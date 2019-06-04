@@ -28,7 +28,7 @@ multiverse <- function () {
   attr(x, "parameters") <- list(parameters = list(), conditions = list())
   attr(x, "current_parameter_assignment") <- list()
   
-  class(x) <- "multiverse_obj"
+  class(x) <- "multiverse"
   x
 }
 
@@ -41,11 +41,17 @@ multiverse <- function () {
 #' @return `TRUE` if the object inherits from the `multiverse` class.
 #' @export
 is_multiverse <- function(x) {
-  inherits(x, "multiverse_obj")
+  inherits(x, "multiverse")
 }
 
+#' @export
 is.multiverse <- function(x) {
-  signal_soft_deprecated("`is.multiverse()` is deprecated, use `is_multiverse()`.")
-  
-  inherits(x, "multiverse_obj")
+  #signal_soft_deprecated("`is.multiverse()` is soft deprecated, use `is_multiverse()`.")
+  inherits(x, "multiverse")
 }
+
+#' @export
+`$.multiverse` <- function(multiverse, variable.name) {
+  attr(M, variable.name)
+}
+

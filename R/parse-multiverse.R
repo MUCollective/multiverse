@@ -14,13 +14,54 @@
 #' @import rlang
 #' @importFrom purrr map
 #' @export
-#' 
 # wrapper function for get_parameter_conditions
 # takes as input a multiverse and parses it
 # returns the output of get_parameter_conditions
 parse_multiverse <- function(M) {
   parameter_conditions_list <- get_parameter_conditions( attr(M, "code") )
-  attr(M, "parameters") <- parameter_conditions_list
+  
+  attr(M, "parameters") <- parameter_conditions_list$parameters
+  attr(M, "conditions") <- parameter_conditions_list$conditions
+  attr(M, "multiverse_tbl") <- get_multiverse_table(M)
+  
+  attr(M, "multiverse_tbl")
+}
+
+#' @export
+#' creates a parameter table from the parameter list
+#' first creates a data.frame of all permutations of parameter values
+#' then enforces the constraints defined in the conditions list
+get_multiverse_table <- function(multiverse) {
+  parameters.list <- attr(multiverse, "parameters")
+  
+  id <- parameters.list %>%
+    map_dbl(length) %>% 
+    unname() %>%
+    sequence()
+  
+  df <- parameters.list %>%
+    as.data.frame() %>%
+    pivot_longer(., 
+                 cols = everything(), 
+                 values_to = "options", 
+                 values_ptypes = list(options = character())
+    ) %>%
+    separate(name, c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
+    select(-delete) %>%
+    mutate(id = id)  %>%
+    pivot_wider(
+      id_cols = id,
+      names_from = parameter, 
+      values_from = options
+    ) %>%
+    select(-id) %>%
+    expand.grid(KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) %>%
+    drop_na()
+  
+  param.assgn = lapply( as.list(1:dim(df)[[1]]), function(x) as.list(df[x[1], ]) )
+  
+  df %>%
+    mutate(parameter_assignment = param.assgn)
 }
 
 # takes as input an expression
@@ -51,6 +92,9 @@ get_parameter_conditions <- function(.expr) {
 # returns as output a list(parameter = list(), condition = list()), 
 # which is a concatenation of the two lists provided as input
 combine_parameter_conditions <- function(l1, l2) {
+  stopifnot(identical(names(l1), c("parameters", "conditions")))
+  stopifnot(identical(names(l2), c("parameters", "conditions")))
+  
   list(
     parameters = c(l1$parameters, l2$parameters),
     conditions = c(l1$conditions, l2$conditions)

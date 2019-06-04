@@ -23,3 +23,25 @@ inside <- function (multiverse, .expr) {
       inset2(., length(.) + 1, .expr[[2]])
   }
 }
+
+#' @export
+`%is%` <- function(.var, value) {
+  .var <- enexpr(.var)
+  multiverse <- eval_tidy( .var[[2]] )
+  
+  #stopifnot(M is not a multiverse object)
+  #stopifnot(`$` is not used to define a variable. Expressions cannot be assigned directly to the multiverse.)
+  
+  var <- .var[[3]]
+  value <- enexpr(value)
+  value[[2]] <- value[[2]] %>%
+    append(exprs(`<-`, !! var), 0) %>%
+    as.call()
+  
+  inside(multiverse, !!value)
+}
+
+#' @export
+`$<-.multiverse` <- function(multiverse, .assgnd, value) {
+  stop('variables cannot be set within the multiverse using the assignment `<-` operator. Use %is% instead.')
+}

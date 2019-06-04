@@ -7,3 +7,5 @@ Author: Abhraneel Sarma <abhsarma@umich.edu>
 Maintainer: Abhraneel Sarma <abhsarma@umich.edu>
 Encoding: UTF-8
 RoxygenNote: 6.1.1
+Suggests: 
+    testthat (>= 2.1.0)
