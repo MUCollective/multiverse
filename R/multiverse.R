@@ -53,6 +53,6 @@ is.multiverse <- function(x) {
 
 #' @export
 `$.multiverse` <- function(multiverse, variable.name) {
-  attr(M, variable.name)
+  attr(multiverse, variable.name)
 }
 

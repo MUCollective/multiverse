@@ -11,6 +11,7 @@
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #' 
 #' @import rlang
+#' @importFrom magrittr %>%
 #' @importFrom purrr map
 #' @importFrom purrr map2
 #' @importFrom purrr flatten_lgl

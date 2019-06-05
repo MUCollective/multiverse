@@ -82,10 +82,12 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 
 `multidy` provides flexible functions which can be used to perform a multiverse analysis.
 
-The first step is to define a *new multiverse*. Here, a multiverse is an S3 object which will contain all the variables within a single scope. A `multiverse` object consists of three attributes: 
-1. `parameters`, which is a list of parameters and conditions
-2. `current parameter assignment`, which is a list of values that each parameter defined in the multiverse can take. This should be the default analysis.
-3. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
+The first step is to define a *new multiverse*. Here, a multiverse is an S3 object which will contain all the variables within a single scope. A `multiverse` object consists of the following attributes: 
+1. `parameters`, which is a list of parameters
+2. `conditions`, which is a list of conditions
+3. `multiverse_tbl`, which is a tibble consisting of all possible combination of values for the multiverse
+4. `current parameter assignment`, which is a list of values that each parameter defined in the multiverse can take. This should be the default analysis.
+5. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
 
 ```{r}
 M <- multiverse()
@@ -180,30 +182,12 @@ M$df %is% {data.raw.study2  %>%
 
 After defining the multiverse, we will need to go through the declaration and parse it to identify the parameters, and the values each parameter can take. The permutations of these values will result in the multiverse of analysis. Parsing will also allow us to convert it into functioning R syntax. 
 
-We parse the multiverse in two steps. The first step is creating a list of all the parameters, and the conditions in which these parameters are valid. The next step is extracting the syntax tree for a single analysis where the value of each parameter are variables corresponding to their values in each universe; we then use a list of parameter assignments --- for each branch, a set of values that each parameter takes which we use to output the code without branches.
+We parse the multiverse in two steps. The first step is creating the `multiverse table` which contains all the combinations of the different values each parameter can take. The next step is extracting the syntax tree for a single analysis where the value of each parameter are variables corresponding to their values in each universe; we then use a list of parameter assignments --- for each branch, a set of values that each parameter takes which we use to output the code without branches.
 
-The `parse_multiverse` function takes care of the first step. We do not need to 
-
+The `parse_multiverse` function takes care of the first step.
 
 ```{r}
-x.1 <- parse_multiverse(M) %>%
-  get_universe()
-
-x.2 <- expr({
-    df <- data.raw.study2  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
-      mutate( Relationship = factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')) ) %>%
-      mutate( 
-        CycleDay = 28 - (NextMenstrualOnset - DateTesting),
-        CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-      ) %>%
-      filter( TRUE ) %>%
-      filter( TRUE ) %>%
-      mutate( Fertility = factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ) )
-  })
-
-identical(f_rhs(x.1), f_rhs(x.2))
+parse_multiverse(M)
 ```
 
 
@@ -220,11 +204,7 @@ param.assgn <- list(
   fertile = "fer_option4"
 )
 
-#param.assgn <- get_multiverse_table(M)[['parameter_assignment']][[1]]
-
 get_universe(M, param.assgn) %>%
   rlang::eval_tidy()
-
-get_universe(M)
 ```
 

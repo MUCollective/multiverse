@@ -12,7 +12,12 @@
 #' parameter, the condition.
 #' 
 #' @import rlang
-#' @importFrom purrr map
+#' @import purrr
+#' @import tidyr
+#' @importFrom magrittr %>%
+#' @importFrom dplyr everything
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
 #' @export
 #' 
 # wrapper function for get_parameter_conditions
@@ -43,18 +48,18 @@ get_multiverse_table <- function(multiverse) {
     
     df <- parameters.list %>%
       as.data.frame() %>%
-      pivot_longer(., 
-                   cols = everything(), 
-                   values_to = "options", 
-                   values_ptypes = list(options = character())
+      pivot_longer(
+          cols = everything(), 
+          values_to = "options", 
+          values_ptypes = list(options = character())
       ) %>%
-      separate(name, c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
-      select(-delete) %>%
+      separate("name", c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
+      select(-"delete") %>%
       mutate(id = id)  %>%
       pivot_wider(
-        id_cols = id,
-        names_from = parameter, 
-        values_from = options
+        id_cols = "id",
+        names_from = "parameter", 
+        values_from = "options"
       ) %>%
       select(-id) %>%
       expand.grid(KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) %>%

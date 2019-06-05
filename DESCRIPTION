@@ -9,5 +9,16 @@ License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 6.1.1
 Suggests: 
+    knitr,
     testthat (>= 2.1.0)
-
+Imports:
+    dplyr (>= 0.8.1),
+    tidyr (>= 0.8.3),
+    ggplot2 (>= 3.0.0),
+    purrr (>= 0.2.3),
+    rlang (>= 0.3.0),
+    tibble,
+    magrittr,
+    modelr
+Remotes: 
+  github::tidyverse/tidyr (>= 0.8.3.9000)

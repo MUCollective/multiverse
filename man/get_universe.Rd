@@ -4,7 +4,7 @@
 \alias{get_universe}
 \title{Code corresponding to a single analysis}
 \usage{
-get_universe(M, .assgn)
+get_universe(M, .assgn = list())
 }
 \arguments{
 \item{M}{The multiverse object with some code passed to it}

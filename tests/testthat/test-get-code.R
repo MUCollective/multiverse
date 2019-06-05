@@ -9,7 +9,7 @@ test_that("syntax tree without branches is correctly returned", {
     df <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   })
-  expect_equal(f_rhs(get_universe(M)), f_rhs(x))
+  expect_equal(f_rhs(get_universe(M)), f_rhs(an_expr))
 })
 
 test_that("syntax tree with branches is correctly returned when no parameter is assigned", {

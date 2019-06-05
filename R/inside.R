@@ -9,6 +9,7 @@
 #' Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.
 #' 
 #' @import rlang
+#' @importFrom magrittr %>%
 #' @importFrom magrittr inset2
 #' 
 #' @export
