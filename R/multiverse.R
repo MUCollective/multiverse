@@ -25,7 +25,8 @@
 multiverse <- function () {
   x <- env()
   attr(x, "code") <- NULL
-  attr(x, "parameters") <- list(parameters = list(), conditions = list())
+  attr(x, "parameters") <- list()
+  attr(x, "conditions") <- list()
   attr(x, "current_parameter_assignment") <- list()
   
   class(x) <- "multiverse"

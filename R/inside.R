@@ -26,14 +26,16 @@ inside <- function (multiverse, .expr) {
 
 #' @export
 `%is%` <- function(.var, value) {
-  .var <- enexpr(.var)
-  multiverse <- eval_tidy( .var[[2]] )
+  .var = enexpr(.var)
+  value = enexpr(value)
+  if( !identical(value[[1]], expr(`{`)) ) stop("expressions passed to the multiverse should be encapsulated within `{`")
   
+  
+  multiverse = eval_tidy( .var[[2]] )
   #stopifnot(M is not a multiverse object)
   #stopifnot(`$` is not used to define a variable. Expressions cannot be assigned directly to the multiverse.)
   
-  var <- .var[[3]]
-  value <- enexpr(value)
+  var = .var[[3]]
   value[[2]] <- value[[2]] %>%
     append(exprs(`<-`, !! var), 0) %>%
     as.call()
@@ -45,3 +47,4 @@ inside <- function (multiverse, .expr) {
 `$<-.multiverse` <- function(multiverse, .assgnd, value) {
   stop('variables cannot be set within the multiverse using the assignment `<-` operator. Use %is% instead.')
 }
+

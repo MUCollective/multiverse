@@ -17,12 +17,6 @@ library(magrittr)
 #library(multidy)
 #library(modelr)
 #library(rlang)
-
-source('R/multiverse.R')
-source('R/inside.R')
-source('R/parse-multiverse.R')
-source('R/get-code.R')
-source('R/utils.R')
 ```
 
 ### The data
@@ -62,7 +56,7 @@ data.raw.study2 <- data.raw.study2 %>%
 
 The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study. 
 
-```{r single_analysis}
+```{r single_analysis, eval = FALSE}
 data.raw.study2 %>%
   mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
   mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
@@ -148,8 +142,7 @@ Alternatively, we can use the `%is%` operator to define variables within the mul
 ```{r}
 M <- multiverse()
 
-M$df %is% {
-  data.raw.study2  %>%
+M$df %is% {data.raw.study2  %>%
   mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(mentrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -193,15 +186,26 @@ The `parse_multiverse` function takes care of the first step. We do not need to
 
 
 ```{r}
-parse_multiverse(M)
+x.1 <- parse_multiverse(M) %>%
+  get_universe()
 
-get_multiverse_table(M)
+x.2 <- expr({
+    df <- data.raw.study2  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+      mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
+      mutate( Relationship = factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')) ) %>%
+      mutate( 
+        CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+        CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+      ) %>%
+      filter( TRUE ) %>%
+      filter( TRUE ) %>%
+      mutate( Fertility = factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ) )
+  })
 
-attr(M, "parameters")$parameters %>%
-    map_dbl(length) %>% 
-    unname() %>%
-    sequence()
+identical(f_rhs(x.1), f_rhs(x.2))
 ```
+
 
 ### Running a single analysis from the multiverse
 
@@ -216,9 +220,11 @@ param.assgn <- list(
   fertile = "fer_option4"
 )
 
-param.assgn <- get_multiverse_table(M)[['parameter_assignment']][[1]]
+#param.assgn <- get_multiverse_table(M)[['parameter_assignment']][[1]]
 
 get_universe(M, param.assgn) %>%
   rlang::eval_tidy()
+
+get_universe(M)
 ```
 

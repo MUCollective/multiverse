@@ -1,15 +1,18 @@
+# Tests to verify if expressions can be passed to the multiverse
+# and if passed expressions are stored properly
 context("inside")
 
-M = multiverse()
+library(rlang)
 
 test_that("inside works on new multiverse object", {
-  an_expr = expr({x <- data.frame(x = 1:10)})
+  an_expr = expr({x = data.frame(x = 1:10)})
   
+  M = multiverse()
   inside(M, {
     x = data.frame(x = 1:10)
   })
   
-  expect_equal(attr(M, "code"), an_expr)
+  expect_equal(f_rhs(attr(M, "code")), f_rhs(an_expr))
 })
 
 test_that("multiple lines of code can be passed to inside", {
@@ -18,15 +21,15 @@ test_that("multiple lines of code can be passed to inside", {
     y = data.frame(y = 11:20)
   })
   
+  M = multiverse()
   inside(M, {
     x = data.frame(x = 1:10)
   })
-  
   inside(M, {
     y = data.frame(y = 11:20)
   })
   
-  expect_equal(attr(M, "code"), an_expr)
+  expect_equal(f_rhs(attr(M, "code")), f_rhs(an_expr))
 })
 
 test_that("throws error when object is not of type `multiverse`", {
@@ -36,3 +39,4 @@ test_that("throws error when object is not of type `multiverse`", {
   expect_error( inside(M.1, {x = data.frame(x = 1:10)}) )
   expect_error( inside(M.2, {x = data.frame(x = 1:10)}) )
 })
+
