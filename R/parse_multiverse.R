@@ -18,19 +18,25 @@
 #' @importFrom dplyr everything
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
+#' @importFrom tibble as_tibble
 #' @export
 #' 
 # wrapper function for get_parameter_conditions
 # takes as input a multiverse and parses it
 # returns the output of get_parameter_conditions
-parse_multiverse <- function(M) {
-  parameter_conditions_list <- get_parameter_conditions( attr(M, "code") )
+parse_multiverse <- function(multiverse) {
+  parameter_conditions_list <- get_parameter_conditions( attr(multiverse, "code") )
   
-  attr(M, "parameters") <- parameter_conditions_list$parameters
-  attr(M, "conditions") <- parameter_conditions_list$conditions
-  attr(M, "multiverse_tbl") <- get_multiverse_table(M)
+  attr(multiverse, "parameters") <- parameter_conditions_list$parameters
+  attr(multiverse, "conditions") <- parameter_conditions_list$conditions
+  attr(multiverse, "multiverse_table") <- get_multiverse_table(multiverse)
   
-  M
+  if( length(attr(multiverse, "parameters")) >= 1) {
+    attr(multiverse, "current_parameter_assignment") = attr(multiverse, "parameters") %>%
+      map(~ .x[[1]])
+  }
+  
+  multiverse
 }
 
 #' @export
@@ -63,7 +69,8 @@ get_multiverse_table <- function(multiverse) {
       ) %>%
       select(-id) %>%
       expand.grid(KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) %>%
-      drop_na()
+      drop_na() %>%
+      as_tibble()
     
     param.assgn = lapply( as.list(1:dim(df)[[1]]), function(x) as.list(df[x[1], ]) )
     
@@ -71,7 +78,7 @@ get_multiverse_table <- function(multiverse) {
       mutate(parameter_assignment = param.assgn)
   } else {
     warning("expression passed to the multiverse has no branches / parameters")
-    data.frame(param.assgn = list())
+    tibble(param.assgn = list())
   }
 }
 

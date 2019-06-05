@@ -19,14 +19,11 @@
 #' 
 #' @export
 # wrapper function for get_parameter_code
-get_universe <- function(M, .assgn = list()) {
-  if( length(attr(M, "parameters")) >= 1 && length(.assgn) == 0 ) {
-    warning("Parameter assignment has not been provided; Assigning the first values for each parameter")
-    
-    .assgn = attr(M, "parameters") %>%
-                map(~ .x[[1]])
+get_code <- function(M, .assgn = list()) {
+  if( length(attr(M, "current_parameter_assignment")) != 0 && length(.assgn) == 0 ) {
+    message("Assigning options to parameter from `current_parameter_assignment`")
+    .assgn = attr(M, "current_parameter_assignment")
   }
-  
   get_parameter_code(attr(M, "code"), .assgn)
 }
 
