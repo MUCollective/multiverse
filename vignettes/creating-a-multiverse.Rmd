@@ -1,5 +1,5 @@
 ---
-title: "Multiverse Syntax"
+title: "Creating a multiverse analysis"
 output: html_document
 ---
 
