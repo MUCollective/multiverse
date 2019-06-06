@@ -12,8 +12,10 @@
 #' parameter, the condition.
 #' 
 #' @import rlang
-#' @import purrr
 #' @import tidyr
+#' @importFrom purrr map
+#' @importFrom purrr map_dbl
+#' @importFrom purrr reduce
 #' @importFrom magrittr %>%
 #' @importFrom dplyr everything
 #' @importFrom dplyr select
@@ -27,13 +29,15 @@
 parse_multiverse <- function(multiverse) {
   parameter_conditions_list <- get_parameter_conditions( attr(multiverse, "code") )
   
-  attr(multiverse, "parameters") <- parameter_conditions_list$parameters
-  attr(multiverse, "conditions") <- parameter_conditions_list$conditions
-  attr(multiverse, "multiverse_table") <- get_multiverse_table(multiverse)
+  attr(multiverse, "parameters") = parameter_conditions_list$parameters
+  attr(multiverse, "conditions") = parameter_conditions_list$conditions
   
   if( length(attr(multiverse, "parameters")) >= 1) {
+    attr(multiverse, "multiverse_table") = get_multiverse_table(multiverse)
     attr(multiverse, "current_parameter_assignment") = attr(multiverse, "parameters") %>%
       map(~ .x[[1]])
+  } else {
+      warning("expression passed to the multiverse has no branches / parameters")
   }
   
   multiverse
@@ -46,40 +50,35 @@ parse_multiverse <- function(multiverse) {
 get_multiverse_table <- function(multiverse) {
   parameters.list <- attr(multiverse, "parameters")
   
-  if (length(parameters.list) > 0){
-    id <- parameters.list %>%
-      map_dbl(length) %>% 
-      unname() %>%
-      sequence()
-    
-    df <- parameters.list %>%
-      as.data.frame() %>%
-      pivot_longer(
-          cols = everything(), 
-          values_to = "options", 
-          values_ptypes = list(options = character())
-      ) %>%
-      separate("name", c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
-      select(-"delete") %>%
-      mutate(id = id)  %>%
-      pivot_wider(
-        id_cols = "id",
-        names_from = "parameter", 
-        values_from = "options"
-      ) %>%
-      select(-id) %>%
-      expand.grid(KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) %>%
-      drop_na() %>%
-      as_tibble()
-    
-    param.assgn = lapply( as.list(1:dim(df)[[1]]), function(x) as.list(df[x[1], ]) )
-    
-    df %>%
-      mutate(parameter_assignment = param.assgn)
-  } else {
-    warning("expression passed to the multiverse has no branches / parameters")
-    tibble(param.assgn = list())
-  }
+  id <- parameters.list %>%
+    map_dbl(length) %>% 
+    unname() %>%
+    sequence()
+  
+  df <- parameters.list %>%
+    as.data.frame() %>%
+    pivot_longer(
+        cols = everything(), 
+        values_to = "options", 
+        values_ptypes = list(options = character())
+    ) %>%
+    separate("name", c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
+    select(-"delete") %>%
+    mutate(id = id)  %>%
+    pivot_wider(
+      id_cols = "id",
+      names_from = "parameter", 
+      values_from = "options"
+    ) %>%
+    select(-id) %>%
+    expand.grid(KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) %>%
+    drop_na() %>%
+    as_tibble()
+  
+  param.assgn = lapply( as.list(1:dim(df)[[1]]), function(x) as.list(df[x[1], ]) )
+  
+  df %>%
+    mutate(parameter_assignment = param.assgn)
 }
 
 # takes as input an expression

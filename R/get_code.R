@@ -14,7 +14,6 @@
 #' @importFrom magrittr %>%
 #' @importFrom purrr map
 #' @importFrom purrr map2
-#' @importFrom purrr flatten_lgl
 #' @importFrom magrittr extract2
 #' 
 #' @export
