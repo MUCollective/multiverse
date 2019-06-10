@@ -11,8 +11,6 @@ RoxygenNote: 6.1.1
 Suggests: 
     knitr,
     testthat (>= 2.1.0)
-Remotes: 
-    github::tidyverse/tidyr
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
@@ -20,4 +18,5 @@ Imports:
     rlang (>= 0.3.4),
     tibble,
     magrittr,
-    modelr
+    modelr,
+    tidyr (>=0.8.3)
