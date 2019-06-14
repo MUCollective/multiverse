@@ -20,19 +20,37 @@
 #' @return An empty multiverse object
 #' 
 #' @importFrom rlang env
+#' @import methods
 #' @export
+setClass("multiverse", 
+  contains = "environment",
+  slots = c(
+    code = "language", 
+    parameters = "list",
+    conditions = "list",
+    current_parameter_assignment = "list",
+    multiverse_table = "data.frame"
+  ),
+  prototype = prototype(
+    code = NULL,
+    parameters = list(),
+    conditions = list(),
+    current_parameter_assignment = list(),
+    multiverse_table = data.frame(parameter_assignment = list())
+  )
+)
 
-multiverse <- function () {
-  x <- env()
-  attr(x, "code") = NULL
-  attr(x, "parameters") = list()
-  attr(x, "conditions") = list()
-  attr(x, "current_parameter_assignment") = list()
-  attr(x, "multiverse_table") = data.frame(parameter_assignment = list())
-  
-  class(x) <- "multiverse"
+setGeneric("current_parameter_assignment", function(x) standardGeneric("current_parameter_assignment"))
+#' @export
+setMethod("current_parameter_assignment", "multiverse", function(x) x@current_parameter_assignment)
+
+
+setGeneric("current_parameter_assignment<-", function(x, value) standardGeneric("current_parameter_assignment<-"))
+#' @export
+setMethod("current_parameter_assignment<-", "multiverse", function(x, value) {
+  x@current_parameter_assignment <- value
   x
-}
+})
 
 #' Test if the object is a multiverse
 #'

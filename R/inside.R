@@ -13,19 +13,28 @@
 #' @importFrom magrittr inset2
 #' 
 #' @export
-inside <- function (multiverse, .expr) {
-  stopifnot(is_multiverse(multiverse))
-  .expr <- enexpr(.expr)
+inside <- function(multiverse, .expr) {
+  .expr = enexpr(.expr)
   
-  if (is_null(attr(multiverse, "code"))) {
-    attr(multiverse, "code") <- .expr
+  if (is_null(multiverse@code)) {
+    multiverse@code <- .expr
   } else {
-    attr(multiverse, "code") <- attr(multiverse, "code") %>% 
+    
+    multiverse@code <- multiverse@code %>% 
       inset2(., length(.) + 1, .expr[[2]])
   }
+  
+  multiverse
 }
 
 #' @export
+`$<-.multiverse` <- function(multiverse, name, value) {
+  .expr = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
+  
+  inside(multiverse, !!.expr)
+}
+
+# deprecated (used when multiverse was an S3 object)
 `%is%` <- function(.var, value) {
   .var = enexpr(.var)
   value = enexpr(value)
@@ -42,10 +51,5 @@ inside <- function (multiverse, .expr) {
     as.call()
   
   inside(multiverse, !!value)
-}
-
-#' @export
-`$<-.multiverse` <- function(multiverse, .assgnd, value) {
-  stop('variables cannot be set within the multiverse using the assignment `<-` operator. Use %is% instead.')
 }
 

@@ -5,7 +5,11 @@ output: html_document
 
 ## Introduction
 
-In this document, we outline some initial avenues for creating the syntax for a multiverse analysis. The goal is to identify a high-level data structure that can be used consistently throughout the analysis and can be manipulated in ways similar to a data.frame or tibble.
+In this document, we outline an initial approach to conducting a multiverse analysis in R. 
+
+Data analysis can involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable options to choose from. A multiverse analysis is a form of analysis which makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). 
+
+Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -13,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-library(multidy)
+#library(multidy)
 ```
 
 ## The data
@@ -102,7 +106,7 @@ The next step is to define our possible analyses inside the multiverse. The `mul
 Consider these first few lines from the transformation code in the single analysis above:
 
 ```{r eval=FALSE}
-df <- data.raw.study2  %>%
+df <- data.raw.study2 %>%
   mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) %>%
   mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength)
 ```
@@ -114,11 +118,23 @@ But `NextMenstrualOnset` could be calculated in at least two other reasonable wa
 
 To create a multiverse that includes these three possible processing options, we can use the `branch()` function. The `branch()` function defines a *parameter* (here `menstrual_calculation`) and the different *options* that the parameter can take (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Each option corresponds to a different chunk of code that would be executed in a different universe.
 
+```{r parameter_options, eval = FALSE}
+NextMenstrualOnset = branch(menstrual_calculation, 
+  "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+  "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+  "mc_option3" ~ StartDateNext
+)
+```
+
+The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Thus, we need to declare this data processing step inside the multiverse. We do this by using the `inside()` function. The `inside()` function takes in two arguments:
+1. the multiverse object, M; and
+2. the code for the analysis (including branches), enclosed within `{}`
+
 ```{r add_to_multiverse}
 inside(M, {
   df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation, 
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
       "mc_option3" ~ StartDateNext)
