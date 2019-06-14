@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-#library(multidy)
+library(multidy)
 ```
 
 ## The data
@@ -98,7 +98,7 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
 ```{r}
-M <- multiverse()
+M <- new("multiverse")
 ```
 
 The next step is to define our possible analyses inside the multiverse. The `multidy` package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above). 
@@ -187,7 +187,7 @@ M$code
 
 At this point, we have defined three possible processing options (three universes) in our multiverse, but no code has been executed. We need to be able to analyse each universe in turn. We can generate the code for a particular universe using the `get_code()`, and execute this code using `rlang::eval_tidy()`.
 
-```{r generate_code}
+```{r generate_code, eval = FALSE}
 get_code(M, list(menstrual_calculation = "mc_option2"))%>%
   rlang::eval_tidy() %>%
   select( NextMenstrualOnset, everything() ) 
@@ -249,7 +249,7 @@ M$multiverse_table
 
 Finally, we can get the code for the defualt single universe analysis from this multiverse and execute it:
 
-```{r}
+```{r, eval = FALSE}
 get_code(M) %>%
   rlang::eval_tidy() %>%
   select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility)
@@ -257,7 +257,7 @@ get_code(M) %>%
 
 Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `get_code()` function and execute it:
 
-```{r}
+```{r, eval = FALSE}
 universe_parameter_assignment <- list(
     menstrual_calculation = "mc_option1",
     relationship_status = "rs_option3",

@@ -1,12 +1,20 @@
 ---
-title: "A multiverse example of calculating the mean"
-output: html_document
+title: "The most basic multiverse example: calculating the mean"
+author: "Abhraneel Sarma"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
 library(knitr)
+
+opts_chunk$set(echo = TRUE)
+opts_knit$set(output.dir="vignettes")
+
 library(tidyverse)
 library(magrittr)
 library(multidy)
@@ -40,7 +48,10 @@ We could also change the fraction of values that we want to trim. This can be co
 
 An overview of the steps involved in creating a multiverse analysis is shown below:
 
-![Creating a multiverse analysis with the multidy package](multiverse.png)
+
+```{r echo = FALSE, out.width = '100%', fig.align = 'center'}
+knitr::include_graphics("multiverse.png")
+```
 
 We will gradually walk through each step involved in this analysis.
 
