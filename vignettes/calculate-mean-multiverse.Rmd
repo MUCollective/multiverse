@@ -25,8 +25,8 @@ library(multidy)
 In this document, we'll outline a simple multiverse analysis --- calculating the mean of a set of numbers.
 
 ```{r data}
-set.seed(10000)
-x = 30 + rt(50, 5) * 12
+set.seed(1234567)
+x = 50 + rt(100, 3) * 20
 data = x
 ```
 
@@ -36,7 +36,7 @@ Now, there are multiple ways of calculating the mean. We could just directly cal
 mean(data)
 ```
 
-Or, we could remove the outliers by removing a fraction of the values from each end
+Or, we could remove the outliers by removing a fraction of the values from each end. Here, we remove 10% of the values (5% from each end).
 
 ```{r}
 mean(data, trim = 0.05)

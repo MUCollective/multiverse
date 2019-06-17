@@ -7,12 +7,25 @@
 inside(multiverse, .expr)
 }
 \arguments{
-\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using `new_multiverse`}
+\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using `new("multiverse")`}
 
 \item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed. 
 Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.}
 }
 \description{
-The inside function allows you to define objects and code to manipulate the objects inside the multiverse.
-However, the function only stores the code, and does not execute any code at this step. See `eval_multi` for executing the code.
+Add code to the multiverse using the function using a function call, or an assignment operator, which is
+a wrapper around the function
+}
+\details{
+To perform a multiverse analysis, we will need to write code to be executed within the multiverse. 
+The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
+which is captured as an expression. To define multiple analysis options in the code passed to the multiverse, 
+use the \code{\link[multidy]{branch}} function. See \code{\link[multidy]{branch}} for more 
+details on how to declare multiple analysis options. 
+
+The `inside` function only stores the code, and does not execute any code at this step. To execute, we 
+provide separate functions. See \code{\link[multidy]{execute}} for executing the code.
+
+Instead of using the `inside()` function, an alternate implementation of the multiverse is using 
+the assignment operator, `<-`. See examples below.
 }

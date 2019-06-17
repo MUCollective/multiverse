@@ -1,12 +1,16 @@
 #' Code corresponding to a single analysis
 #' 
-#' For a particular parameter assignment (i.e. one set of values that each defined parameter takes), 
-#' this function rewrites the code passed into the multiverse to output the corresponding code for that
-#' set of parameter values --- the analysis for a single universe. This function is primarily going to 
-#' be called by other functions, and perhaps not going to be as useful to the user for anything other than
-#' inspecting the rewritten code.
+#' Given a particular set of options for each parameter, extracts the code for performing a 
+#' single analysis from the code used to declare the multiverse.
 #' 
-#' @param M The multiverse object with some code passed to it
+#' @details For a particular parameter assignment (i.e. one set of options that each defined parameter 
+#' in the multiverse takes), this function rewrites the code passed into the multiverse to output the 
+#' corresponding code for that set of parameter values --- the analysis for a single universe.
+#' 
+#' This is primarily going to be called by other functions, and perhaps not going to be as useful to 
+#' the user for anything other than inspecting the rewritten code.
+#' 
+#' @param multiverse The multiverse object with some code passed to it
 #' 
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #' 
@@ -18,12 +22,12 @@
 #' 
 #' @export
 # wrapper function for get_parameter_code
-get_code <- function(M, .assgn = list()) {
-  if( length(attr(M, "current_parameter_assignment")) != 0 && length(.assgn) == 0 ) {
+get_code <- function(multiverse, .assgn = list()) {
+  if( length(attr(multiverse, "current_parameter_assignment")) != 0 && length(.assgn) == 0 ) {
     message("Assigning options to parameter from `current_parameter_assignment`")
-    .assgn = attr(M, "current_parameter_assignment")
+    .assgn = attr(multiverse, "current_parameter_assignment")
   }
-  get_parameter_code(attr(M, "code"), .assgn)
+  get_parameter_code(attr(multiverse, "code"), .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches

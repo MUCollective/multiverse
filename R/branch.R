@@ -1,0 +1,61 @@
+#' Define multiple analysis paths for a step in the multiverse
+#' 
+#' The `branch()` function allows the user to define multiple analysis options for a particular step
+#' in the analysis.
+#' 
+#' @details For every step in the analysis, there may be more than one analysis option. We use `branch()`
+#' to declare these different analysis options. Each branch is characterised by a parameter. The first
+#' argument passed into the branch is the paramter. 
+#' 
+#' All the other arguments passed into branch are the different analysis options corresponding to 
+#' that parameter (that particular step in the analysis process). Naturally, at least two or more 
+#' options should be declared. Thus, the branch function will provide a warning
+#' if the total number arguments passed is less than three.
+#' 
+#' The `branch()` function does not support nested branches. Thus, we cannot declare a branch within a branch.
+#' 
+#' @param parameter A string to identify the branch. Each branch is characterised using a parameter which takes
+#' different options.
+#'  
+#' @param ... Different options for completing a particular step in the analysis. Each option is
+#' declared as <option_name> ~ <option_calculation>. See examples for more details.
+#'  
+#' @examples 
+#' \dontrun{
+#' # declaring multiple options for a data processing step (calculating a new variable) 
+#' data(fertility)
+#' data.fertility <- fertility
+#' 
+#' data.fertility  %>%
+#'     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+#'     mutate( NextMenstrualOnset = StartDateNext)
+#' 
+#' # if the variable `NextMenstrualOnset` can be calculated in more than one way
+#' # we can use branch to declare all the different analysis options as:
+#' branch(menstrual_calculation, 
+#'           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+#'           "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+#'           "mc_option3" ~ StartDateNext)
+#'           
+#' # this will replace the current analysis within the current syntax.
+#' data.fertility  %>%
+#'     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+#'     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+#'                                    "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+#'                                    "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+#'                                    "mc_option3" ~ StartDateNext)
+#'     )
+#' 
+#' # Since this is a multiverse analysis, this is only supported within a multiverse object. Hence:
+#' M = inside(M, {
+#'   df <- data.fertility  %>%
+#'     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+#'     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+#'                                    "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+#'                                    "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+#'                                    "mc_option3" ~ StartDateNext)
+#'     )
+#' })
+#' }
+#' @name branch
+NULL

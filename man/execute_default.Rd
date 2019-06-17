@@ -4,7 +4,7 @@
 \alias{execute_default}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_default(multiverse, N = NA)
+execute_default(multiverse, N = NA, list = list())
 }
 \arguments{
 \item{multiverse}{The multiverse object}
@@ -18,4 +18,9 @@ which indicates the complete multiverse is to be executed.}
 These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
 using the execute_default() or parts or whole of the multiverse using the execute_multiverse(). These functions allow the user 
 to interactively inspect the code.
+}
+\details{
+Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access 
+the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
+multiverse table, under the results column.
 }

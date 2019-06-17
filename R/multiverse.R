@@ -1,20 +1,35 @@
 #' Create a new multiverse object
 #' 
-#' multiverse() constructs a new multiverse object. The multiverse object is an S3 object wtih three attributes:
+#' Constructs a new multiverse object which enables conducting a multiverse analysis
+#' 
+#' @details To perform a multiverse analysis, the user needs to first constructs a new multiverse object. The user can declare 
+#' multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object is 
+#' contains the following slots:
 #' \itemize{
-#'   \item code: The `code` attribute stores the user's code for conducting a multiverse analysis. The user can
+#'   \item code: This slot stores the user's code for conducting a multiverse analysis. The user can
 #'   define multiple analysis pathways at each step in the analysis using the `branch` call. It supports tidyverse syntax.
-#'   \item parameters: The `parameters` attribute contain the list which itself comprises of two lists: 
-#'   the list of parameters and the list of conditions. The list of parameters is a named list which defines all the values 
-#'   that each defined parameter can take. The list of conditions defines, if any of the parameter values are conditional
-#'    on a specific value of another parameter, the condition. This is created from the `code` attribute.
-#'   \item current_parameter_assignment: The `current_parameter_assignment` attribute is a list which contains a single value
-#'   assignment for each parameter defined in the `code`.
+#'   
+#'   \item parameters: This slot contains a named list of lists. It contains each parameter defined in the 
+#'   code using the `branch()` function, and the options defined for each parameter (as a list).
+#'   
+#'   \item conditions (NOT IMPLEMENTED): This slot contain a list of conditions: if any of the 
+#'   parameter values are conditional on a specific value of another parameter, these can be defined in the code 
+#'   using `branch_assert()` or `branch_exclude()`.
+#'   
+#'   \item current_parameter_assignment: This slot is a list which contains a single option
+#'   assigned for each parameter defined in the `code`.
+#'   
+#'   \item multiverse_table: This slot contains a table (in implementation, a tibble which is a 
+#'   rectangular data structure) where each column of the table will be a unqiue parameter. 
+#'   The table will contains every possible combination of options for each parameter — the number of rows 
+#'   corresponds to the number of different analysis paths. The table also contains, for each row, a list of 
+#'   option assignments for each parameter (`parameter_assignment` column), code for executing that particular
+#'   analysis (of type `expression`), and environments where each code will be executed.
 #' }
 #' 
 #' @examples 
 #' \dontrun{
-#' M <- new_multiverse()
+#' M <- new("multiverse")
 #' }
 #' 
 #' @return An empty multiverse object
@@ -68,10 +83,5 @@ is_multiverse <- function(x) {
 is.multiverse <- function(x) {
   #signal_soft_deprecated("`is.multiverse()` is soft deprecated, use `is_multiverse()`.")
   inherits(x, "multiverse")
-}
-
-#' @export
-`$.multiverse` <- function(multiverse, variable.name) {
-  attr(multiverse, variable.name)
 }
 
