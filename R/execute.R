@@ -15,6 +15,33 @@
 #' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
 #' multiverse table, under the results column. 
 #' 
+#' @examples
+#' \dontrun{
+#' #' M <- new("multiverse")
+#' inside(M, {
+#'   data <- rnorm(100, 50, 20)
+#'   
+#'   x.mean <- mean(data, trim = branch(
+#'     trim_values, 
+#'     "trim_none" ~ 0,
+#'     "trim_1pc" ~ 0.05,
+#'     "trim_5pc" ~ 0.025,
+#'     "trim_10pc" ~ 0.05
+#'   ))
+#' })
+#' 
+#' # Prints the default analysis. Here, the default
+#' # analysis is the one conducted with `trim_none`
+#' parse_multiverse(M) %>%
+#' execute_default() %>%
+#'   print()
+#' }
+#' 
+#' # Will print the results from all the multiverses
+#' parse_multiverse(M) %>%
+#' execute_multiverse() %>%
+#'   print_multiverse()
+#' 
 #' @importFrom rlang global_env
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
@@ -38,6 +65,7 @@ execute_default <- function(multiverse, N = NA, list = list()) {
 
 #' @export
 execute_multiverse <- function(multiverse, .vec = NA) {
+  
   multiverse.parsed = parse_multiverse(multiverse)
   
   if (is.na(.vec)) {
@@ -65,7 +93,9 @@ execute_each <- function(.m_tbl, .vec) {
 }
 
 #' @export
-print_multiverse <- function(multiverse, .vec = NULL) {
+print_multiverse <- function(multiverse, .var, .vec = NULL) {
+  .var = as_name(enquo(.var))
+  
   if (is.null(.vec)) {
     .vec = 1:nrow(multiverse@multiverse_table)
   } else if(max(.vec) > nrow(multiverse@multiverse_table)) {
@@ -75,6 +105,7 @@ print_multiverse <- function(multiverse, .vec = NULL) {
   }
   
   for (i in .vec) {
-      print( multiverse@multiverse_table$results[[i]]$x.mean )
+      multiverse@multiverse_table$results[[i]][[.var]] %>%
+        print()
   }
 }

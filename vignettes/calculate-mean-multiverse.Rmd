@@ -17,7 +17,7 @@ opts_knit$set(output.dir="vignettes")
 
 library(tidyverse)
 library(magrittr)
-library(multidy)
+#library(multidy)
 ```
 
 ## Introduction: Conducting a multiverse analysis
@@ -179,7 +179,7 @@ Or we can run the entire multiverse using the `execute_multiverse()` function. T
 ```{r check_results}
 parse_multiverse(M) %>%
   execute_multiverse() %>%
-  print_multiverse() # not sure how helpful this is
+  print_multiverse(x.mean) # not sure how helpful this is
 ```
 
 ## Step 2: extending the multiverse

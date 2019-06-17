@@ -12,6 +12,54 @@ inside(multiverse, .expr)
 \item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed. 
 Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.}
 }
+\value{
+a multiverse object
+
+#' @examples 
+\dontrun{
+M.1 <- new("multiverse")
+
+# using `inside` to declare multiverse code
+inside(M.1, {
+  data <- rnorm(100, 50, 20)
+  
+  x.mean <- mean(data, trim = branch(
+    trim_values, 
+    "trim_none" ~ 0,
+    "trim_1pc" ~ 0.05,
+    "trim_5pc" ~ 0.025,
+    "trim_10pc" ~ 0.05
+  ))
+})
+
+M.2 <- new("multiverse)
+
+# using the assignment operator to declare multiverse code
+M$data <- rnorm(100, 50, 20)
+M$x.mean <- mean(data, trim = branch(
+    trim_values, 
+    "trim_none" ~ 0,
+    "trim_1pc" ~ 0.05,
+    "trim_5pc" ~ 0.025,
+    "trim_10pc" ~ 0.05
+  ))
+  
+# declaring multiple options for a data processing step (calculating a new variable) 
+data(fertility)
+data.fertility <- fertility
+
+inside(M.1, {   
+  df <- data.fertility  %>% 
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+                                   "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                                   "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                                   "mc_option3" ~ StartDateNext
+  ))
+})
+
+}
+}
 \description{
 Add code to the multiverse using the function using a function call, or an assignment operator, which is
 a wrapper around the function
