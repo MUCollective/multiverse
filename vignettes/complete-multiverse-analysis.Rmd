@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-#library(multidy)
+library(multidy)
 ```
 
 ## The data
@@ -157,8 +157,24 @@ M$df <- ~ data.raw.study2  %>%
 ## Parsing the multiverse
 The next step is to parse the multiverse to identify the `parameters` and the corresponding `options` that have been defined for each parameter. For this, we use the `parse_multiverse()` function.
 
-```{r parse_multiverse, include=FALSE}
+
+```{r parse_multiverse}
+M = new("multiverse")
+
+M = inside(M, {
+  df <- data.raw.study2  %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+      "mc_option3" ~ StartDateNext)
+    ) #%>%  filter( branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 ))
+})
+
 M.parsed = parse_multiverse(M)
+
+M.evaluated = parse_multiverse(M) %>%
+  execute_multiverse()
 ```
 
 The `multiverse` object we have defined consists of the following attributes: 

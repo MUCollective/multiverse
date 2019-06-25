@@ -12,14 +12,12 @@
 #' parameter, the condition.
 #' 
 #' @import rlang
-#' @import tidyr
 #' @importFrom purrr map
 #' @importFrom purrr map_dbl
 #' @importFrom purrr reduce
 #' @importFrom magrittr %>%
-#' @importFrom dplyr everything
-#' @importFrom dplyr select
 #' @importFrom dplyr mutate
+#' @importFrom dplyr mutate_all
 #' @importFrom tibble as_tibble
 #' @export
 #' 
@@ -52,9 +50,9 @@ get_multiverse_table <- function(multiverse) {
   
   df <- parameters.list %>%
     expand.grid() %>%
-    mutate_all(~as.character(.))
+    unnest( cols = everything())
   
-  param.assgn = lapply( as.list(1:dim(df)[[1]]), function(x) as.list(df[x[1], ]) )
+  param.assgn = lapply( as.list(1:nrow(df)), function(x) as.list(df[x[1], ]) )
   
   df %>%
     mutate(parameter_assignment = param.assgn)
