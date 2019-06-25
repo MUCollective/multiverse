@@ -5,6 +5,7 @@ context("parse-multiverse")
 library(rlang)
 library(tidyr)
 library(dplyr)
+library(purrr)
 
 test_that("the output of `get_branch_parameter_conditions` on a `branch` call", {
   a_branch_call = expr(
@@ -61,7 +62,7 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
   an_expr = expr({
     df <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate(NextMenstrualOnset = branch(mentrual_calculation, 
+      mutate( NextMenstrualOnset = branch(mentrual_calculation, 
                                          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
                                          "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
                                          "mc_option3" ~ StartDateNext)
@@ -93,8 +94,8 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
 test_that("`parse_multiverse` returns the complete parameter table", {
   p_tbl_df.ref = readRDS("../data/data.parameter_tbl.rds")
   
-  M = multiverse()
-  inside(M, {
+  M = new("multiverse")
+  M = inside(M, {
     df <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate(NextMenstrualOnset = branch(mentrual_calculation, 
@@ -128,8 +129,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
       ))
   })
   
-  p_tbl_df = parse_multiverse(M) %>%
-    attr("multiverse_table")
+  p_tbl_df = parse_multiverse(M)@multiverse_table
   
   expect_true(identical(p_tbl_df, p_tbl_df.ref))
 })
@@ -137,8 +137,8 @@ test_that("`parse_multiverse` returns the complete parameter table", {
 test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' attribute when it is passed an expression without any branches", {
   p_tbl_df.ref = data.frame(parameter_assignment = list())
   
-  M = multiverse()
-  inside(M, {
+  M = new("multiverse")
+  M = inside(M, {
     df <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   })
@@ -147,6 +147,48 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
               )
   
   expect_equal(p_tbl_df, p_tbl_df.ref)
+})
+
+test_that("`parameter_assignment` is created appropriately for single parameter multiverses", {
+  ref_list = lapply(c("mc_option1", "mc_option2", "mc_option3"), function(x) list(menstrual_calculation = x))
+  
+  M = new("multiverse")
+  M = inside(M, {
+    df <- data.raw.study2  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+      mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+                                          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                                          "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                                          "mc_option3" ~ StartDateNext)
+      )
+  })
+  
+  m.tbl = parse_multiverse(M)@multiverse_table
+  
+  expect_equal(m.tbl$parameter_assignment, ref_list)
+})
+
+test_that("`parameter_assignment` is created appropriately for two or more parameter multiverses", {
+  M = new("multiverse")
+  M = inside(M, {
+    df <- data.raw.study2  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+      mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+                                          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                                          "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                                          "mc_option3" ~ StartDateNext)
+      ) %>%  filter( branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 ))
+  })
+  
+  m.tbl = parse_multiverse(M)@multiverse_table
+  
+  ref_list = expand.grid(
+    menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
+    certainty = list("cer_option1", "cer_option2")
+  ) %>%
+    unnest( cols = everything() )
+  
+  expect_equal(m.tbl$parameter_assignment, transpose(ref_list))
 })
 
 

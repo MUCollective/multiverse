@@ -7,8 +7,9 @@ library(rlang)
 test_that("inside works on new multiverse object", {
   an_expr = expr({x = data.frame(x = 1:10)})
   
-  M = multiverse()
-  inside(M, {
+  M = new("multiverse")
+  
+  M = inside(M, {
     x = data.frame(x = 1:10)
   })
   
@@ -21,11 +22,12 @@ test_that("multiple lines of code can be passed to inside", {
     y = data.frame(y = 11:20)
   })
   
-  M = multiverse()
-  inside(M, {
+  M = new("multiverse")
+  M = inside(M, {
     x = data.frame(x = 1:10)
   })
-  inside(M, {
+  
+  M = inside(M, {
     y = data.frame(y = 11:20)
   })
   

@@ -2,19 +2,22 @@
 context("get_code")
 
 test_that("syntax tree without branches is correctly returned", {
-  M = multiverse()
   an_expr <- expr({df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )})
-  inside(M, {
+  
+  M = new("multiverse")
+  M = inside(M, {
     df <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   })
+  
   expect_equal(f_rhs(get_code(M)), f_rhs(an_expr))
 })
 
 test_that("syntax tree with branches is correctly returned when no parameter is assigned", {
-  M = multiverse()
-  inside(M, {
+  M = new("multiverse")
+  
+  M = inside(M, {
     df <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate(NextMenstrualOnset = branch(mentrual_calculation, 
@@ -68,8 +71,9 @@ test_that("syntax tree with branches is correctly returned when no parameter is 
 })
 
 test_that("syntax tree with branches is correctly returned when a parameter is assigned", {
-  M = multiverse()
-  inside(M, {
+  M = new("multiverse")
+  
+  M = inside(M, {
     df <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate(NextMenstrualOnset = branch(mentrual_calculation, 

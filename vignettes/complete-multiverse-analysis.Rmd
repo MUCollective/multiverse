@@ -168,9 +168,26 @@ M = inside(M, {
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
       "mc_option3" ~ StartDateNext)
-    ) #%>%  filter( branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 ))
+    ) %>%  filter( branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 ))
 })
 
+a_list.ref = parse_multiverse(M)@multiverse_table$parameter_assignment
+
+list(
+  lapply(c("mc_option1", "mc_option2", "mc_option3"), function(x) list(menstrual_calculation = x)),
+  lapply(c("cer_option1", "cer_option2"), function(x) list(certainty = x))
+)
+
+a_df = expand.grid(
+  menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
+  certainty = list("cer_option1", "cer_option2")
+) %>%
+  unnest( cols = everything() )
+
+identical(a_list.ref, transpose(a_df))
+```
+
+```{r}
 M.parsed = parse_multiverse(M)
 
 M.evaluated = parse_multiverse(M) %>%

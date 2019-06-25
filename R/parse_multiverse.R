@@ -52,7 +52,7 @@ get_multiverse_table <- function(multiverse) {
     expand.grid() %>%
     unnest( cols = everything())
   
-  param.assgn = lapply( as.list(1:nrow(df)), function(x) as.list(df[x[1], ]) )
+  param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[", i)) 
   
   df %>%
     mutate(parameter_assignment = param.assgn)

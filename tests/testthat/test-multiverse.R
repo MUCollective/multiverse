@@ -1,10 +1,12 @@
 # Tests for multiverse object
 context("multiverse")
 
-M = multiverse()
+library(methods)
+
+M = new("multiverse")
 
 test_that("multiverse object is assigned proper class", {
-  expect_equal(class(M), "multiverse")
+  expect_true(isClass(M, "multiverse"))
 })
 
 test_that("identify multiverse object using 'inherits' function", {
@@ -13,8 +15,8 @@ test_that("identify multiverse object using 'inherits' function", {
 })
 
 test_that("new multiverse object is initialised properly", {
-  expect_null(attr(M, "code"))
-  expect_warning( expect_mapequal(attr(M, "current_parameter_assignment"), list()) )
-  expect_warning( expect_mapequal(attr(M, "parameters"), list()) )
-  expect_warning( expect_mapequal(attr(M, "conditions"), list()) )
+  expect_null(M@code)
+  expect_warning( expect_mapequal(M@current_parameter_assignment, list()) )
+  expect_warning( expect_mapequal(M@parameters, list()) )
+  expect_warning( expect_mapequal(M@conditions, list()) )
 })
