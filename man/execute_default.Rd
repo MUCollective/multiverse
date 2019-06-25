@@ -24,3 +24,31 @@ Each single analysis within the multiverse lives in a separate environment. We p
 the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
 multiverse table, under the results column.
 }
+\examples{
+\dontrun{
+#' M <- new("multiverse")
+inside(M, {
+  data <- rnorm(100, 50, 20)
+  
+  x.mean <- mean(data, trim = branch(
+    trim_values, 
+    "trim_none" ~ 0,
+    "trim_1pc" ~ 0.05,
+    "trim_5pc" ~ 0.025,
+    "trim_10pc" ~ 0.05
+  ))
+})
+
+# Prints the default analysis. Here, the default
+# analysis is the one conducted with `trim_none`
+parse_multiverse(M) \%>\%
+execute_default() \%>\%
+  print()
+}
+
+# Will print the results from all the multiverses
+parse_multiverse(M) \%>\%
+execute_multiverse() \%>\%
+  print_multiverse()
+
+}
