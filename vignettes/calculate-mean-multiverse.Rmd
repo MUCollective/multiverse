@@ -17,7 +17,7 @@ opts_knit$set(output.dir="vignettes")
 
 library(tidyverse)
 library(magrittr)
-#library(multidy)
+library(multidy)
 ```
 
 ## Introduction: Conducting a multiverse analysis
@@ -206,7 +206,5 @@ inside(M, {
 
 # impose condition that trim only takes other values when na.rm = FALSE. All the other instances are redundant.
 # will update when the `conditional` function has been implemented.
-
-
 ```
 
