@@ -50,32 +50,9 @@ parse_multiverse <- function(multiverse) {
 get_multiverse_table <- function(multiverse) {
   parameters.list <- attr(multiverse, "parameters")
   
-  id <- parameters.list %>%
-    map_dbl(length) %>% 
-    unname() %>%
-    sequence()
-  
   df <- parameters.list %>%
-    as.data.frame() %>%
-    #pivot_longer(
-    #    cols = everything(), 
-    #    values_to = "options", 
-    #    values_ptypes = list(options = character())
-    #) %>%
-    mutate_all(~as.character(.)) %>% gather("name", "options") %>%
-    separate("name", c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
-    select(-"delete") %>%
-    mutate(id = id)  %>%
-    #pivot_wider(
-    #  id_cols = "id",
-    #  names_from = "parameter", 
-    #  values_from = "options"
-    #) %>%
-    separate("name", c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
-    select(-id) %>%
-    expand.grid(KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) %>%
-    drop_na() %>%
-    as_tibble()
+    expand.grid() %>%
+    mutate_all(~as.character(.))
   
   param.assgn = lapply( as.list(1:dim(df)[[1]]), function(x) as.list(df[x[1], ]) )
   

@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-library(multidy)
+#library(multidy)
 ```
 
 ## The data
