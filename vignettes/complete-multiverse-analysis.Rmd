@@ -243,7 +243,7 @@ M.parsed = parse_multiverse(M)
 We can then inspect the `multiverse_table` to see if all the possible combinations of the parameter options have been identified.
 
 ```{r}
-M.parsed$multiverse_table %>%
+M.parsed@multiverse_table %>%
   head(10)
 ```
 
@@ -251,7 +251,7 @@ Finally, we can execute the default single universe analysis from this multivers
 
 ```{r, eval = FALSE}
 M.parsed %>%
-  execute_default()  %>%
+  execute_default() %>%
   select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
   head()
 ```

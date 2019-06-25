@@ -57,19 +57,21 @@ get_multiverse_table <- function(multiverse) {
   
   df <- parameters.list %>%
     as.data.frame() %>%
-    pivot_longer(
-        cols = everything(), 
-        values_to = "options", 
-        values_ptypes = list(options = character())
-    ) %>%
+    #pivot_longer(
+    #    cols = everything(), 
+    #    values_to = "options", 
+    #    values_ptypes = list(options = character())
+    #) %>%
+    mutate_all(~as.character(.)) %>% gather("name", "options") %>%
     separate("name", c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
     select(-"delete") %>%
     mutate(id = id)  %>%
-    pivot_wider(
-      id_cols = "id",
-      names_from = "parameter", 
-      values_from = "options"
-    ) %>%
+    #pivot_wider(
+    #  id_cols = "id",
+    #  names_from = "parameter", 
+    #  values_from = "options"
+    #) %>%
+    separate("name", c("parameter", "delete"), sep = "[.]{2}", remove = TRUE) %>%
     select(-id) %>%
     expand.grid(KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) %>%
     drop_na() %>%
