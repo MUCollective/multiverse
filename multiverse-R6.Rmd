@@ -1,0 +1,50 @@
+---
+title: "multiverse with R6"
+author: "Abhraneel Sarma"
+date: "6/29/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(tidyverse)
+library(magrittr)
+
+library(R6)
+#library(multidy)
+```
+
+
+```{r}
+Multiverse <- R6Class("Multiverse", list(
+  code = "language", 
+  parameters = "list",
+  conditions = "list",
+  current_parameter_assignment = list(),
+  multiverse_table = "data.frame"
+  
+  add = function(x = 1) {
+    self$sum <- self$sum + x 
+    invisible(self)
+  })
+)
+
+contains = "environment",
+slots = c(
+  code = "language", 
+  parameters = "list",
+  conditions = "list",
+  current_parameter_assignment = "listORnumeric",
+  multiverse_table = "data.frame"
+),
+prototype = prototype(
+  code = NULL,
+  parameters = list(),
+  conditions = list(),
+  current_parameter_assignment = list(),
+  multiverse_table = data.frame(parameter_assignment = list())
+)
+)
+```
