@@ -1,3 +1,5 @@
+setClassUnion("listORnumeric", c("list", "numeric"))
+
 expr_type <- function(x) {
   if (rlang::is_syntactic_literal(x)) {
     "constant"

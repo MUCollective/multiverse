@@ -70,45 +70,57 @@
 #' @import rlang
 #' @importFrom magrittr %>%
 #' @importFrom magrittr inset2
+#' @importFrom pryr where
 #' 
 #' @export
-inside <- function(multiverse, .expr) {
-  .expr = enexpr(.expr)
+# perhas not the best way of writing modify-in-place functions
+inside <- function(multiverse, .code, parent = NULL) {
+  .code = enexpr(.code)
+  .m_name = quo_name(enquo(multiverse))
+  
+  # get the frame of the environment where the inside function is called
+  # this is where the multiverse object will be located
+  # but, inside2 might be also called by the `$<-` operator, thus we might pass it directly
+  if (is.null(parent))  parent <- parent.frame()
   
   if (is_null(multiverse@code)) {
-    multiverse@code <- .expr
+    .c = .code
   } else {
-    
-    multiverse@code <- multiverse@code %>% 
-      inset2(., length(.) + 1, .expr[[2]])
+    .c = multiverse@code %>% 
+      inset2(., length(.) + 1, .code[[2]])
   }
   
-  multiverse
+  multiverse@code <- .c
+  multiverse = multiverse %>%
+    parse_multiverse()
+  
+  assign(.m_name, multiverse, envir = parent)
 }
 
-#' @export
+inside2 <- function(multiverse, .code, parent = NULL) {
+  # get the frame of the environment where the inside function is called
+  # this is where the multiverse object will be located
+  # but, inside2 might be also called by the `$<-` operator, thus we might pass it directly
+  if (is.null(parent))  parent <- parent.frame()
+  
+  .m_name = enexpr(multiverse)
+  .code = enexpr(.code)
+  
+  if (is_null(multiverse@code)) {
+    .c = .code
+  } else {
+    .c = multiverse@code %>% 
+      inset2(., length(.) + 1, .code[[2]])
+  }
+  
+  eval( call( "<-", call("@", .m_name, "code"), expr(expr(!!.c)) ) , parent )
+  parse_multiverse( eval(.m_name, parent), .m_name, parent )
+}
+
 `$<-.multiverse` <- function(multiverse, name, value) {
-  .expr = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
+  .m_name = match.call()
   
-  inside(multiverse, !!.expr)
-}
-
-# deprecated (used when multiverse was an S3 object)
-`%is%` <- function(.var, value) {
-  .var = enexpr(.var)
-  value = enexpr(value)
-  if( !identical(value[[1]], expr(`{`)) ) stop("expressions passed to the multiverse should be encapsulated within `{`")
-  
-  
-  multiverse = eval_tidy( .var[[2]] )
-  #stopifnot(M is not a multiverse object)
-  #stopifnot(`$` is not used to define a variable. Expressions cannot be assigned directly to the multiverse.)
-  
-  var = .var[[3]]
-  value[[2]] <- value[[2]] %>%
-    append(exprs(`<-`, !! var), 0) %>%
-    as.call()
-  
-  inside(multiverse, !!value)
+  print(.m_name)
+  #inside( .multiverse_obj, { !!sym(name) <- !!f_rhs(value) } )
 }
 

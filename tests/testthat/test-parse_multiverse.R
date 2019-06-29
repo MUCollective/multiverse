@@ -134,7 +134,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
   expect_true(identical(p_tbl_df, p_tbl_df.ref))
 })
 
-test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' attribute when it is passed an expression without any branches", {
+test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' slot when it is passed an expression without any branches", {
   p_tbl_df.ref = data.frame(parameter_assignment = list())
   
   M = new("multiverse")
@@ -143,7 +143,7 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   })
   p_tbl_df = expect_warning( parse_multiverse(M) %>%
-                attr("multiverse_table")
+                slot("multiverse_table")
               )
   
   expect_equal(p_tbl_df, p_tbl_df.ref)

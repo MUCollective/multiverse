@@ -4,7 +4,7 @@
 \alias{parse_multiverse}
 \title{Parse the multiverse syntax to identify branches}
 \usage{
-parse_multiverse(multiverse)
+parse_multiverse(multiverse, .m_name, parent_env = parent.frame(n = 2))
 }
 \arguments{
 \item{M}{The multiverse object with some code passed to it}

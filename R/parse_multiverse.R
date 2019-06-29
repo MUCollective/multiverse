@@ -19,35 +19,57 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_all
 #' @importFrom tibble as_tibble
-#' @export
 #' 
-# wrapper function for get_parameter_conditions
-# takes as input a multiverse and parses it
-# returns the output of get_parameter_conditions
-parse_multiverse <- function(multiverse) {
-  parameter_conditions_list <- get_parameter_conditions( attr(multiverse, "code") )
+# wrapper function for get_parameter_conditions this is a modify-in-place
+# function that takes as input a multiverse, parses it
+parse_multiverse <- function(multiverse, .m_name, parent_env = parent.frame(n = 2)) {
+  env = new.env(parent = parent_env)
   
-  attr(multiverse, "parameters") = parameter_conditions_list$parameters
-  attr(multiverse, "conditions") = parameter_conditions_list$conditions
+  parameter_conditions_list <- get_parameter_conditions( slot(multiverse, "code") )
+  env$parameters <- parameter_conditions_list$parameters
+  env$conditions <- parameter_conditions_list$conditions
   
-  if( length(attr(multiverse, "parameters")) >= 1) {
-    attr(multiverse, "multiverse_table") = get_multiverse_table(multiverse)
-    attr(multiverse, "current_parameter_assignment") = attr(multiverse, "parameters") %>%
+  eval( call( "<-", call("@", .m_name, "parameters"), env$parameters ) , parent_env )
+  eval( call( "<-", call("@", .m_name, "conditions"), env$conditions ) , parent_env )
+  
+  if( length(env$parameters) >= 1) {
+    env$multiverse_table = get_multiverse_table(env$parameters)
+    env$current_parameter_assignment = env$parameters %>%
+      map(~ .x[[1]])
+    
+    eval( call( "<-", call("@", .m_name, "multiverse_table"), env$multiverse_table ) , parent_env )
+    eval( call( "<-", call("@", .m_name, "current_parameter_assignment"), env$current_parameter_assignment ) , parent_env )
+  } else {
+    warning("expression passed to the multiverse has no branches / parameters")
+  }
+}
+
+
+# currently not used
+# this is an indirect modify-in-place implementation of the previous function 
+# which creates a copy of the multiverse and then returns it to the parent 
+# environment (`inside()`) where it is assigned to the multiverse defined by the user
+parse_multiverse2 <- function(multiverse) {
+  parameter_conditions_list <- get_parameter_conditions( slot(multiverse, "code") )
+  slot(multiverse, "parameters") = parameter_conditions_list$parameters
+  slot(multiverse, "conditions") = parameter_conditions_list$conditions
+  
+  if( length(slot(multiverse, "parameters")) >= 1) {
+    slot(multiverse, "multiverse_table") = get_multiverse_table(multiverse, parameter_conditions_list$parameters)
+    slot(multiverse, "current_parameter_assignment") = parameter_conditions_list$parameters %>%
       map(~ .x[[1]])
   } else {
-      warning("expression passed to the multiverse has no branches / parameters")
+    warning("expression passed to the multiverse has no branches / parameters")
   }
   
   multiverse
 }
 
-#' @export
+
 # creates a parameter table from the parameter list
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
-get_multiverse_table <- function(multiverse) {
-  parameters.list <- attr(multiverse, "parameters")
-  
+get_multiverse_table <- function(multiverse, parameters.list) {
   df <- parameters.list %>%
     expand.grid() %>%
     unnest( cols = everything())
@@ -55,7 +77,11 @@ get_multiverse_table <- function(multiverse) {
   param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[", i)) 
   
   df %>%
-    mutate(parameter_assignment = param.assgn)
+    mutate(
+      parameter_assignment = param.assgn,
+      code = map(parameter_assignment, ~ get_code(multiverse, .x)),
+      results = map(parameter_assignment, function(.x) env())
+    )
 }
 
 # takes as input an expression

@@ -42,70 +42,69 @@
 #' execute_multiverse() %>%
 #'   print_multiverse()
 #' 
-#' @importFrom rlang global_env
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
 #' 
 #' @export
 execute_default <- function(multiverse, N = NA, list = list()) {
-  multiverse.parsed = parse_multiverse(multiverse)
+  .m_name = find_chain_lhs() # this would have to be recursive for objects of type call
+  parent = pryr::where(deparse(.m_name))
   
-  if (! is.na(N) && N >= 1) {
-    if ( N > nrow(multiverse.parsed@multiverse_table) ) {
-      N = nrow(multiverse.parsed@multiverse_table)
-    }
-    
-    multiverse@current_parameter_assignment = multiverse.parsed@multiverse_table[["parameter_assignment"]][[N]]
+  .assgn = multiverse@current_parameter_assignment
+  
+  a_tbl = multiverse@multiverse_table %>%
+    select( names(multiverse@parameters) )
+  
+  if ( !is.numeric(.assgn) ) {
+    .n = length(multiverse@parameters)
+    .idx = apply(a_tbl, 1, function(.x) sum(.x == .assgn) == .n) %>%
+      match(TRUE, .)
+  } else {
+    .idx =.assgn
   }
   
-  multiverse.parsed %>%
-      get_code(multiverse@current_parameter_assignment) %>%
-      eval(envir = rlang::global_env())
+  .code_expr = multiverse@multiverse_table[['code']][[.idx]]
+  
+  eval( .code_expr, eval(call("slot", .m_name, 'multiverse_table'), parent)[['results']][[.idx]] )
 }
 
-#' @export
-execute_multiverse <- function(multiverse, .vec = NA) {
+execute_multiverse <- function(multiverse, .vec = NA, parent = NULL) {
+  .m_name = find_chain_lhs()
+  parent = pryr::where(deparse(.m_name))
   
-  multiverse.parsed = parse_multiverse(multiverse)
+  if (is.null(parent)) parent = globalenv() #parent.frame()
+  env = new.env( parent = parent )
+  env$m_tbl = multiverse@multiverse_table
   
   if (is.na(.vec)) {
-    .vec = 1:nrow(multiverse.parsed@multiverse_table)
-  } else if(max(.vec) > nrow(multiverse.parsed@multiverse_table)) {
-    .vec = 1:nrow(multiverse.parsed@multiverse_table)
+    .vec = 1:nrow( env$m_tbl )
+  } else if(max(.vec) > nrow( env$m_tbl )) {
+    .vec = 1:nrow( env$m_tbl )
   }
   
-  multiverse.parsed@multiverse_table = multiverse.parsed@multiverse_table %>%
-    mutate(
-      code = map(parameter_assignment, ~ get_code(multiverse, .x)),
-      results = map(parameter_assignment, function(.x) env())
-    ) %>%
+  env$m_tbl = env$m_tbl %>%
     execute_each(.vec)
   
-  multiverse.parsed
+  eval( call( "<-", call("@", .m_name, "multiverse_table"), env$m_tbl ) , parent )
 }
 
-execute_each <- function(.m_tbl, .vec) {
+execute_each <- function(m_tbl, .vec) {
   for (i in .vec) {
-    eval( .m_tbl$code[[i]], env = .m_tbl$results[[i]] )
+    eval( m_tbl$code[[i]], env = m_tbl$results[[i]] )
   }
   
-  .m_tbl
+  m_tbl
 }
 
-#' @export
-print_multiverse <- function(multiverse, .var, .vec = NULL) {
-  .var = as_name(enquo(.var))
-  
-  if (is.null(.vec)) {
-    .vec = 1:nrow(multiverse@multiverse_table)
-  } else if(max(.vec) > nrow(multiverse@multiverse_table)) {
-    .vec = 1:nrow(multiverse@multiverse_table)
-  } else if (length(.vec) == 1) {
-    .vec = 1:max(.vec)
+find_chain_lhs <- function() {
+  i <- 1
+  while(!("chain_parts" %in% ls(envir=parent.frame(i))) && i < sys.nframe()) {
+    i <- i+1
   }
   
-  for (i in .vec) {
-      multiverse@multiverse_table$results[[i]][[.var]] %>%
-        print()
-  }
+  # the environment where magrittr
+  # stores the chain as lhs and rhs
+  .env = parent.frame(i)
+  .env$lhs
 }
+

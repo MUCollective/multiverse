@@ -1,3 +1,5 @@
+setClassUnion("listORnumeric", c("list", "numeric"))
+
 #' Create a new multiverse object
 #' 
 #' Constructs a new multiverse object which enables conducting a multiverse analysis
@@ -43,7 +45,7 @@ setClass("multiverse",
     code = "language", 
     parameters = "list",
     conditions = "list",
-    current_parameter_assignment = "list",
+    current_parameter_assignment = "listORnumeric",
     multiverse_table = "data.frame"
   ),
   prototype = prototype(
