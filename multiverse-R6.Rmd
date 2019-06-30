@@ -36,20 +36,3 @@ inside(M, {
 M$multiverse_table
 ```
 
-
-
-contains = "environment",
-slots = c(
-  code = "language", 
-  parameters = "list",
-  conditions = "list",
-  current_parameter_assignment = "listORnumeric",
-  multiverse_table = "data.frame"
-),
-prototype = prototype(
-  code = NULL,
-  parameters = list(),
-  conditions = list(),
-  current_parameter_assignment = list(),
-  multiverse_table = data.frame(parameter_assignment = list())
-)
