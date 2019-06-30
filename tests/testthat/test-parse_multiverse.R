@@ -129,7 +129,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
       ))
   })
   
-  p_tbl_df = parse_multiverse(M)@multiverse_table
+  p_tbl_df = parse_multiverse(M)[['multiverse_table']]
   
   expect_true(identical(p_tbl_df, p_tbl_df.ref))
 })
@@ -163,7 +163,7 @@ test_that("`parameter_assignment` is created appropriately for single parameter 
       )
   })
   
-  m.tbl = parse_multiverse(M)@multiverse_table
+  m.tbl = parse_multiverse(M)[['multiverse_table']]
   
   expect_equal(m.tbl$parameter_assignment, ref_list)
 })
@@ -180,7 +180,7 @@ test_that("`parameter_assignment` is created appropriately for two or more param
       ) %>%  filter( branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 ))
   })
   
-  m.tbl = parse_multiverse(M)@multiverse_table
+  m.tbl = parse_multiverse(M)[['multiverse_table']]
   
   ref_list = expand.grid(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),

@@ -23,11 +23,11 @@
 #' @export
 # wrapper function for get_parameter_code
 get_code <- function(multiverse, .assgn = list()) {
-  if( length(attr(multiverse, "current_parameter_assignment")) != 0 && length(.assgn) == 0 ) {
+  if( length( multiverse[['current_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
     message("Assigning options to parameter from `current_parameter_assignment`")
-    .assgn = attr(multiverse, "current_parameter_assignment")
+    .assgn = multiverse[['current_parameter_assignment']]
   }
-  get_parameter_code(attr(multiverse, "code"), .assgn)
+  get_parameter_code( multiverse[['code']], .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches

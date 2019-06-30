@@ -16,20 +16,27 @@ library(R6)
 #library(multidy)
 ```
 
+```{r}
+M <- Multiverse$new()
+
+inside(M, {
+  df <- data.raw.study2  %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+      "mc_option3" ~ StartDateNext)
+    )
+})
+
+```
+
 
 ```{r}
-Multiverse <- R6Class("Multiverse", list(
-  code = "language", 
-  parameters = "list",
-  conditions = "list",
-  current_parameter_assignment = list(),
-  multiverse_table = "data.frame"
-  
-  add = function(x = 1) {
-    self$sum <- self$sum + x 
-    invisible(self)
-  })
-)
+M$multiverse_table
+```
+
+
 
 contains = "environment",
 slots = c(
@@ -46,5 +53,3 @@ prototype = prototype(
   current_parameter_assignment = list(),
   multiverse_table = data.frame(parameter_assignment = list())
 )
-)
-```

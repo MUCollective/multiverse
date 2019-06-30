@@ -37,37 +37,15 @@ setClassUnion("listORnumeric", c("list", "numeric"))
 #' @return An empty multiverse object
 #' 
 #' @importFrom rlang env
-#' @import methods
+#' @import R6
 #' @export
-setClass("multiverse", 
-  contains = "environment",
-  slots = c(
-    code = "language", 
-    parameters = "list",
-    conditions = "list",
-    current_parameter_assignment = "listORnumeric",
-    multiverse_table = "data.frame"
-  ),
-  prototype = prototype(
-    code = NULL,
-    parameters = list(),
-    conditions = list(),
-    current_parameter_assignment = list(),
-    multiverse_table = data.frame(parameter_assignment = list())
-  )
-)
-
-setGeneric("current_parameter_assignment", function(x) standardGeneric("current_parameter_assignment"))
-#' @export
-setMethod("current_parameter_assignment", "multiverse", function(x) x@current_parameter_assignment)
-
-
-setGeneric("current_parameter_assignment<-", function(x, value) standardGeneric("current_parameter_assignment<-"))
-#' @export
-setMethod("current_parameter_assignment<-", "multiverse", function(x, value) {
-  x@current_parameter_assignment <- value
-  x
-})
+Multiverse <- R6Class("Multiverse", list(
+  code = NULL, 
+  parameters = list(),
+  conditions = list(),
+  current_parameter_assignment = list(),
+  multiverse_table = data.frame(parameter_assignment = list())
+))
 
 #' Test if the object is a multiverse
 #'
@@ -78,12 +56,12 @@ setMethod("current_parameter_assignment<-", "multiverse", function(x, value) {
 #' @return `TRUE` if the object inherits from the `multiverse` class.
 #' @export
 is_multiverse <- function(x) {
-  inherits(x, "multiverse")
+  inherits(x, "Multiverse")
 }
 
 #' @export
 is.multiverse <- function(x) {
   #signal_soft_deprecated("`is.multiverse()` is soft deprecated, use `is_multiverse()`.")
-  inherits(x, "multiverse")
+  inherits(x, "Multiverse")
 }
 

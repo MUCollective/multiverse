@@ -13,7 +13,7 @@ test_that("inside works on new multiverse object", {
     x = data.frame(x = 1:10)
   })
   
-  expect_equal(f_rhs(attr(M, "code")), f_rhs(an_expr))
+  expect_equal(f_rhs( M[["code"]] ), f_rhs(an_expr))
 })
 
 test_that("multiple lines of code can be passed to inside", {
@@ -31,7 +31,7 @@ test_that("multiple lines of code can be passed to inside", {
     y = data.frame(y = 11:20)
   })
   
-  expect_equal(f_rhs(attr(M, "code")), f_rhs(an_expr))
+  expect_equal(f_rhs( M[["code"]] ), f_rhs(an_expr))
 })
 
 test_that("throws error when object is not of type `multiverse`", {

@@ -73,54 +73,22 @@
 #' @importFrom pryr where
 #' 
 #' @export
-# perhas not the best way of writing modify-in-place functions
-inside <- function(multiverse, .code, parent = NULL) {
+inside <- function(multiverse, .code) {
   .code = enexpr(.code)
-  .m_name = quo_name(enquo(multiverse))
   
-  # get the frame of the environment where the inside function is called
-  # this is where the multiverse object will be located
-  # but, inside2 might be also called by the `$<-` operator, thus we might pass it directly
-  if (is.null(parent))  parent <- parent.frame()
-  
-  if (is_null(multiverse@code)) {
+  if (is_null(multiverse$code)) {
     .c = .code
   } else {
-    .c = multiverse@code %>% 
+    .c = multiverse$code %>% 
       inset2(., length(.) + 1, .code[[2]])
   }
   
-  multiverse@code <- .c
-  multiverse = multiverse %>%
-    parse_multiverse()
+  multiverse$code <- .c
+  parse_multiverse(multiverse) #%>%
+  #  execute_default()
   
-  assign(.m_name, multiverse, envir = parent)
 }
 
-inside2 <- function(multiverse, .code, parent = NULL) {
-  # get the frame of the environment where the inside function is called
-  # this is where the multiverse object will be located
-  # but, inside2 might be also called by the `$<-` operator, thus we might pass it directly
-  if (is.null(parent))  parent <- parent.frame()
-  
-  .m_name = enexpr(multiverse)
-  .code = enexpr(.code)
-  
-  if (is_null(multiverse@code)) {
-    .c = .code
-  } else {
-    .c = multiverse@code %>% 
-      inset2(., length(.) + 1, .code[[2]])
-  }
-  
-  eval( call( "<-", call("@", .m_name, "code"), expr(expr(!!.c)) ) , parent )
-  parse_multiverse( eval(.m_name, parent), .m_name, parent )
-}
 
-`$<-.multiverse` <- function(multiverse, name, value) {
-  .m_name = match.call()
-  
-  print(.m_name)
-  #inside( .multiverse_obj, { !!sym(name) <- !!f_rhs(value) } )
-}
+
 
