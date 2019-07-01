@@ -73,9 +73,15 @@
 #' @importFrom pryr where
 #' 
 #' @export
-inside <- function(multiverse, .code) {
+inside <- function(.m, .code) {
   .code = enexpr(.code)
+  multiverse = attr(.m, "multiverse")
   
+  add_and_parse_code(multiverse, .code)  
+}
+
+
+add_and_parse_code <- function(multiverse, .code) {
   if (is_null(multiverse$code)) {
     .c = .code
   } else {
@@ -84,9 +90,8 @@ inside <- function(multiverse, .code) {
   }
   
   multiverse$code <- .c
-  parse_multiverse(multiverse) #%>%
-  #  execute_default()
-  
+  parse_multiverse(multiverse)
+  execute_default(multiverse)
 }
 
 

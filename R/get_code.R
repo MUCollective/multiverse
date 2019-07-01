@@ -22,11 +22,18 @@
 #' 
 #' @export
 # wrapper function for get_parameter_code
-get_code <- function(multiverse, .assgn = list()) {
-  if( length( multiverse[['current_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
-    message("Assigning options to parameter from `current_parameter_assignment`")
-    .assgn = multiverse[['current_parameter_assignment']]
+get_code <- function(multiverse, .assgn = NULL) {
+  if (is.numeric(.assgn)) {
+    .assgn = multiverse[['multiverse_table']] %>% 
+      extract2( 'parameter_assignment' ) %>%
+      extract2( .assgn )
   }
+  
+  if( length( multiverse[['default_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
+    #message("Assigning options to parameter from `default_parameter_assignment`")
+    .assgn = default_parameter_assignment(multiverse)
+  }
+  
   get_parameter_code( multiverse[['code']], .assgn)
 }
 

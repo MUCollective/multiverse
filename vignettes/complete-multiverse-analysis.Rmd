@@ -41,8 +41,7 @@ data.raw.study2 <- read_delim("../data/durante_etal_2013_study2.txt", delim = "\
     Profit = abs(7 - Profit) + 1,
     FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
     SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
-  ) %>%
-  mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) 
+  )
 ```
 
 The data look like this:

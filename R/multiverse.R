@@ -1,5 +1,16 @@
 setClassUnion("listORnumeric", c("list", "numeric"))
 
+Multiverse <- R6Class("Multiverse", 
+    public = list(
+        code = NULL, 
+        parameters = list(),
+        conditions = list(),
+        default_parameter_assignment = NULL,
+        multiverse_table = data.frame(parameter_assignment = list())
+        #initialize = function() {}
+    )
+)
+
 #' Create a new multiverse object
 #' 
 #' Constructs a new multiverse object which enables conducting a multiverse analysis
@@ -39,13 +50,11 @@ setClassUnion("listORnumeric", c("list", "numeric"))
 #' @importFrom rlang env
 #' @import R6
 #' @export
-Multiverse <- R6Class("Multiverse", list(
-  code = NULL, 
-  parameters = list(),
-  conditions = list(),
-  current_parameter_assignment = list(),
-  multiverse_table = data.frame(parameter_assignment = list())
-))
+multiverse <- function() {
+  x <- env()
+  attr(x, "multiverse") <- Multiverse$new()
+  structure(x, class = "multiverse")
+}
 
 #' Test if the object is a multiverse
 #'
@@ -56,12 +65,20 @@ Multiverse <- R6Class("Multiverse", list(
 #' @return `TRUE` if the object inherits from the `multiverse` class.
 #' @export
 is_multiverse <- function(x) {
-  inherits(x, "Multiverse")
+  .m = attr(x, "multiverse")
+  inherits(x, "multiverse") && inherits(.m, "Multiverse")
 }
 
 #' @export
 is.multiverse <- function(x) {
   #signal_soft_deprecated("`is.multiverse()` is soft deprecated, use `is_multiverse()`.")
+  .m = attr(x, "multiverse")
+  inherits(x, "multiverse") && inherits(.m, "Multiverse")
+}
+
+
+#' @export
+is.r6_multiverse <- function(x) {
   inherits(x, "Multiverse")
 }
 

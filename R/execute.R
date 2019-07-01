@@ -44,4 +44,30 @@
 #' 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
+#' 
+#' @export
+execute_default <- function(multiverse, N = NA) {
+  UseMethod("execute_default")
+}
 
+execute_default.multiverse <- function(.m, N = NA) {
+  multiverse = attr(.m, "multiverse")
+  
+  .param_assgn = multiverse[['default_parameter_assignment']]
+  stopifnot(is.numeric(.param_assgn))
+  
+  env = multiverse[['multiverse_table']][['results']][[.param_assgn ]]
+  
+  eval(.c, env)
+}
+
+execute_default.Multiverse <- function(multiverse, N = NA) {
+  .param_assgn = multiverse[['default_parameter_assignment']]
+  stopifnot(is.numeric(.param_assgn))
+  
+  .c = multiverse %>%  get_code()
+  
+  env = multiverse[['multiverse_table']][['results']][[.param_assgn ]]
+  
+  eval(.c, env)
+}

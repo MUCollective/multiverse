@@ -22,14 +22,16 @@
 #' 
 #' @export
 parse_multiverse <- function(multiverse) {
+  stopifnot( is.r6_multiverse(multiverse) )
+  
   parameter_conditions_list = get_parameter_conditions( multiverse[['code']] )
   multiverse[['parameters']] = parameter_conditions_list$parameters
   multiverse[['conditions']] = parameter_conditions_list$conditions
   
   if( length( multiverse[['parameters']] ) >= 1) {
     multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list$parameters)
-    multiverse[['current_parameter_assignment']] = parameter_conditions_list$parameters %>%
-      map(~ .x[[1]])
+    multiverse[['default_parameter_assignment']] = 1
+      #parameter_conditions_list$parameters %>% map(~ .x[[1]])
   } else {
     warning("expression passed to the multiverse has no branches / parameters")
   }
@@ -41,8 +43,8 @@ parse_multiverse <- function(multiverse) {
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(multiverse, parameters.list) {
   df <- parameters.list %>%
-    expand.grid() %>%
-    unnest( cols = everything())
+    expand.grid()  %>%
+    unnest() #unnest( cols = everything())
   
   param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[", i)) 
   
