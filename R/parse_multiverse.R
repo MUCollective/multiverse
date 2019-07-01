@@ -47,8 +47,7 @@ parse_multiverse <- function(multiverse) {
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(parameter_list) {
   df <- parameter_list %>%
-    expand.grid() %>%
-    unnest( cols = everything())
+    expand.grid()
   
   param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[", i)) 
   
