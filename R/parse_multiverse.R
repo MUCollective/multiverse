@@ -27,12 +27,12 @@
 parse_multiverse <- function(multiverse) {
   parameter_conditions_list <- get_parameter_conditions( attr(multiverse, "code") )
   
-  attr(multiverse, "parameters") = parameter_conditions_list$parameters
-  attr(multiverse, "conditions") = parameter_conditions_list$conditions
+  slot(multiverse, "parameters") = parameter_conditions_list$parameters
+  slot(multiverse, "conditions") = parameter_conditions_list$conditions
   
   if( length(attr(multiverse, "parameters")) >= 1) {
-    attr(multiverse, "multiverse_table") = get_multiverse_table(multiverse)
-    attr(multiverse, "current_parameter_assignment") = attr(multiverse, "parameters") %>%
+    slot(multiverse, "multiverse_table") = get_multiverse_table(parameter_conditions_list$parameters)
+    slot(multiverse, "current_parameter_assignment") = slot(multiverse, "parameters") %>%
       map(~ .x[[1]])
   } else {
       warning("expression passed to the multiverse has no branches / parameters")
@@ -45,10 +45,8 @@ parse_multiverse <- function(multiverse) {
 # creates a parameter table from the parameter list
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
-get_multiverse_table <- function(multiverse) {
-  parameters.list <- attr(multiverse, "parameters")
-  
-  df <- parameters.list %>%
+get_multiverse_table <- function(parameter_list) {
+  df <- parameter_list %>%
     expand.grid() %>%
     unnest( cols = everything())
   
