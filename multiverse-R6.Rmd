@@ -48,9 +48,7 @@ inside(M, {
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
       "mc_option3" ~ StartDateNext)
-    )
-  
-  df %<>%
+    ) %>%
     mutate(Relationship = branch( relationship_status, 
       "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
       "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
@@ -64,7 +62,12 @@ inside(M, {
       "cl_option1" ~ TRUE,
       "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
       "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    )) %>%
+    ))
+})
+```
+
+```{r}
+M$df <- ~df  %>%
     filter( branch(certainty,
         "cer_option1" ~ TRUE,
         "cer_option2" ~ Sure1 > 6 | Sure2 > 6
@@ -75,11 +78,8 @@ inside(M, {
         "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
         "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
-})
 ```
 
 ```{r}
 M$df
 ```
-
-

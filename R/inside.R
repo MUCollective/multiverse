@@ -80,6 +80,15 @@ inside <- function(.m, .code) {
   add_and_parse_code(multiverse, .code)  
 }
 
+`$<-.multiverse` <- function(.m, name, value) {
+  .code = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
+  multiverse = attr(.m, "multiverse")
+  
+  add_and_parse_code(multiverse, .code)
+  
+  .m
+}
+
 
 add_and_parse_code <- function(multiverse, .code) {
   if (is_null(multiverse$code)) {

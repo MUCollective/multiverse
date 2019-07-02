@@ -17,7 +17,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-library(multidy)
+
+devtools::load_all(".")
 ```
 
 
@@ -98,7 +99,7 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
 ```{r}
-M <- new("multiverse")
+M <- multiverse()
 ```
 
 The next step is to define our possible analyses inside the multiverse. The `multidy` package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above). 
@@ -164,24 +165,24 @@ Once you add the code to the multiverse, it automatically parses the code to ide
 Once the code has been added, the `multiverse` object will have the following attributes: 
 1. `parameters`, which is a list of parameters
 ```{r parameter_list}
-M@parameters
+parameters(M)
 ```
 
 2. `conditions`, which is a list of conditions (we'll define this later) _HAS NOT BEEN IMPLEMENTED YET_
 3. `multiverse_table`, which is a tibble consisting of all possible combination of values for the multiverse
 
 ```{r}
-M@multiverse_table
+multiverse_table(M)
 ```
 
 4. `current_parameter_assignment`, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.
 ```{r}
-M@current_parameter_assignment
+default_parameter_assignment(M)
 ```
 
 5. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
 ```{r}
-M@code
+code(M)
 ```
 
 ## Running a single analysis from the multiverse
@@ -189,7 +190,7 @@ M@code
 At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable `df`. We can see the result of this analysis in the appropriate row (universe) of the multiverse table.
 
 ```{r, generate_code, eval = FALSE}
-M@multiverse_table$results[[1]]$df
+M$df
 ```
 
 
@@ -197,8 +198,7 @@ M@multiverse_table$results[[1]]$df
 Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above.
 
 ```{r}
-inside(M, {
-  df %>%
+M$df <- ~ df %>%
     mutate(Relationship = branch( relationship_status, 
       "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
       "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
@@ -223,33 +223,32 @@ inside(M, {
         "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
         "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
-})
 ```
 
 Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.
 
 ```{r}
-M@code
+code(M)
 ```
 
 Inspecting the `multiverse_table`, we can see that all the possible combinations of the parameter options have been identified.
 
 ```{r}
-M@multiverse_table %>%
+multiverse_table(M) %>%
   head(10)
 ```
 
 We can then inspect the default analysis the default single universe analysis from this multiverse:
 
 ```{r}
-M %>% execute_default()
+M$df
 ```
 
 *Note:* since we did not store the manipulations as a variable, due to R's copy-on-modify behavior, we cannot access this from the `multiverse_table` like we did before.
 
 Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `get_code()` function and execute it:
 
-```{r}
+```{r, eval = FALSE}
 universe_parameter_assignment <- list(
     menstrual_calculation = "mc_option",
     relationship_status = "rs_option3",
@@ -264,7 +263,7 @@ M %>% execute_default( universe_parameter_assignment ) %>%
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 M %>%
   execute_multiverse()
 
