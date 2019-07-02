@@ -53,7 +53,8 @@ get_multiverse_table <- function(multiverse, parameters.list) {
       parameter_assignment = param.assgn,
       code = map(parameter_assignment, ~ get_code(multiverse, .x)),
       results = map(parameter_assignment, function(.x) env())
-    )
+    ) %>%
+    as_tibble()
 }
 
 # takes as input an expression
@@ -87,9 +88,22 @@ combine_parameter_conditions <- function(l1, l2) {
   stopifnot(identical(names(l1), c("parameters", "conditions")))
   stopifnot(identical(names(l2), c("parameters", "conditions")))
   
+  # merge the parameter lists: when a parameter appears in both lists, 
+  # take the union of the options provided. the use of two loops and intersect / setdiff
+  # up front is to prevent a potentially more expensive linear search inside the loop
+  parameters = l1$parameters
+  shared_parameters = intersect(names(l1$parameters), names(l2$parameters))
+  for (n in shared_parameters) {
+    parameters[[n]] = union(l1$parameters[[n]], l2$parameters[[n]])
+  }
+  l2_only_parameters = setdiff(names(l2$parameters), shared_parameters)
+  for (n in l2_only_parameters) {
+    parameters[[n]] = l2$parameters[[n]]
+  }
+  
   list(
-    parameters = c(l1$parameters, l2$parameters),
-    conditions = c(l1$conditions, l2$conditions)
+    parameters = parameters,
+    conditions = union(l1$conditions, l2$conditions)
   )
 }
 
