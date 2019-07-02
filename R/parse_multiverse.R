@@ -53,7 +53,8 @@ get_multiverse_table <- function(multiverse, parameters.list) {
       parameter_assignment = param.assgn,
       code = map(parameter_assignment, ~ get_code(multiverse, .x)),
       results = map(parameter_assignment, function(.x) env())
-    )
+    ) %>%
+    as_tibble()
 }
 
 # takes as input an expression
