@@ -152,7 +152,7 @@ Alternative to the `inside` function, we can use the more concise `<-` operator 
 # see issue #5 on github
 M$df <- ~ data.raw.study2  %>%
   mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-    mutate(NextMenstrualOnset = branch(mentrual_calculation, 
+    mutate(NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
       "mc_option3" ~ StartDateNext)
