@@ -1,6 +1,6 @@
 # Tests for succesfully parsing the expressions passed into the multiverse
 # to identify parameters and branches (values for each parameter)
-context("parse-multiverse")
+context("parse_multiverse")
 
 library(rlang)
 library(tidyr)
@@ -38,7 +38,7 @@ test_that("combine_parameter_conditions properly combines non-overlapping parame
 
 test_that("combine_parameter_conditions properly combines overlapping parameters and conditions", {
   l.1 = list(parameters = list(a = 1:3, b = 3:4), conditions = letters[1:3])
-  l.2 = list(parameters = list(c = c(2,4,6), b = 1:5), conditions = letters[4:6])
+  l.2 = list(parameters = list(a = c(2,4,6), b = 1:5), conditions = letters[4:6])
   l = list(parameters = list(a = c(1,2,3,4,6), b = c(3,4,1,2,5)), conditions = letters[1:6])
 
   expect_equal(combine_parameter_conditions(l.1, l.2), l)
@@ -173,6 +173,24 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
   expect_equal(p_tbl_df, p_tbl_df.ref)
 })
 
+test_that("`parse_multiverse` requires multiple uses of the same paramater to cover all options", {
+  M = multiverse()
+  expect_error(add_and_parse_code(attr(M, "multiverse"), execute = FALSE, expr({
+    some_var = branch(parameter,
+      "option1" ~ expr1,
+      "option2" ~ expr2
+    )
+    
+    some_other_var = branch(parameter,
+      "option1" ~ expr4
+    )
+  })))
+})
+
+
+
+# parameter_assigment -----------------------------------------------------
+
 test_that("`parameter_assignment` is created appropriately for single parameter multiverses", {
   ref_list = lapply(c("mc_option1", "mc_option2", "mc_option3"), function(x) list(menstrual_calculation = x))
   
@@ -213,5 +231,3 @@ test_that("`parameter_assignment` is created appropriately for two or more param
   
   expect_equal(m.tbl$parameter_assignment, transpose(ref_list))
 })
-
-
