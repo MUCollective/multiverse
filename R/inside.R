@@ -89,7 +89,7 @@ inside <- function(.m, .code) {
 }
 
 
-add_and_parse_code <- function(multiverse, .code) {
+add_and_parse_code <- function(multiverse, .code, execute = TRUE) {
   if (is_null(multiverse$code)) {
     .c = .code
   } else {
@@ -99,7 +99,10 @@ add_and_parse_code <- function(multiverse, .code) {
   
   multiverse$code <- .c
   parse_multiverse(multiverse)
-  execute_default(multiverse)
+  
+  # the execute parameter is useful for parsing tests where we don't want to 
+  # actually execute anything
+  if (execute) execute_default(multiverse)
 }
 
 
