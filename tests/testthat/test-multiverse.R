@@ -137,13 +137,13 @@ test_that("accessor functions retrieve the multiverse table", {
   
   ref_df = ref_df %>%
     mutate(
-      parameter_assignment = param.assgn,
-      code = map(parameter_assignment, ~ get_parameter_code(ref_expr, .x))
+      .parameter_assignment = param.assgn,
+      .code = map(.parameter_assignment, ~ get_parameter_code(ref_expr, .x))
     ) %>%
     as_tibble()
   
   expect_true( tibble::is_tibble(multiverse_table(M.2)) )
-  expect_identical( ref_df, multiverse_table(M.2) %>% select(-results) )
+  expect_identical( ref_df, multiverse_table(M.2) %>% select(-.results) )
 })
 
 

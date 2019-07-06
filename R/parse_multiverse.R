@@ -42,9 +42,9 @@ parse_multiverse <- function(multiverse) {
 
 get_multiverse_table_no_param <- function(multiverse) {
   tibble::tibble(
-    parameter_assignment = list(NA),
-    code = list( multiverse[['code']] ),
-    results = list( env() )
+    .parameter_assignment = list(NA),
+    .code = list( multiverse[['code']] ),
+    .results = list( env() )
   )
 }
 
@@ -60,9 +60,9 @@ get_multiverse_table <- function(multiverse, parameters.list) {
   
   df %>%
     mutate(
-      parameter_assignment = param.assgn,
-      code = map(parameter_assignment, ~ get_code(multiverse, .x)),
-      results = map(parameter_assignment, function(.x) env())
+      .parameter_assignment = param.assgn,
+      .code = map(.parameter_assignment, ~ get_code(multiverse, .x)),
+      .results = map(.parameter_assignment, function(.x) env())
     ) %>%
     as_tibble()
 }

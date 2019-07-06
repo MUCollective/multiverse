@@ -59,12 +59,12 @@ execute_default.Multiverse <- function(multiverse, N = NA) {
   .param_assgn = multiverse[['default_parameter_assignment']]
   if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
       .c = multiverse[['code']]
-      env = multiverse[['multiverse_table']][['results']][[1]]
+      env = multiverse[['multiverse_table']][['.results']][[1]]
       eval(.c, env)
   } else {
     stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
     .c = multiverse %>%  get_code()
-    env = multiverse[['multiverse_table']][['results']][[.param_assgn ]]
+    env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
     eval(.c, env)
   }
 }
@@ -81,6 +81,6 @@ execute_each_in_multiverse <- function(multiverse, N) {
   m_tbl = multiverse[['multiverse_table']]
   
   for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl$code[[i]], env = m_tbl$results[[i]] )
+    eval( m_tbl$code[[i]], env = m_tbl[['.results']][[i]] )
   }
 }

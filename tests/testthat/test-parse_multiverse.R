@@ -161,18 +161,16 @@ test_that("`parse_multiverse` returns the complete parameter table", {
 
 test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' slot when it is passed an expression without any branches", {
   p_tbl_df.ref = tibble::tibble(
-    parameter_assignment = list(NA), 
-    code = list( rlang::expr( df <- data.frame(x = 1:10) ) )
+    .parameter_assignment = list(NA), 
+    .code = list( rlang::expr( df <- data.frame(x = 1:10) ) )
   )
   
   M = multiverse()
   # this should NOT generate a warning
   add_and_parse_code(attr(M, "multiverse"), execute = FALSE, expr( df <- data.frame(x = 1:10) ))
-  p_tbl_df = multiverse_table(M) %>% select(-results)
+  p_tbl_df = multiverse_table(M) %>% select(-.results)
   
-  identical(p_tbl_df, p_tbl_df.ref)
-  
-  expect_true( identical(p_tbl_df$code, p_tbl_df.ref$code) )
+  expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
 })
 
 test_that("`parse_multiverse` requires multiple uses of the same paramater to cover all options", {
@@ -209,7 +207,7 @@ test_that("`parameter_assignment` is created appropriately for single parameter 
   
   m.tbl = multiverse_table(M)
   
-  expect_equal(m.tbl$parameter_assignment, ref_list)
+  expect_equal(m.tbl$.parameter_assignment, ref_list)
 })
 
 test_that("`parameter_assignment` is created appropriately for two or more parameter multiverses", {
@@ -231,5 +229,5 @@ test_that("`parameter_assignment` is created appropriately for two or more param
     certainty = list("cer_option1", "cer_option2")
   )
   
-  expect_equal(m.tbl$parameter_assignment, transpose(ref_list))
+  expect_equal(m.tbl$.parameter_assignment, transpose(ref_list))
 })

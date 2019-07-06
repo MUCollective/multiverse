@@ -55,7 +55,7 @@ data.raw.study2 %>%
 M <- multiverse()
 
 inside(M, {
-  df <- new_data  %>%
+  df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -87,6 +87,10 @@ inside(M, {
         "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
 })
+```
+
+```{r}
+multiverse_table(M)
 ```
 
 
