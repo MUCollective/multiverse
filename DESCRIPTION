@@ -1,9 +1,12 @@
 Package: multidy
-Version: 0.1
+Version: 0.1.1
 Date: 2019-03-11
 Title: Explorable Multiverse data analysis and reports in R
 Description: Create Explorable Multiverse Analysis in R. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are.
-Author: Abhraneel Sarma <abhsarma@umich.edu>
+Authors@R: c(
+		person("Abhraneel", "Sarma", role = "aut", email = "abhsarma@umich.edu"),
+        person("Matthew", "Kay", role = c("aut", "cre"), email = "mjskay@umich.edu")    
+    )
 Maintainer: Abhraneel Sarma <abhsarma@umich.edu>
 License: GPL (>= 3)
 Encoding: UTF-8
