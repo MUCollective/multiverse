@@ -18,7 +18,9 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_all
+#' @importFrom dplyr tibble
 #' @importFrom tibble as_tibble
+#' @importFrom tidyr unnest
 #' 
 #' @export
 parse_multiverse <- function(multiverse) {
@@ -29,21 +31,29 @@ parse_multiverse <- function(multiverse) {
   multiverse[['conditions']] = parameter_conditions_list$conditions
   
   if( length( multiverse[['parameters']] ) >= 1) {
-    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list$parameters)
     multiverse[['default_parameter_assignment']] = 1
+    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list$parameters)
       #parameter_conditions_list$parameters %>% map(~ .x[[1]])
   } else {
-    warning("expression passed to the multiverse has no branches / parameters")
+    multiverse[['default_parameter_assignment']] = NULL
+    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse)
   }
 }
 
+get_multiverse_table_no_param <- function(multiverse) {
+  tibble::tibble(
+    parameter_assignment = list(NA),
+    code = list( multiverse[['code']] ),
+    results = list( env() )
+  )
+}
 
 # creates a parameter table from the parameter list
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(multiverse, parameters.list) {
   df <- parameters.list %>%
-    expand.grid()  %>%
+    expand.grid() %>%
     unnest() #unnest( cols = everything())
   
   param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[", i)) 

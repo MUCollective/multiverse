@@ -23,6 +23,8 @@
 #' @export
 # wrapper function for get_parameter_code
 get_code <- function(multiverse, .assgn = NULL) {
+  stopifnot( is.r6_multiverse(multiverse))
+  
   if (is.numeric(.assgn)) {
     .assgn = multiverse[['multiverse_table']] %>% 
       extract2( 'parameter_assignment' ) %>%
@@ -60,10 +62,10 @@ get_parameter_code <- function(.expr, .assgn) {
 # takes as input:  parameter assignment, and the expression or code containing a branch
 # returns as output an expression (or code) without the branch
 compute_branch <- function(.expr, .assgn) {
-  assigned_parameter_option_name <- .assgn[[.expr[[2]]]]
-  parameter_values <- .expr[-1:-2]
+  assigned_parameter_option_name = .assgn[[.expr[[2]]]]
+  parameter_values = .expr[-1:-2]
   
-  assigned_parameter_option_value <- map2(parameter_values, 
+  assigned_parameter_option_value = map2(parameter_values, 
                                           assigned_parameter_option_name, function(.x, .y) .y %in% as.character(.x) ) %>% 
     flatten_lgl() %>%
     which(arr.ind = TRUE)

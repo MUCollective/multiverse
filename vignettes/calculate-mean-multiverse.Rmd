@@ -99,16 +99,28 @@ mean(data, trim = branch(
 However, for this to work, we would need to run this step within the multiverse, and not directly. To do that, we first need to create an empty multiverse object.
 
 ```{r}
-M = new("multiverse")
+M = multiverse()
 ```
 
 The multiverse object contains five components (which we will subsequently refer to as slots): `code`, `parameters`, `conditions`, `current_parameter_assignment` and `multiverse_table`; all of them are initialised as empty (*NULL / empty list*). We will describe them in more detail later.
 
 ```{r}
-M@code
-M@parameters #this is a list
-M@conditions #this is empty
-M@current_parameter_assignment #this is a list
+code(M)
+```
+
+
+```{r}
+parameters(M) #this is a list
+```
+
+
+```{r}
+conditions(M) #this is empty
+```
+
+
+```{r}
+default_parameter_assignment(M) #this is a list
 ```
 
 Inside this new multiverse object, we will declare the code to calculate the mean using four different options. The `multiverse` object will store all possible combinations of analysis (in this case, the analysis is calculating the *mean*). 
@@ -120,7 +132,7 @@ The `inside()` function takes in two arguments:
 2. the expression, which should be declared within `{}`
 
 ```{r}
-M = inside(M, {
+inside(M, {
   x.mean = mean(data, 
     trim = branch(trim_values,
       "trim_none" ~ 0,
@@ -132,36 +144,28 @@ M = inside(M, {
 })
 ```
 
-Once, code is declared inside the multiverse, this is stored inside the `code` component as an un-evaluated expression.
+Once, code is declared inside the multiverse, this is stored inside the `code` component as an un-evaluated expression. This will also populate the empty slots in the multiverse i.e. identify the parameters and create a multiverse table.
 
 ```{r}
-M@code
-```
-
-### Parsing the multiverse to create the different analysis paths
-
-Now that we've stored the code with branches, we will inspect the multiverse to identify the branches (the different analysis pathways) that we have declared. This will populate the empty slots in the multiverse.
-
-```{r}
-M.parsed = parse_multiverse(M)
+code(M)
 ```
 
 The `parameter` slot will have a named list of parameters (in this case, the only parameter we've declared is `trim_values`) and the options for each parameter (here, the four options).
 
 ```{r}
-M.parsed@parameters
+parameters(M)
 ```
 
 The `multiverse_table` slot contains a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter --- the number of rows corresponds to the number of different analysis paths (here, 4).
 
 ```{r}
-M.parsed@multiverse_table
+multiverse_table(M)
 ```
 
 The `current_parameter_assignment` slot will be initialised to the first option for each parameter (in this case, "trim_none").
 
 ```{r}
-M.parsed@current_parameter_assignment
+default_parameter_assignment(M)
 ```
 
 ### Executing the different analysis paths in the multiverse
@@ -169,17 +173,14 @@ M.parsed@current_parameter_assignment
 This will be considered the default analysis option. We can execute this default option using the `execute_default()` function.. This will execute the analysis in the global environment, and we can use print to look at the output.
 
 ```{r}
-parse_multiverse(M) %>%
-    execute_default() %>%
-    print()
+M$x.mean
 ```
 
 Or we can run the entire multiverse using the `execute_multiverse()` function. This will execute each analysis path in a seperate environment. To access the result of this, we can use the `print_multiverse()` function, which will print the output from each environment, corresponding to the analysis path.
 
 ```{r check_results}
-parse_multiverse(M) %>%
-  execute_multiverse() %>%
-  print_multiverse(x.mean) # not sure how helpful this is
+M %>%
+  execute_multiverse()
 ```
 
 ## Step 2: extending the multiverse

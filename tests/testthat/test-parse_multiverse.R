@@ -115,7 +115,7 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
 # parse_multiverse --------------------------------------------------------
 
 test_that("`parse_multiverse` returns the complete parameter table", {
-  p_tbl_df.ref = readRDS("../data/data.parameter_tbl.rds")
+  p_tbl_df.ref = readRDS("../testdata/data.parameter_tbl.rds")
   
   M = multiverse()
   add_and_parse_code(attr(M, "multiverse"), execute = FALSE, expr({
@@ -160,17 +160,19 @@ test_that("`parse_multiverse` returns the complete parameter table", {
 })
 
 test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' slot when it is passed an expression without any branches", {
-  p_tbl_df.ref = data.frame(parameter_assignment = list())
+  p_tbl_df.ref = tibble::tibble(
+    parameter_assignment = list(NA), 
+    code = list( rlang::expr( df <- data.frame(x = 1:10) ) )
+  )
   
   M = multiverse()
   # this should NOT generate a warning
-  add_and_parse_code(attr(M, "multiverse"), execute = FALSE, expr({
-    df <- data.raw.study2  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
-  }))
-  p_tbl_df = multiverse_table(M)
+  add_and_parse_code(attr(M, "multiverse"), execute = FALSE, expr( df <- data.frame(x = 1:10) ))
+  p_tbl_df = multiverse_table(M) %>% select(-results)
   
-  expect_equal(p_tbl_df, p_tbl_df.ref)
+  identical(p_tbl_df, p_tbl_df.ref)
+  
+  expect_true( identical(p_tbl_df$code, p_tbl_df.ref$code) )
 })
 
 test_that("`parse_multiverse` requires multiple uses of the same paramater to cover all options", {

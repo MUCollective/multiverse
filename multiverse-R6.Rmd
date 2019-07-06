@@ -5,7 +5,7 @@ date: "6/29/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r libraries, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(knitr)
@@ -39,10 +39,23 @@ data.raw.study2 <- read_delim("data/durante_etal_2013_study2.txt", delim = "\t",
 ```
 
 ```{r}
+load(file = "data/durante_etal_2013_study2.rda")
+
+test_df = data.raw.study2
+```
+
+```{r}
+data.raw.study2 %>%
+  group_by(DateTesting) %>%
+  summarise(n = n())
+```
+
+
+```{r}
 M <- multiverse()
 
 inside(M, {
-  df <- data.raw.study2  %>%
+  df <- new_data  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -58,17 +71,12 @@ inside(M, {
       CycleDay = 28 - (NextMenstrualOnset - DateTesting),
       CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
     ) %>%
-    filter( branch(cycle_length, 
+    dplyr::filter( branch(cycle_length, 
       "cl_option1" ~ TRUE,
       "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
       "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    ))
-})
-```
-
-```{r}
-M$df <- ~df  %>%
-    filter( branch(certainty,
+    )) %>%
+    dplyr::filter( branch(certainty,
         "cer_option1" ~ TRUE,
         "cer_option2" ~ Sure1 > 6 | Sure2 > 6
     )) %>%
@@ -78,8 +86,10 @@ M$df <- ~df  %>%
         "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
         "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
+})
 ```
 
-```{r}
-M$df
-```
+
+
+
+

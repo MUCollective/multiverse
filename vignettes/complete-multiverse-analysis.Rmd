@@ -1,11 +1,17 @@
 ---
-title: "Creating a multiverse analysis"
-output: html_document
+title: "Creating a complete multiverse analysis"
+author: "Abhraneel Sarma"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ## Introduction
 
-In this document, we outline an initial approach to conducting a multiverse analysis in R. 
+In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
 
 Data analysis can involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable options to choose from. A multiverse analysis is a form of analysis which makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). 
 
@@ -17,8 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-
-devtools::load_all(".")
+library(multidy)
 ```
 
 
@@ -82,7 +87,7 @@ one_universe %>%
   head(10)
 ```
 
-```{r}
+```{r, out.width = '100%', fig.align = 'center'}
 one_universe %>%
   ggplot(aes(x = Relationship, y = Rel1 + Rel2 + Rel3, color = Fertility)) +
   stat_summary(position = position_dodge(width = .1), fun.data = "mean_se")
@@ -143,13 +148,9 @@ inside(M, {
 })
 ```
 
-<span style="colour:"red"> __this does not work__ </span>
-
 Alternative to the `inside` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
 
 ```{r alternate_add_to_multiverse, eval = FALSE}
-# the `$<-` assignment doesn't work
-# see issue #5 on github
 M$df <- ~ data.raw.study2  %>%
   mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation, 
@@ -195,7 +196,7 @@ M$df
 
 
 ## A complete multiverse analysis
-Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above.
+Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. We'll also try the more concise `<-` assignment operator now.
 
 ```{r}
 M$df <- ~ df %>%
@@ -244,7 +245,7 @@ We can then inspect the default analysis the default single universe analysis fr
 M$df
 ```
 
-*Note:* since we did not store the manipulations as a variable, due to R's copy-on-modify behavior, we cannot access this from the `multiverse_table` like we did before.
+<span style="colour:"red"> __this does not work__ </span>
 
 Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `get_code()` function and execute it:
 
