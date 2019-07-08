@@ -1,5 +1,5 @@
 ---
-title: "Creating a complete multiverse analysis"
+title: "The most basic multiverse example: calculating the mean"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -23,7 +23,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-library(multidy)
+#library(multidy)
+devtools::load_all(".")
 ```
 
 
@@ -164,7 +165,9 @@ M$df <- ~ data.raw.study2  %>%
 Once you add the code to the multiverse, it automatically parses the code to identify the `parameters` and the corresponding `options` that have been defined for each parameter.
 
 Once the code has been added, the `multiverse` object will have the following attributes: 
+
 1. `parameters`, which is a list of parameters
+
 ```{r parameter_list}
 parameters(M)
 ```
