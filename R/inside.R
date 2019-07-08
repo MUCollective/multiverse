@@ -72,43 +72,39 @@
 #' @importFrom magrittr inset2
 #' 
 #' @export
-inside <- function(multiverse, .expr) {
-  .expr = enexpr(.expr)
+inside <- function(.m, .code) {
+  .code = enexpr(.code)
+  multiverse = attr(.m, "multiverse")
   
-  if (is_null(multiverse@code)) {
-    multiverse@code <- .expr
+  add_and_parse_code(multiverse, .code)  
+}
+
+`$<-.multiverse` <- function(.m, name, value) {
+  .code = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
+  multiverse = attr(.m, "multiverse")
+  
+  add_and_parse_code(multiverse, .code)
+  
+  .m
+}
+
+
+add_and_parse_code <- function(multiverse, .code, execute = TRUE) {
+  if (is_null(multiverse$code)) {
+    .c = .code
   } else {
-    
-    multiverse@code <- multiverse@code %>% 
-      inset2(., length(.) + 1, .expr[[2]])
+    .c = multiverse$code %>% 
+      inset2(., length(.) + 1, .code[[2]])
   }
   
-  multiverse
+  multiverse$code <- .c
+  parse_multiverse(multiverse)
+  
+  # the execute parameter is useful for parsing tests where we don't want to 
+  # actually execute anything. probably more for internal use
+  if (execute) execute_default(multiverse)
 }
 
-#' @export
-`$<-.multiverse` <- function(multiverse, name, value) {
-  .expr = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
-  
-  inside(multiverse, !!.expr)
-}
 
-# deprecated (used when multiverse was an S3 object)
-`%is%` <- function(.var, value) {
-  .var = enexpr(.var)
-  value = enexpr(value)
-  if( !identical(value[[1]], expr(`{`)) ) stop("expressions passed to the multiverse should be encapsulated within `{`")
-  
-  
-  multiverse = eval_tidy( .var[[2]] )
-  #stopifnot(M is not a multiverse object)
-  #stopifnot(`$` is not used to define a variable. Expressions cannot be assigned directly to the multiverse.)
-  
-  var = .var[[3]]
-  value[[2]] <- value[[2]] %>%
-    append(exprs(`<-`, !! var), 0) %>%
-    as.call()
-  
-  inside(multiverse, !!value)
-}
+
 

@@ -4,7 +4,7 @@
 \alias{get_code}
 \title{Code corresponding to a single analysis}
 \usage{
-get_code(multiverse, .assgn = list())
+get_code(multiverse, .assgn = NULL)
 }
 \arguments{
 \item{multiverse}{The multiverse object with some code passed to it}

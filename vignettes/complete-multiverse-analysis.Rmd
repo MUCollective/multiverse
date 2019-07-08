@@ -11,7 +11,7 @@ vignette: >
 
 ## Introduction
 
-In this document, we outline an initial approach to conducting a multiverse analysis in R. 
+In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
 
 Data analysis can involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable options to choose from. A multiverse analysis is a form of analysis which makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). 
 
@@ -26,6 +26,7 @@ library(magrittr)
 #library(multidy)
 devtools::load_all(".")
 ```
+
 
 ## The data
 The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
@@ -47,8 +48,7 @@ data.raw.study2 <- read_delim("../data/durante_etal_2013_study2.txt", delim = "\
     Profit = abs(7 - Profit) + 1,
     FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
     SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
-  ) %>%
-  mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) 
+  )
 ```
 
 The data look like this:
@@ -88,7 +88,7 @@ one_universe %>%
   head(10)
 ```
 
-```{r}
+```{r, out.width = '100%', fig.align = 'center'}
 one_universe %>%
   ggplot(aes(x = Relationship, y = Rel1 + Rel2 + Rel3, color = Fertility)) +
   stat_summary(position = position_dodge(width = .1), fun.data = "mean_se")
@@ -105,7 +105,7 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
 ```{r}
-M <- new("multiverse")
+M <- multiverse()
 ```
 
 The next step is to define our possible analyses inside the multiverse. The `multidy` package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above). 
@@ -138,7 +138,7 @@ The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset 
 2. the code for the analysis (including branches), enclosed within `{}`
 
 ```{r add_to_multiverse}
-M = inside(M, {
+inside(M, {
   df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
@@ -154,64 +154,55 @@ Alternative to the `inside` function, we can use the more concise `<-` operator 
 ```{r alternate_add_to_multiverse, eval = FALSE}
 M$df <- ~ data.raw.study2  %>%
   mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-    mutate(NextMenstrualOnset = branch(mentrual_calculation, 
+    mutate(NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
       "mc_option3" ~ StartDateNext)
     )
 ```
 
-## Parsing the multiverse
-The next step is to parse the multiverse to identify the `parameters` and the corresponding `options` that have been defined for each parameter. For this, we use the `parse_multiverse()` function.
+## The multiverse, with declared code and branches
+Once you add the code to the multiverse, it automatically parses the code to identify the `parameters` and the corresponding `options` that have been defined for each parameter.
 
-```{r}
-M.parsed = parse_multiverse(M)
+Once the code has been added, the `multiverse` object will have the following attributes: 
 
-M.evaluated = parse_multiverse(M) %>%
-  execute_multiverse()
-```
-
-The `multiverse` object we have defined consists of the following attributes: 
 1. `parameters`, which is a list of parameters
 
 ```{r parameter_list}
-M.parsed@parameters
+parameters(M)
 ```
 
 2. `conditions`, which is a list of conditions (we'll define this later) _HAS NOT BEEN IMPLEMENTED YET_
 3. `multiverse_table`, which is a tibble consisting of all possible combination of values for the multiverse
+
 ```{r}
-M.parsed@multiverse_table
+multiverse_table(M)
 ```
 
 4. `current_parameter_assignment`, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.
 ```{r}
-M.parsed$current_parameter_assignment
+default_parameter_assignment(M)
 ```
 
 5. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
 ```{r}
-M.parsed$code
+code(M)
 ```
 
 ## Running a single analysis from the multiverse
 
-At this point, we have defined three possible processing options (three universes) in our multiverse, but no code has been executed. We need to be able to analyse each universe in turn. We can generate the code for a particular universe using the `get_code()`, and execute this code using `rlang::eval_tidy()`.
+At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable `df`. We can see the result of this analysis in the appropriate row (universe) of the multiverse table.
 
-```{r generate_code}
-execute_default(M.parsed) %>%
-  select( NextMenstrualOnset, everything() ) %>%
-  head()
+```{r, generate_code, eval = FALSE}
+M$df
 ```
 
-These attributes are populated only after the `parse_multiverse()` function has been called on the multiverse object.
 
 ## A complete multiverse analysis
-Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above.
+Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. We'll also try the more concise `<-` assignment operator now.
 
 ```{r}
-M = inside(M, {
-  df %>%
+M$df <- ~ df %>%
     mutate(Relationship = branch( relationship_status, 
       "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
       "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
@@ -236,51 +227,51 @@ M = inside(M, {
         "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
         "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
-})
 ```
 
 Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.
 
 ```{r}
-M@code
+code(M)
 ```
 
-Next, we use the `parse_multiverse()` function
-
-```{r, include = FALSE}
-M.parsed = parse_multiverse(M)
-```
-
-We can then inspect the `multiverse_table` to see if all the possible combinations of the parameter options have been identified.
+Inspecting the `multiverse_table`, we can see that all the possible combinations of the parameter options have been identified.
 
 ```{r}
-M.parsed@multiverse_table %>%
+multiverse_table(M) %>%
   head(10)
 ```
 
-Finally, we can execute the default single universe analysis from this multiverse:
+We can then inspect the default analysis the default single universe analysis from this multiverse:
 
-```{r, eval = FALSE}
-M.parsed %>%
-  execute_default() %>%
-  select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
-  head()
+```{r}
+M$df
 ```
+
+<span style="colour:"red"> __this does not work__ </span>
 
 Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `get_code()` function and execute it:
 
 ```{r, eval = FALSE}
 universe_parameter_assignment <- list(
-    menstrual_calculation = "mc_option1",
+    menstrual_calculation = "mc_option",
     relationship_status = "rs_option3",
     cycle_length = "cl_option2",
     certainty = "cer_option1",
     fertile = "fer_option4"
   )
 
-M.parsed %>%
-  execute_default(universe_parameter_assignment)  %>%
+M %>% execute_default( universe_parameter_assignment ) %>%
   select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
-  head()
+ head()
 ```
+
+
+```{r, eval = FALSE}
+M %>%
+  execute_multiverse()
+
+M@multiverse_table$results[[2]]$df
+```
+
 

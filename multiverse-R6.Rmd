@@ -1,0 +1,117 @@
+---
+title: "multiverse with R6"
+author: "Abhraneel Sarma"
+date: "6/29/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(tidyverse)
+library(magrittr)
+
+library(R6)
+#library(multidy)
+
+devtools::load_all(".")
+```
+
+```{r}
+data.raw.study2 <- read_delim("data/durante_etal_2013_study2.txt", delim = "\t",
+    col_types = cols(
+        DateTesting = col_date(format = "%m/%d/%y"),
+        StartDateofLastPeriod =col_date(format = "%m/%d/%y"),
+        StartDateofPeriodBeforeLast = col_date(format = "%m/%d/%y"),
+        StartDateNext = col_date(format = "%m/%d/%y")
+  )) %>%
+  mutate(
+    Abortion = abs(7 - Abortion) + 1,
+    StemCell = abs(7 - StemCell) + 1,
+    Marijuana = abs(7 - Marijuana) + 1,
+    RichTax = abs(7 - RichTax) + 1,
+    StLiving = abs(7 - StLiving) + 1,
+    Profit = abs(7 - Profit) + 1,
+    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
+    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
+  )
+```
+
+```{r}
+load(file = "data/durante_etal_2013_study2.rda")
+
+test_df = data.raw.study2
+```
+
+
+```{r}
+M <- multiverse()
+
+inside(M, {
+  df <- data.raw.study2  %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+      "mc_option3" ~ StartDateNext)
+    )
+})
+```
+
+```{r}
+ref_assgn = list(
+  menstrual_calculation = "mc_option1", 
+  relationship_status = "rs_option1",
+  cycle_length = "cl_option1",
+  certainty = "cer_option1",
+  fertile = "fer_option1"
+)
+
+ref_assgn.2 = list(
+  menstrual_calculation = "mc_option1", 
+  relationship_status = "rs_option1",
+  cycle_length = "cl_option3",
+  certainty = "cer_option1",
+  fertile = "fer_option1"
+)
+
+unlist(ref_assgn) == unlist(ref_assgn.2)
+
+  
+default_parameter_assignment(M) <- ref_assgn
+```
+
+
+
+
+```{r}
+M.1 = multiverse()
+inside(M.1, {
+  test_df = mutate(test_df, x = branch(
+        values_x,
+        0,
+        3,
+        "abc",
+        x + 5
+    ))
+})
+M.tbl.1 = multiverse_table(M.1) %>% select(-.parameter_assignment, -.code, -.results)
+
+M.2 = multiverse()
+inside(M.2, {
+  test_df = mutate(test_df, x = branch(
+        values_x,
+        0 ~ 0,
+        3 ~ 3,
+        "abc" ~ "abc",
+        "x + 5" ~ x + 5
+    ))
+})
+M.tbl.2 = multiverse_table(M.2) %>% select(-.parameter_assignment, -.code, -.results)
+```
+
+
+
+
+

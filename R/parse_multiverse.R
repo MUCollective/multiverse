@@ -18,41 +18,52 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_all
+#' @importFrom dplyr tibble
 #' @importFrom tibble as_tibble
-#' @export
+#' @importFrom tidyr unnest
 #' 
-# wrapper function for get_parameter_conditions
-# takes as input a multiverse and parses it
-# returns the output of get_parameter_conditions
+#' @export
 parse_multiverse <- function(multiverse) {
-  parameter_conditions_list <- get_parameter_conditions( attr(multiverse, "code") )
+  stopifnot( is.r6_multiverse(multiverse) )
   
-  slot(multiverse, "parameters") = parameter_conditions_list$parameters
-  slot(multiverse, "conditions") = parameter_conditions_list$conditions
+  parameter_conditions_list = get_parameter_conditions( multiverse[['code']] )
+  multiverse[['parameters']] = parameter_conditions_list$parameters
+  multiverse[['conditions']] = parameter_conditions_list$conditions
   
-  if( length(attr(multiverse, "parameters")) >= 1) {
-    slot(multiverse, "multiverse_table") = get_multiverse_table(parameter_conditions_list$parameters)
-    slot(multiverse, "current_parameter_assignment") = slot(multiverse, "parameters") %>%
-      map(~ .x[[1]])
+  if( length( multiverse[['parameters']] ) >= 1) {
+    multiverse[['default_parameter_assignment']] = 1
+    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list$parameters)
+      #parameter_conditions_list$parameters %>% map(~ .x[[1]])
   } else {
-      warning("expression passed to the multiverse has no branches / parameters")
+    multiverse[['default_parameter_assignment']] = NULL
+    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse)
   }
-  
-  multiverse
 }
 
-#' @export
+get_multiverse_table_no_param <- function(multiverse) {
+  tibble::tibble(
+    .parameter_assignment = list(NA),
+    .code = list( multiverse[['code']] ),
+    .results = list( env() )
+  )
+}
+
 # creates a parameter table from the parameter list
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
-get_multiverse_table <- function(parameter_list) {
-  df <- parameter_list %>%
-    expand.grid()
+get_multiverse_table <- function(multiverse, parameters.list) {
+  df <- parameters.list %>%
+    expand.grid(KEEP.OUT.ATTRS = FALSE) #unnest( cols = everything())
   
-  param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[", i)) 
+  param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i)) 
   
   df %>%
-    mutate(parameter_assignment = param.assgn)
+    mutate(
+      .parameter_assignment = param.assgn,
+      .code = map(.parameter_assignment, ~ get_code(multiverse, .x)),
+      .results = map(.parameter_assignment, function(.x) env())
+    ) %>%
+    as_tibble()
 }
 
 # takes as input an expression
@@ -70,10 +81,10 @@ get_parameter_conditions <- function(.expr) {
         reduce(combine_parameter_conditions)
       
       if (is_call(.expr, "branch")) {
-        get_branch_parameter_conditions(.expr) %>%
-          combine_parameter_conditions(child_parameter_conditions)
+          get_branch_parameter_conditions(.expr) %>%
+              combine_parameter_conditions(child_parameter_conditions)
       } else {
-        child_parameter_conditions
+          child_parameter_conditions
       }
     }
   )
@@ -86,9 +97,22 @@ combine_parameter_conditions <- function(l1, l2) {
   stopifnot(identical(names(l1), c("parameters", "conditions")))
   stopifnot(identical(names(l2), c("parameters", "conditions")))
   
+  # merge the parameter lists: when a parameter appears in both lists, 
+  # take the union of the options provided. the use of two loops and intersect / setdiff
+  # up front is to prevent a potentially more expensive linear search inside the loop
+  parameters = l1$parameters
+  shared_parameters = intersect(names(l1$parameters), names(l2$parameters))
+  for (n in shared_parameters) {
+    parameters[[n]] = union(l1$parameters[[n]], l2$parameters[[n]])
+  }
+  l2_only_parameters = setdiff(names(l2$parameters), shared_parameters)
+  for (n in l2_only_parameters) {
+    parameters[[n]] = l2$parameters[[n]]
+  }
+  
   list(
-    parameters = c(l1$parameters, l2$parameters),
-    conditions = c(l1$conditions, l2$conditions)
+    parameters = parameters,
+    conditions = union(l1$conditions, l2$conditions)
   )
 }
 
@@ -100,11 +124,26 @@ get_branch_parameter_conditions <- function(.branch_call) {
     stop("parameter names should be symbols")
   }
   parameter_name <- as.character(.branch_call[[2]])
-  parameter_options <- map(.branch_call[-1:-2], ~ .x[[2]])
+  parameter_options <- map(.branch_call[-1:-2], ~ get_option_name(.x) )
   
   parameter_options_list <- list(parameter_options)
   names(parameter_options_list) <- parameter_name
   
   list(parameters = parameter_options_list, conditions = list())
 }
+
+get_option_name <- function(x) {
+  if (is.call(x) && x[[1]] == "~") {
+    if (is.call(x[[2]])) {
+      return( expr_text(x[[2]]) )
+    }
+    return( x[[2]] )
+  } else {
+    if (is.call(x)) {
+      return(expr_text(x))
+    }
+    return(x)
+  }
+}
+  
 

@@ -1,3 +1,16 @@
+setClassUnion("listORnumeric", c("list", "numeric"))
+
+Multiverse <- R6Class("Multiverse", 
+    public = list(
+        code = NULL, 
+        parameters = list(),
+        conditions = list(),
+        default_parameter_assignment = NULL,
+        multiverse_table = data.frame(parameter_assignment = list())
+        #initialize = function() {}
+    )
+)
+
 #' Create a new multiverse object
 #' 
 #' Constructs a new multiverse object which enables conducting a multiverse analysis
@@ -35,37 +48,13 @@
 #' @return An empty multiverse object
 #' 
 #' @importFrom rlang env
-#' @import methods
+#' @import R6
 #' @export
-setClass("multiverse", 
-  contains = "environment",
-  slots = c(
-    code = "language", 
-    parameters = "list",
-    conditions = "list",
-    current_parameter_assignment = "list",
-    multiverse_table = "data.frame"
-  ),
-  prototype = prototype(
-    code = NULL,
-    parameters = list(),
-    conditions = list(),
-    current_parameter_assignment = list(),
-    multiverse_table = data.frame(parameter_assignment = list())
-  )
-)
-
-setGeneric("current_parameter_assignment", function(x) standardGeneric("current_parameter_assignment"))
-#' @export
-setMethod("current_parameter_assignment", "multiverse", function(x) x@current_parameter_assignment)
-
-
-setGeneric("current_parameter_assignment<-", function(x, value) standardGeneric("current_parameter_assignment<-"))
-#' @export
-setMethod("current_parameter_assignment<-", "multiverse", function(x, value) {
-  x@current_parameter_assignment <- value
-  x
-})
+multiverse <- function() {
+  x <- env()
+  attr(x, "multiverse") <- Multiverse$new()
+  structure(x, class = "multiverse")
+}
 
 #' Test if the object is a multiverse
 #'
@@ -76,12 +65,20 @@ setMethod("current_parameter_assignment<-", "multiverse", function(x, value) {
 #' @return `TRUE` if the object inherits from the `multiverse` class.
 #' @export
 is_multiverse <- function(x) {
-  inherits(x, "multiverse")
+  .m = attr(x, "multiverse")
+  inherits(x, "multiverse") && inherits(.m, "Multiverse")
 }
 
 #' @export
 is.multiverse <- function(x) {
   #signal_soft_deprecated("`is.multiverse()` is soft deprecated, use `is_multiverse()`.")
-  inherits(x, "multiverse")
+  .m = attr(x, "multiverse")
+  inherits(x, "multiverse") && inherits(.m, "Multiverse")
+}
+
+
+#' @export
+is.r6_multiverse <- function(x) {
+  inherits(x, "Multiverse")
 }
 

@@ -4,7 +4,7 @@
 \alias{execute_default}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_default(multiverse, N = NA, list = list())
+execute_default(multiverse, N = NA)
 }
 \arguments{
 \item{multiverse}{The multiverse object}

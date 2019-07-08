@@ -22,12 +22,21 @@
 #' 
 #' @export
 # wrapper function for get_parameter_code
-get_code <- function(multiverse, .assgn = list()) {
-  if( length(attr(multiverse, "current_parameter_assignment")) != 0 && length(.assgn) == 0 ) {
-    message("Assigning options to parameter from `current_parameter_assignment`")
-    .assgn = attr(multiverse, "current_parameter_assignment")
+get_code <- function(multiverse, .assgn = NULL) {
+  stopifnot( is.r6_multiverse(multiverse))
+  
+  if (is.numeric(.assgn)) {
+    .assgn = multiverse[['multiverse_table']] %>% 
+      extract2( 'parameter_assignment' ) %>%
+      extract2( .assgn )
   }
-  get_parameter_code(attr(multiverse, "code"), .assgn)
+  
+  if( length( multiverse[['default_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
+    #message("Assigning options to parameter from `default_parameter_assignment`")
+    .assgn = default_parameter_assignment(multiverse)
+  }
+  
+  get_parameter_code( multiverse[['code']], .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches
@@ -53,15 +62,27 @@ get_parameter_code <- function(.expr, .assgn) {
 # takes as input:  parameter assignment, and the expression or code containing a branch
 # returns as output an expression (or code) without the branch
 compute_branch <- function(.expr, .assgn) {
-  assigned_parameter_option_name <- .assgn[[.expr[[2]]]]
-  parameter_values <- .expr[-1:-2]
+  assigned_parameter_option_name = .assgn[[.expr[[2]]]]
+  parameter_values = .expr[-1:-2]
   
-  assigned_parameter_option_value <- map2(parameter_values, 
-                                          assigned_parameter_option_name, function(.x, .y) .y %in% as.character(.x) ) %>% 
+  assigned_parameter_option_value = map(parameter_values, ~ get_option_index_from_branch(.x, assigned_parameter_option_name)) %>% 
     flatten_lgl() %>%
     which(arr.ind = TRUE)
   
   parameter_values %>%
     extract2(assigned_parameter_option_value) %>%
-    extract2(3)
+    get_option_value() 
 }
+
+get_option_index_from_branch <- function(x, y) {
+  grepl( y, expr_text(x), fixed = TRUE )
+}
+
+get_option_value <- function(x) {
+  if (is.call(x) && x[[1]] == "~") {
+    return( x[[3]] )
+  } else {
+    return(x)
+  }
+}
+

@@ -42,70 +42,45 @@
 #' execute_multiverse() %>%
 #'   print_multiverse()
 #' 
-#' @importFrom rlang global_env
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
 #' 
 #' @export
-execute_default <- function(multiverse, N = NA, list = list()) {
-  multiverse.parsed = parse_multiverse(multiverse)
-  
-  if (! is.na(N) && N >= 1) {
-    if ( N > nrow(multiverse.parsed@multiverse_table) ) {
-      N = nrow(multiverse.parsed@multiverse_table)
-    }
-    
-    multiverse@current_parameter_assignment = multiverse.parsed@multiverse_table[["parameter_assignment"]][[N]]
+execute_default <- function(multiverse, N = NA) {
+  UseMethod("execute_default")
+}
+
+execute_default.multiverse <- function(.m, N = NA) {
+  multiverse = attr(.m, "multiverse")
+  execute_default.Multiverse(multiverse, N)
+}
+
+execute_default.Multiverse <- function(multiverse, N = NA) {
+  .param_assgn = multiverse[['default_parameter_assignment']]
+  if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
+      .c = multiverse[['code']]
+      env = multiverse[['multiverse_table']][['.results']][[1]]
+      eval(.c, env)
+  } else {
+    stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
+    .c = multiverse %>%  get_code()
+    env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
+    eval(.c, env)
   }
-  
-  multiverse.parsed %>%
-      get_code(multiverse@current_parameter_assignment) %>%
-      eval(envir = rlang::global_env())
 }
 
 #' @export
-execute_multiverse <- function(multiverse, .vec = NA) {
+execute_multiverse <- function(.m, N = NA) {
+  stopifnot( is.multiverse(.m) )
+  multiverse = attr(.m, "multiverse")
   
-  multiverse.parsed = parse_multiverse(multiverse)
-  
-  if (is.na(.vec)) {
-    .vec = 1:nrow(multiverse.parsed@multiverse_table)
-  } else if(max(.vec) > nrow(multiverse.parsed@multiverse_table)) {
-    .vec = 1:nrow(multiverse.parsed@multiverse_table)
-  }
-  
-  multiverse.parsed@multiverse_table = multiverse.parsed@multiverse_table %>%
-    mutate(
-      code = map(parameter_assignment, ~ get_code(multiverse, .x)),
-      results = map(parameter_assignment, function(.x) env())
-    ) %>%
-    execute_each(.vec)
-  
-  multiverse.parsed
+  execute_all_in_multiverse(multiverse, N)
 }
 
-execute_each <- function(.m_tbl, .vec) {
-  for (i in .vec) {
-    eval( .m_tbl$code[[i]], env = .m_tbl$results[[i]] )
-  }
+execute_each_in_multiverse <- function(multiverse, N) {
+  m_tbl = multiverse[['multiverse_table']]
   
-  .m_tbl
-}
-
-#' @export
-print_multiverse <- function(multiverse, .var, .vec = NULL) {
-  .var = as_name(enquo(.var))
-  
-  if (is.null(.vec)) {
-    .vec = 1:nrow(multiverse@multiverse_table)
-  } else if(max(.vec) > nrow(multiverse@multiverse_table)) {
-    .vec = 1:nrow(multiverse@multiverse_table)
-  } else if (length(.vec) == 1) {
-    .vec = 1:max(.vec)
-  }
-  
-  for (i in .vec) {
-      multiverse@multiverse_table$results[[i]][[.var]] %>%
-        print()
+  for (i in 1:nrow(m_tbl)) {
+    eval( m_tbl$code[[i]], env = m_tbl[['.results']][[i]] )
   }
 }

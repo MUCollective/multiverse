@@ -3,17 +3,18 @@
 context("inside")
 
 library(rlang)
+library(dplyr)
 
 test_that("inside works on new multiverse object", {
   an_expr = expr({x = data.frame(x = 1:10)})
   
-  M = new("multiverse")
+  M = multiverse()
   
-  M = inside(M, {
+  inside(M, {
     x = data.frame(x = 1:10)
   })
   
-  expect_equal(f_rhs(attr(M, "code")), f_rhs(an_expr))
+  expect_equal(f_rhs( code(M) ), f_rhs(an_expr))
 })
 
 test_that("multiple lines of code can be passed to inside", {
@@ -22,16 +23,34 @@ test_that("multiple lines of code can be passed to inside", {
     y = data.frame(y = 11:20)
   })
   
-  M = new("multiverse")
-  M = inside(M, {
+  M = multiverse()
+  inside(M, {
     x = data.frame(x = 1:10)
   })
   
-  M = inside(M, {
+  inside(M, {
     y = data.frame(y = 11:20)
   })
   
-  expect_equal(f_rhs(attr(M, "code")), f_rhs(an_expr))
+  expect_equal(f_rhs( code(M) ), f_rhs(an_expr))
+})
+
+test_that("stores code as `language`", {
+  an_expr = expr({
+    x = data.frame(x = 1:10)
+    y = data.frame(y = 11:20)
+  })
+  
+  M = multiverse()
+  inside(M, {
+    x = data.frame(x = 1:10)
+  })
+  
+  inside(M, {
+    y = data.frame(y = 11:20)
+  })
+  
+  expect_true( is.language( f_rhs( code(M) ) ))
 })
 
 test_that("throws error when object is not of type `multiverse`", {
