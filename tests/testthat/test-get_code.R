@@ -19,8 +19,9 @@ make_data <- function(nrow = 500) {
       ReportedCycleLength = sample(14:28, nrow, TRUE)
     )
 }
-
-test_df = make_data()
+# HACK: code executed in the multiverse only has access to the global environment, so need to put
+# variables into that environment for testing purposes. TODO: come up with better solution
+test_df <<- make_data()
 
 M = multiverse()
 inside(M, {
@@ -94,16 +95,16 @@ test_that("can identify the correct option index from a branch", {
 
 test_that("given parameter assignment, an expression with branch is converted into proper R code for execution", {
   an_expr.1 = expr(
-      branch(menstrual_calculation, 
-                      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-                      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-                      "mc_option3" ~ StartDateNext)
+    branch(menstrual_calculation, 
+           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+           "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+           "mc_option3" ~ StartDateNext)
   )
   an_expr.2 = expr( branch(cycle_length, 
-           "cl_option1" ~ TRUE,
-           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    ))
+                           "cl_option1" ~ TRUE,
+                           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+                           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+  ))
   
   .assgn_list = list(
     menstrual_calculation = "mc_option1", 
