@@ -134,10 +134,13 @@ get_branch_parameter_conditions <- function(.branch_call) {
 
 get_option_name <- function(x) {
   if (is.call(x) && x[[1]] == "~") {
+    if (is.call(x[[2]])) {
+      return( expr_text(x[[2]]) )
+    }
     return( x[[2]] )
   } else {
     if (is.call(x)) {
-        return(expr_text(x))
+      return(expr_text(x))
     }
     return(x)
   }

@@ -25,7 +25,6 @@ test_that("the output of `get_branch_parameter_conditions` on a `branch` call", 
 })
 
 
-
 # combine_parameter_conditions -----------------------------------------
 
 test_that("combine_parameter_conditions properly combines non-overlapping parameters and conditions", {
@@ -235,10 +234,7 @@ test_that("`parameter_assignment` is created appropriately for two or more param
 })
 
 test_that("option names of integer types are supported in branches", {
-  df = data.frame( y = 1:10 )
-  
-  M = multiverse()
-  inside(M, {
+  an_expr = expr({
     df = df %>%
       mutate(x = branch(
           values_x,
@@ -246,25 +242,14 @@ test_that("option names of integer types are supported in branches", {
           3 ~ 3
       ))
   })
+  option_names = get_parameter_conditions(an_expr)$parameters
+  option_names.ref = list(values_x = list(0, 3))
   
-  M.tbl = multiverse_table(M) %>% select(-.results)
-  M.tbl.ref = expand.grid( list(values_x = list(0, 3)), KEEP.OUT.ATTRS = FALSE ) %>%
-    mutate( 
-        .parameter_assignment = list(list(values_x = 0), list(values_x = 3)),
-        .code = c(
-            list(expr({ df = df %>% mutate( x = 0) })), 
-            list(expr({ df = df %>% mutate( x = 3) }))
-        )
-    )
-  
-  expect_equal( as.list(M.tbl), as.list(M.tbl.ref) )
+  expect_equal( option_names, option_names.ref )
 })
 
 test_that("option names of more than one type (numeric & character) are supported in branches", {
-  df = data.frame( y = 1:10 )
-  
-  M = multiverse()
-  inside(M, {
+  an_expr = expr({
     df = df %>%
       mutate(x = branch(
         values_x,
@@ -274,22 +259,64 @@ test_that("option names of more than one type (numeric & character) are supporte
       ))
   })
   
-  M.tbl = multiverse_table(M) %>% select(-.results)
-  M.tbl.ref = expand.grid( list(values_x = list(0, 3, "y + 5")), KEEP.OUT.ATTRS = FALSE ) %>%
-    mutate( 
-      .parameter_assignment = list(list(values_x = 0), list(values_x = 3), list(values_x = "y + 5")),
-      .code = c(
-        list(expr({ df = df %>% mutate( x = 0) })), 
-        list(expr({ df = df %>% mutate( x = 3) })), 
-        list(expr({ df = df %>% mutate( x = y + 5 ) }))
-      )
-    )
+  option_names = get_parameter_conditions(an_expr)$parameters
+  option_names.ref = list(values_x = list(0, 3, "y + 5"))
   
-  expect_equal( as.list(M.tbl), as.list(M.tbl.ref) )
+  expect_equal( option_names, option_names.ref )
 })
 
+test_that("unnamed option names of type call are converted into strings", {
+  an_expr = expr({
+    df = df %>%
+      mutate(x = branch(
+        values_x,
+        y^2 + 1,
+        y + 5
+      ))
+  })
+  
+  option_names = get_parameter_conditions(an_expr)$parameters
+  option_names.ref = list(values_x = list("y^2 + 1", "y + 5"))
+  
+  expect_equal( option_names, option_names.ref )
+})
+
+test_that("option names of type call are converted into strings", {
+  an_expr = expr({
+    df = df %>%
+      mutate(x = branch(
+        values_x,
+        y^2 + 1 ~ y^2 + 1,
+        y + 5 ~ y + 5
+      ))
+  })
+  
+  option_names = get_parameter_conditions(an_expr)$parameters
+  option_names.ref = list(values_x = list("y^2 + 1", "y + 5"))
+  
+  expect_equal( option_names, option_names.ref )
+})
+
+test_that("unnamed options in branches are converted into option names: `char` -> `char`, `numeric` -> `numeric`, `call` -> `call` ", {
+  an_expr = expr({
+    df = mutate(df, x = branch(
+      values_x,
+      0,
+      3,
+      "abc",
+      y + 5
+    ))
+  })
+  
+  option_names = get_parameter_conditions(an_expr)$parameters
+  option_names.ref = list(values_x = list(0, 3, "abc", "y + 5"))
+  
+  expect_equal( option_names, option_names.ref )
+})
+
+
 test_that("unnamed options in branches are supported", {
-  df = data.frame( y = 1:10 )
+    df = data.frame( y = 1:10 )
     
     M.1 = multiverse()
     inside(M.1, {
