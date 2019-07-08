@@ -56,7 +56,7 @@ make_data <- function(nrow = 500) {
 test_df = make_data()
 
 inside(M.2, {
-  df <- test_df  %>%
+  df <- test_df %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
                 "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -87,7 +87,7 @@ test_that("accessor functions for getting default code", {
   })
   
   expect_true( is.language(code(M.2)) )
-  expect_equal(code(M.2), ref_code)
+  expect_equal( code(M.2), ref_code )
 })
 
 test_that("accessor function for parameter list", {
@@ -130,10 +130,9 @@ test_that("accessor functions retrieve the multiverse table", {
     relationship_status = list("rs_option1", "rs_option2", "rs_option3")
   )
   
-  ref_df = expand.grid(ref_list) %>%
-    tidyr::unnest()
+  ref_df = expand.grid(ref_list)
   
-  param.assgn = lapply(seq_len(nrow(ref_df)), function(i) lapply(ref_df, "[", i)) 
+  param.assgn = lapply(seq_len(nrow(ref_df)), function(i) lapply(ref_df, "[[", i)) 
   
   ref_df = ref_df %>%
     mutate(
@@ -142,8 +141,10 @@ test_that("accessor functions retrieve the multiverse table", {
     ) %>%
     as_tibble()
   
+  df = multiverse_table(M.2) %>% select(-.results)
+  
   expect_true( tibble::is_tibble(multiverse_table(M.2)) )
-  expect_identical( ref_df, multiverse_table(M.2) %>% select(-.results) )
+  expect_equal( as.list(ref_df), as.list(df) )
 })
 
 

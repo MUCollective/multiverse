@@ -53,10 +53,9 @@ get_multiverse_table_no_param <- function(multiverse) {
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(multiverse, parameters.list) {
   df <- parameters.list %>%
-    expand.grid() %>%
-    unnest() #unnest( cols = everything())
+    expand.grid(KEEP.OUT.ATTRS = FALSE) #unnest( cols = everything())
   
-  param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[", i)) 
+  param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i)) 
   
   df %>%
     mutate(
@@ -82,10 +81,10 @@ get_parameter_conditions <- function(.expr) {
         reduce(combine_parameter_conditions)
       
       if (is_call(.expr, "branch")) {
-        get_branch_parameter_conditions(.expr) %>%
-          combine_parameter_conditions(child_parameter_conditions)
+          get_branch_parameter_conditions(.expr) %>%
+              combine_parameter_conditions(child_parameter_conditions)
       } else {
-        child_parameter_conditions
+          child_parameter_conditions
       }
     }
   )
@@ -125,11 +124,23 @@ get_branch_parameter_conditions <- function(.branch_call) {
     stop("parameter names should be symbols")
   }
   parameter_name <- as.character(.branch_call[[2]])
-  parameter_options <- map(.branch_call[-1:-2], ~ .x[[2]])
+  parameter_options <- map(.branch_call[-1:-2], ~ get_option_name(.x) )
   
   parameter_options_list <- list(parameter_options)
   names(parameter_options_list) <- parameter_name
   
   list(parameters = parameter_options_list, conditions = list())
 }
+
+get_option_name <- function(x) {
+  if (is.call(x) && x[[1]] == "~") {
+    return( x[[2]] )
+  } else {
+    if (is.call(x)) {
+        return(expr_text(x))
+    }
+    return(x)
+  }
+}
+  
 

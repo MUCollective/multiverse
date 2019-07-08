@@ -65,12 +65,24 @@ compute_branch <- function(.expr, .assgn) {
   assigned_parameter_option_name = .assgn[[.expr[[2]]]]
   parameter_values = .expr[-1:-2]
   
-  assigned_parameter_option_value = map2(parameter_values, 
-                                          assigned_parameter_option_name, function(.x, .y) .y %in% as.character(.x) ) %>% 
+  assigned_parameter_option_value = map(parameter_values, ~ get_option_index_from_branch(.x, assigned_parameter_option_name)) %>% 
     flatten_lgl() %>%
     which(arr.ind = TRUE)
   
   parameter_values %>%
     extract2(assigned_parameter_option_value) %>%
-    extract2(3)
+    get_option_value() 
 }
+
+get_option_index_from_branch <- function(x, y) {
+  grepl( y, expr_text(x), fixed = TRUE )
+}
+
+get_option_value <- function(x) {
+  if (is.call(x) && x[[1]] == "~") {
+    return( x[[3]] )
+  } else {
+    return(x)
+  }
+}
+

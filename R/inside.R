@@ -102,7 +102,7 @@ add_and_parse_code <- function(multiverse, .code, execute = TRUE) {
   
   # the execute parameter is useful for parsing tests where we don't want to 
   # actually execute anything. probably more for internal use
-  # if (execute) execute_default(multiverse)
+  if (execute) execute_default(multiverse)
 }
 
 

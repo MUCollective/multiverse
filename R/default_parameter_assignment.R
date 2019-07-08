@@ -37,7 +37,9 @@ default_parameter_assignment.Multiverse <- function(multiverse) {
     
     .idx = m_obj$multiverse_table %>%
       select( names(.params) )  %>%
-      apply(., 1, function(.x) sum(.x == value) == .n) %>%
+      apply(., 1, function(.x) {
+        sum(unlist(.x) == unlist(value)) == .n
+      }) %>%
       match(TRUE, .)
   } else {
     .idx = value

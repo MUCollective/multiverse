@@ -4,6 +4,7 @@ context("get_code")
 library(dplyr)
 library(lubridate)
 
+set.seed(123)
 make_data <- function(nrow = 500) {
   data.frame(
     Relationship = sample(1:4, nrow, replace = TRUE),
@@ -18,10 +19,10 @@ make_data <- function(nrow = 500) {
       ReportedCycleLength = sample(14:28, nrow, TRUE)
     )
 }
+
 test_df = make_data()
 
 M = multiverse()
-
 inside(M, {
   df <- test_df  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
@@ -54,6 +55,38 @@ inside(M, {
                                 "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
                                 "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
+})
+
+test_that("given parameter assignment, an expression with branch is converted into proper R code for execution", {
+  an_expr.1 = expr(
+      branch(menstrual_calculation, 
+                      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                      "mc_option3" ~ StartDateNext)
+  )
+  
+  an_expr.2 = expr( branch(cycle_length, 
+           "cl_option1" ~ TRUE,
+           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+    ))
+  
+  .assgn_list = list(
+    menstrual_calculation = "mc_option1", 
+    relationship_status = "rs_option3",
+    cycle_length = "cl_option3",
+    certainty = "cer_option2",
+    fertile = "fer_option4"
+  )
+  
+  .code.1 = compute_branch( an_expr.1, .assgn_list )
+  .code.2 = compute_branch( an_expr.2, .assgn_list )
+  
+  .code_ref.1 = expr(StartDateofLastPeriod + ComputedCycleLength)
+  .code_ref.2 = expr(ReportedCycleLength > 25 & ReportedCycleLength < 35)
+  
+  expect_equal(.code.1, .code_ref.1)
+  expect_equal(.code.2, .code_ref.2)
 })
 
 test_that("throws error if multiverse object passed is not R6", {

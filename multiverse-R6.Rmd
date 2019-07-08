@@ -5,7 +5,7 @@ date: "6/29/2019"
 output: html_document
 ---
 
-```{r libraries, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(knitr)
@@ -44,12 +44,6 @@ load(file = "data/durante_etal_2013_study2.rda")
 test_df = data.raw.study2
 ```
 
-```{r}
-data.raw.study2 %>%
-  group_by(DateTesting) %>%
-  summarise(n = n())
-```
-
 
 ```{r}
 M <- multiverse()
@@ -61,36 +55,60 @@ inside(M, {
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
       "mc_option3" ~ StartDateNext)
-    ) %>%
-    mutate(Relationship = branch( relationship_status, 
-      "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
-      "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-      "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-    ) %>%
-    mutate(
-      CycleDay = 28 - (NextMenstrualOnset - DateTesting),
-      CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-    ) %>%
-    dplyr::filter( branch(cycle_length, 
-      "cl_option1" ~ TRUE,
-      "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-      "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    )) %>%
-    dplyr::filter( branch(certainty,
-        "cer_option1" ~ TRUE,
-        "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-    )) %>%
-    mutate( Fertility = branch( fertile,
-        "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ),
-        "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", "medium")) ),
-        "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
-        "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
-    ))
+    )
 })
 ```
 
 ```{r}
-multiverse_table(M)
+ref_assgn = list(
+  menstrual_calculation = "mc_option1", 
+  relationship_status = "rs_option1",
+  cycle_length = "cl_option1",
+  certainty = "cer_option1",
+  fertile = "fer_option1"
+)
+
+ref_assgn.2 = list(
+  menstrual_calculation = "mc_option1", 
+  relationship_status = "rs_option1",
+  cycle_length = "cl_option3",
+  certainty = "cer_option1",
+  fertile = "fer_option1"
+)
+
+unlist(ref_assgn) == unlist(ref_assgn.2)
+
+  
+default_parameter_assignment(M) <- ref_assgn
+```
+
+
+
+
+```{r}
+M.1 = multiverse()
+inside(M.1, {
+  test_df = mutate(test_df, x = branch(
+        values_x,
+        0,
+        3,
+        "abc",
+        x + 5
+    ))
+})
+M.tbl.1 = multiverse_table(M.1) %>% select(-.parameter_assignment, -.code, -.results)
+
+M.2 = multiverse()
+inside(M.2, {
+  test_df = mutate(test_df, x = branch(
+        values_x,
+        0 ~ 0,
+        3 ~ 3,
+        "abc" ~ "abc",
+        "x + 5" ~ x + 5
+    ))
+})
+M.tbl.2 = multiverse_table(M.2) %>% select(-.parameter_assignment, -.code, -.results)
 ```
 
 
