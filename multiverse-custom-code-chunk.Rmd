@@ -1,0 +1,61 @@
+---
+title: "multiverse with R6"
+author: "Abhraneel Sarma"
+date: "6/29/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(magrittr)
+library(rlang)
+
+#library(multidy)
+
+devtools::load_all(".")
+```
+
+```{r}
+M = multiverse()
+M.2 = multiverse()
+```
+
+```{r}
+multiverse_table(M)$.code
+```
+
+
+```{multidy, multiverse = M}
+df <- data.frame( x = 1:10 ) %>%
+  mutate(
+    y = branch( values_y,
+                "opt_1" ~ 0,
+                "opt_2" ~ x + 1,
+                "opt_3" ~ x^2 - 4
+                )
+  )
+```
+
+```{multidy, multiverse = M}
+df <- df %>%
+  mutate(
+    z = branch( values_z,
+                "opt_1" ~ x + y,
+                "opt_2" ~ x * y,
+                "opt_3" ~ x^2 / y
+                )
+  )
+```
+
+```{r}
+multiverse_table(M)
+```
+
+
+
+
+
+
+
+
