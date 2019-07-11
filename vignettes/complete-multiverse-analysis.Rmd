@@ -1,11 +1,11 @@
 ---
-title: "The most basic multiverse example: calculating the mean"
+title: "A complete multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
+  %\VignetteIndexEntry{"A complete multiverse analysis}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -19,12 +19,10 @@ Below, we illustrate an example of a single analysis for a dataset. And then ext
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 library(knitr)
 library(tidyverse)
 library(magrittr)
-#library(multidy)
-devtools::load_all(".")
+library(multidy)
 ```
 
 
@@ -260,7 +258,6 @@ universe_parameter_assignment <- list(
     certainty = "cer_option1",
     fertile = "fer_option4"
   )
-
 M %>% execute_default( universe_parameter_assignment ) %>%
   select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
  head()
@@ -270,8 +267,6 @@ M %>% execute_default( universe_parameter_assignment ) %>%
 ```{r, eval = FALSE}
 M %>%
   execute_multiverse()
-
 M@multiverse_table$results[[2]]$df
 ```
-
 
