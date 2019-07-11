@@ -37,25 +37,15 @@ df <- data.frame( x = 1:10 ) %>%
   )
 ```
 
-```{multidy, multiverse = M}
-df <- df %>%
-  mutate(
-    z = branch( values_z,
-                "opt_1" ~ x + y,
-                "opt_2" ~ x * y,
-                "opt_3" ~ x^2 / y
-                )
-  )
-```
-
 ```{r}
-multiverse_table(M)
+inside(M.2, {
+  df <- data.frame( x = 1:10, y = ((1:10)^2)/5 ) %>%
+    mutate(
+      z = branch( values_z,
+                  "opt_1" ~ x + y,
+                  "opt_2" ~ x * y,
+                  "opt_3" ~ x^2 / y
+                  )
+    )
+})
 ```
-
-
-
-
-
-
-
-
