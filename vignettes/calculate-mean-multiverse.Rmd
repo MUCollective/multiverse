@@ -17,8 +17,7 @@ opts_knit$set(output.dir="vignettes")
 
 library(tidyverse)
 library(magrittr)
-
-devtools::load_all(".")
+library(multidy)
 ```
 
 ## Introduction: Conducting a multiverse analysis

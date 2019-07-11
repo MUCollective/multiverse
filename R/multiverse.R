@@ -42,7 +42,7 @@ Multiverse <- R6Class("Multiverse",
 #' 
 #' @examples 
 #' \dontrun{
-#' M <- new("multiverse")
+#' M <- multiverse()
 #' }
 #' 
 #' @return An empty multiverse object

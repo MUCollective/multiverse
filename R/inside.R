@@ -15,7 +15,7 @@
 #' Instead of using the `inside()` function, an alternate implementation of the multiverse is using 
 #' the assignment operator, `<-`. See examples below.
 #' 
-#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using `new("multiverse")`
+#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using [multiverse]
 #' 
 #' @param .expr R syntax. All the operations that the user wants to perform within the multiverse can be passed. 
 #' Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.
@@ -24,7 +24,7 @@
 #' 
 #' #' @examples 
 #' \dontrun{
-#' M.1 <- new("multiverse")
+#' M.1 <- multiverse()
 #' 
 #' # using `inside` to declare multiverse code
 #' inside(M.1, {
@@ -39,7 +39,7 @@
 #'   ))
 #' })
 #' 
-#' M.2 <- new("multiverse)
+#' M.2 <- multiverse()
 #' 
 #' # using the assignment operator to declare multiverse code
 #' M$data <- rnorm(100, 50, 20)
@@ -79,6 +79,9 @@ inside <- function(.m, .code) {
   add_and_parse_code(multiverse, .code)  
 }
 
+#' @rdname inside
+#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using [multiverse]
+#' @export
 `$<-.multiverse` <- function(.m, name, value) {
   .code = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
   multiverse = attr(.m, "multiverse")

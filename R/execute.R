@@ -1,8 +1,8 @@
 #' Execute parts of, or the entire multiverse
 #' 
-#' @description These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
-#' using the execute_default() or parts or whole of the multiverse using the execute_multiverse(). These functions allow the user 
-#' to interactively inspect the code.
+#' @description These are functions which allow the user to execute parts or whole of the multiverse. 
+#' The user can choose to either execute the default analysis using the [execute_default], or a part or 
+#' whole of the multiverse using the [execute_multiverse].
 #' 
 #' @param multiverse The multiverse object
 #' 
@@ -11,13 +11,13 @@
 #' @param .vec A vector specifying the range of analysis paths from the multiverse to be executed. Defaults to \code{\link[base]{NA}}
 #' which indicates the complete multiverse is to be executed.
 #' 
-#' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access 
-#' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
-#' multiverse table, under the results column. 
+#' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to execute 
+#' the results for the  default analysis, as well as parts or whole of the multiverse. The default analysis is executed everytime 
+#' code is added to the multiverse, hence we do not expect users to use the [execute_default] function frequently.
 #' 
 #' @examples
 #' \dontrun{
-#' #' M <- new("multiverse")
+#' #' M <- multiverse()
 #' inside(M, {
 #'   data <- rnorm(100, 50, 20)
 #'   
@@ -30,17 +30,9 @@
 #'   ))
 #' })
 #' 
-#' # Prints the default analysis. Here, the default
-#' # analysis is the one conducted with `trim_none`
-#' parse_multiverse(M) %>%
-#' execute_default() %>%
-#'   print()
+#' M %>%
+#'   execute_multiverse()
 #' }
-#' 
-#' # Will print the results from all the multiverses
-#' parse_multiverse(M) %>%
-#' execute_multiverse() %>%
-#'   print_multiverse()
 #' 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
@@ -74,13 +66,13 @@ execute_multiverse <- function(.m, N = NA) {
   stopifnot( is.multiverse(.m) )
   multiverse = attr(.m, "multiverse")
   
-  execute_all_in_multiverse(multiverse, N)
+  execute_each_in_multiverse(multiverse, N)
 }
 
 execute_each_in_multiverse <- function(multiverse, N) {
   m_tbl = multiverse[['multiverse_table']]
   
   for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl$code[[i]], env = m_tbl[['.results']][[i]] )
+    eval( m_tbl[['.code']][[i]], env = m_tbl[['.results']][[i]] )
   }
 }

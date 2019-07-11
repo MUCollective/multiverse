@@ -11,6 +11,8 @@ Maintainer: Abhraneel Sarma <abhsarma@umich.edu>
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 6.1.1
+Depends:
+    R (>= 3.5.0)
 Suggests: 
     knitr,
     testthat (>= 2.1.0)

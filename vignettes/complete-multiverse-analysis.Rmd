@@ -1,11 +1,11 @@
 ---
-title: "The most basic multiverse example: calculating the mean"
+title: "A complete multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
+  %\VignetteIndexEntry{"A complete multiverse analysis}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -23,8 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
 library(magrittr)
-#library(multidy)
-devtools::load_all(".")
+library(multidy)
 ```
 
 

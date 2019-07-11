@@ -2,22 +2,27 @@
 % Please edit documentation in R/inside.R
 \name{inside}
 \alias{inside}
+\alias{$<-.multiverse}
 \title{Pass code into the multiverse}
 \usage{
 inside(.m, .code)
+
+\method{$}{multiverse}(.m, name) <- value
 }
 \arguments{
-\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using `new("multiverse")`}
+\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using [multiverse]}
 
 \item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed. 
 Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.}
+
+\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using [multiverse]}
 }
 \value{
 a multiverse object
 
 #' @examples 
 \dontrun{
-M.1 <- new("multiverse")
+M.1 <- multiverse()
 
 # using `inside` to declare multiverse code
 inside(M.1, {
@@ -32,7 +37,7 @@ inside(M.1, {
   ))
 })
 
-M.2 <- new("multiverse)
+M.2 <- multiverse()
 
 # using the assignment operator to declare multiverse code
 M$data <- rnorm(100, 50, 20)

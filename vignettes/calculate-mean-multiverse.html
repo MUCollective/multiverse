@@ -12,7 +12,7 @@
 
 <meta name="author" content="Abhraneel Sarma" />
 
-<meta name="date" content="2019-06-14" />
+<meta name="date" content="2019-07-11" />
 
 <title>The most basic multiverse example: calculating the mean</title>
 
@@ -303,22 +303,22 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">The most basic multiverse example: calculating the mean</h1>
 <h4 class="author">Abhraneel Sarma</h4>
-<h4 class="date">2019-06-14</h4>
+<h4 class="date">2019-07-11</h4>
 
 
 
 <div id="introduction-conducting-a-multiverse-analysis" class="section level2">
 <h2>Introduction: Conducting a multiverse analysis</h2>
 <p>In this document, we’ll outline a simple multiverse analysis — calculating the mean of a set of numbers.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">10000</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">x =<span class="st"> </span><span class="dv">30</span> <span class="op">+</span><span class="st"> </span><span class="kw">rt</span>(<span class="dv">50</span>, <span class="dv">5</span>) <span class="op">*</span><span class="st"> </span><span class="dv">12</span></a>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">1234567</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">x =<span class="st"> </span><span class="dv">50</span> <span class="op">+</span><span class="st"> </span><span class="kw">rt</span>(<span class="dv">100</span>, <span class="dv">3</span>) <span class="op">*</span><span class="st"> </span><span class="dv">20</span></a>
 <a class="sourceLine" id="cb1-3" data-line-number="3">data =<span class="st"> </span>x</a></code></pre></div>
 <p>Now, there are multiple ways of calculating the mean. We could just directly call the <code>mean()</code> function on the data.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">mean</span>(data)</a></code></pre></div>
-<pre><code>## [1] 27.48261</code></pre>
-<p>Or, we could remove the outliers by removing a fraction of the values from each end</p>
+<pre><code>## [1] 56.43083</code></pre>
+<p>Or, we could remove the outliers by removing a fraction of the values from each end. Here, we remove 10% of the values (5% from each end).</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">mean</span>(data, <span class="dt">trim =</span> <span class="fl">0.05</span>)</a></code></pre></div>
-<pre><code>## [1] 27.96304</code></pre>
+<pre><code>## [1] 56.01159</code></pre>
 <p>We could also change the fraction of values that we want to trim. This can be considered a very basic multiverse of analysis, where each single analysis would comprise of calculating the mean using different values for the <code>trim</code> argument of the <code>mean()</code> function.</p>
 </div>
 <div id="the-most-basic-multiverse" class="section level2">
@@ -353,20 +353,20 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="creating-and-initialising-the-multiverse" class="section level3">
 <h3>Creating and initialising the multiverse</h3>
 <p>However, for this to work, we would need to run this step within the multiverse, and not directly. To do that, we first need to create an empty multiverse object.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">M =<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;multiverse&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">M =<span class="st"> </span><span class="kw">multiverse</span>()</a></code></pre></div>
 <p>The multiverse object contains five components (which we will subsequently refer to as slots): <code>code</code>, <code>parameters</code>, <code>conditions</code>, <code>current_parameter_assignment</code> and <code>multiverse_table</code>; all of them are initialised as empty (<em>NULL / empty list</em>). We will describe them in more detail later.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">M<span class="op">@</span>code</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">code</span>(M)</a></code></pre></div>
 <pre><code>## NULL</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">M<span class="op">@</span>parameters <span class="co">#this is a list</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">parameters</span>(M) <span class="co">#this is a list</span></a></code></pre></div>
 <pre><code>## list()</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">M<span class="op">@</span>conditions <span class="co">#this is empty</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">conditions</span>(M) <span class="co">#this is empty</span></a></code></pre></div>
 <pre><code>## list()</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">M<span class="op">@</span>current_parameter_assignment <span class="co">#this is a list</span></a></code></pre></div>
-<pre><code>## list()</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">default_parameter_assignment</span>(M) <span class="co">#this is a list</span></a></code></pre></div>
+<pre><code>## NULL</code></pre>
 <p>Inside this new multiverse object, we will declare the code to calculate the mean using four different options. The <code>multiverse</code> object will store all possible combinations of analysis (in this case, the analysis is calculating the <em>mean</em>).</p>
 <p>When the <em>branches</em> are declared inside the multiverse, we can capture and store them without executing them. This way, we can capture the branches for more than one parameter, and interactively add more branches to the multiverse, so that it is easy to conduct a complete analysis. We will illustrate this later.</p>
 <p>The <code>inside()</code> function takes in two arguments: 1. the multiverse object, and 2. the expression, which should be declared within <code>{}</code></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">M =<span class="st"> </span><span class="kw">inside</span>(M, {</a>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">inside</span>(M, {</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2">  x.mean =<span class="st"> </span><span class="kw">mean</span>(data, </a>
 <a class="sourceLine" id="cb17-3" data-line-number="3">    <span class="dt">trim =</span> <span class="kw">branch</span>(trim_values,</a>
 <a class="sourceLine" id="cb17-4" data-line-number="4">      <span class="st">&quot;trim_none&quot;</span> <span class="op">~</span><span class="st"> </span><span class="dv">0</span>,</a>
@@ -376,20 +376,15 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb17-8" data-line-number="8">    )</a>
 <a class="sourceLine" id="cb17-9" data-line-number="9">  )</a>
 <a class="sourceLine" id="cb17-10" data-line-number="10">})</a></code></pre></div>
-<p>Once, code is declared inside the multiverse, this is stored inside the <code>code</code> component as an un-evaluated expression.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">M<span class="op">@</span>code</a></code></pre></div>
+<p>Once, code is declared inside the multiverse, this is stored inside the <code>code</code> component as an un-evaluated expression. This will also populate the empty slots in the multiverse i.e. identify the parameters and create a multiverse table.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">code</span>(M)</a></code></pre></div>
 <pre><code>## {
 ##     x.mean = mean(data, trim = branch(trim_values, &quot;trim_none&quot; ~ 
 ##         0, &quot;trim_1pc&quot; ~ 0.005, &quot;trim_5pc&quot; ~ 0.025, &quot;trim_10pc&quot; ~ 
 ##         0.05))
 ## }</code></pre>
-</div>
-<div id="parsing-the-multiverse-to-create-the-different-analysis-paths" class="section level3">
-<h3>Parsing the multiverse to create the different analysis paths</h3>
-<p>Now that we’ve stored the code with branches, we will inspect the multiverse to identify the branches (the different analysis pathways) that we have declared. This will populate the empty slots in the multiverse.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">M.parsed =<span class="st"> </span><span class="kw">parse_multiverse</span>(M)</a></code></pre></div>
 <p>The <code>parameter</code> slot will have a named list of parameters (in this case, the only parameter we’ve declared is <code>trim_values</code>) and the options for each parameter (here, the four options).</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">M.parsed<span class="op">@</span>parameters</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">parameters</span>(M)</a></code></pre></div>
 <pre><code>## $trim_values
 ## $trim_values[[1]]
 ## [1] &quot;trim_none&quot;
@@ -403,34 +398,27 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## $trim_values[[4]]
 ## [1] &quot;trim_10pc&quot;</code></pre>
 <p>The <code>multiverse_table</code> slot contains a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter — the number of rows corresponds to the number of different analysis paths (here, 4).</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">M.parsed<span class="op">@</span>multiverse_table</a></code></pre></div>
-<pre><code>## # A tibble: 4 x 2
-##   trim_values parameter_assignment
-##   &lt;chr&gt;       &lt;list&gt;              
-## 1 trim_none   &lt;named list [1]&gt;    
-## 2 trim_1pc    &lt;named list [1]&gt;    
-## 3 trim_5pc    &lt;named list [1]&gt;    
-## 4 trim_10pc   &lt;named list [1]&gt;</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">multiverse_table</span>(M)</a></code></pre></div>
+<pre><code>## # A tibble: 4 x 4
+##   trim_values .parameter_assignment .code      .results
+##   &lt;list&gt;      &lt;list&gt;                &lt;list&gt;     &lt;list&gt;  
+## 1 &lt;chr [1]&gt;   &lt;named list [1]&gt;      &lt;language&gt; &lt;env&gt;   
+## 2 &lt;chr [1]&gt;   &lt;named list [1]&gt;      &lt;language&gt; &lt;env&gt;   
+## 3 &lt;chr [1]&gt;   &lt;named list [1]&gt;      &lt;language&gt; &lt;env&gt;   
+## 4 &lt;chr [1]&gt;   &lt;named list [1]&gt;      &lt;language&gt; &lt;env&gt;</code></pre>
 <p>The <code>current_parameter_assignment</code> slot will be initialised to the first option for each parameter (in this case, “trim_none”).</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">M.parsed<span class="op">@</span>current_parameter_assignment</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">default_parameter_assignment</span>(M)</a></code></pre></div>
 <pre><code>## $trim_values
 ## [1] &quot;trim_none&quot;</code></pre>
 </div>
 <div id="executing-the-different-analysis-paths-in-the-multiverse" class="section level3">
 <h3>Executing the different analysis paths in the multiverse</h3>
 <p>This will be considered the default analysis option. We can execute this default option using the <code>execute_default()</code> function.. This will execute the analysis in the global environment, and we can use print to look at the output.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">parse_multiverse</span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="st">    </span><span class="kw">execute_default</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="st">    </span><span class="kw">print</span>()</a></code></pre></div>
-<pre><code>## [1] 27.48261</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">M<span class="op">$</span>x.mean</a></code></pre></div>
+<pre><code>## [1] 56.43083</code></pre>
 <p>Or we can run the entire multiverse using the <code>execute_multiverse()</code> function. This will execute each analysis path in a seperate environment. To access the result of this, we can use the <code>print_multiverse()</code> function, which will print the output from each environment, corresponding to the analysis path.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">parse_multiverse</span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="st">  </span><span class="kw">execute_multiverse</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="st">  </span><span class="kw">print_multiverse</span>() <span class="co"># not sure how helpful this is</span></a></code></pre></div>
-<pre><code>## [1] 27.48261
-## [1] 27.48261
-## [1] 27.73537
-## [1] 27.96304</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">M <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="st">  </span><span class="kw">execute_multiverse</span>()</a></code></pre></div>
 </div>
 </div>
 <div id="step-2-extending-the-multiverse" class="section level2">

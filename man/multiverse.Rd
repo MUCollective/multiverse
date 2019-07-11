@@ -40,7 +40,7 @@ contains the following slots:
 }
 \examples{
 \dontrun{
-M <- new("multiverse")
+M <- multiverse()
 }
 
 }

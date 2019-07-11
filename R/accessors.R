@@ -1,43 +1,63 @@
+#' Accessing contents of the multiverse object
+#' 
+#' @description A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
+#' Variables from the analysis that is being performed within the multiverse can be accessed using the `$`.
+#' Object variables such as the `code`, the `multiverse table`, the `parameters` and the `conditions` can be accessed using respective functions
+
+#' @name accessors
+#' @param multiverse Object of class multiverse
 #' @export 
 `$.multiverse` <- function(m_obj, value) {
   .idx = 1
   multiverse = attr(m_obj, "multiverse")
   
-  multiverse[['multiverse_table']][['results']][[.idx]][[value]]
+  multiverse[['multiverse_table']][['.results']][[.idx]][[value]]
 }
 
+#' @rdname accessors
 #' @export
 multiverse_table <- function(multiverse) {
   UseMethod("multiverse_table")
 }
 
+#' @rdname accessors
+#' @export
 multiverse_table.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['multiverse_table']]
 }
 
+#' @rdname accessors
 #' @export
 code <- function(multiverse) {
   UseMethod("code")
 }
 
+#' @rdname accessors
+#' @export
 code.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['code']]
 }
 
+#' @rdname accessors
 #' @export
 parameters <- function(multiverse) {
   UseMethod("parameters")
 }
 
+#' @rdname accessors
+#' @export
 parameters.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['parameters']]
 }
 
+#' @rdname accessors
 #' @export
 conditions <- function(multiverse) {
   UseMethod("conditions")
 }
 
+#' @rdname accessors
+#' @export
 conditions <- function(multiverse) {
   attr(multiverse, "multiverse")[['conditions']]
 }

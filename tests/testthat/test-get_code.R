@@ -71,20 +71,20 @@ test_that("can identify the correct option index from a branch", {
   an_expr.2 = expr(
     branch(cycle_length, 
            "no_filter" ~ TRUE,
-           "25" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+           "computed_25to35" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+           "reported_25to35" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
   ))
   
   parameter_values.1 = an_expr.1[-1:-2]
   parameter_values.2 = an_expr.2[-1:-2]
   
-  option_name.1 = "mc_option3"
-  option_name.2 = "cl_option2"
+  option_name.1 = "null"
+  option_name.2 = "computed_25to35"
   
   lgl.1 = map(parameter_values.1, ~ get_option_index_from_branch(.x, option_name.1)) %>% flatten_lgl()
   lgl.2 = map(parameter_values.2, ~ get_option_index_from_branch(.x, option_name.2)) %>% flatten_lgl()
   
-  lgl.1.ref = c(FALSE, FALSE, TRUE)
+  lgl.1.ref = c(FALSE, FALSE, TRUE, FALSE)
   lgl.2.ref = c(FALSE, TRUE, FALSE)
   
   expect_equal(lgl.1, lgl.1.ref)

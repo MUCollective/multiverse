@@ -15,18 +15,18 @@ execute_default(multiverse, N = NA)
 which indicates the complete multiverse is to be executed.}
 }
 \description{
-These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
-using the execute_default() or parts or whole of the multiverse using the execute_multiverse(). These functions allow the user 
-to interactively inspect the code.
+These are functions which allow the user to execute parts or whole of the multiverse. 
+The user can choose to either execute the default analysis using the [execute_default], or a part or 
+whole of the multiverse using the [execute_multiverse].
 }
 \details{
-Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access 
-the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
-multiverse table, under the results column.
+Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to execute 
+the results for the  default analysis, as well as parts or whole of the multiverse. The default analysis is executed everytime 
+code is added to the multiverse, hence we do not expect users to use the [execute_default] function frequently.
 }
 \examples{
 \dontrun{
-#' M <- new("multiverse")
+#' M <- multiverse()
 inside(M, {
   data <- rnorm(100, 50, 20)
   
@@ -39,16 +39,8 @@ inside(M, {
   ))
 })
 
-# Prints the default analysis. Here, the default
-# analysis is the one conducted with `trim_none`
-parse_multiverse(M) \%>\%
-execute_default() \%>\%
-  print()
+M \%>\%
+  execute_multiverse()
 }
-
-# Will print the results from all the multiverses
-parse_multiverse(M) \%>\%
-execute_multiverse() \%>\%
-  print_multiverse()
 
 }
