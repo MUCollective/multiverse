@@ -24,7 +24,7 @@
 #' 
 #' #' @examples 
 #' \dontrun{
-#' M.1 <- new("multiverse")
+#' M.1 <- multiverse()
 #' 
 #' # using `inside` to declare multiverse code
 #' inside(M.1, {
@@ -39,7 +39,7 @@
 #'   ))
 #' })
 #' 
-#' M.2 <- new("multiverse)
+#' M.2 <- multiverse()
 #' 
 #' # using the assignment operator to declare multiverse code
 #' M$data <- rnorm(100, 50, 20)

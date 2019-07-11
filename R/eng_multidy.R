@@ -21,7 +21,8 @@
 #' }
 #' 
 #' @importFrom knitr knit_engines
-
+#' 
+#' @name multidy_engine
 knit_engines$set(multidy = function(options) {
     .multiverse_name = options$multiverse
     if ( !(.multiverse_name %in% ls(envir = globalenv()))) {

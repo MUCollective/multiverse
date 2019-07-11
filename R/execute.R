@@ -17,7 +17,7 @@
 #' 
 #' @examples
 #' \dontrun{
-#' #' M <- new("multiverse")
+#' #' M <- multiverse()
 #' inside(M, {
 #'   data <- rnorm(100, 50, 20)
 #'   
