@@ -1,8 +1,10 @@
 #' Retrieve or change the default analysis of the multiverse
 #' 
-#' @description These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
-#' using the execute_default() or parts or whole of the multiverse using the execute_multiverse(). These functions allow the user 
-#' to interactively inspect the code.
+#' @description Functions which allow the user to retrieve or update the default assignments for
+#' each parameter defined in the multiverse. Retrieving the default analysis allows the users 
+#' to see what the default analysis would look like (what values each parameter would take). Updating
+#' the default analysis allows the users to specify a different set of parameter assignments which will
+#' be executed. 
 #' 
 #' @param multiverse The multiverse object
 #' 
