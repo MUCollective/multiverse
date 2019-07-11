@@ -17,11 +17,14 @@ devtools::load_all(".")
 ```
 
 ```{r}
-M = multiverse()
+
 M.2 = multiverse()
 ```
 
 ```{r}
+M = multiverse()
+M$x <- ~ 5
+
 multiverse_table(M)$.code
 ```
 

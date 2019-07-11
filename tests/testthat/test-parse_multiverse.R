@@ -160,7 +160,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
 
 test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' slot when it is passed an expression without any branches", {
   p_tbl_df.ref = tibble::tibble(
-    .parameter_assignment = list(NA), 
+    .parameter_assignment = list( list() ), 
     .code = list( rlang::expr( df <- data.frame(x = 1:10) ) )
   )
   
@@ -185,8 +185,6 @@ test_that("`parse_multiverse` requires multiple uses of the same paramater to co
     )
   })))
 })
-
-
 
 # parameter_assigment -----------------------------------------------------
 
