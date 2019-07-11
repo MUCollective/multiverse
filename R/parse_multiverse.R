@@ -42,7 +42,7 @@ parse_multiverse <- function(multiverse) {
 
 get_multiverse_table_no_param <- function(multiverse) {
   tibble::tibble(
-    .parameter_assignment = list(NA),
+    .parameter_assignment = list(),
     .code = list( multiverse[['code']] ),
     .results = list( env() )
   )
