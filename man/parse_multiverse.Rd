@@ -7,7 +7,7 @@
 parse_multiverse(multiverse)
 }
 \arguments{
-\item{M}{The multiverse object with some code passed to it}
+\item{multiverse}{The multiverse object with some code passed to it}
 }
 \value{
 The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions. 

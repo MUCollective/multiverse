@@ -12,7 +12,7 @@
 \alias{conditions}
 \title{Accessing contents of the multiverse object}
 \usage{
-\method{$}{multiverse}(m_obj, value)
+\method{$}{multiverse}(multiverse, name)
 
 multiverse_table(multiverse)
 
@@ -32,6 +32,8 @@ conditions(multiverse)
 }
 \arguments{
 \item{multiverse}{Object of class multiverse}
+
+\item{name}{a variable name}
 }
 \description{
 A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.

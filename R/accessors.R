@@ -6,12 +6,13 @@
 
 #' @name accessors
 #' @param multiverse Object of class multiverse
+#' @param name a variable name
 #' @export 
-`$.multiverse` <- function(m_obj, value) {
+`$.multiverse` <- function(multiverse, name) {
   .idx = 1
-  multiverse = attr(m_obj, "multiverse")
+  m_obj = attr(multiverse, "multiverse")
   
-  multiverse[['multiverse_table']][['.results']][[.idx]][[value]]
+  m_obj[['multiverse_table']][['.results']][[.idx]][[name]]
 }
 
 #' @rdname accessors

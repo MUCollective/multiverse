@@ -30,13 +30,10 @@ library(multidy)
 The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
 
 ```{r data}
-data.raw.study2 <- read_delim("../data/durante_etal_2013_study2.txt", delim = "\t",
-    col_types = cols(
-        DateTesting = col_date(format = "%m/%d/%y"),
-        StartDateofLastPeriod =col_date(format = "%m/%d/%y"),
-        StartDateofPeriodBeforeLast = col_date(format = "%m/%d/%y"),
-        StartDateNext = col_date(format = "%m/%d/%y")
-  )) %>%
+data("durante")
+data.raw.study2 <- durante
+
+data.raw.study2 <- data.raw.study2 %>%
   mutate(
     Abortion = abs(7 - Abortion) + 1,
     StemCell = abs(7 - StemCell) + 1,

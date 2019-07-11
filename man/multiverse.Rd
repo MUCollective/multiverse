@@ -2,15 +2,31 @@
 % Please edit documentation in R/multiverse.R
 \name{multiverse}
 \alias{multiverse}
+\alias{is_multiverse}
+\alias{is.multiverse}
 \title{Create a new multiverse object}
 \usage{
 multiverse()
+
+is_multiverse(x)
+
+is.multiverse(x)
+}
+\arguments{
+\item{x}{An object}
 }
 \value{
 An empty multiverse object
+
+`TRUE` if the object inherits from the `multiverse` class.
+
+`TRUE` if the object inherits from the `multiverse` class.
 }
 \description{
 Constructs a new multiverse object which enables conducting a multiverse analysis
+
+This function returns `TRUE` for objects of class multiverse,
+and `FALSE` for all other objects.
 }
 \details{
 To perform a multiverse analysis, the user needs to first constructs a new multiverse object. The user can declare 
