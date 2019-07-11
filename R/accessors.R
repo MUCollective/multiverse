@@ -3,7 +3,7 @@
   .idx = 1
   multiverse = attr(m_obj, "multiverse")
   
-  multiverse[['multiverse_table']][['results']][[.idx]][[value]]
+  multiverse[['multiverse_table']][['.results']][[.idx]][[value]]
 }
 
 #' @export
