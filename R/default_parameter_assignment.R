@@ -1,4 +1,4 @@
-#' Execute parts of, or the entire multiverse
+#' Retrieve or change the default analysis of the multiverse
 #' 
 #' @description These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
 #' using the execute_default() or parts or whole of the multiverse using the execute_multiverse(). These functions allow the user 
