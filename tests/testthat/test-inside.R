@@ -44,7 +44,7 @@ test_that("throws error when object is not of type `multiverse`", {
 
 # `$<-.multiverse` // multiverse shorthand assignment ___________________________
 test_that("`$<-.multiverse` works on new multiverse object", {
-  an_expr = expr({x = data.frame(x = 1:10)})
+  an_expr = expr({x <- data.frame(x = 1:10)})
   
   M = multiverse()
   M$x <- ~ data.frame(x = 1:10)
@@ -54,8 +54,8 @@ test_that("`$<-.multiverse` works on new multiverse object", {
 
 test_that("multiple lines of code can be passed to inside", {
   an_expr = expr({
-    x = data.frame(x = 1:10)
-    y = data.frame(y = 11:20)
+    x <- data.frame(x = 1:10)
+    y <- data.frame(y = 11:20)
   })
   
   M = multiverse()
@@ -92,7 +92,8 @@ test_that("`add_and_parse_code` parses the code", {
   add_and_parse_code(M.R6, an_expr)
   
   expect_equal( dim(M.R6$multiverse_table), c(4, 4) )
-  expect_equal( length(M.R6$parameters), 4 )
+  expect_equal( length(M.R6$parameters), 1 )
+  expect_equal( length(M.R6$parameters$value_y), 4 )
 })
 
 test_that("`add_and_parse_code` executes the default analysis", {
