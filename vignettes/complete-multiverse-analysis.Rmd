@@ -18,11 +18,12 @@ Data analysis can involve several decisions involving two or more options. In mo
 Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
 library(knitr)
-library(tidyverse)
-library(magrittr)
+opts_chunk$set(echo = TRUE)
+opts_knit$set(output.dir="vignettes")
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 library(multidy)
 ```
 
@@ -31,13 +32,10 @@ library(multidy)
 The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
 
 ```{r data}
-data.raw.study2 <- read_delim("../data/durante_etal_2013_study2.txt", delim = "\t",
-    col_types = cols(
-        DateTesting = col_date(format = "%m/%d/%y"),
-        StartDateofLastPeriod =col_date(format = "%m/%d/%y"),
-        StartDateofPeriodBeforeLast = col_date(format = "%m/%d/%y"),
-        StartDateNext = col_date(format = "%m/%d/%y")
-  )) %>%
+data("durante")
+data.raw.study2 <- durante
+
+data.raw.study2 <- data.raw.study2 %>%
   mutate(
     Abortion = abs(7 - Abortion) + 1,
     StemCell = abs(7 - StemCell) + 1,
@@ -249,7 +247,7 @@ M$df
 
 <span style="colour:"red"> __this does not work__ </span>
 
-Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `get_code()` function and execute it:
+Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `execute_default()` function and execute it:
 
 ```{r, eval = FALSE}
 universe_parameter_assignment <- list(
@@ -259,18 +257,7 @@ universe_parameter_assignment <- list(
     certainty = "cer_option1",
     fertile = "fer_option4"
   )
-
 M %>% execute_default( universe_parameter_assignment ) %>%
   select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
- head()
+  head()
 ```
-
-
-```{r, eval = FALSE}
-M %>%
-  execute_multiverse()
-
-M@multiverse_table$results[[2]]$df
-```
-
-

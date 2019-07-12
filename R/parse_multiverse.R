@@ -4,7 +4,7 @@
 #' The `parse_multiverse` identifies the `branch` calls defined in the analysis syntax and parses them into a list of 
 #' parameters and the corresponding values that each parameter can take.
 #' 
-#' @param M The multiverse object with some code passed to it
+#' @param multiverse The multiverse object with some code passed to it
 #' 
 #' @return The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions. 
 #' The list of parameters is a named list which defines all the values that each defined parameter can take. 
@@ -42,7 +42,7 @@ parse_multiverse <- function(multiverse) {
 
 get_multiverse_table_no_param <- function(multiverse) {
   tibble::tibble(
-    .parameter_assignment = list(NA),
+    .parameter_assignment = list( list() ),
     .code = list( multiverse[['code']] ),
     .results = list( env() )
   )

@@ -59,7 +59,6 @@ inside(M, {
 })
 
 # get_option_index_from_branch ----------------------------------
-
 test_that("can identify the correct option index from a branch", {
   an_expr.1 = expr(
     branch(values, 
@@ -72,7 +71,7 @@ test_that("can identify the correct option index from a branch", {
     branch(cycle_length, 
            "no_filter" ~ TRUE,
            "computed_25to35" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-           "reported_25to35" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+           "repored_25to35" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
   ))
   
   parameter_values.1 = an_expr.1[-1:-2]
@@ -91,8 +90,41 @@ test_that("can identify the correct option index from a branch", {
   expect_equal(lgl.2, lgl.2.ref)
 })
 
-# compute_branch ----------------------------------
+# get_option_value ----------------------------------
+test_that("can identify the correct option index from a branch", {
+  an_expr.1 = expr(
+    branch(values, 
+           "zero" ~ 0,
+           "three" ~ 3,
+           "null" ~ NULL,
+           "y + 5" ~ y + 5
+    ))
+  an_expr.2 = expr(
+    branch(cycle_length, 
+           "no_filter" ~ TRUE,
+           "computed_25to35" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+           "repored_25to35" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+    ))
+  
+  parameter_values.1 = an_expr.1[-1:-2]
+  parameter_values.2 = an_expr.2[-1:-2]
+  
+  idx.1 = 3
+  idx.2 = 2
+  
+  value.1 = parameter_values.1 %>%
+    extract2(idx.1) %>%
+    get_option_value()
+  
+  value.2 = parameter_values.2 %>%
+    extract2(idx.2) %>%
+    get_option_value()
+  
+  expect_equal(value.1, as.list(an_expr.1)[[2 + idx.1]][[3]])
+  expect_equal(value.2, as.list(an_expr.2)[[2 + idx.2]][[3]])
+})
 
+# compute_branch ----------------------------------
 test_that("given parameter assignment, an expression with branch is converted into proper R code for execution", {
   an_expr.1 = expr(
     branch(menstrual_calculation, 

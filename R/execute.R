@@ -8,12 +8,9 @@
 #' 
 #' @param N Override the default analysis and instead perform the N-th analysis from the multiverse table
 #' 
-#' @param .vec A vector specifying the range of analysis paths from the multiverse to be executed. Defaults to \code{\link[base]{NA}}
-#' which indicates the complete multiverse is to be executed.
-#' 
-#' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to execute 
-#' the results for the  default analysis, as well as parts or whole of the multiverse. The default analysis is executed everytime 
-#' code is added to the multiverse, hence we do not expect users to use the [execute_default] function frequently.
+#' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access 
+#' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
+#' multiverse table, under the results column. 
 #' 
 #' @examples
 #' \dontrun{
@@ -30,13 +27,33 @@
 #'   ))
 #' })
 #' 
+#' # Computes the analysis for all 
+#' # universes in the multiverse`
 #' M %>%
 #'   execute_multiverse()
 #' }
 #' 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
-#' 
+#'
+#' @name execute
+#' @export
+execute_multiverse <- function(multiverse) {
+  stopifnot( is.multiverse(multiverse) )
+  .m_obj = attr(multiverse, "multiverse")
+  
+  execute_all_in_multiverse(.m_obj)
+}
+
+execute_all_in_multiverse <- function(m_obj) {
+  m_tbl = m_obj[['multiverse_table']]
+  
+  for (i in 1:nrow(m_tbl)) {
+    eval( m_tbl$code[[i]], envir = m_tbl[['.results']][[i]] )
+  }
+}
+
+#' @rdname execute
 #' @export
 execute_default <- function(multiverse, N = NA) {
   UseMethod("execute_default")
@@ -50,29 +67,13 @@ execute_default.multiverse <- function(.m, N = NA) {
 execute_default.Multiverse <- function(multiverse, N = NA) {
   .param_assgn = multiverse[['default_parameter_assignment']]
   if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
-      .c = multiverse[['code']]
-      env = multiverse[['multiverse_table']][['.results']][[1]]
-      eval(.c, env)
+    .c = multiverse[['code']]
+    env = multiverse[['multiverse_table']][['.results']][[1]]
+    eval(.c, env)
   } else {
     stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
     .c = multiverse %>%  get_code()
     env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
     eval(.c, env)
-  }
-}
-
-#' @export
-execute_multiverse <- function(.m, N = NA) {
-  stopifnot( is.multiverse(.m) )
-  multiverse = attr(.m, "multiverse")
-  
-  execute_each_in_multiverse(multiverse, N)
-}
-
-execute_each_in_multiverse <- function(multiverse, N) {
-  m_tbl = multiverse[['multiverse_table']]
-  
-  for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl[['.code']][[i]], env = m_tbl[['.results']][[i]] )
   }
 }
