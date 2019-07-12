@@ -35,7 +35,25 @@
 #' 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
-#' 
+#'
+#' @name execute
+#' @export
+execute_multiverse <- function(multiverse) {
+  stopifnot( is.multiverse(multiverse) )
+  .m_obj = attr(multiverse, "multiverse")
+  
+  execute_all_in_multiverse(.m_obj)
+}
+
+execute_all_in_multiverse <- function(m_obj) {
+  m_tbl = m_obj[['multiverse_table']]
+  
+  for (i in 1:nrow(m_tbl)) {
+    eval( m_tbl$code[[i]], envir = m_tbl[['.results']][[i]] )
+  }
+}
+
+#' @rdname execute
 #' @export
 execute_default <- function(multiverse, N = NA) {
   UseMethod("execute_default")
@@ -49,29 +67,13 @@ execute_default.multiverse <- function(.m, N = NA) {
 execute_default.Multiverse <- function(multiverse, N = NA) {
   .param_assgn = multiverse[['default_parameter_assignment']]
   if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
-      .c = multiverse[['code']]
-      env = multiverse[['multiverse_table']][['.results']][[1]]
-      eval(.c, env)
+    .c = multiverse[['code']]
+    env = multiverse[['multiverse_table']][['.results']][[1]]
+    eval(.c, env)
   } else {
     stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
     .c = multiverse %>%  get_code()
     env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
     eval(.c, env)
-  }
-}
-
-#' @export
-execute_multiverse <- function(multiverse, N = NA) {
-  stopifnot( is.multiverse(multiverse) )
-  .m_obj = attr(multiverse, "multiverse")
-  
-  execute_all_in_multiverse(.m_obj, N)
-}
-
-execute_all_in_multiverse <- function(m_obj, N) {
-  m_tbl = m_obj[['multiverse_table']]
-  
-  for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl$code[[i]], envir = m_tbl[['.results']][[i]] )
   }
 }

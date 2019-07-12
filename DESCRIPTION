@@ -15,7 +15,8 @@ Depends:
     R (>= 3.5.0)
 Suggests:
     testthat (>= 2.1.0),
-    lubridate
+    lubridate,
+    rmarkdown
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
@@ -28,3 +29,4 @@ Imports:
     magrittr,
     modelr
 Language: en-US
+VignetteBuilder: knitr
