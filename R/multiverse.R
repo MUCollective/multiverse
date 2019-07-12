@@ -42,13 +42,14 @@ Multiverse <- R6Class("Multiverse",
 #' 
 #' @examples 
 #' \dontrun{
-#' M <- new("multiverse")
+#' M <- multiverse()
 #' }
 #' 
 #' @return An empty multiverse object
 #' 
+#' @name multiverse
 #' @importFrom rlang env
-#' @import R6
+#' @importFrom R6 R6Class
 #' @export
 multiverse <- function() {
   x <- env()
@@ -61,6 +62,7 @@ multiverse <- function() {
 #' This function returns `TRUE` for objects of class multiverse,
 #' and `FALSE` for all other objects.
 #'
+#' @rdname multiverse
 #' @param x An object
 #' @return `TRUE` if the object inherits from the `multiverse` class.
 #' @export
@@ -69,6 +71,8 @@ is_multiverse <- function(x) {
   inherits(x, "multiverse") && inherits(.m, "Multiverse")
 }
 
+#' @rdname multiverse
+#' @return `TRUE` if the object inherits from the `multiverse` class.
 #' @export
 is.multiverse <- function(x) {
   #signal_soft_deprecated("`is.multiverse()` is soft deprecated, use `is_multiverse()`.")
@@ -76,8 +80,6 @@ is.multiverse <- function(x) {
   inherits(x, "multiverse") && inherits(.m, "Multiverse")
 }
 
-
-#' @export
 is.r6_multiverse <- function(x) {
   inherits(x, "Multiverse")
 }

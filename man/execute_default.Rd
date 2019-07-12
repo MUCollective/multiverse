@@ -10,9 +10,6 @@ execute_default(multiverse, N = NA)
 \item{multiverse}{The multiverse object}
 
 \item{N}{Override the default analysis and instead perform the N-th analysis from the multiverse table}
-
-\item{.vec}{A vector specifying the range of analysis paths from the multiverse to be executed. Defaults to \code{\link[base]{NA}}
-which indicates the complete multiverse is to be executed.}
 }
 \description{
 These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
@@ -26,7 +23,7 @@ multiverse table, under the results column.
 }
 \examples{
 \dontrun{
-#' M <- new("multiverse")
+#' M <- multiverse()
 inside(M, {
   data <- rnorm(100, 50, 20)
   
@@ -39,16 +36,10 @@ inside(M, {
   ))
 })
 
-# Prints the default analysis. Here, the default
-# analysis is the one conducted with `trim_none`
-parse_multiverse(M) \%>\%
-execute_default() \%>\%
-  print()
+# Computes the analysis for all 
+# universes in the multiverse`
+M \%>\%
+  execute_multiverse()
 }
-
-# Will print the results from all the multiverses
-parse_multiverse(M) \%>\%
-execute_multiverse() \%>\%
-  print_multiverse()
 
 }

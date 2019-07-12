@@ -11,15 +11,20 @@ Maintainer: Abhraneel Sarma <abhsarma@umich.edu>
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 6.1.1
-Suggests: 
-    knitr,
-    testthat (>= 2.1.0)
+Depends:
+    R (>= 3.5.0)
+Suggests:
+    testthat (>= 2.1.0),
+    lubridate
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
     purrr (>= 0.3.2),
     rlang (>= 0.3.4),
+    knitr,
+    R6,
     tidyr,
     tibble,
     magrittr,
     modelr
+Language: en-US

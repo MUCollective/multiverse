@@ -8,16 +8,13 @@
 #' 
 #' @param N Override the default analysis and instead perform the N-th analysis from the multiverse table
 #' 
-#' @param .vec A vector specifying the range of analysis paths from the multiverse to be executed. Defaults to \code{\link[base]{NA}}
-#' which indicates the complete multiverse is to be executed.
-#' 
 #' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access 
 #' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
 #' multiverse table, under the results column. 
 #' 
 #' @examples
 #' \dontrun{
-#' #' M <- new("multiverse")
+#' #' M <- multiverse()
 #' inside(M, {
 #'   data <- rnorm(100, 50, 20)
 #'   
@@ -30,17 +27,11 @@
 #'   ))
 #' })
 #' 
-#' # Prints the default analysis. Here, the default
-#' # analysis is the one conducted with `trim_none`
-#' parse_multiverse(M) %>%
-#' execute_default() %>%
-#'   print()
+#' # Computes the analysis for all 
+#' # universes in the multiverse`
+#' M %>%
+#'   execute_multiverse()
 #' }
-#' 
-#' # Will print the results from all the multiverses
-#' parse_multiverse(M) %>%
-#' execute_multiverse() %>%
-#'   print_multiverse()
 #' 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate 
@@ -70,17 +61,17 @@ execute_default.Multiverse <- function(multiverse, N = NA) {
 }
 
 #' @export
-execute_multiverse <- function(.m, N = NA) {
-  stopifnot( is.multiverse(.m) )
-  multiverse = attr(.m, "multiverse")
+execute_multiverse <- function(multiverse, N = NA) {
+  stopifnot( is.multiverse(multiverse) )
+  .m_obj = attr(multiverse, "multiverse")
   
-  execute_all_in_multiverse(multiverse, N)
+  execute_all_in_multiverse(.m_obj, N)
 }
 
-execute_each_in_multiverse <- function(multiverse, N) {
-  m_tbl = multiverse[['multiverse_table']]
+execute_all_in_multiverse <- function(m_obj, N) {
+  m_tbl = m_obj[['multiverse_table']]
   
   for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl$code[[i]], env = m_tbl[['.results']][[i]] )
+    eval( m_tbl$code[[i]], envir = m_tbl[['.results']][[i]] )
   }
 }

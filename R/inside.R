@@ -6,25 +6,28 @@
 #' @details To perform a multiverse analysis, we will need to write code to be executed within the multiverse. 
 #' The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 #' which is captured as an expression. To define multiple analysis options in the code passed to the multiverse, 
-#' use the \code{\link[multidy]{branch}} function. See \code{\link[multidy]{branch}} for more 
+#' use the [branch] function. See [branch] for more 
 #' details on how to declare multiple analysis options. 
 #' 
 #' The `inside` function only stores the code, and does not execute any code at this step. To execute, we 
-#' provide separate functions. See \code{\link[multidy]{execute}} for executing the code.
+#' provide separate functions. See [execute] for executing the code.
 #' 
 #' Instead of using the `inside()` function, an alternate implementation of the multiverse is using 
 #' the assignment operator, `<-`. See examples below.
 #' 
-#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using `new("multiverse")`
+#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using `multiverse()`
 #' 
 #' @param .expr R syntax. All the operations that the user wants to perform within the multiverse can be passed. 
 #' Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.
 #' 
+#' @param name,value If the shorthand assignment `$<-` is used to assign values to variables in the multiverse
+#' name and value of arguments should be specified. Name indicates the variable name; value indicates the value to be assigned to name.
+#' 
 #' @return a multiverse object
 #' 
-#' #' @examples 
+#' @examples 
 #' \dontrun{
-#' M.1 <- new("multiverse")
+#' M.1 <- multiverse()
 #' 
 #' # using `inside` to declare multiverse code
 #' inside(M.1, {
@@ -39,7 +42,7 @@
 #'   ))
 #' })
 #' 
-#' M.2 <- new("multiverse)
+#' M.2 <- multiverse()
 #' 
 #' # using the assignment operator to declare multiverse code
 #' M$data <- rnorm(100, 50, 20)
@@ -52,11 +55,11 @@
 #'   ))
 #'   
 #' # declaring multiple options for a data processing step (calculating a new variable) 
-#' data(fertility)
-#' data.fertility <- fertility
+#' data(durante)
+#' df <- durante
 #' 
 #' inside(M.1, {   
-#'   df <- data.fertility  %>% 
+#'   df <- df  %>% 
 #'     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
 #'     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
 #'                                    "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -71,38 +74,41 @@
 #' @importFrom magrittr %>%
 #' @importFrom magrittr inset2
 #' 
+#' @name inside
 #' @export
-inside <- function(.m, .code) {
-  .code = enexpr(.code)
-  multiverse = attr(.m, "multiverse")
+inside <- function(multiverse, .expr) {
+  .expr = enexpr(.expr)
+  m_obj = attr(multiverse, "multiverse")
   
-  add_and_parse_code(multiverse, .code)  
+  add_and_parse_code(m_obj, .expr)  
 }
 
-`$<-.multiverse` <- function(.m, name, value) {
-  .code = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
-  multiverse = attr(.m, "multiverse")
+#' @rdname inside
+#' @export
+`$<-.multiverse` <- function(multiverse, name, value) {
+  .expr = expr({ !!sym(name) <- !!rlang::f_rhs(value) })
+  m_obj = attr(multiverse, "multiverse")
   
-  add_and_parse_code(multiverse, .code)
+  add_and_parse_code(m_obj, .expr)
   
-  .m
+  multiverse
 }
 
 
-add_and_parse_code <- function(multiverse, .code, execute = TRUE) {
-  if (is_null(multiverse$code)) {
+add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
+  if (is_null(m_obj$code)) {
     .c = .code
   } else {
-    .c = multiverse$code %>% 
+    .c = m_obj$code %>% 
       inset2(., length(.) + 1, .code[[2]])
   }
   
-  multiverse$code <- .c
-  parse_multiverse(multiverse)
+  m_obj$code <- .c
+  parse_multiverse(m_obj)
   
   # the execute parameter is useful for parsing tests where we don't want to 
   # actually execute anything. probably more for internal use
-  if (execute) execute_default(multiverse)
+  if (execute) execute_default(m_obj)
 }
 
 

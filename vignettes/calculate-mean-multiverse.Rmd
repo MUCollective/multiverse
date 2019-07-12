@@ -11,14 +11,11 @@ vignette: >
 
 ```{r setup, include=FALSE}
 library(knitr)
-
 opts_chunk$set(echo = TRUE)
 opts_knit$set(output.dir="vignettes")
-
 library(tidyverse)
 library(magrittr)
-
-devtools::load_all(".")
+library(multidy)
 ```
 
 ## Introduction: Conducting a multiverse analysis
@@ -191,9 +188,7 @@ Now, let's introduce some *missing values*. We will then sample `100` values and
 
 ```{r eval = FALSE, echo = FALSE}
 data = c(x, rep(NA, 5)) %>% sample(length(x))
-
 M = new("multiverse")
-
 inside(M, {
   mean(data, 
     trim = branch(trim_values,
@@ -205,7 +200,6 @@ inside(M, {
     na.rm = branch(remove_na, "False" ~ FALSE, "True" ~ TRUE)
   )
 })
-
 # impose condition that trim only takes other values when na.rm = FALSE. All the other instances are redundant.
 # will update when the `conditional` function has been implemented.
 ```
