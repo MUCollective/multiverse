@@ -11,10 +11,10 @@ vignette: >
 
 ```{r setup, include=FALSE}
 library(knitr)
-library(tidyverse)
-library(magrittr)
-library(rlang)
-
+opts_chunk$set(echo = TRUE)
+opts_knit$set(output.dir="vignettes")
+library(dplyr)
+library(tidyr)
 library(multidy)
 ```
 

@@ -18,10 +18,12 @@ Data analysis can involve several decisions involving two or more options. In mo
 Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
-library(tidyverse)
-library(magrittr)
+opts_chunk$set(echo = TRUE)
+opts_knit$set(output.dir="vignettes")
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 library(multidy)
 ```
 
