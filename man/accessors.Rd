@@ -4,29 +4,41 @@
 \alias{accessors}
 \alias{$.multiverse}
 \alias{multiverse_table}
+\alias{multiverse_table.default}
 \alias{multiverse_table.multiverse}
 \alias{code}
+\alias{code.default}
 \alias{code.multiverse}
 \alias{parameters}
+\alias{parameters.default}
 \alias{parameters.multiverse}
 \alias{conditions}
+\alias{conditions.default}
 \title{Accessing contents of the multiverse object}
 \usage{
 \method{$}{multiverse}(multiverse, name)
 
 multiverse_table(multiverse)
 
+\method{multiverse_table}{default}(multiverse)
+
 \method{multiverse_table}{multiverse}(multiverse)
 
 code(multiverse)
+
+\method{code}{default}(multiverse)
 
 \method{code}{multiverse}(multiverse)
 
 parameters(multiverse)
 
+\method{parameters}{default}(multiverse)
+
 \method{parameters}{multiverse}(multiverse)
 
 conditions(multiverse)
+
+conditions.default(multiverse)
 
 conditions(multiverse)
 }

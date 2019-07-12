@@ -17,11 +17,7 @@ test_that("basic assignment / retrieval works with `code()`", {
 
 test_that("basic retrieval works with `parameters()`", {
   M <- multiverse()
-  M$x <- ~ branch( x_values,
-                   0,
-                   3,
-                   5
-                )
+  M$x <- ~ branch( x_values, 0, 3, 5 )
   
   expect_equal(parameters(M), list(x_values = list(0, 3, 5)) )
 })

@@ -23,6 +23,15 @@ multiverse_table <- function(multiverse) {
 
 #' @rdname accessors
 #' @export
+multiverse_table.default <- function(multiverse) {
+  stop(
+    "Objects of type ", deparse(class(multiverse)), " do not have method `multiverse_table`. \n",
+    "Please use objects of type `multiverse."
+  )
+}
+
+#' @rdname accessors
+#' @export
 multiverse_table.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['multiverse_table']]
 }
@@ -31,6 +40,15 @@ multiverse_table.multiverse <- function(multiverse) {
 #' @export
 code <- function(multiverse) {
   UseMethod("code")
+}
+
+#' @rdname accessors
+#' @export
+code.default <- function(multiverse) {
+  stop(
+    "Objects of type ", deparse(class(multiverse)), " do not have method `code`. \n",
+    "Please use objects of type `multiverse."
+  )
 }
 
 #' @rdname accessors
@@ -47,6 +65,15 @@ parameters <- function(multiverse) {
 
 #' @rdname accessors
 #' @export
+parameters.default <- function(multiverse) {
+  stop(
+    "Objects of type ", deparse(class(multiverse)), " do not have method `parameters`. \n",
+    "Please use objects of type `multiverse."
+  )
+}
+
+#' @rdname accessors
+#' @export
 parameters.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['parameters']]
 }
@@ -55,6 +82,15 @@ parameters.multiverse <- function(multiverse) {
 #' @export
 conditions <- function(multiverse) {
   UseMethod("conditions")
+}
+
+#' @rdname accessors
+#' @export
+conditions.default <- function(multiverse) {
+  stop(
+    "Objects of type ", deparse(class(multiverse)), " do not have method `conditions`. \n",
+    "Please use objects of type `multiverse."
+  )
 }
 
 #' @rdname accessors

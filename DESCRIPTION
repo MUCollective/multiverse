@@ -16,7 +16,8 @@ Depends:
 Suggests:
     testthat (>= 2.1.0),
     lubridate,
-    rmarkdown
+    rmarkdown,
+    covr
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),

@@ -19,10 +19,6 @@ library(multidy)
 ```
 
 ```{r}
-M.2 = multiverse()
-```
-
-```{r}
 M = multiverse()
 M$x <- ~ 5
 
@@ -31,6 +27,7 @@ multiverse_table(M)$.code
 
 
 ```{r}
+M = multiverse()
 inside(M, {df <- data.frame( x = 1:10 ) %>%
   mutate(
     y = branch( values_y,
@@ -43,6 +40,7 @@ inside(M, {df <- data.frame( x = 1:10 ) %>%
 ```
 
 ```{r}
+M.2 = multiverse()
 inside(M.2, {
   df <- data.frame( x = 1:10, y = ((1:10)^2)/5 ) %>%
     mutate(
