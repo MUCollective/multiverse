@@ -160,7 +160,7 @@ The `multiverse_table` slot contains a tibble where each column of the tibble wi
 multiverse_table(M)
 ```
 
-The `current_parameter_assignment` slot will be initialised to the first option for each parameter (in this case, "trim_none").
+The `default_parameter_assignment` slot will be initialised to the first option for each parameter (in this case, "trim_none").
 
 ```{r}
 default_parameter_assignment(M)
@@ -168,13 +168,13 @@ default_parameter_assignment(M)
 
 ### Executing the different analysis paths in the multiverse
 
-This will be considered the default analysis option. We can execute this default option using the `execute_default()` function.. This will execute the analysis in the global environment, and we can use print to look at the output.
+This will be considered the default analysis option. We can execute this default option using the `execute_default()` function. `execute_default()` is also run everytime code is added to the multiverse, so users usually won't need to call it.
 
 ```{r}
 M$x.mean
 ```
 
-Or we can run the entire multiverse using the `execute_multiverse()` function. This will execute each analysis path in a seperate environment. To access the result of this, we can use the `print_multiverse()` function, which will print the output from each environment, corresponding to the analysis path.
+Or we can run the entire multiverse using the `execute_multiverse()` function. This will execute each analysis path in seperate environments.
 
 ```{r check_results}
 M %>%

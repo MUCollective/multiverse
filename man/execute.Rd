@@ -16,9 +16,9 @@ execute_default(multiverse, N = NA)
 \item{N}{Override the default analysis and instead perform the N-th analysis from the multiverse table}
 }
 \description{
-These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
-using the execute_default() or parts or whole of the multiverse using the execute_multiverse(). These functions allow the user 
-to interactively inspect the code.
+These are functions which allow the user to execute parts or whole of the multiverse. 
+The user can choose to either execute the default analysis using the [execute_default], or a part or 
+whole of the multiverse using the [execute_multiverse].
 }
 \details{
 Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access 

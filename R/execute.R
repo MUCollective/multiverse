@@ -1,8 +1,8 @@
 #' Execute parts of, or the entire multiverse
 #' 
-#' @description These are functions which allow the user to execute the multiverse. The user can choose to either execute the default analysis
-#' using the execute_default() or parts or whole of the multiverse using the execute_multiverse(). These functions allow the user 
-#' to interactively inspect the code.
+#' @description These are functions which allow the user to execute parts or whole of the multiverse. 
+#' The user can choose to either execute the default analysis using the [execute_default], or a part or 
+#' whole of the multiverse using the [execute_multiverse].
 #' 
 #' @param multiverse The multiverse object
 #' 

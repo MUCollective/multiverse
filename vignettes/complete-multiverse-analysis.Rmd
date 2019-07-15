@@ -247,7 +247,7 @@ M$df
 
 <span style="colour:"red"> __this does not work__ </span>
 
-Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `get_code()` function and execute it:
+Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `execute_default()` function and execute it:
 
 ```{r, eval = FALSE}
 universe_parameter_assignment <- list(
@@ -259,13 +259,5 @@ universe_parameter_assignment <- list(
   )
 M %>% execute_default( universe_parameter_assignment ) %>%
   select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
- head()
+  head()
 ```
-
-
-```{r, eval = FALSE}
-M %>%
-  execute_multiverse()
-M@multiverse_table$results[[2]]$df
-```
-
