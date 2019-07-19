@@ -130,7 +130,7 @@ test_that("accessor functions retrieve the multiverse table", {
     relationship_status = list("rs_option1", "rs_option2", "rs_option3")
   )
   
-  ref_df = expand.grid(ref_list)
+  ref_df = expand.grid(ref_list, KEEP.OUT.ATTRS = FALSE)
   
   param.assgn = lapply(seq_len(nrow(ref_df)), function(i) lapply(ref_df, "[[", i)) 
   

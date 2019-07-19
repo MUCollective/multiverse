@@ -20,3 +20,7 @@ switch_expr <- function(x, ...) {
          stop("Don't know how to handle type ", typeof(x), call. = FALSE)
   )
 }
+
+safe_f_rhs <- purrr::safely(f_rhs)
+
+safe_f_lhs <- purrr::safely(f_lhs)

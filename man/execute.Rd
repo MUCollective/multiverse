@@ -8,20 +8,18 @@
 \usage{
 execute_multiverse(multiverse)
 
-execute_default(multiverse, N = NA)
+execute_default(multiverse)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
-
-\item{N}{Override the default analysis and instead perform the N-th analysis from the multiverse table}
 }
 \description{
-These are functions which allow the user to execute parts or whole of the multiverse. 
-The user can choose to either execute the default analysis using the [execute_default], or a part or 
+These are functions which allow the user to execute parts or whole of the multiverse.
+The user can choose to either execute the default analysis using the [execute_default], or a part or
 whole of the multiverse using the [execute_multiverse].
 }
 \details{
-Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access 
+Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access
 the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
 multiverse table, under the results column.
 }
@@ -30,9 +28,9 @@ multiverse table, under the results column.
 #' M <- multiverse()
 inside(M, {
   data <- rnorm(100, 50, 20)
-  
+
   x.mean <- mean(data, trim = branch(
-    trim_values, 
+    trim_values,
     "trim_none" ~ 0,
     "trim_1pc" ~ 0.05,
     "trim_5pc" ~ 0.025,
@@ -40,7 +38,7 @@ inside(M, {
   ))
 })
 
-# Computes the analysis for all 
+# Computes the analysis for all
 # universes in the multiverse`
 M \%>\%
   execute_multiverse()
