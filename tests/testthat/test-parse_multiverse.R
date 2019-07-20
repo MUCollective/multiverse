@@ -315,18 +315,7 @@ test_that("`get_condition` is able to extract conditions in the correct format",
   expect_equal(conditions_list, conditions_list.ref)
 })
 
-test_that("`condition` throws error if assigned to subexpression of an option", {
-  an_expr = expr(branch(value_z,
-                        "constant" ~ 5,
-                        "linear" ~ x + 1,
-                        "sum" %when% (values_y == TRUE) ~ x + y,
-                        "sum" ~ x + (y %when% (value_y == TRUE))
-  ))
-
-  expect_error( map(an_expr[-1:-2], ~ get_condition(.x, 'value_z')) )
-})
-
-test_that("`condition` throws error if assigned to subexpression of an option", {
+test_that("`get_condition` ignores `%when%` if assigned to subexpression of an option", {
   an_expr.1 = expr(branch(value_z,
                         "constant" ~ 5,
                         "linear" ~ x + 1,
@@ -340,8 +329,10 @@ test_that("`condition` throws error if assigned to subexpression of an option", 
                           "sum" ~ (x + (y %when% (value_y == TRUE)))
   ))
 
-  expect_error( map(an_expr.1[-1:-2], ~ get_condition(.x, 'value_z')) )
-  expect_error( map(an_expr.2[-1:-2], ~ get_condition(.x, 'value_z')) )
+  ref = list( NULL, NULL, expr( ("value_z" != "sum" | (values_y == TRUE)) ), NULL)
+
+  expect_equal( map(an_expr.1[-1:-2], ~ get_condition(.x, 'value_z')), ref )
+  expect_equal( map(an_expr.2[-1:-2], ~ get_condition(.x, 'value_z')), ref )
 })
 
 

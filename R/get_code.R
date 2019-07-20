@@ -70,7 +70,7 @@ get_parameter_code <- function(.expr, .assgn) {
 # returns as output an expression (or code) without the branch
 compute_branch <- function(.expr, .assgn) {
   assigned_parameter_option_name = .assgn[[.expr[[2]]]]
-  option_names = map(.expr[-1:-2], ~ get_option_name(.x))
+  option_names = map(.expr[-1:-2], get_option_name)
 
   map(option_names, ~ .x == assigned_parameter_option_name) %>%
     flatten_lgl() %>%

@@ -119,7 +119,7 @@ get_branch_parameter_conditions <- function(.branch_call) {
     stop("parameter names should be symbols")
   }
   parameter_name <- .branch_call[[2]]
-  parameter_options <- map(.branch_call[-1:-2], ~ get_option_name(.x) )
+  parameter_options <- map(.branch_call[-1:-2], get_option_name )
   parameter_conditions <- map(.branch_call[-1:-2], ~ get_condition(.x, parameter_name) )
 
   parameter_options_list <- list(parameter_options)
@@ -142,6 +142,7 @@ get_condition <- function(.x, name) {
   } else {
     .consequent = get_implies_consequent(.x)
   }
+
   if ( !is.null(.consequent)) {
     expr(( !!name != !!.antecedent | !!.consequent ))
   }
@@ -150,14 +151,8 @@ get_condition <- function(.x, name) {
 get_implies_consequent <- function(.x) {
   if( is_call(.x, "%when%") ) {
     f_rhs(.x)
-  } else {
-    if (is_call(.x, "(") | is_call(.x, "{")) {
+  } else if (is_call(.x, "(") | is_call(.x, "{")) {
       get_implies_consequent(f_rhs(.x))
-    } else {
-      if (grepl("%when%",  expr_text(.x), fixed = TRUE) ) {
-        stop("Conditionals cannot be created for subexpressions of an option")
-      }
-    }
   }
 }
 
@@ -190,24 +185,19 @@ combine_parameter_conditions <- function(l1, l2) {
 get_option_name <- function(x) {
   if (is_call(x, "~")) {
     if (is_call( f_lhs(x), "%when%") ) {
-      .name = f_lhs(f_lhs(x))
-      if ( !(is.character(.name) | is.numeric(.name) | is.logical(.name)) ) .name = expr_text(.name)
-      return( .name )
+      .expr = f_lhs(f_lhs(x))
+      return( create_name_from_expr(.expr) )
     } else if (is_call( f_lhs(x)) ) {
-      .name = f_lhs(x)
-      if ( !(is.character(.name) | is.numeric(.name) | is.logical(.name)) ) .name = expr_text(.name)
-      return( .name )
+      .expr = f_lhs(x)
+      return( create_name_from_expr(.expr) )
     }
     return( f_lhs(x) )
   } else {
     if (is_call( x, "%when%") ) {
-      .name = f_lhs(x)
-      if ( !(is.character(.name) | is.numeric(.name) | is.logical(.name)) ) .name = expr_text(.name)
-      return( .name )
-    } else if (!(is.numeric(x) | is.logical(x) | is.character(x))) {
-      return(expr_text(x))
+      .expr = f_lhs(x)
+      return( create_name_from_expr(.expr) )
     }
-    return(x)
+    create_name_from_expr(x)
   }
 }
 

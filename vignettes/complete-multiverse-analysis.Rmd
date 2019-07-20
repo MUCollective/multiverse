@@ -195,7 +195,7 @@ M$df %>% head()
 ```
 
 
-## A complete multiverse analysis
+## A multiverse with all possible combinations specified 
 Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. We'll also try the more concise `<-` assignment operator now.
 
 ```{r}
@@ -277,8 +277,8 @@ In a multiverse analysis, it may occur that the value of one variable might depe
 For example, in our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`.
 
 We should be able to express these conditions in the multiverse. We can do this in two ways:
-1. `%when%`: when declaring a branch, we can use this operator to specify the condition as `A %when% B`
-2. `branch_assert`: the conditional $A | B$ is also referred to as the connective $A \implies B$. This has the meaning "if A is true, then B is also true" and is an abbreviation for $\neg A | B$
+1. `%when%`: when declaring a branch, we can use this operator to specify the conditional $A | B$ as `A %when% B`. The conditional $A | B$ is also referred to as the connective $A \implies B$. This has the meaning "if A is true, then B is also true" and is an abbreviation for $\neg A | B$
+2. `branch_assert`: this function allows the user to specify any condition in the form of a logical operation
 
 #### The %when% operator
 There are two ways in which you can specify the `%when%` operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.
@@ -305,18 +305,21 @@ M$df <- df  %>%
 ```
 
 #### The `branch_assert()` function
-Within the branch assert function, the user needs to specify the classical logic specification $\neg A | B$:
+Within the branch assert function, the user can specify any logical operation. 
+
+For eg: the above logical operations can be specified as: `branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3")` or `branch_assert(!(menstrual_calculation == "mc_option1" | cycle_length == "cl_option3"))`
+
+Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
 
 ```{r, eval = FALSE}
-M = multiverse()
 M$df <- df  %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
             "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
             "mc_option3" ~ StartDateNext)
     ) %>%
-    branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3") %>%
-    branch_assert(menstrual_calculation != "mc_option2" | cycle_length != "cl_option2")
+    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3")) %>%
+    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2"))
 ```
 
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:
