@@ -370,3 +370,20 @@ multiverse_table(M) %>% nrow()
 
 Now, we've implemented the complete multiverse example #2 from Steegen et al.'s paper
 
+
+```{r}
+M <- multiverse()
+inside(M, {
+  df <- data.frame (x = 1:10 ) %>%
+    filter( branch( values_x, 
+                    TRUE, 
+                    x > 2 | x < 6 
+    )) %>%
+    mutate( z = branch(values_z,
+      5,
+      x + 1,
+      (x + 20) %when% (values_x == 'x > 2 | x < 6')
+  ))
+})
+```
+

@@ -15,7 +15,20 @@
 #'
 #' @examples
 #' \dontrun{
-#' M <- multiverse()
+#' # There are different ways to specifying conditions
+#' # One way is to use the %when% operator
+#' # the %when% operator can be specified after the option name
+#' inside(M, {
+#'     df <- data.frame (x = 1:10 ) %>%
+#'         mutate( y = branch( values_y, TRUE, FALSE )) %>%
+#'         mutate( z = branch(values_z,
+#'             "constant" ~ 5,
+#'             "linear" ~ x + 1,
+#'             "sum" %when% (values_y == TRUE) ~ (x + y)
+#'         ))
+#' })
+#'
+#' # or it can be specified after the expression for computing the option value
 #' inside(M, {
 #'     df <- data.frame (x = 1:10 ) %>%
 #'         mutate( y = branch( values_y, TRUE, FALSE )) %>%
@@ -24,6 +37,49 @@
 #'             "linear" ~ x + 1,
 #'             "sum" ~ (x + y) %when% (values_y == TRUE)
 #'         ))
+#' })
+#'
+#' # an advantage of the '%when' operator is that it can also be used it the
+#' # option names are not specified for branches.
+#' # when option names are not specified for branches, option names are assigned to
+#' # the branches. For character, logical or numeric expressions, option names are of the
+#' # same type (i.e. character, logical or numeric expressions respectively)
+#' # For expressions of type symbol or call, options names are characters strings
+#' # containing the expression.
+#' # see the next two examples:
+#' inside(M, {
+#'  df <- data.frame (x = 1:10 ) %>%
+#'    mutate( y = branch( values_y, TRUE, FALSE )) %>%
+#'    mutate( z = branch(values_z,
+#'           5,
+#'           x + 1,
+#'           (x + y) %when% (values_y == TRUE)
+#'    ))
+#' })
+#'
+#' inside(M, {
+#'  df <- data.frame (x = 1:10 ) %>%
+#'    filter( branch( values_x,
+#'        TRUE,
+#'        x > 2 | x < 6
+#'    ) %>%
+#'    mutate( z = branch(values_z,
+#'           5,
+#'           x + 1,
+#'           (x^2) %when% (values_x == 'x > 2 | x < 6')
+#'    ))
+#' })
+#'
+#' # or it can be specified after the expression for computing the option value
+#' inside(M, {
+#'     df <- data.frame (x = 1:10 ) %>%
+#'         mutate( y = branch( values_y, TRUE, FALSE )) %>%
+#'         mutate( z = branch(values_z,
+#'             "constant" ~ 5,
+#'             "linear" ~ x + 1,
+#'             "sum" ~ x + y
+#'         )) %>%
+#'         branch_assert( values_z != "sum" | values_y == TRUE )
 #' })
 #' }
 #'
