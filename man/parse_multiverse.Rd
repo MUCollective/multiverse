@@ -10,13 +10,13 @@ parse_multiverse(multiverse)
 \item{multiverse}{The multiverse object with some code passed to it}
 }
 \value{
-The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions. 
-The list of parameters is a named list which defines all the values that each defined parameter can take. 
-The list of conditions defines, if any of the parameter values are conditional on a specific value of another 
+The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.
+The list of parameters is a named list which defines all the values that each defined parameter can take.
+The list of conditions defines, if any of the parameter values are conditional on a specific value of another
 parameter, the condition.
 }
 \description{
 In a multiverse, the user can define different values that a parameter can take using the `branch` call.
-The `parse_multiverse` identifies the `branch` calls defined in the analysis syntax and parses them into a list of 
+The `parse_multiverse` identifies the `branch` calls defined in the analysis syntax and parses them into a list of
 parameters and the corresponding values that each parameter can take.
 }

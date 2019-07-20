@@ -12,7 +12,7 @@ inside(multiverse, .expr)
 \arguments{
 \item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using `multiverse()`}
 
-\item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed. 
+\item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed.
 Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.}
 
 \item{name, value}{If the shorthand assignment `$<-` is used to assign values to variables in the multiverse
@@ -26,16 +26,16 @@ Add code to the multiverse using the function using a function call, or an assig
 a wrapper around the function
 }
 \details{
-To perform a multiverse analysis, we will need to write code to be executed within the multiverse. 
+To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
-which is captured as an expression. To define multiple analysis options in the code passed to the multiverse, 
-use the [branch] function. See [branch] for more 
-details on how to declare multiple analysis options. 
+which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
+use the [branch] function. See [branch] for more
+details on how to declare multiple analysis options.
 
-The `inside` function only stores the code, and does not execute any code at this step. To execute, we 
+The `inside` function only stores the code, and does not execute any code at this step. To execute, we
 provide separate functions. See [execute] for executing the code.
 
-Instead of using the `inside()` function, an alternate implementation of the multiverse is using 
+Instead of using the `inside()` function, an alternate implementation of the multiverse is using
 the assignment operator, `<-`. See examples below.
 }
 \examples{
@@ -45,9 +45,9 @@ M.1 <- multiverse()
 # using `inside` to declare multiverse code
 inside(M.1, {
   data <- rnorm(100, 50, 20)
-  
+
   x.mean <- mean(data, trim = branch(
-    trim_values, 
+    trim_values,
     "trim_none" ~ 0,
     "trim_1pc" ~ 0.05,
     "trim_5pc" ~ 0.025,
@@ -60,21 +60,21 @@ M.2 <- multiverse()
 # using the assignment operator to declare multiverse code
 M$data <- rnorm(100, 50, 20)
 M$x.mean <- mean(data, trim = branch(
-    trim_values, 
+    trim_values,
     "trim_none" ~ 0,
     "trim_1pc" ~ 0.05,
     "trim_5pc" ~ 0.025,
     "trim_10pc" ~ 0.05
   ))
-  
-# declaring multiple options for a data processing step (calculating a new variable) 
+
+# declaring multiple options for a data processing step (calculating a new variable)
 data(durante)
 df <- durante
 
-inside(M.1, {   
-  df <- df  \%>\% 
+inside(M.1, {
+  df <- df  \%>\%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) \%>\%
-    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+    mutate( NextMenstrualOnset = branch(menstrual_calculation,
                                    "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
                                    "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
                                    "mc_option3" ~ StartDateNext

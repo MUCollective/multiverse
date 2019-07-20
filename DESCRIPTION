@@ -28,6 +28,7 @@ Imports:
     tidyr,
     tibble,
     magrittr,
+    stringi,
     modelr
 Language: en-US
 VignetteBuilder: knitr

@@ -14,9 +14,21 @@ expr_type <- function(x) {
   }
 }
 
+create_name_from_expr <- function(x) {
+  if (rlang::is_syntactic_literal(x)) {
+    x
+  } else {
+    expr_text(x)
+  }
+}
+
 switch_expr <- function(x, ...) {
   switch(expr_type(x),
          ...,
          stop("Don't know how to handle type ", typeof(x), call. = FALSE)
   )
 }
+
+safe_f_rhs <- purrr::safely(f_rhs)
+
+safe_f_lhs <- purrr::safely(f_lhs)

@@ -14,6 +14,8 @@
 \alias{parameters.multiverse}
 \alias{conditions}
 \alias{conditions.default}
+\alias{conditions.multiverse}
+\alias{from_universe_i}
 \title{Accessing contents of the multiverse object}
 \usage{
 \method{$}{multiverse}(multiverse, name)
@@ -38,14 +40,18 @@ parameters(multiverse)
 
 conditions(multiverse)
 
-conditions.default(multiverse)
+\method{conditions}{default}(multiverse)
 
-conditions(multiverse)
+\method{conditions}{multiverse}(multiverse)
+
+from_universe_i(multiverse, idx, name)
 }
 \arguments{
 \item{multiverse}{Object of class multiverse}
 
 \item{name}{a variable name}
+
+\item{idx}{index of the universe in the multiverse (corresponds to the row in the table)}
 }
 \description{
 A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
