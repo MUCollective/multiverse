@@ -19,8 +19,12 @@ Below, we illustrate an example of a single analysis for a dataset. And then ext
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(echo = TRUE)
-opts_knit$set(output.dir="vignettes")
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4,
+  output.dir="vignettes"
+)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
