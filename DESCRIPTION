@@ -29,6 +29,8 @@ Imports:
     tibble,
     magrittr,
     stringi,
-    modelr
+    modelr,
+    broom,
+    gganimate
 Language: en-US
 VignetteBuilder: knitr
