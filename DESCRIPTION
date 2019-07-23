@@ -17,7 +17,10 @@ Suggests:
     testthat (>= 2.1.0),
     lubridate,
     rmarkdown,
-    covr
+    covr,
+    broom,
+    gganimate,
+    gifski,
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
@@ -29,8 +32,6 @@ Imports:
     tibble,
     magrittr,
     stringi,
-    modelr,
-    broom,
-    gganimate
+    modelr
 Language: en-US
 VignetteBuilder: knitr
