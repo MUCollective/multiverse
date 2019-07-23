@@ -3,6 +3,11 @@
 language: R
 cache: packages
 
+addons:
+  apt:
+    packages:
+      - cargo
+
 r_packages:
   - covr
 
