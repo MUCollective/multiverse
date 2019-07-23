@@ -1,5 +1,5 @@
 #' Accessing contents of the multiverse object
-#' 
+#'
 #' @description A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
 #' Variables from the analysis that is being performed within the multiverse can be accessed using the `$`.
 #' Object variables such as the `code`, the `multiverse table`, the `parameters` and the `conditions` can be accessed using respective functions
@@ -8,7 +8,7 @@
 #' @param multiverse Object of class multiverse
 #' @param name a variable name
 #'
-#' @export 
+#' @export
 `$.multiverse` <- function(multiverse, name) {
   .idx = 1
   m_obj = attr(multiverse, "multiverse")
@@ -95,6 +95,19 @@ conditions.default <- function(multiverse) {
 
 #' @rdname accessors
 #' @export
-conditions <- function(multiverse) {
+conditions.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['conditions']]
 }
+
+#' @rdname accessors
+#' @param idx index of the universe in the multiverse (corresponds to the row in the table)
+#' @export
+from_universe_i <- function(multiverse, idx, name) {
+  name = enquo(name)
+  stopifnot( is.multiverse(multiverse) )
+  m_tbl = attr(multiverse, "multiverse")[['multiverse_table']]
+
+  m_tbl$.results[[idx]][[quo_text(name)]]
+}
+
+

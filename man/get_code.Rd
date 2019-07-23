@@ -4,22 +4,25 @@
 \alias{get_code}
 \title{Code corresponding to a single analysis}
 \usage{
-get_code(multiverse, .assgn = NULL)
+get_code(multiverse, .code, .assgn = NULL)
 }
 \arguments{
 \item{multiverse}{The multiverse object with some code passed to it}
 
+\item{.code}{Code that is passed to the multiverse stripped of calls such as `branch_assert`.
+This is the output of `remove_branch_assert` function.}
+
 \item{.assgn}{A list containing the assignments for each defined parameter in the multiverse}
 }
 \description{
-Given a particular set of options for each parameter, extracts the code for performing a 
+Given a particular set of options for each parameter, extracts the code for performing a
 single analysis from the code used to declare the multiverse.
 }
 \details{
-For a particular parameter assignment (i.e. one set of options that each defined parameter 
-in the multiverse takes), this function rewrites the code passed into the multiverse to output the 
+For a particular parameter assignment (i.e. one set of options that each defined parameter
+in the multiverse takes), this function rewrites the code passed into the multiverse to output the
 corresponding code for that set of parameter values --- the analysis for a single universe.
 
-This is primarily going to be called by other functions, and perhaps not going to be as useful to 
+This is primarily going to be called by other functions, and perhaps not going to be as useful to
 the user for anything other than inspecting the rewritten code.
 }

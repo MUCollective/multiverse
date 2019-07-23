@@ -2,3 +2,17 @@
 
 language: R
 cache: packages
+
+r_build_args: '--no-build-vignettes'
+r_check_args: '--ignore-vignettes'
+
+addons:
+  apt:
+    packages:
+      - cargo # for gifski_renderer
+
+r_packages:
+  - covr
+
+after_success:
+  - Rscript -e 'library(covr);codecov()'
