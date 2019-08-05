@@ -354,10 +354,10 @@ test_that("`parse_multiverse` returns the complete parameter table", {
   ) %>%
     expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
     unnest() %>%
-    mutate( index = seq(1:nrow(.)) ) %>%
-    select(index, everything())
+    mutate( .universe = seq(1:nrow(.)) ) %>%
+    select(.universe, everything())
 
-  param.assgn = lapply(seq_len(nrow(p_tbl_df.ref)), function(i) lapply(select(p_tbl_df.ref, -index), "[[", i))
+  param.assgn = lapply(seq_len(nrow(p_tbl_df.ref)), function(i) lapply(select(p_tbl_df.ref, -.universe), "[[", i))
   p_tbl_df.ref <- p_tbl_df.ref %>% mutate(.parameter_assignment = param.assgn)
 
   # comparing nested tibbles doesn't work correctly, but can convert to lists
@@ -386,8 +386,8 @@ test_that("`parse_multiverse` works when conditions are specified", {
   ) %>%
   expand.grid(KEEP.OUT.ATTRS = FALSE)  %>%
   unnest() %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
-  select(index, everything()) %>%
+  mutate( .universe = seq(1:nrow(.)) ) %>%
+  select(.universe, everything()) %>%
   filter( values_z != "sum" | values_y == TRUE )
 
   M <- multiverse()

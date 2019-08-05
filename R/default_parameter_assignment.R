@@ -51,10 +51,6 @@ default_parameter_assignment.multiverse <- function(multiverse) {
   m_obj = attr(multiverse, "multiverse")
   .idx = m_obj[['default_parameter_assignment']]
 
-  x = m_obj[['multiverse_table']] %>%
-    extract2( '.parameter_assignment' )
-  print(.idx)
-
   m_obj[['multiverse_table']] %>%
     extract2( '.parameter_assignment' ) %>%
     extract2(.idx)

@@ -434,7 +434,7 @@ p <- multiverse_table(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( index )
+  transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
 ```
@@ -477,7 +477,7 @@ p <- multiverse_table(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( index )
+  transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
 ```
@@ -496,7 +496,7 @@ p <- multiverse_table(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( index )
+  transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
 ```
@@ -510,12 +510,11 @@ p <- multiverse_table(M) %>%
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
   ) ) %>%
-  filter( index %in% sample(1:210, 10) ) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( index )
+  transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
 ```
@@ -529,12 +528,11 @@ p <- multiverse_table(M) %>%
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
   ) ) %>%
-  filter( index %in% sample(1:210, 10) ) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( index )
+  transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
 ```

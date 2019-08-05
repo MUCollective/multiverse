@@ -79,8 +79,8 @@ test_that("basic retrieval works with `multiverse()`", {
     values_z = list("constant", "linear", "sum")
   ), KEEP.OUT.ATTRS = FALSE) %>%
     unnest() %>%
-    mutate( index = seq(1:nrow(.)) ) %>%
-    select(index, everything())
+    mutate( .universe = seq(1:nrow(.)) ) %>%
+    select(.universe, everything())
 
   expect_equal( as.list(m_tbl), as.list(m_tbl.ref) )
 })

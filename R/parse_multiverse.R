@@ -63,10 +63,10 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list) {
   df <- parameters_conditions.list$parameters %>%
     expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
     unnest() %>%
-    mutate( index = seq(1:nrow(.)) ) %>%
-    select(index, everything())
+    mutate( .universe = seq(1:nrow(.)) ) %>%
+    select(.universe, everything())
 
-  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(select(df, -index), "[[", i))
+  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(select(df, -.universe), "[[", i))
 
   if (length(parameters_conditions.list$condition) > 0) {
     all_conditions <- parameters_conditions.list$conditions %>%
