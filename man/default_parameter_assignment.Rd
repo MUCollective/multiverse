@@ -26,7 +26,7 @@ The integer indicates the corresponding position in the multiverse table which w
 }
 \description{
 Functions which allow the user to retrieve or update the default assignments for
-each parameter defined in the multiverse. Retrieving the default analysis allows the users 
+each parameter defined in the multiverse. Retrieving the default analysis allows the users
 to see what the default analysis would look like (what values each parameter would take). Updating
 the default analysis allows the users to specify a different set of parameter assignments which will
 be executed.
@@ -36,10 +36,10 @@ be executed.
 M <- multiv
 inside(M, {
   df <- data.frame( x = sample(1:100, 50, replace = TRUE)
-  
+
   df <- df \%>\%
    mutate( y = branch(
-    value_y, 
+    value_y,
     "zero" ~ 0,
     "three" ~ 3,
     "x + 1" ~ x + 1,

@@ -37,7 +37,6 @@ test_that("accessor functions work on newly initialised object", {
 # accessor functions ------------------------------------------------
 
 M.2 <- multiverse()
-
 make_data <- function(nrow = 500) {
   data.frame(
         Relationship = sample(1:4, nrow, replace = TRUE),
@@ -58,12 +57,12 @@ test_df <<- make_data()
 inside(M.2, {
   df <- test_df %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+    mutate( NextMenstrualOnset = branch(menstrual_calculation,
                 "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
                 "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
                 "mc_option3" ~ StartDateNext)
     ) %>%
-    mutate(Relationship = branch( relationship_status, 
+    mutate(Relationship = branch( relationship_status,
                 "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
                 "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
                 "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
@@ -74,18 +73,18 @@ test_that("accessor functions for getting default code", {
   ref_code = expr({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate( NextMenstrualOnset = branch(menstrual_calculation, 
-                                          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-                                          "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-                                          "mc_option3" ~ StartDateNext)
+      mutate( NextMenstrualOnset = branch(menstrual_calculation,
+                "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                "mc_option3" ~ StartDateNext)
       ) %>%
-      mutate(Relationship = branch( relationship_status, 
-                                    "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
-                                    "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-                                    "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+      mutate(Relationship = branch( relationship_status,
+                "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+                "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+                "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
       )
   })
-  
+
   expect_true( is.language(code(M.2)) )
   expect_equal( code(M.2), ref_code )
 })
@@ -95,7 +94,7 @@ test_that("accessor function for parameter list", {
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
     relationship_status = list("rs_option1", "rs_option2", "rs_option3")
   )
-  
+
   expect_true( is.list(parameters(M.2)) )
   expect_mapequal( parameters(M.2), ref_list )
 })
@@ -104,7 +103,7 @@ test_that("accessor function for parameter list", {
 
 test_that("accessor functions get default parameter assignment", {
   ref_list = list(menstrual_calculation = "mc_option1", relationship_status = "rs_option1")
-  
+
   expect_true( is.list(default_parameter_assignment(M.2)) )
   expect_mapequal( default_parameter_assignment(M.2), ref_list )
 })
@@ -113,36 +112,39 @@ test_that("accessor functions retrieve the multiverse table", {
   ref_expr = expr({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+      mutate( NextMenstrualOnset = branch(menstrual_calculation,
                 "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
                 "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
                 "mc_option3" ~ StartDateNext)
       ) %>%
-      mutate(Relationship = branch( relationship_status, 
+      mutate(Relationship = branch( relationship_status,
                 "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
                 "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
                 "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
       )
   })
-  
+
   ref_list = list(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
     relationship_status = list("rs_option1", "rs_option2", "rs_option3")
   )
-  
-  ref_df = expand.grid(ref_list, KEEP.OUT.ATTRS = FALSE)
-  
-  param.assgn = lapply(seq_len(nrow(ref_df)), function(i) lapply(ref_df, "[[", i)) 
-  
+
+  ref_df = expand.grid(ref_list, KEEP.OUT.ATTRS = FALSE) %>%
+    unnest() %>%
+    mutate( index = seq(1:nrow(.)) ) %>%
+    select(index, everything())
+
+  param.assgn = lapply(seq_len(nrow(ref_df)), function(i) lapply(select(ref_df, -index), "[[", i))
+
   ref_df = ref_df %>%
     mutate(
       .parameter_assignment = param.assgn,
       .code = map(.parameter_assignment, ~ get_parameter_code(ref_expr, .x))
     ) %>%
     as_tibble()
-  
+
   df = multiverse_table(M.2) %>% select(-.results)
-  
+
   expect_true( tibble::is_tibble(multiverse_table(M.2)) )
   expect_equal( as.list(ref_df), as.list(df) )
 })

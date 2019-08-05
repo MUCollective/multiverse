@@ -160,7 +160,7 @@ test_that("option names of integer types are supported in branches", {
   expect_equal( option_names, option_names.ref )
 })
 
-test_that("option names of more than one type (numeric & character) are supported in branches", {
+test_that("option names of more than one type (numeric & character) throw an error", {
   an_expr = expr({
     df = df %>%
       mutate(x = branch(
@@ -171,10 +171,7 @@ test_that("option names of more than one type (numeric & character) are supporte
       ))
   })
 
-  option_names = get_parameter_conditions(an_expr)$parameters
-  option_names.ref = list(values_x = list(0, 3, "y + 5"))
-
-  expect_equal( option_names, option_names.ref )
+  expect_error(get_parameter_conditions(an_expr))
 })
 
 test_that("unnamed option names of type call are converted into strings", {
@@ -193,23 +190,7 @@ test_that("unnamed option names of type call are converted into strings", {
   expect_equal( option_names, option_names.ref )
 })
 
-test_that("option names of type call are converted into strings", {
-  an_expr = expr({
-    df = df %>%
-      mutate(x = branch(
-        values_x,
-        y^2 + 1 ~ y^2 + 1,
-        y + 5 ~ y + 5
-      ))
-  })
-
-  option_names = get_parameter_conditions(an_expr)$parameters
-  option_names.ref = list(values_x = list("y^2 + 1", "y + 5"))
-
-  expect_equal( option_names, option_names.ref )
-})
-
-test_that("unnamed options in branches are converted into option names: `char` -> `char`, `numeric` -> `numeric`, `call` -> `call` ", {
+test_that("unnamed options in branches are converted into option names: `char` -> `char`, `numeric` -> `numeric`, `call` -> `char` ", {
   an_expr = expr({
     df = mutate(df, x = branch(
       values_x,
@@ -221,8 +202,7 @@ test_that("unnamed options in branches are converted into option names: `char` -
   })
 
   option_names = get_parameter_conditions(an_expr)$parameters
-  option_names.ref = list(values_x = list(0, 3, "abc", "y + 5"))
-
+  option_names.ref = list(values_x = list("0", "3", "abc", "y + 5"))
   expect_equal( option_names, option_names.ref )
 })
 
@@ -372,8 +352,12 @@ test_that("`parse_multiverse` returns the complete parameter table", {
     cycle_length = list("cl_option1", "cl_option2", "cl_option3"),
     certainty = list("cer_option1", "cer_option2")
   ) %>%
-    expand.grid(KEEP.OUT.ATTRS = FALSE)
-  param.assgn = lapply(seq_len(nrow(p_tbl_df.ref)), function(i) lapply(p_tbl_df.ref, "[[", i))
+    expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
+    unnest() %>%
+    mutate( index = seq(1:nrow(.)) ) %>%
+    select(index, everything())
+
+  param.assgn = lapply(seq_len(nrow(p_tbl_df.ref)), function(i) lapply(select(p_tbl_df.ref, -index), "[[", i))
   p_tbl_df.ref <- p_tbl_df.ref %>% mutate(.parameter_assignment = param.assgn)
 
   # comparing nested tibbles doesn't work correctly, but can convert to lists
@@ -397,10 +381,13 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
 
 test_that("`parse_multiverse` works when conditions are specified", {
   p_tbl_df.ref = list(
-    values_y = list(TRUE, FALSE),
+    values_y = list("TRUE", "FALSE"),
     values_z = list("constant", "linear", "sum")
   ) %>%
-  expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
+  expand.grid(KEEP.OUT.ATTRS = FALSE)  %>%
+  unnest() %>%
+  mutate( index = seq(1:nrow(.)) ) %>%
+  select(index, everything()) %>%
   filter( values_z != "sum" | values_y == TRUE )
 
   M <- multiverse()
@@ -501,8 +488,8 @@ test_that("unnamed options in branches are supported", {
     inside(M.2, {
       df = mutate(df, x = branch(
             values_x,
-            0 ~ 0,
-            3 ~ 3,
+            "0" ~ 0,
+            "3" ~ 3,
             "abc" ~ "abc",
             "y + 5" ~ y + 5
         ))

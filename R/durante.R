@@ -71,5 +71,3 @@
 #' \emph{Abortion}, \emph{Marriage}, \emph{StemCell}, \emph{Marijuana}, \emph{RestrictAbortion}
 "durante"
 
-
-

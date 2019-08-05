@@ -14,9 +14,13 @@ expr_type <- function(x) {
   }
 }
 
-create_name_from_expr <- function(x) {
+create_name_from_expr <- function(x, as.str = FALSE) {
   if (rlang::is_syntactic_literal(x)) {
-    x
+    if (as.str) {
+      as.character(x)
+    } else {
+      x
+    }
   } else {
     expr_text(x)
   }

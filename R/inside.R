@@ -78,6 +78,10 @@
 #' @export
 inside <- function(multiverse, .expr) {
   .expr = enexpr(.expr)
+  if(!is_call(.expr, "{")) {
+    .expr = expr({ !!.expr })
+  }
+
   m_obj = attr(multiverse, "multiverse")
 
   add_and_parse_code(m_obj, .expr)
@@ -102,8 +106,7 @@ add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
   if (is_null(m_obj$code)) {
     .c = .code
   } else {
-    .c = m_obj$code %>%
-      inset2(., length(.) + 1, .code[[2]])
+    .c = concatenate_expr(m_obj$code, .code)
   }
 
   m_obj$code <- .c
@@ -112,4 +115,22 @@ add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
   if (execute) execute_default(m_obj)
+}
+
+concatenate_expr <- function(ref, .add){
+  if (is_call(.add, "{")) {
+    ref = concatenate_expr(ref, as.list(.add)[-1])
+  } else {
+    if(length(.add) == 1){
+      ref = ref %>%
+        inset2(., length(.) + 1, .add[[1]])
+    } else {
+      ref = ref %>%
+        inset2(., length(.) + 1, .add[[1]])
+      .add = .add[-1]
+      ref = concatenate_expr(ref, .add)
+    }
+  }
+
+  ref
 }

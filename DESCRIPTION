@@ -19,8 +19,10 @@ Suggests:
     rmarkdown,
     covr,
     broom,
+    boot,
     gganimate,
     gifski,
+    patchwork
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
@@ -28,6 +30,7 @@ Imports:
     rlang (>= 0.3.4),
     knitr,
     R6,
+    methods,
     tidyr,
     tibble,
     magrittr,

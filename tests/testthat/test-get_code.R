@@ -81,7 +81,7 @@ test_that("can extract the option names from a branch", {
 
   lgl.1.ref = list("zero", "three", "null", "y + 5")
   lgl.2.ref = list("no_filter", "computed_25to35", "reported_25to35")
-  lgl.3.ref = list("a", 1, "x + 1", "x^2", TRUE)
+  lgl.3.ref = list("a", "1", "x + 1", "x^2", "TRUE")
 
   expect_equal(map(an_expr.1[-1:-2], ~ get_option_name(.x)), lgl.1.ref)
   expect_equal(map(an_expr.2[-1:-2], ~ get_option_name(.x)), lgl.2.ref)

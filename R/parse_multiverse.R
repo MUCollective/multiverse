@@ -19,6 +19,8 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr mutate_all
 #' @importFrom dplyr tibble
+#' @importFrom dplyr everything
+#' @importFrom dplyr filter
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr unnest
 #' @importFrom purrr compact
@@ -59,9 +61,12 @@ get_multiverse_table_no_param <- function(multiverse) {
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(multiverse, parameters_conditions.list) {
   df <- parameters_conditions.list$parameters %>%
-    expand.grid(KEEP.OUT.ATTRS = FALSE) #unnest( cols = everything())
+    expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
+    unnest() %>%
+    mutate( index = seq(1:nrow(.)) ) %>%
+    select(index, everything())
 
-  param.assgn = lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i))
+  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(select(df, -index), "[[", i))
 
   if (length(parameters_conditions.list$condition) > 0) {
     all_conditions <- parameters_conditions.list$conditions %>%
@@ -69,7 +74,7 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list) {
       paste0(collapse = "&") %>%
       parse_expr()
   } else {
-    all_conditions <- TRUE
+    all_conditions <- expr(TRUE)
   }
 
   .code = remove_branch_assert( multiverse[['code']] )
@@ -121,6 +126,10 @@ get_branch_parameter_conditions <- function(.branch_call) {
   parameter_name <- .branch_call[[2]]
   parameter_options <- map(.branch_call[-1:-2], get_option_name )
   parameter_conditions <- map(.branch_call[-1:-2], ~ get_condition(.x, parameter_name) )
+
+  if (length(unique(map(parameter_options, typeof))) != 1) {
+    stop("all option names should be of the same type")
+  }
 
   parameter_options_list <- list(parameter_options)
   names(parameter_options_list) <- as.character(parameter_name)
@@ -183,6 +192,7 @@ combine_parameter_conditions <- function(l1, l2) {
 }
 
 get_option_name <- function(x) {
+  # when option names are specified
   if (is_call(x, "~")) {
     if (is_call( f_lhs(x), "%when%") ) {
       .expr = f_lhs(f_lhs(x))
@@ -192,12 +202,14 @@ get_option_name <- function(x) {
       return( create_name_from_expr(.expr) )
     }
     return( f_lhs(x) )
-  } else {
+  }
+  # when option names are implicitly identified from the expression
+  else {
     if (is_call( x, "%when%") ) {
       .expr = f_lhs(x)
       return( create_name_from_expr(.expr) )
     }
-    create_name_from_expr(x)
+    create_name_from_expr(x, TRUE)
   }
 }
 

@@ -91,7 +91,7 @@ test_that("`add_and_parse_code` parses the code", {
 
   add_and_parse_code(M.R6, an_expr)
 
-  expect_equal( dim(M.R6$multiverse_table), c(4, 4) )
+  expect_equal( dim(M.R6$multiverse_table), c(4, 5) )
   expect_equal( length(M.R6$parameters), 1 )
   expect_equal( length(M.R6$parameters$value_y), 4 )
 })
