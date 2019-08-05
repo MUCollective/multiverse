@@ -21,8 +21,8 @@ Suggests:
     broom,
     boot,
     gganimate,
-    gifski,
-    patchwork
+    gifski
+Remotes: github::thomasp85/patchwork
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
