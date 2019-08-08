@@ -27,10 +27,10 @@ library(ggplot2)
 library(purrr)
 library(broom)
 library(gganimate)
-library(multidy)
-library(patchwork)
+library(cowplot)
 library(stringr)
 library(forcats)
+library(multidy)
 ```
 
 ## Data and Analysis

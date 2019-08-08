@@ -32,7 +32,7 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(multidy)
-library(patchwork)
+library(cowplot)
 ```
 
 
