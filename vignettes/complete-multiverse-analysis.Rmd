@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{"A complete multiverse analysis}
+  %\VignetteIndexEntry{A complete multiverse analysis}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -32,6 +32,7 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(multidy)
+library(patchwork)
 ```
 
 
@@ -138,12 +139,20 @@ NextMenstrualOnset = branch(menstrual_calculation,
 
 The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Thus, we need to declare this data processing step inside the multiverse. We do this by using the `inside()` function. The `inside()` function takes in two arguments:
 1. the multiverse object, M; and
-2. the code for the analysis (including branches), enclosed within `{}`
+2. the code for the analysis (including branches). Note that if you are passing multiple expressions, they should be enclosed within `{}`.
 
 ```{r add_to_multiverse}
+# here we just create the variable `df` in the multiverse
+inside(M, df <- data.raw.study2)
+
+# here, we perform two `mutate` operations in the multiverse.
+# although they could have been chained, this illustrates 
+# how multiple variables can be declared together using the `{}`
 inside(M, {
-  df <- data.raw.study2  %>%
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+  df <- df %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
+  
+  df <- df %>%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -156,7 +165,7 @@ Alternative to the `inside` function, we can use the more concise `<-` operator 
 
 ```{r alternate_add_to_multiverse, eval = FALSE}
 M$df <- ~ data.raw.study2  %>%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -183,6 +192,7 @@ multiverse_table(M)
 ```
 
 4. `current_parameter_assignment`, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.
+
 ```{r}
 default_parameter_assignment(M)
 ```
@@ -385,7 +395,6 @@ M$df <- ~ df %>%
   mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
 ```
 
-
 The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`.
 
 ```{r}
@@ -405,27 +414,29 @@ Now that we have performed the analysis in each universe of the multiverse, we n
 
 ```{r}
 multiverse_table(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
   unnest( map(.results, "summary_RelComp" ) ) %>%
   head( 10 )
 ```
 
 We then take this data frame and plot the results as a confidence interval and point estimate using `ggplot2`. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use `gganimate` to animate through the results of each universe to quickly get an overview of the robustness of the results.
 
+Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette [`Extracting and Visualizing the results of a multiverse analysis`](visualizing-multiverse.html)
 
 ```{r, message = FALSE}
-multiverse_table(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
+p <- multiverse_table(M) %>%
   unnest( map(.results, "summary_RelComp" ) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
   ) ) %>%
+  filter( term != "(Intercept)" ) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_states( index )
+  transition_manual( .universe )
+
+animate(p, nframes = 210, fps = 2)
 ```
 
 
@@ -455,8 +466,7 @@ execute_multiverse(M)
 ### Model #3: Effect of Fertility and Relationship status on Fiscal political attitudes
 
 ```{r}
-multiverse_table(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
+p <- multiverse_table(M) %>%
   unnest( map(.results, "summary_FiscConsComp" ) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
@@ -467,14 +477,15 @@ multiverse_table(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_states( index )
+  transition_manual( .universe )
+
+animate(p, nframes = 210, fps = 2)
 ```
 
 ### Model #4: Effect of Fertility and Relationship status on Social political attitudes
 
 ```{r}
-multiverse_table(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
+p <- multiverse_table(M) %>%
   unnest( map(.results, "summary_SocConsComp" ) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
@@ -485,42 +496,44 @@ multiverse_table(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_states( index )
+  transition_manual( .universe )
+
+animate(p, nframes = 210, fps = 2)
 ```
 
 ### Model #5: Effect of Fertility and Relationship status on Voting preferences
 
 ```{r}
-multiverse_table(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
+p <- multiverse_table(M) %>%
   unnest( map(.results, "summary_Donate" ) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
   ) ) %>%
-  filter( index %in% sample(1:210, 10) ) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_states( index )
+  transition_manual( .universe )
+
+animate(p, nframes = 210, fps = 2)
 ```
 
 ### Model #6: Effect of Fertility and Relationship status on Donation preferences
 
 ```{r}
-multiverse_table(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
+p <- multiverse_table(M) %>%
   unnest( map(.results, "summary_Vote" ) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
   ) ) %>%
-  filter( index %in% sample(1:210, 10) ) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_states( index )
+  transition_manual( .universe )
+
+animate(p, nframes = 210, fps = 2)
 ```
 

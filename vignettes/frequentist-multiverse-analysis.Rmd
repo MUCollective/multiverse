@@ -1,0 +1,175 @@
+---
+title: "A multiverse analysis of the efficiency of physical visualizations"
+author: "Abhraneel Sarma"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{A multiverse analysis of the efficiency of physical visualizations}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+```{r setup, include=FALSE}
+library(knitr)
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4,
+  output.dir="vignettes"
+)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(broom)
+library(gganimate)
+library(multidy)
+library(boot)
+```
+
+
+## The data
+
+```{r}
+data("userlogs")
+data.userlogs.raw = userlogs
+```
+
+
+## Average task completion time (arithmetic mean) for each condition. 
+Error bars are 95% BCa bootstrap CIs.
+
+```{r}
+samplemean <- function(x, d) {return(mean(x[d]))}
+
+M = multiverse()
+
+M$df <- ~ data.userlogs.raw %>%
+  mutate( duration = branch( data_transform, 
+                         "none" ~ duration,
+                         "log" ~ log(duration)
+        )) %>% 
+  mutate( modality.f = factor(modality) ) %>%
+  group_by(subject, modality.f, modalityname) %>% 
+  summarise( duration = mean(duration) ) %>%
+  group_by(modality.f) %>%
+  nest( duration )
+
+M$n_comparisons <- ~ 3
+
+M$df <- ~ df %>%
+  mutate( ci = branch( confidence_interval, 0.5, 0.68, 0.8, 0.9, 0.95, 0.99, 0.999 )) %>%
+  mutate( fit = branch(bootstrap,
+                       "t-dist" ~ map2(data, ci, ~ tidy(t.test(.x$duration, conf.level = .y)) ),
+                       "bca" ~ map2(data, ci, ~ boot(data = .x$duration, statistic = samplemean, R = 5000) %>%
+                              tidy( conf.int = TRUE, conf.method = "bca", conf.level = .y) %>%
+                              rename(estimate = statistic))
+        )) %>%
+  select(-data) %>%
+  unnest( fit )
+```
+
+```{r}
+multiverse_table(M)
+```
+
+
+```{r, warnings = FALSE}
+execute_multiverse(M)
+```
+
+
+```{r}
+p <- multiverse_table(M) %>%
+  unnest( map(.results, "df" ) )  %>%
+  mutate( modality.f = recode( modality.f, 
+                 "1" = "physical-touch",
+                 "2" = "no-touch",
+                 "3" = "virtual-prop",
+                 "4" = "virtual-mouse"
+  ) ) %>%
+  mutate( 
+    estimate = ifelse(data_transform == "log", exp(estimate), estimate),
+    conf.low = ifelse(data_transform == "log", exp(conf.low), conf.low),
+    conf.high = ifelse(data_transform == "log", exp(conf.high), conf.high)
+  ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap)) %>%
+  ggplot() + 
+  geom_vline( xintercept = 0,  colour = '#979797' ) +
+  geom_point( aes(x = estimate, y = modality.f)) +
+  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = modality.f), height = 0)  +
+  transition_manual( .universe )
+
+animate(p, nframes = 28,  fps = 2)
+```
+
+## Differences between mean completion times 
+Differences between mean completion times (arithmetic means) between conditions. Error bars are 95% BCa bootstrap CIs.
+
+```{r}
+M$df.diffs <- ~ data.userlogs.raw  %>%
+  mutate( duration = branch( data_transform, 
+                         "none" ~ duration,
+                         "log" ~ log(duration)
+  )) %>%
+  arrange(modality) %>%
+  mutate(index = rep(seq(1:(nrow(.)/4)), 4)) %>%
+  select(index, modalityname, duration) %>%
+  spread(modalityname, duration) %>%
+  mutate(
+    `physical-touch - physical-notouch` = `physical-touch` - `physical-notouch`,
+    `physical-notouch - virtual-prop` = `physical-notouch` - `virtual-prop`,
+    `virtual-prop - virtual-mouse` = `virtual-prop` - `virtual-mouse`
+  ) %>%
+  select(`physical-touch - physical-notouch`, `physical-notouch - virtual-prop`, `virtual-prop - virtual-mouse`) %>%
+  gather(levels) %>%
+  group_by(levels) %>%
+  nest()
+
+M$df.diffs <- ~ df.diffs  %>%
+  mutate( ci = branch( confidence_interval, 0.5, 0.68, 0.8, 0.9, 0.95, 0.99, 0.999 )) %>%
+  mutate( diff = branch(bootstrap,
+                       "t-dist" ~ map2(data, ci, ~ tidy(t.test(.x$value, conf.level = .y)) ),
+                       "bca" ~ map2(data, ci, ~ boot(data = .x$value, statistic = samplemean, R = 5000) %>%
+                              tidy( conf.int = TRUE, conf.method = "bca", conf.level = .y) %>%
+                              rename(estimate = statistic))
+        )) %>%
+  unnest(diff)
+```
+
+```{r, warnings = FALSE}
+execute_multiverse(M)
+```
+
+```{r}
+M$df.diffs
+```
+
+```{r}
+multiverse_table(M) %>%
+  unnest( map(.results, "df.diffs" ) ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap))
+```
+
+
+```{r}
+p <- multiverse_table(M) %>%
+  unnest( map(.results, "df.diffs" ) ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap)) %>%
+  ggplot() + 
+  geom_vline( xintercept = 0,  colour = '#979797' ) +
+  geom_point( aes(x = estimate, y = levels)) +
+  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = levels), height = 0) +
+  transition_manual( .universe )
+
+animate(p, nframes = 28,  fps = 4)
+```
+
+
+
+
+
+
+
+

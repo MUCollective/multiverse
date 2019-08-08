@@ -26,7 +26,7 @@ test_that("basic retrieval works with `parameters()`", {
   M <- multiverse()
   M$x <- ~ branch( x_values, 0, 3, 5 )
 
-  expect_equal(parameters(M), list(x_values = list(0, 3, 5)) )
+  expect_equal(parameters(M), list(x_values = list("0", "3", "5")) )
 })
 
 test_that("`parameters()` throws error for objects of class other than multiverse", {
@@ -75,9 +75,12 @@ test_that("basic retrieval works with `multiverse()`", {
 
   m_tbl = multiverse_table(M) %>% select(-.parameter_assignment, -.code, -.results)
   m_tbl.ref = expand.grid(list(
-    values_y = list(TRUE, FALSE),
+    values_y = list("TRUE", "FALSE"),
     values_z = list("constant", "linear", "sum")
-  ), KEEP.OUT.ATTRS = FALSE)
+  ), KEEP.OUT.ATTRS = FALSE) %>%
+    unnest() %>%
+    mutate( .universe = seq(1:nrow(.)) ) %>%
+    select(.universe, everything())
 
   expect_equal( as.list(m_tbl), as.list(m_tbl.ref) )
 })
