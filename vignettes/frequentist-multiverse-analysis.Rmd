@@ -41,14 +41,6 @@ data.userlogs.raw = userlogs
 Error bars are 95% BCa bootstrap CIs.
 
 ```{r}
-M = multiverse()
-inside(M, x <- 1)
-inside(M, y <- 1)
-code(M)
-```
-
-
-```{r}
 samplemean <- function(x, d) {return(mean(x[d]))}
 
 M = multiverse()
@@ -102,11 +94,12 @@ p <- multiverse_table(M) %>%
     conf.low = ifelse(data_transform == "log", exp(conf.low), conf.low),
     conf.high = ifelse(data_transform == "log", exp(conf.high), conf.high)
   ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap)) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = modality.f)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = modality.f), height = 0)  +
-  transition_manual( index )
+  transition_manual( .universe )
 
 animate(p, nframes = 28,  fps = 2)
 ```
@@ -154,46 +147,29 @@ M$df.diffs
 ```
 
 ```{r}
+multiverse_table(M) %>%
+  unnest( map(.results, "df.diffs" ) ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap))
+```
+
+
+```{r}
 p <- multiverse_table(M) %>%
   unnest( map(.results, "df.diffs" ) ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap)) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = levels)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = levels), height = 0) +
-  transition_manual( index )
+  transition_manual( .universe )
 
-animate(p, nframes = 28,  fps = 2)
+animate(p, nframes = 28,  fps = 4)
 ```
 
 
-## Not relevant....Some Checks
-Not sure why the std error is constant across levels. Figure out a way to have non-constant variance across levels
-
-```{r, echo = FALSE, eval = FALSE}
-fit <- df.s  %>% 
-  mutate(
-    time.exp = exp(logtime)
-  ) %>%
-  select( logtime, time.exp, modality.f ) %>%
-  # filter( modality.f == 1) %>%
-  lm(logtime ~ modality.f - 1, data = .)
-
-broom::tidy(fit, conf.int = TRUE) %>%
-  mutate( 
-    time.conf.low = exp(conf.low),
-    time.conf.high = exp(conf.high),
-    time.mean = exp(estimate) 
-  )
-```
 
 
-```{r, echo = FALSE, eval = FALSE}
-df.s  %>%
-  ungroup() %>%
-  select( subject, time, modality.f ) %>%
-  # filter( modality.f == 1) %>%
-  lm(time ~ modality.f - 1, data = .) %>%
-  broom::tidy(conf.int = TRUE)
-```
+
+
 
 

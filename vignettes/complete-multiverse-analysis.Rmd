@@ -395,7 +395,6 @@ M$df <- ~ df %>%
   mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
 ```
 
-
 The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`.
 
 ```{r}
@@ -421,6 +420,7 @@ multiverse_table(M) %>%
 
 We then take this data frame and plot the results as a confidence interval and point estimate using `ggplot2`. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use `gganimate` to animate through the results of each universe to quickly get an overview of the robustness of the results.
 
+Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette [`Extracting and Visualizing the results of a multiverse analysis`](visualizing-multiverse.html)
 
 ```{r, message = FALSE}
 p <- multiverse_table(M) %>%

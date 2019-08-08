@@ -21,8 +21,10 @@ Suggests:
     broom,
     boot,
     gganimate,
-    gifski
-Remotes: github::thomasp85/patchwork
+    gifski,
+    forcats,
+    stringr,
+    cowplot
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
