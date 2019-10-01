@@ -1,15 +1,43 @@
 ---
-title: "Extracting and Visualizing the results of a multiverse analysis"
-author: "Abhraneel Sarma"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Visualizing the results of a multiverse analysis}
-  %\VignetteEncoding{UTF-8}
+output: 
+  github_document:
+    html_preview: false
+    df_print: kable
 ---
 
-## Introduction
+# Multidy: An R package for creating multiverse analysis
+
+[![Build status](https://travis-ci.com/MUCollective/multidy.svg)](https://travis-ci.com/MUCollective/multidy)
+[![Codecov test coverage](https://codecov.io/gh/MUCollective/multidy/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multidy?branch=master)
+
+`multidy` is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.
+
+Steegen et al. first put forth the concept of [multiverse analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637); Simonsohn et al. put forth a similar notion called the [Specification curve analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
+
+`multidy` attempts to make it easy to declare alternate analysis paths by declaring **analysis parameters** at different levels of analysis:
+
+  - **Data substitution parameters** offer to switch between different raw datasets, either collected or simulated.
+
+  - **Data processing parameters** offer to process the same raw data in different ways before it is analyzed.
+
+  - **Modeling parameters** offer different ways of analyzing the same processed data
+
+  - **Presentation parameters** offer different ways of presenting analysis outcomes
+
+The `multidy` documentation follows the tidyverse syntax
+
+
+## Installation
+
+You can install the latest development version from
+GitHub with these R commands:
+
+``` r
+install.packages("devtools")
+devtools::install_github("mucollective/multidy")
+```
+
+## Examples
 
 In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
 
@@ -23,7 +51,7 @@ opts_knit$set(
   echo = TRUE,
   fig.width = 6, 
   fig.height = 4,
-  output.dir="vignettes"
+  fig.path = "README_files/"
 )
 library(dplyr)
 library(tidyr)
