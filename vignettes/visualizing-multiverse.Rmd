@@ -28,9 +28,9 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(multidy)
-library(patchwork)
 library(stringr)
 library(forcats)
+library(cowplot)
 ```
 
 ## Data and Analysis
@@ -156,7 +156,7 @@ We can then use various R packages to visualize the results. Below, we show some
 ### Animating the coefficients of the model from each multiverse
 One way to visualize over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in [Increasing the Transparency of Research Papers with Explorable Multiverse Analyses](https://dl.acm.org/citation.cfm?id=3300295). This approach allows us to quickly see the robustness of a result --- if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.
 
-```{r, message = FALSE}
+```{r, message = FALSE, fig.width = 6, fig.height = 4}
 p <- multiverse_table(M) %>%
   unnest( map(.results, "summary_RelComp" ) ) %>%
   mutate( term = recode( term, 

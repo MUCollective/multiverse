@@ -12,7 +12,7 @@ vignette: >
 ```{r setup, include=FALSE}
 library(knitr)
 opts_chunk$set(echo = TRUE)
-opts_knit$set(output.dir="vignettes")
+#opts_knit$set(output.dir="vignettes")
 library(dplyr)
 library(tidyr)
 library(purrr)
