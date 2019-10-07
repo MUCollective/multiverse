@@ -212,26 +212,31 @@ data.spec_curve <- multiverse_table(M) %>%
 p1 <- data.spec_curve %>%
   gather( "parameter_name", "parameter_option", !! names(parameters(M)) ) %>%
   select( .universe, parameter_name, parameter_option) %>%
-  rbind( data.frame(
-    parameter_name = c("cycle length", "certainty", "menstrual calc.", "fertile", "relationship"),
-    parameter_option = c("cycle length", "certainty", "menstrual calc.", "fertile", "relationship"),
-    .universe = NA
-  ))  %>%
   mutate(
-    parameter_name = factor(str_replace(parameter_name, "_", " ")),
+    parameter_name = factor(str_replace(parameter_name, "_", "\n")),
     parameter_option = fct_relevel(factor(parameter_option), "relationship status", after = Inf)
   ) %>%
   ggplot() +
   geom_point( aes(x = .universe, y = parameter_option, color = parameter_name), size = 0.5 ) +
-  labs( x = "universe #", y = "option included in the analysis specification")
+  labs( x = "universe #", y = "option included in the analysis specification") + 
+  facet_grid(parameter_name ~ ., space="free_y", scales="free_y", switch="y") +
+  theme(strip.placement = "outside",
+        strip.background = element_rect(fill=NA,colour=NA),
+        panel.spacing.x=unit(0.15,"cm"), 
+        strip.text.y = element_text(angle = 180, face="bold", size=10), 
+        #legend.position = "none",
+        panel.spacing = unit(0.25, "lines")
+      )
 
 p2 <- data.spec_curve %>%
   ggplot() +
   geom_point( aes(.universe, estimate, color = (p.value < 0.05)), size = 0.25) +
   labs(x = "", y = "coefficient of\ninteraction term:\nfertility x relationship")
   
-cowplot::plot_grid(p2, p1, ncol = 1, rel_heights = c(1, 2), align = "v")
+cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 2))
 ```
+
+
 
 **Incomplete**
 

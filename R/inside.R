@@ -81,6 +81,7 @@ inside <- function(multiverse, .expr) {
   if(!is_call(.expr, "{")) {
     .expr = expr({ !!.expr })
   }
+  .expr = eval_seq_in_code(.expr)
 
   m_obj = attr(multiverse, "multiverse")
 
@@ -94,6 +95,8 @@ inside <- function(multiverse, .expr) {
   # because otherwise covr::package_coverage() will insert line number stubs
   # *into* the expression and cause tests to break
   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
+  .expr = eval_seq_in_code(.expr)
+
   m_obj = attr(multiverse, "multiverse")
 
   add_and_parse_code(m_obj, .expr)
@@ -102,7 +105,7 @@ inside <- function(multiverse, .expr) {
 }
 
 
-add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
+add_and_parse_code <- function(m_obj, .code, execute = FALSE) {
   if (is_null(m_obj$code)) {
     .c = .code
   } else {
@@ -134,3 +137,25 @@ concatenate_expr <- function(ref, .add){
 
   ref
 }
+
+eval_seq_in_code <- function(.expr) {
+  if (is_call(.expr, "branch")) {
+    if(".option" %in% names(.expr)) {
+      .eval_seq = eval(.expr[['.option']])
+      .new_expr = .expr
+      .new_expr = .expr %>%
+        unname() %>%
+        magrittr::inset(c(3:(2+length(.eval_seq))), .eval_seq)
+
+      return(.new_expr)
+    }
+  } else if (is_call(.expr)) {
+    .expr[[2]] = eval_seq_in_code(.expr[[2]])
+  }
+
+  return(.expr)
+}
+
+
+
+
