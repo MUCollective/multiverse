@@ -95,7 +95,6 @@ inside <- function(multiverse, .expr) {
   # because otherwise covr::package_coverage() will insert line number stubs
   # *into* the expression and cause tests to break
   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
-  .expr = eval_seq_in_code(.expr)
 
   m_obj = attr(multiverse, "multiverse")
 
@@ -105,7 +104,7 @@ inside <- function(multiverse, .expr) {
 }
 
 
-add_and_parse_code <- function(m_obj, .code, execute = FALSE) {
+add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
   if (is_null(m_obj$code)) {
     .c = .code
   } else {

@@ -1,0 +1,11 @@
+pandoc: 2.3.1
+pkgdown: 1.4.1
+pkgdown_sha: ~
+articles:
+  branch: branch.html
+  calculate-mean-multiverse: calculate-mean-multiverse.html
+  complete-multiverse-analysis: complete-multiverse-analysis.html
+  frequentist-multiverse-analysis: frequentist-multiverse-analysis.html
+  test-bed: test-bed.html
+  visualizing-multiverse: visualizing-multiverse.html
+
