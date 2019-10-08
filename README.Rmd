@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
 ```
 
 
-
 # Multidy: An R package for creating multiverse analysis
 
 <!-- badges: start -->

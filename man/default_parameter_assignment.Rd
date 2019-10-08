@@ -33,7 +33,7 @@ be executed.
 }
 \examples{
 \dontrun{
-M <- multiv
+M <- multiverse()
 inside(M, {
   df <- data.frame( x = sample(1:100, 50, replace = TRUE)
 
