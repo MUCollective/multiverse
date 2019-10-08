@@ -113,3 +113,25 @@ test_that("`add_and_parse_code` executes the default analysis", {
   expect_equal( as.list(df), as.list(df.ref) )
 })
 
+test_that("continuous parameters defined in the multiverse are evaluated", {
+  .expr_1 = expr({
+    y <- branch(foo, "option1" ~ 1, .options = 2:10)
+  }) %>% eval_seq_in_code()
+
+  .expr_2 = expr({
+    y <- branch(foo, "option1" ~ 1, .options = seq(2, 3, by = 0.1))
+  }) %>% eval_seq_in_code()
+
+  .ref_expr_1 = expr({
+    y <- branch(foo, "option1" ~ 1, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)
+  })
+
+  .ref_expr_2 = expr({
+    y <- branch(foo, "option1" ~ 1, 2, 2.1, 2.2, 2.3, 2.4, 2.5,
+                2.6, 2.7, 2.8, 2.9, 3)
+  })
+
+  expect_equal(.expr_1, .ref_expr_1)
+  expect_equal(.expr_2, .ref_expr_2)
+})
+

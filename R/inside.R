@@ -154,9 +154,8 @@ eval_seq_in_code <- function(.expr) {
               .new_expr = .expr %>%
                 unname() %>%
                 magrittr::inset(c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
-
-              return(.new_expr)
             }
+            return(.new_expr)
           } else {
             as.call(map(.expr, ~ eval_seq_in_code(.x)))
           }
