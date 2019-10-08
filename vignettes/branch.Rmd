@@ -36,11 +36,9 @@ An important aspect of this package is to make declaring such **branches** in th
 
 - **Presentation parameters** offer different ways of presenting analysis outcomes
 
-
-## Declaring a branch
 In this document we describe different ways of declaring a **branch**, using different syntactical styles that are popular with R users, including base R syntax and tidyverse syntax.
 
-### Example 1: A simple branch
+## Example 1: A simple branch
 
 Let's say that there is a variable `x` which can take any of three different values --- "low", "medium", "high".  We can perform the effect of encoding `x` as each of these values separately through separate branches. To do this, we first create a **multiverse object**, M and then declare `x` as three possible values within the multiverse using the `branch()` function.
 
@@ -53,7 +51,7 @@ M$x <- ~ branch(a_parameter, "low", "medium", "high")
 multiverse_table(M)
 ```
 
-### Example 2: A branch within functions in a dplyr %>%
+## Example 2: A branch within functions in a dplyr %>%
 
 Let's say that we have some data which indicates the amount of time spent by a user in four different conditions, 1, 2, 3 and 4.
 
@@ -62,8 +60,7 @@ data("userlogs")
 data.userlogs.raw = userlogs %>%
   mutate( modality = factor(modality) ) %>%
   arrange(modality) %>%
-  mutate(index = rep(seq(1:(nrow(.)/4)), 4)) %>%
-  select(index, modalityname, duration)
+  mutate(index = rep(seq(1:(nrow(.)/4)), 4))
 ```
 
 
@@ -88,7 +85,7 @@ The `multiverse_table` shows that there are two rows for each branch. If we look
 multiverse_table(M)$.code
 ```
 
-### Example 3: A branch as a function
+## Example 3: A branch as a function
 
 Say we are not familiar with R's tidyverse packages and it's style of writing code. An alternate way of declaring a branch for transforming the `duration` variable in the analysis would be to use two separate functions for the transformation depending on which universe one is.
 
@@ -134,7 +131,7 @@ multiverse_table(M.2) %>%
 ```
 
 
-### Example 4: Parameters can be reused
+## Example 4: Parameters can be reused
 
 If you want to use a parameter multiple times, or just want to define it upfront, you can assign it to a variable and use the variable in your code. For example, in the next example, we declare *three different branches* for data transformation, data modelling and data presentation respectively. We also define any necessary functions along the way.
 

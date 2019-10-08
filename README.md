@@ -1,10 +1,31 @@
 
 # Multidy: An R package for creating multiverse analysis
 
+<!-- badges: start -->
+
 [![Build
 status](https://travis-ci.com/MUCollective/multidy.svg)](https://travis-ci.com/MUCollective/multidy)
 [![Codecov test
 coverage](https://codecov.io/gh/MUCollective/multidy/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multidy?branch=master)
+<!-- badges: end -->
+
+The goal of multidy is to …
+
+## Installation
+
+You can install the released version of multidy from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("multidy")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("MUCollective/multidy")
+```
 
 `multidy` is an R package that allows users to specify multiverse of
 statistical analysis, also called a multiverse analysis. In a multiverse
@@ -48,13 +69,11 @@ devtools::install_github("mucollective/multidy")
 
 ## Examples
 
-In the rest of this document, we outline an initial approach to conducting a
+In this document, we outline an initial approach to conducting a
 multiverse analysis in R. We will show how our package can be used to
 perform the multiverse analysis outlined by Steegen et al. in
 [Increasing Transparency Through a Multiverse
-Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637). 
-This example can also be found in the vignettes; see vignette("complete-multiiverse-analysis")
-for more details.
+Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
 
 Data analysis can involve several decisions involving two or more
 options. In most statistical analysis, these decisions are taken by the
@@ -177,7 +196,7 @@ one_universe %>%
   stat_summary(position = position_dodge(width = .1), fun.data = "mean_se")
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+<img src="README_files/universe-summary-1.png" style="display: block; margin: auto;" />
 
 However, there also exists other valid processing options: instead of
 calculating `NextMenstrualOnset = StartDateofLastPeriod +
@@ -299,23 +318,50 @@ following attributes:
 
 ``` r
 parameters(M)
+#> $menstrual_calculation
+#> $menstrual_calculation[[1]]
+#> [1] "mc_option1"
+#> 
+#> $menstrual_calculation[[2]]
+#> [1] "mc_option2"
+#> 
+#> $menstrual_calculation[[3]]
+#> [1] "mc_option3"
 ```
-
-    ## $menstrual_calculation
-    ## $menstrual_calculation[[1]]
-    ## [1] "mc_option1"
-    ## 
-    ## $menstrual_calculation[[2]]
-    ## [1] "mc_option2"
-    ## 
-    ## $menstrual_calculation[[3]]
-    ## [1] "mc_option3"
 
 2.  `conditions`, which is a list of conditions (we’ll define this
     later)
 3.  `multiverse_table`, which is a tibble consisting of all possible
     combination of values for the
 multiverse
+
+<!-- end list -->
+
+``` r
+multiverse_table(M)
+```
+
+<div class="kable-table">
+
+|   .universe | menstrual\_calculation   | .parameter\_assignment                        | .code             | .results |
+| ----------: | :----------------------- | :-------------------------------------------- | :---------------- | :------- |
+|           1 | mc\_option1              | list(menstrual\_calculation = “mc\_option1”)  | {                 |          |
+|   df \<- da | ta.raw.study2            |                                               |                   |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofLastPeriod - StartDateof | PeriodBeforeLast) |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLastPeriod + ComputedCycl | eLength)          |          |
+| } \<environ | ment\>                   |                                               |                   |          |
+|           2 | mc\_option2              | list(menstrual\_calculation = “mc\_option2”)  | {                 |          |
+|   df \<- da | ta.raw.study2            |                                               |                   |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofLastPeriod - StartDateof | PeriodBeforeLast) |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLastPeriod + ReportedCycl | eLength)          |          |
+| } \<environ | ment\>                   |                                               |                   |          |
+|           3 | mc\_option3              | list(menstrual\_calculation = “mc\_option3”)  | {                 |          |
+|   df \<- da | ta.raw.study2            |                                               |                   |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofLastPeriod - StartDateof | PeriodBeforeLast) |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateNext)                       |                   |          |
+|           } | \<e                      | nvironment\>                                  |                   |          |
+
+</div>
 
 4.  `current_parameter_assignment`, which is a list of one set of
     options for each parameter defined in the multiverse. It initialises
@@ -326,10 +372,9 @@ multiverse
 
 ``` r
 default_parameter_assignment(M)
+#> $menstrual_calculation
+#> [1] "mc_option1"
 ```
-
-    ## $menstrual_calculation
-    ## [1] "mc_option1"
 
 5.  `code`, which is the code that the user passes to the multiverse to
     conduct a multiverse analysis. However, we do not execute this code
@@ -341,17 +386,16 @@ default_parameter_assignment(M)
 
 ``` r
 code(M)
+#> {
+#>     df <- data.raw.study2
+#>     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
+#>         StartDateofPeriodBeforeLast)
+#>     df <- df %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
+#>         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
+#>         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
+#>         "mc_option3" ~ StartDateNext))
+#> }
 ```
-
-    ## {
-    ##     df <- data.raw.study2
-    ##     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
-    ##         StartDateofPeriodBeforeLast)
-    ##     df <- df %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
-    ##         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
-    ##         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
-    ##         "mc_option3" ~ StartDateNext))
-    ## }
 
 ## Running a single analysis from the multiverse
 
@@ -425,44 +469,91 @@ previous code.
 
 ``` r
 code(M)
+#> {
+#>     df <- data.raw.study2
+#>     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
+#>         StartDateofPeriodBeforeLast)
+#>     df <- df %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
+#>         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
+#>         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
+#>         "mc_option3" ~ StartDateNext))
+#>     df <- df %>% mutate(Relationship = branch(relationship_status, 
+#>         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == 
+#>             2, "Single", "Relationship")), "rs_option2" ~ factor(ifelse(Relationship == 
+#>             1, "Single", "Relationship")), "rs_option3" ~ factor(ifelse(Relationship == 
+#>             1, "Single", ifelse(Relationship == 3 | Relationship == 
+#>             4, "Relationship", NA))))) %>% mutate(CycleDay = 28 - 
+#>         (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay > 
+#>         1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 
+#>         28))) %>% filter(branch(cycle_length, "cl_option1" ~ 
+#>         TRUE, "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 
+#>         35, "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 
+#>         35)) %>% filter(branch(certainty, "cer_option1" ~ TRUE, 
+#>         "cer_option2" ~ Sure1 > 6 | Sure2 > 6)) %>% mutate(Fertility = branch(fertile, 
+#>         "fer_option1" ~ factor(ifelse(CycleDay >= 7 & CycleDay <= 
+#>             14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, 
+#>             "low", "medium"))), "fer_option2" ~ factor(ifelse(CycleDay >= 
+#>             6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & 
+#>             CycleDay <= 27, "low", "medium"))), "fer_option3" ~ 
+#>             factor(ifelse(CycleDay >= 9 & CycleDay <= 17, "high", 
+#>                 ifelse(CycleDay >= 18 & CycleDay <= 25, "low", 
+#>                   "medium"))), "fer_option4" ~ factor(ifelse(CycleDay >= 
+#>             8 & CycleDay <= 14, "high", "low")), "fer_option5" ~ 
+#>             factor(ifelse(CycleDay >= 8 & CycleDay <= 17, "high", 
+#>                 "low"))))
+#> }
 ```
 
-    ## {
-    ##     df <- data.raw.study2
-    ##     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
-    ##         StartDateofPeriodBeforeLast)
-    ##     df <- df %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
-    ##         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
-    ##         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
-    ##         "mc_option3" ~ StartDateNext))
-    ##     df <- df %>% mutate(Relationship = branch(relationship_status, 
-    ##         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == 
-    ##             2, "Single", "Relationship")), "rs_option2" ~ factor(ifelse(Relationship == 
-    ##             1, "Single", "Relationship")), "rs_option3" ~ factor(ifelse(Relationship == 
-    ##             1, "Single", ifelse(Relationship == 3 | Relationship == 
-    ##             4, "Relationship", NA))))) %>% mutate(CycleDay = 28 - 
-    ##         (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay > 
-    ##         1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 
-    ##         28))) %>% filter(branch(cycle_length, "cl_option1" ~ 
-    ##         TRUE, "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 
-    ##         35, "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 
-    ##         35)) %>% filter(branch(certainty, "cer_option1" ~ TRUE, 
-    ##         "cer_option2" ~ Sure1 > 6 | Sure2 > 6)) %>% mutate(Fertility = branch(fertile, 
-    ##         "fer_option1" ~ factor(ifelse(CycleDay >= 7 & CycleDay <= 
-    ##             14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, 
-    ##             "low", "medium"))), "fer_option2" ~ factor(ifelse(CycleDay >= 
-    ##             6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & 
-    ##             CycleDay <= 27, "low", "medium"))), "fer_option3" ~ 
-    ##             factor(ifelse(CycleDay >= 9 & CycleDay <= 17, "high", 
-    ##                 ifelse(CycleDay >= 18 & CycleDay <= 25, "low", 
-    ##                   "medium"))), "fer_option4" ~ factor(ifelse(CycleDay >= 
-    ##             8 & CycleDay <= 14, "high", "low")), "fer_option5" ~ 
-    ##             factor(ifelse(CycleDay >= 8 & CycleDay <= 17, "high", 
-    ##                 "low"))))
-    ## }
-
 The `multiverse_table` will contain all the possible combinations of the
-parameter options that have been identified (not shown).
+parameter options that have been identified.
+
+``` r
+multiverse_table(M) %>%
+  head()
+```
+
+<div class="kable-table">
+
+|   .universe | menstrual\_calculation   | relationship\_status   | cycle\_length   | certainty      | fertile         | .parameter\_assignment                                                                                                                                                  | .code                                                                                                                                                                                     | .results |
+| ----------: | :----------------------- | :--------------------- | :-------------- | :------------- | :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- |
+|           1 | mc\_option1              | rs\_option1            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
+|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Comp | utedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1 |  | Relationship = | \= 2, “Single”, | “Relationship”))) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1   | , 28))) %\>% filter(TRUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”)))) |          |
+| } \<environ | ment\>                   |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|           2 | mc\_option2              | rs\_option1            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
+|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Repo | rtedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1 |  | Relationship = | \= 2, “Single”, | “Relationship”))) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1   | , 28))) %\>% filter(TRUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”)))) |          |
+| } \<environ | ment\>                   |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|           3 | mc\_option3              | rs\_option1            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
+|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateNext | )               |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1 |  | Relationship = | \= 2, “Single”, | “Relationship”))) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1   | , 28))) %\>% filter(TRUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”)))) |          |
+|           } | \<e                      | nvironment\>           |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|           4 | mc\_option1              | rs\_option2            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
+|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Comp | utedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1, " | Single“,”Rela  | tionship"))) %  | \>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% filter(T | RUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”))))                      |          |
+|           } | \<environment            | \>                     |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|           5 | mc\_option2              | rs\_option2            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
+|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Repo | rtedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1, " | Single“,”Rela  | tionship"))) %  | \>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% filter(T | RUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”))))                      |          |
+|           } | \<environment            | \>                     |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|           6 | mc\_option3              | rs\_option2            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
+|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateNext | )               |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1, " | Single“,”Rela  | tionship"))) %  | \>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% filter(T | RUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”))))                      |          |
+|           } |                          | \<env                  | ironment\>      |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+
+</div>
 
 In our multiverse we have identified 5 options for calculating
 `fertility`, 3 options for calculating `menstrual calculation` and
@@ -470,13 +561,12 @@ In our multiverse we have identified 5 options for calculating
 their `cycle length` and 2 ways of excluding participants based on the
 self-reported `certainty` of their responses.
 
-This results in $$5 \times 3 \times 3 \times 3 \times 2 = 270$$ possible combinations.
+This results in $ 5 3 3 3 2 = 270$ possible combinations.
 
 ``` r
 multiverse_table(M) %>% nrow()
+#> [1] 270
 ```
-
-    ## [1] 270
 
 We can then inspect the default analysis the default single universe
 analysis from this multiverse:
@@ -616,14 +706,13 @@ M$df <- ~ data.raw.study2  %>%
 ```
 
 After excluding the inconsistent choice combinations,
-$$270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210$$
+\(270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210\)
 choice combinations remain:
 
 ``` r
 multiverse_table(M) %>% nrow()
+#> [1] 210
 ```
-
-    ## [1] 210
 
 Now, we’ve created the complete multiverse that was presented as example
 \#2 from Steegen et al.’s paper.
@@ -707,7 +796,8 @@ results of each universe to quickly get an overview of the robustness of
 the results.
 
 Note: we discuss extracting results from the multiverse and visualizing
-them in more detail in a separate vignette; see `vignette('visualizing-multiverse')`.
+them in more detail in the vignette [`Extracting and Visualizing the
+results of a multiverse analysis`](visualizing-multiverse.html)
 
 ``` r
 p <- multiverse_table(M) %>%
@@ -726,7 +816,7 @@ p <- multiverse_table(M) %>%
 animate(p, nframes = 210, fps = 2)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-24-1.gif)<!-- -->
+![](README_files/model-1-vis-1.gif)<!-- -->
 
 ### Models \#3 - 6
 
@@ -777,7 +867,7 @@ p <- multiverse_table(M) %>%
 animate(p, nframes = 210, fps = 2)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-26-1.gif)<!-- -->
+![](README_files/model-3-vis-1.gif)<!-- -->
 
 ### Model \#4: Effect of Fertility and Relationship status on Social political attitudes
 
@@ -798,7 +888,7 @@ p <- multiverse_table(M) %>%
 animate(p, nframes = 210, fps = 2)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-27-1.gif)<!-- -->
+![](README_files/model-4-vis-1.gif)<!-- -->
 
 ### Model \#5: Effect of Fertility and Relationship status on Voting preferences
 
@@ -818,7 +908,7 @@ p <- multiverse_table(M) %>%
 animate(p, nframes = 210, fps = 2)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-28-1.gif)<!-- -->
+![](README_files/model-5-vis-1.gif)<!-- -->
 
 ### Model \#6: Effect of Fertility and Relationship status on Donation preferences
 
@@ -838,4 +928,4 @@ p <- multiverse_table(M) %>%
 animate(p, nframes = 210, fps = 2)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-29-1.gif)<!-- -->
+![](README_files/model-6-vis-1.gif)<!-- -->
