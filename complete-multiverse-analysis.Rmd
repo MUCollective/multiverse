@@ -1,12 +1,10 @@
 ---
-title: "Extracting and Visualizing the results of a multiverse analysis"
+title: "A complete multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
-  %\usepackage[UTF-8]{inputenc}
+output: 
+  md_document:
+    variant: markdown_github
 ---
 
 ## Introduction
@@ -22,8 +20,7 @@ library(knitr)
 opts_knit$set(
   echo = TRUE,
   fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
+  fig.height = 4
 )
 library(dplyr)
 library(tidyr)

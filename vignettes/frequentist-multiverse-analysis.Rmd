@@ -6,7 +6,7 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{A multiverse analysis of the efficiency of physical visualizations}
-  %\VignetteEncoding{UTF-8}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ## Introduction
@@ -80,7 +80,7 @@ execute_multiverse(M)
 ```
 
 
-```{r}
+```{r, fig.width = 6, fig.height = 4}
 p <- multiverse_table(M) %>%
   unnest( map(.results, "df" ) )  %>%
   mutate( modality.f = recode( modality.f, 
@@ -153,7 +153,7 @@ multiverse_table(M) %>%
 ```
 
 
-```{r}
+```{r, fig.width = 6, fig.height = 4}
 p <- multiverse_table(M) %>%
   unnest( map(.results, "df.diffs" ) ) %>%
   arrange(confidence_interval, desc(data_transform), desc(bootstrap)) %>%

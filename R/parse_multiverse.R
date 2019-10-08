@@ -24,6 +24,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr unnest
 #' @importFrom purrr compact
+#' @importFrom purrr map_chr
 #' @importFrom rlang parse_expr
 #' @importFrom rlang expr_deparse
 #' @importFrom rlang is_call
