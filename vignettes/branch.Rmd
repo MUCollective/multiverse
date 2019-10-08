@@ -43,6 +43,18 @@ In this document we describe different ways of declaring a **branch**, using dif
 Let's say that there is a variable `x` which can take any of three different values --- "low", "medium", "high".  We can perform the effect of encoding `x` as each of these values separately through separate branches. To do this, we first create a **multiverse object**, M and then declare `x` as three possible values within the multiverse using the `branch()` function.
 
 
+
+```{r, test-chunk}
+M = multiverse()
+
+inside(M, {
+  branch(foo, "option1" ~ 1, .option = seq(2, 10, by = 0.1))
+})
+
+multiverse_table(M)
+```
+
+
 ```{r}
 M = multiverse()
 

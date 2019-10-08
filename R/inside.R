@@ -95,6 +95,7 @@ inside <- function(multiverse, .expr) {
   # because otherwise covr::package_coverage() will insert line number stubs
   # *into* the expression and cause tests to break
   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
+  .expr = eval_seq_in_code(.expr)
 
   m_obj = attr(multiverse, "multiverse")
 
@@ -142,9 +143,10 @@ eval_seq_in_code <- function(.expr) {
     if(".option" %in% names(.expr)) {
       .eval_seq = eval(.expr[['.option']])
       .new_expr = .expr
+      .idx = match(c(".option"), names(.expr))
       .new_expr = .expr %>%
         unname() %>%
-        magrittr::inset(c(3:(2+length(.eval_seq))), .eval_seq)
+        magrittr::inset(c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
 
       return(.new_expr)
     }
