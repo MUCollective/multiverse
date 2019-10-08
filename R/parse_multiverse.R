@@ -94,7 +94,6 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list) {
 # returns as output a paramater condition list whose structure
 # resembles list(parameter = list(), condition = list())
 get_parameter_conditions <- function(.expr) {
-  print(.expr)
   switch_expr(.expr,
     # Base cases
     constant = , # falls through; the next element is evaluated
