@@ -6,7 +6,7 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
-  %\VignetteEncoding{UTF-8}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
@@ -15,6 +15,8 @@ opts_chunk$set(echo = TRUE)
 opts_knit$set(output.dir="vignettes")
 library(dplyr)
 library(tidyr)
+library(purrr)
+library(ggplot2)
 library(multidy)
 ```
 
@@ -24,7 +26,8 @@ In this document, we'll outline a simple multiverse analysis --- calculating the
 
 ```{r data}
 set.seed(1234567)
-x = 50 + rt(100, 3) * 20
+n = 100
+x = c(10 + rt(n, 3) * 20, 20 + rt(5, 3, 100))
 data = x
 ```
 
@@ -181,26 +184,50 @@ M %>%
   execute_multiverse()
 ```
 
+
+```{r}
+multiverse_table(M) %>%
+  unnest( mean = map(.results, "x.mean") ) %>%
+  ggplot() +
+  geom_col(aes(x = .universe, y = mean))
+```
+
+
 ## Step 2: extending the multiverse
 
 Now, let's introduce some *missing values*. We will then sample `100` values and compute the mean.
 *Incomplete; requires the conditional assertion implementation*
 
+```{r, data_2}
+data = sample(c(data, rep(NA, 5)))
+```
+
+
 ```{r eval = FALSE, echo = FALSE}
-data = c(x, rep(NA, 5)) %>% sample(length(x))
-M = new("multiverse")
+M = multiverse()
 inside(M, {
-  mean(data, 
+  x.mean = mean(data, 
+    na.rm = branch(remove_na,
+      FALSE,
+      TRUE
+    ),
     trim = branch(trim_values,
       "trim_none" ~ 0,
-      "trim_1pc" ~ 0.005,
-      "trim_5pc" ~ 0.025,
-      "trim_10pc" ~ 0.05
-    ), 
-    na.rm = branch(remove_na, "False" ~ FALSE, "True" ~ TRUE)
+      "trim_1pc" %when% (remove_na == TRUE) ~ 0.005,
+      "trim_5pc" %when% (remove_na == TRUE) ~ 0.025,
+      "trim_10pc" %when% (remove_na == TRUE) ~ 0.05
+    )
   )
 })
-# impose condition that trim only takes other values when na.rm = FALSE. All the other instances are redundant.
-# will update when the `conditional` function has been implemented.
+
+execute_multiverse(M)
 ```
+
+
+
+```{r}
+multiverse_table(M) %>%
+  unnest( mean = map(.results, "x.mean") )
+```
+
 
