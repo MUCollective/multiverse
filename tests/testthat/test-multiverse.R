@@ -130,7 +130,7 @@ test_that("accessor functions retrieve the multiverse table", {
   )
 
   ref_df = expand.grid(ref_list, KEEP.OUT.ATTRS = FALSE) %>%
-    unnest() %>%
+    unnest( cols = everything() ) %>%
     mutate( .universe = seq(1:nrow(.)) ) %>%
     select(.universe, everything())
 

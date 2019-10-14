@@ -43,7 +43,8 @@ parse_multiverse <- function(multiverse) {
   if( length( multiverse[['parameters']] ) >= 1) {
     multiverse[['default_parameter_assignment']] = 1
     multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list)
-  } else {
+  }
+  else {
     multiverse[['default_parameter_assignment']] = NULL
     multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse)
   }
@@ -63,7 +64,7 @@ get_multiverse_table_no_param <- function(multiverse) {
 get_multiverse_table <- function(multiverse, parameters_conditions.list) {
   df <- parameters_conditions.list$parameters %>%
     expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
-    unnest() %>%
+    unnest(cols = everything()) %>%
     mutate( .universe = seq(1:nrow(.)) ) %>%
     select(.universe, everything())
 

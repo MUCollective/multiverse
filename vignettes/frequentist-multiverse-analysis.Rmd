@@ -54,24 +54,20 @@ M$df <- ~ data.userlogs.raw %>%
   group_by(subject, modality.f, modalityname) %>% 
   summarise( duration = mean(duration) ) %>%
   group_by(modality.f) %>%
-  nest( duration )
+  summarise( data = list(duration) )
 
 M$n_comparisons <- ~ 3
 
 M$df <- ~ df %>%
   mutate( ci = branch( confidence_interval, 0.5, 0.68, 0.8, 0.9, 0.95, 0.99, 0.999 )) %>%
   mutate( fit = branch(bootstrap,
-                       "t-dist" ~ map2(data, ci, ~ tidy(t.test(.x$duration, conf.level = .y)) ),
-                       "bca" ~ map2(data, ci, ~ boot(data = .x$duration, statistic = samplemean, R = 5000) %>%
+                       "t-dist" ~ map2(data, ci, ~ tidy(t.test(.x, conf.level = .y)) ),
+                       "bca" ~ map2(data, ci, ~ boot(data = .x, statistic = samplemean, R = 5000) %>%
                               tidy( conf.int = TRUE, conf.method = "bca", conf.level = .y) %>%
                               rename(estimate = statistic))
         )) %>%
   select(-data) %>%
-  unnest( fit )
-```
-
-```{r}
-multiverse_table(M)
+  unnest( cols = c(fit) )
 ```
 
 
@@ -82,7 +78,8 @@ execute_multiverse(M)
 
 ```{r, fig.width = 6, fig.height = 4}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "df" ) )  %>%
+  mutate( df = map(.results, "df") ) %>%
+  unnest(cols = c(df) )  %>%
   mutate( modality.f = recode( modality.f, 
                  "1" = "physical-touch",
                  "2" = "no-touch",
@@ -148,15 +145,18 @@ M$df.diffs
 
 ```{r}
 multiverse_table(M) %>%
-  unnest( map(.results, "df.diffs" ) ) %>%
-  arrange(confidence_interval, desc(data_transform), desc(bootstrap))
+  mutate( df = map(.results, "df.diffs") ) %>%
+  unnest(cols = c(df) ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap)) %>%
+  head()
 ```
 
 
 ```{r, fig.width = 6, fig.height = 4}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "df.diffs" ) ) %>%
-  arrange(confidence_interval, desc(data_transform), desc(bootstrap)) %>%
+  mutate( df = map(.results, "df.diffs") ) %>%
+  unnest(cols = c(df) ) %>%
+  arrange(confidence_interval, desc(data_transform), desc(bootstrap))%>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = levels)) +

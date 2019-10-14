@@ -17,7 +17,7 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(ggplot2)
-#library(multidy)
+library(multidy)
 ```
 
 
@@ -48,7 +48,8 @@ M = multiverse()
 
 M$x <- ~ branch(a_parameter, "low", "medium", "high")
 
-multiverse_table(M)
+multiverse_table(M) %>%
+  select(.universe, everything())
 ```
 
 ## Example 2: A branch within functions in a dplyr %>%
@@ -148,11 +149,11 @@ M$data_trans <- ~ branch(data_trans,
   )
 
 t_test_ci <- function(x, y) {
-    broom::tidy(t.test(x$value, conf.level = y))
+    broom::tidy(t.test(x, conf.level = y))
 }
 
 bootstrapped_ci <- function(x, y) {
-    boot(data = x$value, statistic = samplemean, R = 5000) %>%
+    boot(data = x, statistic = samplemean, R = 5000) %>%
         broom::tidy( conf.int = TRUE, conf.method = "bca", conf.level =  y) %>%
         rename(estimate = statistic)
 }
@@ -175,21 +176,24 @@ M$df <- ~ data.userlogs.raw  %>%
   summarise( duration = mean(duration) ) %>%
   group_by(modality.f) %>%
   rename( value = duration ) %>%
-  nest( value )
+  summarise( data = list(value) )
 
 M$df <- ~ df %>%
-  mutate( fit = map2(data, ci, ~ fit(.x, .y) ) ) %>%
+  mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
   select(-data) %>%
-  unnest( fit )
+  unnest( cols = c(fit) )
 
 execute_multiverse(M)
 ```
 
+
 To see the results of using branches, we plot a part of this multiverse. We see the different transformations (no transformations in the right column and log-transform in the left column). Each row shows the different data presentation branches by presenting different confidence levels.
+
 
 ```{r, fig.width = 8, fig.height = 8}
 multiverse_table(M) %>%
-  unnest( map(.results, "df" ) )  %>%
+  mutate(df = map(.results, "df" ) ) %>%
+  unnest( cols = c(df) )  %>%
   mutate( modality.f = recode( modality.f, 
                  "1" = "physical-touch",
                  "2" = "no-touch",
@@ -219,7 +223,7 @@ So far we have only looked at examples where we declare parameters within a bran
 M = multiverse()
 
 inside(M, {
-  set.seed(branch(seed, .option = 1:25))
+  set.seed(branch(seed, .options = 1:25))
   
   x1 <- rnorm(25)
   x2 <- rnorm(25)
@@ -233,11 +237,13 @@ inside(M, {
 execute_multiverse(M)
 ```
 
+
 We then plot the estimates from the multiverse to see if we obtain the correct results:
 
 ```{r}
 multiverse_table(M) %>%
-  unnest(map(.results, "intervals"), .drop = FALSE) %>%
+  mutate(df = map(.results, "intervals" ) ) %>%
+  unnest( cols = c(df) ) %>%
   unnest(seed) %>%  # won't be necessary once issue #34 is fixed
   ggplot(aes(x = .universe, y = estimate, ymin = conf.low, ymax = conf.high), alpha = 0.5) +
   geom_pointrange() +

@@ -414,7 +414,8 @@ Now that we have performed the analysis in each universe of the multiverse, we n
 
 ```{r}
 multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   head( 10 )
 ```
 
@@ -424,7 +425,8 @@ Note: we discuss extracting results from the multiverse and visualizing them in 
 
 ```{r, message = FALSE}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -467,7 +469,8 @@ execute_multiverse(M)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_FiscConsComp" ) ) %>%
+  mutate( summary = map(.results, "summary_FiscConsComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -486,7 +489,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_SocConsComp" ) ) %>%
+  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -505,7 +509,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_Donate" ) ) %>%
+  mutate( summary = map(.results, "summary_Donate" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -523,7 +528,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_Vote" ) ) %>%
+  mutate( summary = map(.results, "summary_Vote" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
