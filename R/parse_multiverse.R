@@ -6,6 +6,9 @@
 #'
 #' @param multiverse The multiverse object with some code passed to it
 #'
+#' @param .super_env The parent environment of the multiverse object i.e. the environment
+#' in which the multiverse object was called. This is automatically recorded.
+#'
 #' @return The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.
 #' The list of parameters is a named list which defines all the values that each defined parameter can take.
 #' The list of conditions defines, if any of the parameter values are conditional on a specific value of another
@@ -33,7 +36,7 @@
 #' @importFrom rlang f_lhs
 #'
 #' @export
-parse_multiverse <- function(multiverse) {
+parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
 
   parameter_conditions_list = get_parameter_conditions( multiverse[['code']] )
@@ -42,26 +45,26 @@ parse_multiverse <- function(multiverse) {
 
   if( length( multiverse[['parameters']] ) >= 1) {
     multiverse[['default_parameter_assignment']] = 1
-    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list)
+    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list, .super_env)
   }
   else {
     multiverse[['default_parameter_assignment']] = NULL
-    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse)
+    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse, .super_env)
   }
 }
 
-get_multiverse_table_no_param <- function(multiverse) {
+get_multiverse_table_no_param <- function(multiverse, .super_env) {
   tibble::tibble(
     .parameter_assignment = list( list() ),
     .code = list( multiverse[['code']] ),
-    .results = list( env() )
+    .results = list( new.env(parent = .super_env) )
   )
 }
 
 # creates a parameter table from the parameter list
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
-get_multiverse_table <- function(multiverse, parameters_conditions.list) {
+get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_env) {
   df <- unnest(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), cols = everything())
   df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
 
@@ -79,7 +82,7 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list) {
   filter(as_tibble(mutate(df,
       .parameter_assignment = param.assgn,
       .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
-      .results = lapply(.parameter_assignment, function(x) env())
+      .results = lapply(.parameter_assignment, function(x) new.env(parent = .super_env))
     )), eval(all_conditions))
 }
 

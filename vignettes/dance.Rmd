@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{A multiverse analysis of the efficiency of physical visualizations}
+  %\VignetteIndexEntry{Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -43,7 +43,7 @@ The experiment involved four independent variables: the visualization type (9 le
 First, we will quickly show what the original data, and the plots created using this dataset, looks like:
 
 ```{r, data-proc-errorbars}
-data = read.csv("../data/master-alt.csv")
+data("vis_correlation")
 
 df <- data %>% 
   group_by( vis, rbase, approach, sign ) %>%
@@ -73,7 +73,7 @@ df.error_bar <- df %>%
 The following figure shows the mean JND for each of the 216 conditions, each displayed as a dot. We show JND as a function of correlation *r* for both above (light points) and below (dark points) approaches.
 
 ```{r, fig.height = 8, fig.width = 8}
-df %>%
+df.error_bar %>%
   ggplot() +
   geom_errorbar(aes(x = rbase, ymin = (mean - sd), ymax = mean + sd, color = approach), width = 0.025) +
   geom_point( aes(x = rbase, y = mean, color = approach )) +

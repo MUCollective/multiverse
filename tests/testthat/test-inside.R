@@ -73,9 +73,7 @@ test_that("`add_and_parse_code` stores code as `language`", {
   })
 
   M = multiverse()
-  M.R6 = attr(M, "multiverse")
-
-  add_and_parse_code(M.R6, an_expr)
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), an_expr)
 
   expect_true( is.language( f_rhs( code(M) ) ))
 })
@@ -88,8 +86,7 @@ test_that("`add_and_parse_code` parses the code", {
 
   M = multiverse()
   M.R6 = attr(M, "multiverse")
-
-  add_and_parse_code(M.R6, an_expr)
+  add_and_parse_code(M.R6, attr(M, "multiverse_super_env"), an_expr)
 
   expect_equal( dim(M.R6$multiverse_table), c(4, 5) )
   expect_equal( length(M.R6$parameters), 1 )
@@ -103,11 +100,9 @@ test_that("`add_and_parse_code` executes the default analysis", {
   })
 
   M = multiverse()
-  M.R6 = attr(M, "multiverse")
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), an_expr)
 
-  add_and_parse_code(M.R6, an_expr)
-
-  df = M.R6$multiverse_table$.results[[1]]$x
+  df = attr(M, "multiverse")$multiverse_table$.results[[1]]$x
   df.ref =  data.frame(x = 1:10) %>%  mutate( y = 0 )
 
   expect_equal( as.list(df), as.list(df.ref) )

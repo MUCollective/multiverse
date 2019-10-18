@@ -1,11 +1,11 @@
 ---
-title: "Extracting and Visualizing the results of a multiverse analysis"
+title: "A complete implementation of a multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
+  %\VignetteIndexEntry{A complete implementation of a multiverse analysis}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -34,7 +34,6 @@ library(gganimate)
 library(cowplot)
 library(multidy)
 ```
-
 
 ## The data
 The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
