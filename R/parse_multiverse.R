@@ -62,31 +62,25 @@ get_multiverse_table_no_param <- function(multiverse) {
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(multiverse, parameters_conditions.list) {
-  df <- parameters_conditions.list$parameters %>%
-    expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
-    unnest(cols = everything()) %>%
-    mutate( .universe = seq(1:nrow(.)) ) %>%
-    select(.universe, everything())
+  df <- unnest(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), cols = everything())
+  df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
 
   param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(subset(df, select = -.universe), "[[", i))
 
   if (length(parameters_conditions.list$condition) > 0) {
-    all_conditions <- lapply(parameters_conditions.list$conditions, expr_deparse) %>%
-      paste0(collapse = "&") %>%
-      parse_expr()
+    all_conditions <- parse_expr(paste0(lapply(parameters_conditions.list$conditions, expr_deparse), collapse = "&"))
   } else {
     all_conditions <- expr(TRUE)
   }
 
   .code = multiverse[['code']] #remove_branch_assert( multiverse[['code']] )
 
-  df = as_tibble(mutate(df,
+
+  filter(as_tibble(mutate(df,
       .parameter_assignment = param.assgn,
       .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
       .results = lapply(.parameter_assignment, function(x) env())
-    ))
-
-  filter(df, eval(all_conditions))
+    )), eval(all_conditions))
 }
 
 # takes as input an expression
