@@ -22,8 +22,6 @@
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
 #' @importFrom magrittr %>%
-#' @importFrom purrr map
-#' @importFrom purrr map2
 #' @importFrom magrittr extract2
 #' @importFrom stringi stri_detect_regex
 #'
@@ -33,9 +31,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
   stopifnot( is.r6_multiverse(multiverse))
 
   if (is.numeric(.assgn)) {
-    .assgn = multiverse[['multiverse_table']] %>%
-      extract2( 'parameter_assignment' ) %>%
-      extract2( .assgn )
+    .assgn = multiverse[['multiverse_table']][['parameter_assignment']][[.assgn]]
   }
 
   if( length( multiverse[['default_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
@@ -56,11 +52,11 @@ get_parameter_code <- function(.expr, .assgn) {
 
     # Recursive cases
     call = {
+      #.expr = get_branch_assert(.expr)
       if (is_call(.expr, "branch")) {
-        compute_branch(.expr, .assgn) %>%
-          get_parameter_code(.assgn)
+        get_parameter_code(compute_branch(.expr, .assgn), .assgn)
       } else {
-        as.call(map(.expr, ~ get_parameter_code(.x, .assgn)))
+        as.call(lapply(.expr, function(x) get_parameter_code(x, .assgn)))
       }
     }
   )
@@ -70,13 +66,11 @@ get_parameter_code <- function(.expr, .assgn) {
 # returns as output an expression (or code) without the branch
 compute_branch <- function(.expr, .assgn) {
   assigned_parameter_option_name = .assgn[[.expr[[2]]]]
-  option_names = map(.expr[-1:-2], get_option_name)
+  option_names = lapply(.expr[-1:-2], get_option_name)
 
-  map(option_names, ~ .x == assigned_parameter_option_name) %>%
-    flatten_lgl() %>%
-    which(., arr.ind = TRUE) %>%
-    extract2(.expr[-1:-2], .) %>%
-    get_option_value()
+  param_assignment <- flatten_lgl(lapply(option_names, function(x) x == assigned_parameter_option_name))
+
+  get_option_value(extract2(.expr[-1:-2], which(param_assignment, arr.ind = TRUE)))
 }
 
 get_option_value <- function(x) {
@@ -84,6 +78,19 @@ get_option_value <- function(x) {
     return( f_rhs(x) )
   } else {
     return(x)
+  }
+}
+
+
+get_branch_assert <- function(.expr) {
+  if (is_call(safe_f_rhs(.expr)$result, "branch_assert")) {
+    .expr = f_lhs(.expr)
+    get_branch_assert(.expr)
+  } else if (is_call(safe_f_lhs(.expr)$result, "branch_assert")) {
+    .expr = f_rhs(.expr)
+    get_branch_assert(.expr)
+  } else {
+    .expr
   }
 }
 

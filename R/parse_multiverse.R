@@ -68,27 +68,25 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list) {
     mutate( .universe = seq(1:nrow(.)) ) %>%
     select(.universe, everything())
 
-  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(select(df, -.universe), "[[", i))
+  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(subset(df, select = -.universe), "[[", i))
 
   if (length(parameters_conditions.list$condition) > 0) {
-    all_conditions <- parameters_conditions.list$conditions %>%
-      map(expr_deparse) %>%
+    all_conditions <- lapply(parameters_conditions.list$conditions, expr_deparse) %>%
       paste0(collapse = "&") %>%
       parse_expr()
   } else {
     all_conditions <- expr(TRUE)
   }
 
-  .code = remove_branch_assert( multiverse[['code']] )
+  .code = multiverse[['code']] #remove_branch_assert( multiverse[['code']] )
 
-  df %>%
-    mutate(
+  df = as_tibble(mutate(df,
       .parameter_assignment = param.assgn,
-      .code = map(.parameter_assignment, ~ get_code(multiverse, .code, .x)),
-      .results = map(.parameter_assignment, function(.x) env())
-    ) %>%
-    as_tibble() %>%
-    filter( eval(all_conditions) )
+      .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
+      .results = lapply(.parameter_assignment, function(x) env())
+    ))
+
+  filter(df, eval(all_conditions))
 }
 
 # takes as input an expression
@@ -102,7 +100,7 @@ get_parameter_conditions <- function(.expr) {
 
     # Recursive cases
     call = {
-      child_parameter_conditions <- map(.expr, get_parameter_conditions) %>%
+      child_parameter_conditions <- lapply(.expr, get_parameter_conditions) %>%
         reduce(combine_parameter_conditions)
 
       if (is_call(.expr, "branch")) {
@@ -126,10 +124,10 @@ get_branch_parameter_conditions <- function(.branch_call) {
     stop("parameter names should be symbols")
   }
   parameter_name <- .branch_call[[2]]
-  parameter_options <- map(.branch_call[-1:-2], get_option_name )
-  parameter_conditions <- map(.branch_call[-1:-2], ~ get_condition(.x, parameter_name) )
+  parameter_options <- lapply(.branch_call[-1:-2], get_option_name )
+  parameter_conditions <- lapply(.branch_call[-1:-2], function(x) get_condition(x, parameter_name) )
 
-  if (length(unique(map(parameter_options, typeof))) != 1) {
+  if (length(unique(lapply(parameter_options, typeof))) != 1) {
     stop("all option names should be of the same type")
   }
 
@@ -225,7 +223,7 @@ remove_branch_assert <- function(.expr) {
     call = {
       .expr = get_branch_assert(.expr)
       if (is_call(.expr)) {
-        as.call(map(.expr, ~ remove_branch_assert(.x)))
+        as.call(lapply(.expr, remove_branch_assert))
       } else {
         remove_branch_assert(.expr)
       }
@@ -233,15 +231,5 @@ remove_branch_assert <- function(.expr) {
   )
 }
 
-get_branch_assert <- function(.expr) {
-  if (is_call(safe_f_rhs(.expr)$result, "branch_assert")) {
-    .expr = f_lhs(.expr)
-    get_branch_assert(.expr)
-  } else if (is_call(safe_f_lhs(.expr)$result, "branch_assert")) {
-    .expr = f_rhs(.expr)
-    get_branch_assert(.expr)
-  } else {
-    .expr
-  }
-}
+
 

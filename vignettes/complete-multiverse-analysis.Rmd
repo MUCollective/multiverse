@@ -68,6 +68,7 @@ The original paper looked at the relationship between fertility, relationship st
 
 The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study. 
 
+
 ```{r single_analysis}
 one_universe = data.raw.study2 %>%
   mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
@@ -243,6 +244,7 @@ M$df <- ~ df %>%
     ))
 ```
 
+
 Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.
 
 ```{r}
@@ -334,8 +336,8 @@ M$df <- df  %>%
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
             "mc_option3" ~ StartDateNext)
     ) %>%
-    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3")) %>%
-    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2"))
+    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3") ) %>%
+    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2") )
 ```
 
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:

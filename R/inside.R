@@ -120,18 +120,16 @@ add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
   if (execute) execute_default(m_obj)
 }
 
-concatenate_expr <- function(ref, .add){
-  if (is_call(.add, "{")) {
-    ref = concatenate_expr(ref, as.list(.add)[-1])
+concatenate_expr <- function(ref, to_add){
+  if (is_call(to_add, "{")) {
+    ref = concatenate_expr( ref, as.list(to_add)[-1] )
   } else {
-    if(length(.add) == 1){
-      ref = ref %>%
-        inset2(., length(.) + 1, .add[[1]])
+    if(length(to_add) == 1){
+      ref = inset2(ref, length(ref) + 1, to_add[[1]])
     } else {
-      ref = ref %>%
-        inset2(., length(.) + 1, .add[[1]])
-      .add = .add[-1]
-      ref = concatenate_expr(ref, .add)
+      ref = inset2(ref, length(ref) + 1, to_add[[1]])
+      to_add = to_add[-1]
+      ref = concatenate_expr(ref, to_add)
     }
   }
 
@@ -151,9 +149,7 @@ eval_seq_in_code <- function(.expr) {
             if(".options" %in% names(.expr)) {
               .eval_seq = eval(.expr[['.options']])
               .idx = match(c(".options"), names(.expr))
-              .new_expr = .expr %>%
-                unname() %>%
-                magrittr::inset(c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
+              .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
             }
             return(.new_expr)
           } else {

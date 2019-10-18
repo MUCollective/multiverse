@@ -200,6 +200,9 @@ test_that("syntax tree with branches is correctly returned when no parameter is 
   expect_equal(f_rhs(u.expr), f_rhs(u.expr.ref))
 })
 
+# get_branch_assert ----------------------------------------------------
+## writ etest cases for get_branch_assert which is called from get_code
+
 # get_parameter_code ----------------------------------
 
 test_that("syntax tree with branches is correctly returned when a parameter is assigned", {

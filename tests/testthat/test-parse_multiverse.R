@@ -43,59 +43,6 @@ test_that("combine_parameter_conditions properly combines overlapping parameters
   expect_equal(combine_parameter_conditions(l.1, l.2), l)
 })
 
-
-# remove_branch_assert ----------------------------------------------------
-test_that("`remove_branch_assert` can remove `branch_assert` calls from the expression", {
-  an_expr.1 = expr({
-    df <- data.raw.study2  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength)
-      ) %>%
-      mutate(Relationship = branch( relationship_status,
-            "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-            "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-      ) %>%
-      branch_assert(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2") %>%
-      branch_assert(relationship_status != "rs_option3" | menstrual_calculation == "mc_option1") %>%
-      branch_assert(fertile != "fer_option4" | certainty == "cer_option2")
-  })
-
-  an_expr.2 = expr({
-    df <- data.raw.study2  %>%
-      branch_assert(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2")  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength)
-      ) %>%
-      branch_assert(relationship_status != "rs_option3" | menstrual_calculation == "mc_option1") %>%
-      mutate(Relationship = branch( relationship_status,
-            "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-            "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-      ) %>%
-      branch_assert(fertile != "fer_option4" | certainty == "cer_option2")
-  })
-
-  an_expr.clean = expr({
-    df <- data.raw.study2  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate(NextMenstrualOnset = branch(menstrual_calculation,
-               "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-               "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength)
-      ) %>%
-      mutate(Relationship = branch( relationship_status,
-              "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-              "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-      )
-  })
-
-  expect_equal(remove_branch_assert(an_expr.1), an_expr.clean)
-  expect_equal(remove_branch_assert(an_expr.2), an_expr.clean)
-})
-
-
 # get_parameter_conditions ------------------------------------------------
 test_that("option names of integer types are supported in branches", {
   an_expr = expr({
