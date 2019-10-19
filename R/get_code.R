@@ -45,21 +45,17 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
 # takes as input: parameter assignment, and an expression (or code) which contains branches
 # returns as output an expression (or code) without branches
 get_parameter_code <- function(.expr, .assgn) {
-  switch_expr(.expr,
-    # Base cases
-    constant = , # falls through; the next element is evaluated
-    symbol = .expr,
-
+  if (is.call(.expr)) {
     # Recursive cases
-    call = {
-      #.expr = get_branch_assert(.expr)
-      if (is_call(.expr, "branch")) {
-        get_parameter_code(compute_branch(.expr, .assgn), .assgn)
-      } else {
-        as.call(lapply(.expr, function(x) get_parameter_code(x, .assgn)))
-      }
+    if (.expr[[1]] == sym("branch")) {
+      get_parameter_code(compute_branch(.expr, .assgn), .assgn)
+    } else {
+      as.call(lapply(.expr, get_parameter_code, .assgn))
     }
-  )
+  } else {
+    # Base case: constants and symbols
+    .expr
+  }
 }
 
 # takes as input:  parameter assignment, and the expression or code containing a branch
