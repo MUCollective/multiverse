@@ -47,7 +47,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
 get_parameter_code <- function(.expr, .assgn) {
   if (is.call(.expr)) {
     # Recursive cases
-    if (.expr[[1]] == sym("branch")) {
+    if (.expr[[1]] == quote(branch)) {
       get_parameter_code(compute_branch(.expr, .assgn), .assgn)
     } else {
       as.call(lapply(.expr, get_parameter_code, .assgn))
