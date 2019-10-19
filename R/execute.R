@@ -64,14 +64,15 @@ execute_default.multiverse <- function(multiverse) {
 
 execute_default.Multiverse <- function(multiverse) {
   .param_assgn = multiverse[['default_parameter_assignment']]
-  .c = remove_branch_assert( multiverse[['code']] )
 
   if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
     env = multiverse[['multiverse_table']][['.results']][[1]]
+    .c = multiverse[['multiverse_table']][['.code']][[1]]
+
     eval(.c, env)
   } else {
     stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
-    .c = multiverse %>%  get_code(.c)
+    .c = multiverse[['multiverse_table']][['.code']][[1]]
     env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
     eval(.c, env)
   }

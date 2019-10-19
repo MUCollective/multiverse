@@ -158,7 +158,8 @@ One way to visualize over the multiverse is to animate over the results from eac
 
 ```{r, message = FALSE, fig.width = 6, fig.height = 4}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
+  unnest( cols = c(summary_RelComp) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -203,7 +204,8 @@ Simonsohn et al. propose visualizing results from the multiverse as a `specifica
 
 ```{r, fig.width = 12, fig.height = 6}
 data.spec_curve <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
+  unnest( cols = c(summary_RelComp) ) %>%
   filter( term == "Fertilitylow:RelationshipStatusSingle" ) %>%
   select( .universe, !! names(parameters(M)), estimate, p.value ) %>%
   arrange( estimate ) %>%
@@ -240,7 +242,7 @@ cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = 
 
 **Incomplete**
 
-```{r, fig.width = 9, fig.height = 5}
+```{r, eval = FALSE, fig.width = 9, fig.height = 5}
 multiverse_table(M) %>%
   mutate( index = seq(1:nrow(.)) ) %>%
   unnest( map(.results, "summary_RelComp" ) ) %>%

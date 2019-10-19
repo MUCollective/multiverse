@@ -6,6 +6,9 @@
 #'
 #' @param multiverse The multiverse object with some code passed to it
 #'
+#' @param .super_env The parent environment of the multiverse object i.e. the environment
+#' in which the multiverse object was called. This is automatically recorded.
+#'
 #' @return The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.
 #' The list of parameters is a named list which defines all the values that each defined parameter can take.
 #' The list of conditions defines, if any of the parameter values are conditional on a specific value of another
@@ -33,7 +36,7 @@
 #' @importFrom rlang f_lhs
 #'
 #' @export
-parse_multiverse <- function(multiverse) {
+parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
 
   parameter_conditions_list = get_parameter_conditions( multiverse[['code']] )
@@ -42,52 +45,45 @@ parse_multiverse <- function(multiverse) {
 
   if( length( multiverse[['parameters']] ) >= 1) {
     multiverse[['default_parameter_assignment']] = 1
-    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list)
-  } else {
+    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list, .super_env)
+  }
+  else {
     multiverse[['default_parameter_assignment']] = NULL
-    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse)
+    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse, .super_env)
   }
 }
 
-get_multiverse_table_no_param <- function(multiverse) {
+get_multiverse_table_no_param <- function(multiverse, .super_env) {
   tibble::tibble(
     .parameter_assignment = list( list() ),
     .code = list( multiverse[['code']] ),
-    .results = list( env() )
+    .results = list( new.env(parent = .super_env) )
   )
 }
 
 # creates a parameter table from the parameter list
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
-get_multiverse_table <- function(multiverse, parameters_conditions.list) {
-  df <- parameters_conditions.list$parameters %>%
-    expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
-    unnest() %>%
-    mutate( .universe = seq(1:nrow(.)) ) %>%
-    select(.universe, everything())
+get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_env) {
+  df <- unnest(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), cols = everything())
+  df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
 
-  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(select(df, -.universe), "[[", i))
+  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(subset(df, select = -.universe), "[[", i))
 
   if (length(parameters_conditions.list$condition) > 0) {
-    all_conditions <- parameters_conditions.list$conditions %>%
-      map(expr_deparse) %>%
-      paste0(collapse = "&") %>%
-      parse_expr()
+    all_conditions <- parse_expr(paste0(lapply(parameters_conditions.list$conditions, expr_deparse), collapse = "&"))
   } else {
     all_conditions <- expr(TRUE)
   }
 
-  .code = remove_branch_assert( multiverse[['code']] )
+  .code = multiverse[['code']] #remove_branch_assert( multiverse[['code']] )
 
-  df %>%
-    mutate(
+
+  filter(as_tibble(mutate(df,
       .parameter_assignment = param.assgn,
-      .code = map(.parameter_assignment, ~ get_code(multiverse, .code, .x)),
-      .results = map(.parameter_assignment, function(.x) env())
-    ) %>%
-    as_tibble() %>%
-    filter( eval(all_conditions) )
+      .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
+      .results = lapply(.parameter_assignment, function(x) new.env(parent = .super_env))
+    )), eval(all_conditions))
 }
 
 # takes as input an expression
@@ -101,7 +97,7 @@ get_parameter_conditions <- function(.expr) {
 
     # Recursive cases
     call = {
-      child_parameter_conditions <- map(.expr, get_parameter_conditions) %>%
+      child_parameter_conditions <- lapply(.expr, get_parameter_conditions) %>%
         reduce(combine_parameter_conditions)
 
       if (is_call(.expr, "branch")) {
@@ -125,10 +121,10 @@ get_branch_parameter_conditions <- function(.branch_call) {
     stop("parameter names should be symbols")
   }
   parameter_name <- .branch_call[[2]]
-  parameter_options <- map(.branch_call[-1:-2], get_option_name )
-  parameter_conditions <- map(.branch_call[-1:-2], ~ get_condition(.x, parameter_name) )
+  parameter_options <- lapply(.branch_call[-1:-2], get_option_name )
+  parameter_conditions <- lapply(.branch_call[-1:-2], function(x) get_condition(x, parameter_name) )
 
-  if (length(unique(map(parameter_options, typeof))) != 1) {
+  if (length(unique(lapply(parameter_options, typeof))) != 1) {
     stop("all option names should be of the same type")
   }
 
@@ -224,7 +220,7 @@ remove_branch_assert <- function(.expr) {
     call = {
       .expr = get_branch_assert(.expr)
       if (is_call(.expr)) {
-        as.call(map(.expr, ~ remove_branch_assert(.x)))
+        as.call(lapply(.expr, remove_branch_assert))
       } else {
         remove_branch_assert(.expr)
       }
@@ -232,15 +228,5 @@ remove_branch_assert <- function(.expr) {
   )
 }
 
-get_branch_assert <- function(.expr) {
-  if (is_call(safe_f_rhs(.expr)$result, "branch_assert")) {
-    .expr = f_lhs(.expr)
-    get_branch_assert(.expr)
-  } else if (is_call(safe_f_lhs(.expr)$result, "branch_assert")) {
-    .expr = f_rhs(.expr)
-    get_branch_assert(.expr)
-  } else {
-    .expr
-  }
-}
+
 

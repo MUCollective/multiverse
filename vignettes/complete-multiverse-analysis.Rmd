@@ -1,11 +1,11 @@
 ---
-title: "Extracting and Visualizing the results of a multiverse analysis"
+title: "A complete implementation of a multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
+  %\VignetteIndexEntry{A complete implementation of a multiverse analysis}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -34,7 +34,6 @@ library(gganimate)
 library(cowplot)
 library(multidy)
 ```
-
 
 ## The data
 The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
@@ -67,6 +66,7 @@ The original paper looked at the relationship between fertility, relationship st
 ## A single data set analysis: one possible analysis among many
 
 The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study. 
+
 
 ```{r single_analysis}
 one_universe = data.raw.study2 %>%
@@ -243,6 +243,7 @@ M$df <- ~ df %>%
     ))
 ```
 
+
 Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.
 
 ```{r}
@@ -334,8 +335,8 @@ M$df <- df  %>%
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
             "mc_option3" ~ StartDateNext)
     ) %>%
-    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3")) %>%
-    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2"))
+    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3") ) %>%
+    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2") )
 ```
 
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:
@@ -414,7 +415,8 @@ Now that we have performed the analysis in each universe of the multiverse, we n
 
 ```{r}
 multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   head( 10 )
 ```
 
@@ -424,7 +426,8 @@ Note: we discuss extracting results from the multiverse and visualizing them in 
 
 ```{r, message = FALSE}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -467,7 +470,8 @@ execute_multiverse(M)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_FiscConsComp" ) ) %>%
+  mutate( summary = map(.results, "summary_FiscConsComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -486,7 +490,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_SocConsComp" ) ) %>%
+  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -505,7 +510,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_Donate" ) ) %>%
+  mutate( summary = map(.results, "summary_Donate" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -523,7 +529,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_Vote" ) ) %>%
+  mutate( summary = map(.results, "summary_Vote" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
