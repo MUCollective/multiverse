@@ -324,7 +324,7 @@ M$df <- df  %>%
 #### The `branch_assert()` function
 Within the branch assert function, the user can specify any logical operation. 
 
-For eg: the above logical operations can be specified as: `branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3")` or `branch_assert(!(menstrual_calculation == "mc_option1" | cycle_length == "cl_option3"))`
+For eg: the above logical operations can be specified as: `branch_assert((menstrual_calculation != "mc_option1" | cycle_length != "cl_option3"))`
 
 Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
 
@@ -335,8 +335,8 @@ M$df <- df  %>%
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
             "mc_option3" ~ StartDateNext)
     ) %>%
-    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3") ) %>%
-    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2") )
+    branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+    branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
 ```
 
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:

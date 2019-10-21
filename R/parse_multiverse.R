@@ -25,7 +25,6 @@
 #' @importFrom dplyr everything
 #' @importFrom dplyr filter
 #' @importFrom tibble as_tibble
-#' @importFrom tidyr unnest
 #' @importFrom purrr compact
 #' @importFrom purrr map_chr
 #' @importFrom rlang parse_expr
@@ -65,10 +64,9 @@ get_multiverse_table_no_param <- function(multiverse, .super_env) {
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_env) {
-  df <- unnest(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), cols = everything())
-  df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
+  df <- data.frame( lapply(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
 
-  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(subset(df, select = -.universe), "[[", i))
+  param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i))
 
   if (length(parameters_conditions.list$condition) > 0) {
     all_conditions <- parse_expr(paste0(lapply(parameters_conditions.list$conditions, expr_deparse), collapse = "&"))
@@ -76,9 +74,10 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_
     all_conditions <- expr(TRUE)
   }
 
-  .code = multiverse[['code']] #remove_branch_assert( multiverse[['code']] )
+  .code = multiverse[['code']]
+  #.code = remove_branch_assert( multiverse[['code']] )
 
-
+  df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
   filter(as_tibble(mutate(df,
       .parameter_assignment = param.assgn,
       .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
@@ -90,27 +89,23 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_
 # returns as output a paramater condition list whose structure
 # resembles list(parameter = list(), condition = list())
 get_parameter_conditions <- function(.expr) {
-  switch_expr(.expr,
-    # Base cases
-    constant = , # falls through; the next element is evaluated
-    symbol = list(parameters = list(), conditions = list()),
+  if (is.call(.expr)) {
+    child_parameter_conditions <- lapply(.expr, get_parameter_conditions) %>%
+      reduce(combine_parameter_conditions)
 
-    # Recursive cases
-    call = {
-      child_parameter_conditions <- lapply(.expr, get_parameter_conditions) %>%
-        reduce(combine_parameter_conditions)
-
-      if (is_call(.expr, "branch")) {
-          get_branch_parameter_conditions(.expr) %>%
-            combine_parameter_conditions(child_parameter_conditions)
-      } else if (is_call(.expr, "branch_assert")) {
-          get_branch_assert_condition(.expr) %>%
-            combine_parameter_conditions(child_parameter_conditions)
-      } else {
-          child_parameter_conditions
-      }
+    if (is_call(.expr, "branch")) {
+      get_branch_parameter_conditions(.expr) %>%
+        combine_parameter_conditions(child_parameter_conditions)
+    } else if (is_call(.expr, "branch_assert")) {
+      get_branch_assert_condition(.expr) %>%
+        combine_parameter_conditions(child_parameter_conditions)
+    } else {
+      child_parameter_conditions
     }
-  )
+  } else {
+    # Base case: constants and symbols
+    list(parameters = list(), conditions = list())
+  }
 }
 
 # takes as input a `branch` call which contains a parameter name
@@ -190,11 +185,11 @@ combine_parameter_conditions <- function(l1, l2) {
 
 get_option_name <- function(x) {
   # when option names are specified
-  if (is_call(x, "~")) {
-    if (is_call( f_lhs(x), "%when%") ) {
+  if (is.call(x) && x[[1]] == "~") {
+    if (is.call( f_lhs(x) ) && f_lhs(x)[[1]] == "%when%" ) {
       .expr = f_lhs(f_lhs(x))
       return( create_name_from_expr(.expr) )
-    } else if (is_call( f_lhs(x)) ) {
+    } else if (is.call( f_lhs(x)) ) {
       .expr = f_lhs(x)
       return( create_name_from_expr(.expr) )
     }
@@ -202,7 +197,7 @@ get_option_name <- function(x) {
   }
   # when option names are implicitly identified from the expression
   else {
-    if (is_call( x, "%when%") ) {
+    if (is.call( x ) && x[[1]] == "%when%" ) {
       .expr = f_lhs(x)
       return( create_name_from_expr(.expr) )
     }
@@ -211,22 +206,20 @@ get_option_name <- function(x) {
 }
 
 remove_branch_assert <- function(.expr) {
-  switch_expr(.expr,
-    # Base cases
-    constant = , # falls through; the next element is evaluated
-    symbol = .expr,
-
-    # Recursive cases
-    call = {
-      .expr = get_branch_assert(.expr)
-      if (is_call(.expr)) {
-        as.call(lapply(.expr, remove_branch_assert))
-      } else {
-        remove_branch_assert(.expr)
-      }
+  if (is.call(.expr)) {
+    .expr = get_branch_assert(.expr)
+    if (is.call(.expr)) {
+      as.call(lapply(.expr, remove_branch_assert))
+    } else {
+      remove_branch_assert(.expr)
     }
-  )
+  } else {
+    # Base case: constants and symbols
+    .expr
+  }
 }
+
+
 
 
 

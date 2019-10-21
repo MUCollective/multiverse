@@ -12,8 +12,8 @@
 #'
 #' @param multiverse The multiverse object with some code passed to it
 #'
-#' @param .code Code that is passed to the multiverse stripped of calls such as `branch_assert`.
-#' This is the output of `remove_branch_assert` function.
+#' @param .code Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
+#' which can be done using the `remove_branch_assert` function.
 #'
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #'
@@ -45,6 +45,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
 # takes as input: parameter assignment, and an expression (or code) which contains branches
 # returns as output an expression (or code) without branches
 get_parameter_code <- function(.expr, .assgn) {
+  .expr = rm_branch_assert(.expr)
   if (is.call(.expr)) {
     # Recursive cases
     if (.expr[[1]] == quote(branch)) {
@@ -52,8 +53,33 @@ get_parameter_code <- function(.expr, .assgn) {
     } else {
       as.call(lapply(.expr, get_parameter_code, .assgn))
     }
-  } else {
+  }  else {
     # Base case: constants and symbols
+    .expr
+  }
+}
+
+### this function is to allow people to declare `branch_assert` which does not work rn
+rm_branch_assert <- function(.expr) {
+  # if the expression is not of length 3, than there isn't a branch_assert call
+  if(length(.expr) == 3) {
+    # checks if the rhs of the expression is a branch_assert call
+    # rewrites the expression by removing it
+    if (is.call(.expr[[3]])) {
+      if(.expr[[3]][[1]] == quote(branch_assert)) {
+        .expr = .expr[[2]]
+      }
+    }
+    # checks if the rhs of the expression is a branch_assert call
+    # rewrites the expression by removing it
+    if (is.call(.expr[[2]])) {
+      if(.expr[[2]][[1]] == quote(branch_assert)) {
+        .expr = .expr[[3]]
+      }
+    }
+
+    .expr
+  } else {
     .expr
   }
 }
@@ -64,30 +90,18 @@ compute_branch <- function(.expr, .assgn) {
   assigned_parameter_option_name = .assgn[[.expr[[2]]]]
   option_names = lapply(.expr[-1:-2], get_option_name)
 
-  param_assignment <- flatten_lgl(lapply(option_names, function(x) x == assigned_parameter_option_name))
+  param_assignment <- unlist(lapply(option_names, function(x) x == assigned_parameter_option_name))
 
   get_option_value(extract2(.expr[-1:-2], which(param_assignment, arr.ind = TRUE)))
 }
 
 get_option_value <- function(x) {
-  if (is_call(x, "~")) {
+  if (is.call(x) && x[[1]] == "~") {
     return( f_rhs(x) )
   } else {
     return(x)
   }
 }
 
-
-get_branch_assert <- function(.expr) {
-  if (is_call(safe_f_rhs(.expr)$result, "branch_assert")) {
-    .expr = f_lhs(.expr)
-    get_branch_assert(.expr)
-  } else if (is_call(safe_f_lhs(.expr)$result, "branch_assert")) {
-    .expr = f_rhs(.expr)
-    get_branch_assert(.expr)
-  } else {
-    .expr
-  }
-}
 
 
