@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
       </span>
     </div>
 
@@ -60,7 +60,10 @@
       <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+    </li>
+    <li>
+      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
@@ -87,7 +90,7 @@
       <h1>The most basic multiverse example: calculating the mean</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2019-10-07</h4>
+            <h4 class="date">2019-10-25</h4>
       
       
       <div class="hidden name"><code>calculate-mean-multiverse.Rmd</code></div>
@@ -218,6 +221,8 @@
 <a class="sourceLine" id="cb29-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">mean =</span> <span class="kw">map</span>(.results, <span class="st">"x.mean"</span>) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb29-3" data-line-number="3"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb29-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_col</span>(<span class="kw">aes</span>(<span class="dt">x =</span> .universe, <span class="dt">y =</span> mean))</a></code></pre></div>
+<pre><code>## Warning: unnest() has a new interface. See ?unnest for details.
+## Try `df %&gt;% unnest(c(mean))`, with `mutate()` if needed</code></pre>
 <p><img src="calculate-mean-multiverse_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
 </div>
 </div>
@@ -225,9 +230,11 @@
 <h2 class="hasAnchor">
 <a href="#step-2-extending-the-multiverse" class="anchor"></a>Step 2: extending the multiverse</h2>
 <p>Now, let’s introduce some <em>missing values</em>. We will then sample <code>100</code> values and compute the mean. <em>Incomplete; requires the conditional assertion implementation</em></p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">data =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(data, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="ot">NA</span>, <span class="dv">5</span>)))</a></code></pre></div>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">mean =</span> <span class="kw">map</span>(.results, <span class="st">"x.mean"</span>) )</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">data =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(data, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="ot">NA</span>, <span class="dv">5</span>)))</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">mean =</span> <span class="kw">map</span>(.results, <span class="st">"x.mean"</span>) )</a></code></pre></div>
+<pre><code>## Warning: unnest() has a new interface. See ?unnest for details.
+## Try `df %&gt;% unnest(c(mean))`, with `mutate()` if needed</code></pre>
 <pre><code>## # A tibble: 4 x 6
 ##   .universe trim_values .parameter_assignment .code      .results  mean
 ##       &lt;int&gt; &lt;chr&gt;       &lt;list&gt;                &lt;list&gt;     &lt;list&gt;   &lt;dbl&gt;

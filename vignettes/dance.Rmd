@@ -42,10 +42,10 @@ The experiment involved four independent variables: the visualization type (9 le
 
 First, we will quickly show what the original data, and the plots created using this dataset, looks like:
 
-```{r, data-proc-errorbars}
+```{r, data}
 data("vis_correlation")
 
-df <- data %>% 
+df <- vis_correlation %>% 
   group_by( vis, rbase, approach, sign ) %>%
   select(-c(condition, visandsign, participant)) %>%
   summarise( jnd = list(jnd) ) %>%
@@ -55,8 +55,10 @@ df <- data %>%
     jnd_limit = 3 * mads
   ) %>% 
   ungroup()
+```
 
 
+```{r, data-proc-errorbars}
 df.error_bar <- df %>%
   unnest( cols = c(jnd) ) %>%
   filter( abs(jnd - median) <= jnd_limit ) %>%
@@ -153,7 +155,7 @@ M = multiverse()
 inside(M, {
   set.seed(branch(seed, .options = 1:n))
   
-  data.i = data %>%
+  data.i = vis_correlation %>%
     group_by(rbase, sign, vis, approach) %>%
     summarise( jnd = list(jnd) ) %>%
     mutate( 

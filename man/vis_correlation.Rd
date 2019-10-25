@@ -14,7 +14,7 @@
   \item{rbase}{The coefficiant of correlation using which the stimuli was generated}
   \item{approach}{NA}
   \item{jnd}{Estimated JND value for that participant}
-  \item{condtion}{Condition that the participant was placed in (which is a combination of vis, rbase and approach)}
+  \item{condition}{Condition that the participant was placed in (which is a combination of vis, rbase and approach)}
 }}
 \usage{
 vis_correlation
