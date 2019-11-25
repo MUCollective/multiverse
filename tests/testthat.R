@@ -1,4 +1,4 @@
 library(testthat)
-library(multidy)
+library(multiverse)
 
-test_check("multidy")
+test_check("multiverse")
