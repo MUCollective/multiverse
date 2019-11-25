@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Execute parts of, or the entire multiverse — execute • multidy</title>
+<title>Execute parts of, or the entire multiverse — execute • multiverse</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -67,8 +67,8 @@ whole of the multiverse using the [execute_multiverse]." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -163,10 +163,10 @@ multiverse table, under the results column.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'>#' M &lt;- multiverse()</span>
-<span class='fu'><a href='inside.html'>inside</a></span>(<span class='no'>M</span>, {
+<span class='fu'>inside</span>(<span class='no'>M</span>, {
   <span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>100</span>, <span class='fl'>50</span>, <span class='fl'>20</span>)
 
-  <span class='no'>x.mean</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>data</span>, <span class='kw'>trim</span> <span class='kw'>=</span> <span class='fu'><a href='branch.html'>branch</a></span>(
+  <span class='no'>x.mean</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>data</span>, <span class='kw'>trim</span> <span class='kw'>=</span> <span class='fu'>branch</span>(
     <span class='no'>trim_values</span>,
     <span class='st'>"trim_none"</span> ~ <span class='fl'>0</span>,
     <span class='st'>"trim_1pc"</span> ~ <span class='fl'>0.05</span>,

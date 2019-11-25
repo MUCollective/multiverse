@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy • multidy</title>
+<title>Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy • multiverse</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
@@ -30,8 +30,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@
       <h1>Recreating <code>Adding inferential treatments to plots using Resampling and Animations</code> using multidy</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2019-10-25</h4>
+            <h4 class="date">2019-11-25</h4>
       
       
       <div class="hidden name"><code>dance.Rmd</code></div>
@@ -199,10 +199,10 @@
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co">#data_original &lt;- read.csv("master-alt.csv")</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">n =<span class="st"> </span><span class="dv">200</span></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">M =<span class="st"> </span><span class="kw"><a href="../reference/multiverse.html">multiverse</a></span>()</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">M =<span class="st"> </span><span class="kw">multiverse</span>()</a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw"><a href="../reference/inside.html">inside</a></span>(M, {</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">  <span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="kw"><a href="../reference/branch.html">branch</a></span>(seed, <span class="dt">.options =</span> <span class="dv">1</span><span class="op">:</span>n))</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">inside</span>(M, {</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">  <span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="kw">branch</span>(seed, <span class="dt">.options =</span> <span class="dv">1</span><span class="op">:</span>n))</a>
 <a class="sourceLine" id="cb7-8" data-line-number="8">  </a>
 <a class="sourceLine" id="cb7-9" data-line-number="9">  data.i =<span class="st"> </span>vis_correlation <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb7-10" data-line-number="10"><span class="st">    </span><span class="kw">group_by</span>(rbase, sign, vis, approach) <span class="op">%&gt;%</span></a>
@@ -225,7 +225,7 @@
 <a class="sourceLine" id="cb7-27" data-line-number="27">    ) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-28" data-line-number="28"><span class="st">    </span><span class="kw">ungroup</span>()</a>
 <a class="sourceLine" id="cb7-29" data-line-number="29">})</a></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/inside.html">inside</a></span>(M, {</a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">inside</span>(M, {</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2">  df.error_bar.i &lt;-<span class="st"> </span>df.i <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">    </span><span class="kw">unnest</span>( <span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(jnd) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(jnd <span class="op">-</span><span class="st"> </span>median) <span class="op">&lt;=</span><span class="st"> </span>jnd_limit ) <span class="op">%&gt;%</span></a>
@@ -274,8 +274,8 @@
 <a class="sourceLine" id="cb8-47" data-line-number="47">          <span class="dt">yend =</span> intercept <span class="op">+</span><span class="st"> </span>coef <span class="op">*</span><span class="st"> </span>xend</a>
 <a class="sourceLine" id="cb8-48" data-line-number="48">      )</a>
 <a class="sourceLine" id="cb8-49" data-line-number="49">})</a></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/execute.html">execute_multiverse</a></span>(M)</a></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">p.above &lt;-<span class="st"> </span><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">execute_multiverse</span>(M)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">p.above &lt;-<span class="st"> </span><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">data =</span> <span class="kw">map</span>(.results, <span class="st">"df.error_bar.i"</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(data) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( sign <span class="op">==</span><span class="st"> </span><span class="dv">1</span> ) <span class="op">%&gt;%</span></a>
@@ -289,7 +289,7 @@
 <a class="sourceLine" id="cb10-12" data-line-number="12"></a>
 <a class="sourceLine" id="cb10-13" data-line-number="13"><span class="kw">animate</span>(p.above, <span class="dt">nframes =</span> n, <span class="dt">fps =</span> <span class="dv">3</span>, <span class="dt">width =</span> <span class="dv">840</span>, <span class="dt">height =</span> <span class="dv">320</span>)</a></code></pre></div>
 <p><img src="dance_files/figure-html/vis-errorbars-above-1.gif"><!-- --></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">p.below &lt;-<span class="st"> </span><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">p.below &lt;-<span class="st"> </span><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">data =</span> <span class="kw">map</span>(.results, <span class="st">"df.error_bar.i"</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(data) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( sign <span class="op">==</span><span class="st"> </span><span class="dv">-1</span> ) <span class="op">%&gt;%</span></a>
@@ -303,7 +303,7 @@
 <a class="sourceLine" id="cb11-12" data-line-number="12"></a>
 <a class="sourceLine" id="cb11-13" data-line-number="13"><span class="kw">animate</span>(p.below, <span class="dt">nframes =</span> n, <span class="dt">fps =</span> <span class="dv">3</span>, <span class="dt">width =</span> <span class="dv">840</span>, <span class="dt">height =</span> <span class="dv">320</span>)</a></code></pre></div>
 <p><img src="dance_files/figure-html/vis-errorbars-below-1.gif"><!-- --></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">p.fitted_lines &lt;-<span class="st"> </span><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">p.fitted_lines &lt;-<span class="st"> </span><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">data =</span> <span class="kw">map</span>(.results, <span class="st">"df.corr_fitted.i"</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(data) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>

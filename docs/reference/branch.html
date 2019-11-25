@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Define multiple analysis paths for a step in the multiverse — branch • multidy</title>
+<title>Define multiple analysis paths for a step in the multiverse — branch • multiverse</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -66,8 +66,8 @@ in the analysis." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -193,7 +193,7 @@ if the total number arguments passed is less than three.</p>
     )
 
 <span class='co'># Since this is a multiverse analysis, this is only supported within a multiverse object. Hence:</span>
-<span class='no'>M</span> <span class='kw'>=</span> <span class='fu'><a href='inside.html'>inside</a></span>(<span class='no'>M</span>, {
+<span class='no'>M</span> <span class='kw'>=</span> <span class='fu'>inside</span>(<span class='no'>M</span>, {
   <span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='no'>data.fertility</span>  <span class='kw'>%&gt;%</span>
     <span class='fu'>mutate</span>( <span class='kw'>ComputedCycleLength</span> <span class='kw'>=</span> <span class='no'>StartDateofLastPeriod</span> - <span class='no'>StartDateofPeriodBeforeLast</span> ) <span class='kw'>%&gt;%</span>
     <span class='fu'>mutate</span>( <span class='kw'>NextMenstrualOnset</span> <span class='kw'>=</span> <span class='fu'>branch</span>(<span class='no'>menstrual_calculation</span>,

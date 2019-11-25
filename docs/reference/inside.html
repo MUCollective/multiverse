@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Pass code into the multiverse — inside • multidy</title>
+<title>Pass code into the multiverse — inside • multiverse</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -66,8 +66,8 @@ a wrapper around the function" />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -181,13 +181,13 @@ the assignment operator, `&lt;-`. See examples below.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>M.1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='multiverse.html'>multiverse</a></span>()
+<span class='no'>M.1</span> <span class='kw'>&lt;-</span> <span class='fu'>multiverse</span>()
 
 <span class='co'># using `inside` to declare multiverse code</span>
 <span class='fu'>inside</span>(<span class='no'>M.1</span>, {
   <span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>100</span>, <span class='fl'>50</span>, <span class='fl'>20</span>)
 
-  <span class='no'>x.mean</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>data</span>, <span class='kw'>trim</span> <span class='kw'>=</span> <span class='fu'><a href='branch.html'>branch</a></span>(
+  <span class='no'>x.mean</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>data</span>, <span class='kw'>trim</span> <span class='kw'>=</span> <span class='fu'>branch</span>(
     <span class='no'>trim_values</span>,
     <span class='st'>"trim_none"</span> ~ <span class='fl'>0</span>,
     <span class='st'>"trim_1pc"</span> ~ <span class='fl'>0.05</span>,
@@ -196,11 +196,11 @@ the assignment operator, `&lt;-`. See examples below.</p>
   ))
 })
 
-<span class='no'>M.2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='multiverse.html'>multiverse</a></span>()
+<span class='no'>M.2</span> <span class='kw'>&lt;-</span> <span class='fu'>multiverse</span>()
 
 <span class='co'># using the assignment operator to declare multiverse code</span>
 <span class='no'>M</span>$<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>100</span>, <span class='fl'>50</span>, <span class='fl'>20</span>)
-<span class='no'>M</span>$<span class='no'>x.mean</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>data</span>, <span class='kw'>trim</span> <span class='kw'>=</span> <span class='fu'><a href='branch.html'>branch</a></span>(
+<span class='no'>M</span>$<span class='no'>x.mean</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>data</span>, <span class='kw'>trim</span> <span class='kw'>=</span> <span class='fu'>branch</span>(
     <span class='no'>trim_values</span>,
     <span class='st'>"trim_none"</span> ~ <span class='fl'>0</span>,
     <span class='st'>"trim_1pc"</span> ~ <span class='fl'>0.05</span>,
@@ -215,7 +215,7 @@ the assignment operator, `&lt;-`. See examples below.</p>
 <span class='fu'>inside</span>(<span class='no'>M.1</span>, {
   <span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='no'>df</span>  <span class='kw'>%&gt;%</span>
     <span class='fu'>mutate</span>( <span class='kw'>ComputedCycleLength</span> <span class='kw'>=</span> <span class='no'>StartDateofLastPeriod</span> - <span class='no'>StartDateofPeriodBeforeLast</span> ) <span class='kw'>%&gt;%</span>
-    <span class='fu'>mutate</span>( <span class='kw'>NextMenstrualOnset</span> <span class='kw'>=</span> <span class='fu'><a href='branch.html'>branch</a></span>(<span class='no'>menstrual_calculation</span>,
+    <span class='fu'>mutate</span>( <span class='kw'>NextMenstrualOnset</span> <span class='kw'>=</span> <span class='fu'>branch</span>(<span class='no'>menstrual_calculation</span>,
                                    <span class='st'>"mc_option1"</span> ~ <span class='no'>StartDateofLastPeriod</span> + <span class='no'>ComputedCycleLength</span>,
                                    <span class='st'>"mc_option2"</span> ~ <span class='no'>StartDateofLastPeriod</span> + <span class='no'>ReportedCycleLength</span>,
                                    <span class='st'>"mc_option3"</span> ~ <span class='no'>StartDateNext</span>

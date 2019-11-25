@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The most basic multiverse example: calculating the mean • multidy</title>
+<title>The most basic multiverse example: calculating the mean • multiverse</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
@@ -30,8 +30,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@
       <h1>The most basic multiverse example: calculating the mean</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2019-10-25</h4>
+            <h4 class="date">2019-11-25</h4>
       
       
       <div class="hidden name"><code>calculate-mean-multiverse.Rmd</code></div>
@@ -125,11 +125,11 @@
 <h3 class="hasAnchor">
 <a href="#the-different-analysis-options" class="anchor"></a>The different analysis options</h3>
 <p>In our multiverse, we want to look at the result of using different values for trim. Let’s first define the different options we want to set the value for trim to; we could choose to : - not trim i.e. trim = 0 - trim 1% of the data i.e. trim = 0.005 - trim 5% of the data i.e. trim = 0.025 - trim 10% of the data i.e. trim = 0.05</p>
-<p>Instead of repeatedly calling <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> with different values of trim, we can use the <code><a href="../reference/branch.html">branch()</a></code> function to declare that we want to calculate <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> using different options for the value of trim. Thus, instead of passing a value to trim (which is an argument of <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>), we would pass the <code><a href="../reference/branch.html">branch()</a></code> function.</p>
-<p>The first argument to the <code><a href="../reference/branch.html">branch()</a></code> function is the name of the parameter (here “trim_value”). The other arguments are the options which are declared syntactically as <code>&lt;option_name&gt; ~ &lt;option_calculation / option_value&gt;</code>. Thus the <code><a href="../reference/branch.html">branch()</a></code> indicates that a parameter can take more than one option, which are then listed.</p>
+<p>Instead of repeatedly calling <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> with different values of trim, we can use the <code>branch()</code> function to declare that we want to calculate <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> using different options for the value of trim. Thus, instead of passing a value to trim (which is an argument of <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>), we would pass the <code>branch()</code> function.</p>
+<p>The first argument to the <code>branch()</code> function is the name of the parameter (here “trim_value”). The other arguments are the options which are declared syntactically as <code>&lt;option_name&gt; ~ &lt;option_calculation / option_value&gt;</code>. Thus the <code>branch()</code> indicates that a parameter can take more than one option, which are then listed.</p>
 <p>This style of syntax allows us to declare all the possible options for this parameter at the same time.</p>
-<p>Thus, the <code><a href="../reference/branch.html">branch()</a></code> call would resemble something like this:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/branch.html">branch</a></span>(</a>
+<p>Thus, the <code>branch()</code> call would resemble something like this:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">branch</span>(</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">  trim_values,</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="st">"trim_none"</span> <span class="op">~</span><span class="st"> </span><span class="dv">0</span>,</a>
 <a class="sourceLine" id="cb6-4" data-line-number="4">    <span class="st">"trim_1pc"</span> <span class="op">~</span><span class="st"> </span><span class="fl">0.005</span>,</a>
@@ -137,7 +137,7 @@
 <a class="sourceLine" id="cb6-6" data-line-number="6">    <span class="st">"trim_10pc"</span> <span class="op">~</span><span class="st"> </span><span class="fl">0.05</span></a>
 <a class="sourceLine" id="cb6-7" data-line-number="7">)</a></code></pre></div>
 <p>We can now pass this branch to the <code>trim</code> argument of the <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> function.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(data, <span class="dt">trim =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>(</a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(data, <span class="dt">trim =</span> <span class="kw">branch</span>(</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">    trim_values,</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">      <span class="st">"trim_none"</span> <span class="op">~</span><span class="st"> </span><span class="dv">0</span>,</a>
 <a class="sourceLine" id="cb7-4" data-line-number="4">      <span class="st">"trim_1pc"</span> <span class="op">~</span><span class="st"> </span><span class="fl">0.005</span>,</a>
@@ -150,22 +150,22 @@
 <h3 class="hasAnchor">
 <a href="#creating-and-initialising-the-multiverse" class="anchor"></a>Creating and initialising the multiverse</h3>
 <p>However, for this to work, we would need to run this step within the multiverse, and not directly. To do that, we first need to create an empty multiverse object.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">M =<span class="st"> </span><span class="kw"><a href="../reference/multiverse.html">multiverse</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">M =<span class="st"> </span><span class="kw">multiverse</span>()</a></code></pre></div>
 <p>The multiverse object contains five components (which we will subsequently refer to as slots): <code>code</code>, <code>parameters</code>, <code>conditions</code>, <code>current_parameter_assignment</code> and <code>multiverse_table</code>; all of them are initialised as empty (<em>NULL / empty list</em>). We will describe them in more detail later.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">code</a></span>(M)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">code</span>(M)</a></code></pre></div>
 <pre><code>## NULL</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">parameters</a></span>(M) <span class="co">#this is a list</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">parameters</span>(M) <span class="co">#this is a list</span></a></code></pre></div>
 <pre><code>## list()</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">conditions</a></span>(M) <span class="co">#this is empty</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/conditions.html">conditions</a></span>(M) <span class="co">#this is empty</span></a></code></pre></div>
 <pre><code>## list()</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/default_parameter_assignment.html">default_parameter_assignment</a></span>(M) <span class="co">#this is a list</span></a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">default_parameter_assignment</span>(M) <span class="co">#this is a list</span></a></code></pre></div>
 <pre><code>## NULL</code></pre>
 <p>Inside this new multiverse object, we will declare the code to calculate the mean using four different options. The <code>multiverse</code> object will store all possible combinations of analysis (in this case, the analysis is calculating the <em>mean</em>).</p>
 <p>When the <em>branches</em> are declared inside the multiverse, we can capture and store them without executing them. This way, we can capture the branches for more than one parameter, and interactively add more branches to the multiverse, so that it is easy to conduct a complete analysis. We will illustrate this later.</p>
-<p>The <code><a href="../reference/inside.html">inside()</a></code> function takes in two arguments: 1. the multiverse object, and 2. the expression, which should be declared within <code>{}</code></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../reference/inside.html">inside</a></span>(M, {</a>
+<p>The <code>inside()</code> function takes in two arguments: 1. the multiverse object, and 2. the expression, which should be declared within <code>{}</code></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">inside</span>(M, {</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2">  x.mean =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(data, </a>
-<a class="sourceLine" id="cb17-3" data-line-number="3">    <span class="dt">trim =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>(trim_values,</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">    <span class="dt">trim =</span> <span class="kw">branch</span>(trim_values,</a>
 <a class="sourceLine" id="cb17-4" data-line-number="4">      <span class="st">"trim_none"</span> <span class="op">~</span><span class="st"> </span><span class="dv">0</span>,</a>
 <a class="sourceLine" id="cb17-5" data-line-number="5">      <span class="st">"trim_1pc"</span> <span class="op">~</span><span class="st"> </span><span class="fl">0.005</span>,</a>
 <a class="sourceLine" id="cb17-6" data-line-number="6">      <span class="st">"trim_5pc"</span> <span class="op">~</span><span class="st"> </span><span class="fl">0.025</span>,</a>
@@ -174,14 +174,14 @@
 <a class="sourceLine" id="cb17-9" data-line-number="9">  )</a>
 <a class="sourceLine" id="cb17-10" data-line-number="10">})</a></code></pre></div>
 <p>Once, code is declared inside the multiverse, this is stored inside the <code>code</code> component as an un-evaluated expression. This will also populate the empty slots in the multiverse i.e. identify the parameters and create a multiverse table.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">code</a></span>(M)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">code</span>(M)</a></code></pre></div>
 <pre><code>## {
 ##     x.mean = mean(data, trim = branch(trim_values, "trim_none" ~ 
 ##         0, "trim_1pc" ~ 0.005, "trim_5pc" ~ 0.025, "trim_10pc" ~ 
 ##         0.05))
 ## }</code></pre>
 <p>The <code>parameter</code> slot will have a named list of parameters (in this case, the only parameter we’ve declared is <code>trim_values</code>) and the options for each parameter (here, the four options).</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">parameters</a></span>(M)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">parameters</span>(M)</a></code></pre></div>
 <pre><code>## $trim_values
 ## $trim_values[[1]]
 ## [1] "trim_none"
@@ -195,7 +195,7 @@
 ## $trim_values[[4]]
 ## [1] "trim_10pc"</code></pre>
 <p>The <code>multiverse_table</code> slot contains a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter — the number of rows corresponds to the number of different analysis paths (here, 4).</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M)</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">multiverse_table</span>(M)</a></code></pre></div>
 <pre><code>## # A tibble: 4 x 5
 ##   .universe trim_values .parameter_assignment .code      .results
 ##       &lt;int&gt; &lt;chr&gt;       &lt;list&gt;                &lt;list&gt;     &lt;list&gt;  
@@ -204,20 +204,20 @@
 ## 3         3 trim_5pc    &lt;named list [1]&gt;      &lt;language&gt; &lt;env&gt;   
 ## 4         4 trim_10pc   &lt;named list [1]&gt;      &lt;language&gt; &lt;env&gt;</code></pre>
 <p>The <code>default_parameter_assignment</code> slot will be initialised to the first option for each parameter (in this case, “trim_none”).</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw"><a href="../reference/default_parameter_assignment.html">default_parameter_assignment</a></span>(M)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">default_parameter_assignment</span>(M)</a></code></pre></div>
 <pre><code>## $trim_values
 ## [1] "trim_none"</code></pre>
 </div>
 <div id="executing-the-different-analysis-paths-in-the-multiverse" class="section level3">
 <h3 class="hasAnchor">
 <a href="#executing-the-different-analysis-paths-in-the-multiverse" class="anchor"></a>Executing the different analysis paths in the multiverse</h3>
-<p>This will be considered the default analysis option. We can execute this default option using the <code><a href="../reference/execute.html">execute_default()</a></code> function. <code><a href="../reference/execute.html">execute_default()</a></code> is also run everytime code is added to the multiverse, so users usually won’t need to call it.</p>
+<p>This will be considered the default analysis option. We can execute this default option using the <code>execute_default()</code> function. <code>execute_default()</code> is also run everytime code is added to the multiverse, so users usually won’t need to call it.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">M<span class="op">$</span>x.mean</a></code></pre></div>
 <pre><code>## [1] 22.35059</code></pre>
-<p>Or we can run the entire multiverse using the <code><a href="../reference/execute.html">execute_multiverse()</a></code> function. This will execute each analysis path in seperate environments.</p>
+<p>Or we can run the entire multiverse using the <code>execute_multiverse()</code> function. This will execute each analysis path in seperate environments.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">M <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/execute.html">execute_multiverse</a></span>()</a></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="st">  </span><span class="kw">execute_multiverse</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb29-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">mean =</span> <span class="kw">map</span>(.results, <span class="st">"x.mean"</span>) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb29-3" data-line-number="3"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb29-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_col</span>(<span class="kw">aes</span>(<span class="dt">x =</span> .universe, <span class="dt">y =</span> mean))</a></code></pre></div>
@@ -231,7 +231,7 @@
 <a href="#step-2-extending-the-multiverse" class="anchor"></a>Step 2: extending the multiverse</h2>
 <p>Now, let’s introduce some <em>missing values</em>. We will then sample <code>100</code> values and compute the mean. <em>Incomplete; requires the conditional assertion implementation</em></p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">data =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(data, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="ot">NA</span>, <span class="dv">5</span>)))</a></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb32-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">mean =</span> <span class="kw">map</span>(.results, <span class="st">"x.mean"</span>) )</a></code></pre></div>
 <pre><code>## Warning: unnest() has a new interface. See ?unnest for details.
 ## Try `df %&gt;% unnest(c(mean))`, with `mutate()` if needed</code></pre>
