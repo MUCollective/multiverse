@@ -25,13 +25,7 @@ The goal of multidy is to ...
 
 ## Installation
 
-You can install the released version of multidy from [CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("multidy")
-```
-
-And the development version from [GitHub](https://github.com/) with:
+You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -88,7 +82,7 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(cowplot)
-library(multidy)
+library(multiverse)
 ```
 
 
@@ -470,7 +464,8 @@ Now that we have performed the analysis in each universe of the multiverse, we n
 
 ```{r, multiverse-model-1-summary}
 multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   head( 10 )
 ```
 
@@ -480,7 +475,8 @@ Note: we discuss extracting results from the multiverse and visualizing them in 
 
 ```{r, model-1-vis, message = FALSE}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary = map(.results, "summary_RelComp") ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -523,7 +519,8 @@ execute_multiverse(M)
 
 ```{r, model-3-vis}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_FiscConsComp" ) ) %>%
+  mutate( summary = map(.results, "summary_FiscConsComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -542,7 +539,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r, model-4-vis}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_SocConsComp" ) ) %>%
+  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -561,7 +559,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r, model-5-vis}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_Donate" ) ) %>%
+  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
@@ -579,7 +578,8 @@ animate(p, nframes = 210, fps = 2)
 
 ```{r, model-6-vis}
 p <- multiverse_table(M) %>%
-  unnest( map(.results, "summary_Vote" ) ) %>%
+  mutate( summary = map(.results, "summary_Donate" ) ) %>%
+  unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
