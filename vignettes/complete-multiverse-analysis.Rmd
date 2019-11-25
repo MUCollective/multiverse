@@ -161,6 +161,7 @@ inside(M, {
 })
 ```
 
+
 Alternative to the `inside` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
 
 ```{r alternate_add_to_multiverse, eval = FALSE}

@@ -133,26 +133,21 @@ concatenate_expr <- function(ref, to_add){
 }
 
 eval_seq_in_code <- function(.expr) {
-    switch_expr(.expr,
-        # Base cases
-        constant = , # falls through; the next element is evaluated
-        symbol = .expr,
-
-        # Recursive cases
-        call = {
-          if (is_call(.expr, "branch")) {
-            .new_expr = .expr
-            if(".options" %in% names(.expr)) {
-              .eval_seq = eval(.expr[['.options']])
-              .idx = match(c(".options"), names(.expr))
-              .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
-            }
-            return(.new_expr)
-          } else {
-            as.call(map(.expr, ~ eval_seq_in_code(.x)))
-          }
+    if (is.call(.expr)) {
+      if (is_call(.expr, "branch")) {
+        .new_expr = .expr
+        if(".options" %in% names(.expr)) {
+          .eval_seq = eval(.expr[['.options']])
+          .idx = match(c(".options"), names(.expr))
+          .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
         }
-    )
+        return(.new_expr)
+      } else {
+        as.call(map(.expr, ~ eval_seq_in_code(.x)))
+      }
+    } else {
+      .expr
+    }
 }
 
 

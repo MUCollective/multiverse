@@ -27,12 +27,12 @@
 #'   ))
 #' })
 #'
-#' default_parameter_assignment(M)
 #' # the code above will return a list: value_y = zero
+#' default_parameter_assignment(M)
 #'
+#' # both of these will change the default parameter assignment to "x + 1"
 #' default_parameter_assignment(M) <- 3
 #' default_parameter_assignment(M) <- list(value_y = "x + 1")
-#' # both of these will change the default parameter assignment to "x + 1"
 #' }
 #'
 #' @importFrom magrittr %>%
