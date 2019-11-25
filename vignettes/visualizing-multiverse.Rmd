@@ -30,7 +30,7 @@ library(gganimate)
 library(cowplot)
 library(stringr)
 library(forcats)
-library(multidy)
+library(multiverse)
 ```
 
 ## Data and Analysis

@@ -32,7 +32,7 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(cowplot)
-library(multidy)
+library(multiverse)
 ```
 
 ## The data
@@ -243,6 +243,14 @@ M$df <- ~ df %>%
         "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
 ```
+
+
+```{r}
+multiverse_table(M) %>%
+  select( -c(.universe, .parameter_assignment, .code, .results) ) %>%
+  pivot_longer( cols = everything() )
+```
+
 
 
 Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.
