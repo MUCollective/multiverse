@@ -12,8 +12,8 @@
 #'
 #' @param multiverse The multiverse object with some code passed to it
 #'
-#' @param .code Code that is passed to the multiverse stripped of calls such as `branch_assert`.
-#' This is the output of `remove_branch_assert` function.
+#' @param .code Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
+#' which can be done using the `remove_branch_assert` function.
 #'
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #'
@@ -22,8 +22,6 @@
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
 #' @importFrom magrittr %>%
-#' @importFrom purrr map
-#' @importFrom purrr map2
 #' @importFrom magrittr extract2
 #' @importFrom stringi stri_detect_regex
 #'
@@ -33,9 +31,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
   stopifnot( is.r6_multiverse(multiverse))
 
   if (is.numeric(.assgn)) {
-    .assgn = multiverse[['multiverse_table']] %>%
-      extract2( 'parameter_assignment' ) %>%
-      extract2( .assgn )
+    .assgn = multiverse[['multiverse_table']][['parameter_assignment']][[.assgn]]
   }
 
   if( length( multiverse[['default_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
@@ -49,42 +45,63 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
 # takes as input: parameter assignment, and an expression (or code) which contains branches
 # returns as output an expression (or code) without branches
 get_parameter_code <- function(.expr, .assgn) {
-  switch_expr(.expr,
-    # Base cases
-    constant = , # falls through; the next element is evaluated
-    symbol = .expr,
-
+  .expr = rm_branch_assert(.expr)
+  if (is.call(.expr)) {
     # Recursive cases
-    call = {
-      if (is_call(.expr, "branch")) {
-        compute_branch(.expr, .assgn) %>%
-          get_parameter_code(.assgn)
-      } else {
-        as.call(map(.expr, ~ get_parameter_code(.x, .assgn)))
+    if (.expr[[1]] == quote(branch)) {
+      get_parameter_code(compute_branch(.expr, .assgn), .assgn)
+    } else {
+      as.call(lapply(.expr, get_parameter_code, .assgn))
+    }
+  }  else {
+    # Base case: constants and symbols
+    .expr
+  }
+}
+
+### this function is to allow people to declare `branch_assert` which does not work rn
+rm_branch_assert <- function(.expr) {
+  # if the expression is not of length 3, than there isn't a branch_assert call
+  if(length(.expr) == 3) {
+    # checks if the rhs of the expression is a branch_assert call
+    # rewrites the expression by removing it
+    if (is.call(.expr[[3]])) {
+      if(.expr[[3]][[1]] == quote(branch_assert)) {
+        .expr = .expr[[2]]
       }
     }
-  )
+    # checks if the rhs of the expression is a branch_assert call
+    # rewrites the expression by removing it
+    if (is.call(.expr[[2]])) {
+      if(.expr[[2]][[1]] == quote(branch_assert)) {
+        .expr = .expr[[3]]
+      }
+    }
+
+    .expr
+  } else {
+    .expr
+  }
 }
 
 # takes as input:  parameter assignment, and the expression or code containing a branch
 # returns as output an expression (or code) without the branch
 compute_branch <- function(.expr, .assgn) {
   assigned_parameter_option_name = .assgn[[.expr[[2]]]]
-  option_names = map(.expr[-1:-2], get_option_name)
+  option_names = lapply(.expr[-1:-2], get_option_name)
 
-  map(option_names, ~ .x == assigned_parameter_option_name) %>%
-    flatten_lgl() %>%
-    which(., arr.ind = TRUE) %>%
-    extract2(.expr[-1:-2], .) %>%
-    get_option_value()
+  param_assignment <- unlist(lapply(option_names, function(x) x == assigned_parameter_option_name))
+
+  get_option_value(extract2(.expr[-1:-2], which(param_assignment, arr.ind = TRUE)))
 }
 
 get_option_value <- function(x) {
-  if (is_call(x, "~")) {
+  if (is.call(x) && x[[1]] == "~") {
     return( f_rhs(x) )
   } else {
     return(x)
   }
 }
+
 
 

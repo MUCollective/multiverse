@@ -1,11 +1,11 @@
 ---
-title: "Extracting and Visualizing the results of a multiverse analysis"
+title: "A complete implementation of a multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
+  %\VignetteIndexEntry{A complete implementation of a multiverse analysis}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -32,9 +32,8 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(cowplot)
-library(multidy)
+library(multiverse)
 ```
-
 
 ## The data
 The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
@@ -67,6 +66,7 @@ The original paper looked at the relationship between fertility, relationship st
 ## A single data set analysis: one possible analysis among many
 
 The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study. 
+
 
 ```{r single_analysis}
 one_universe = data.raw.study2 %>%
@@ -161,6 +161,7 @@ inside(M, {
 })
 ```
 
+
 Alternative to the `inside` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
 
 ```{r alternate_add_to_multiverse, eval = FALSE}
@@ -243,6 +244,15 @@ M$df <- ~ df %>%
     ))
 ```
 
+
+```{r}
+multiverse_table(M) %>%
+  select( -c(.universe, .parameter_assignment, .code, .results) ) %>%
+  pivot_longer( cols = everything() )
+```
+
+
+
 Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.
 
 ```{r}
@@ -323,7 +333,7 @@ M$df <- df  %>%
 #### The `branch_assert()` function
 Within the branch assert function, the user can specify any logical operation. 
 
-For eg: the above logical operations can be specified as: `branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3")` or `branch_assert(!(menstrual_calculation == "mc_option1" | cycle_length == "cl_option3"))`
+For eg: the above logical operations can be specified as: `branch_assert((menstrual_calculation != "mc_option1" | cycle_length != "cl_option3"))`
 
 Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
 
@@ -334,8 +344,8 @@ M$df <- df  %>%
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
             "mc_option3" ~ StartDateNext)
     ) %>%
-    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3")) %>%
-    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2"))
+    branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+    branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
 ```
 
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:

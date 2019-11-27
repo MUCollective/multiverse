@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Extracting and Visualizing the results of a multiverse analysis • multidy</title>
+<title>Extracting and Visualizing the results of a multiverse analysis • multiverse</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
@@ -30,8 +30,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -60,7 +60,10 @@
       <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+    </li>
+    <li>
+      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
@@ -87,7 +90,7 @@
       <h1>Extracting and Visualizing the results of a multiverse analysis</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2019-10-07</h4>
+            <h4 class="date">2019-11-25</h4>
       
       
       <div class="hidden name"><code>visualizing-multiverse.Rmd</code></div>
@@ -119,20 +122,20 @@
 <a class="sourceLine" id="cb1-12" data-line-number="12">    <span class="dt">SocConsComp =</span> Marriage <span class="op">+</span><span class="st"> </span>RestrictAbortion <span class="op">+</span><span class="st"> </span>Abortion <span class="op">+</span><span class="st"> </span>StemCell <span class="op">+</span><span class="st"> </span>Marijuana</a>
 <a class="sourceLine" id="cb1-13" data-line-number="13">  )</a></code></pre></div>
 <p>A detailed description of this analysis can be found in <a href="complete-multiverse-analysis.html"><code>A complete multiverse analysis</code></a>. We will use the results from this analysis to create the visualizations.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">M =<span class="st"> </span><span class="kw"><a href="../reference/multiverse.html">multiverse</a></span>()</a>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">M =<span class="st"> </span><span class="kw">multiverse</span>()</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">M<span class="op">$</span>df &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>data.raw.study2  <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="st">    </span><span class="kw">mutate</span>( <span class="dt">ComputedCycleLength =</span> StartDateofLastPeriod <span class="op">-</span><span class="st"> </span>StartDateofPeriodBeforeLast )  <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="kw"><a href="../reference/branch.html">branch</a></span>(cycle_length,</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="kw">branch</span>(cycle_length,</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6">            <span class="st">"cl_option1"</span> <span class="op">~</span><span class="st"> </span><span class="ot">TRUE</span>,</a>
 <a class="sourceLine" id="cb2-7" data-line-number="7">            <span class="st">"cl_option2"</span> <span class="op">~</span><span class="st"> </span>ComputedCycleLength <span class="op">&gt;</span><span class="st"> </span><span class="dv">25</span> <span class="op">&amp;</span><span class="st"> </span>ComputedCycleLength <span class="op">&lt;</span><span class="st"> </span><span class="dv">35</span>,</a>
 <a class="sourceLine" id="cb2-8" data-line-number="8">            <span class="st">"cl_option3"</span> <span class="op">~</span><span class="st"> </span>ReportedCycleLength <span class="op">&gt;</span><span class="st"> </span><span class="dv">25</span> <span class="op">&amp;</span><span class="st"> </span>ReportedCycleLength <span class="op">&lt;</span><span class="st"> </span><span class="dv">35</span></a>
 <a class="sourceLine" id="cb2-9" data-line-number="9">    )) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="kw"><a href="../reference/branch.html">branch</a></span>(certainty,</a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="kw">branch</span>(certainty,</a>
 <a class="sourceLine" id="cb2-11" data-line-number="11">            <span class="st">"cer_option1"</span> <span class="op">~</span><span class="st"> </span><span class="ot">TRUE</span>,</a>
 <a class="sourceLine" id="cb2-12" data-line-number="12">            <span class="st">"cer_option2"</span> <span class="op">~</span><span class="st"> </span>Sure1 <span class="op">&gt;</span><span class="st"> </span><span class="dv">6</span> <span class="op">|</span><span class="st"> </span>Sure2 <span class="op">&gt;</span><span class="st"> </span><span class="dv">6</span></a>
 <a class="sourceLine" id="cb2-13" data-line-number="13">    )) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">NextMenstrualOnset =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>(menstrual_calculation,</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">NextMenstrualOnset =</span> <span class="kw">branch</span>(menstrual_calculation,</a>
 <a class="sourceLine" id="cb2-15" data-line-number="15">            <span class="st">"mc_option1"</span> <span class="op">%when%</span><span class="st"> </span>(cycle_length <span class="op">!=</span><span class="st"> "cl_option3"</span>) <span class="op">~</span><span class="st"> </span>StartDateofLastPeriod <span class="op">+</span><span class="st"> </span>ComputedCycleLength,</a>
 <a class="sourceLine" id="cb2-16" data-line-number="16">            <span class="st">"mc_option2"</span> <span class="op">%when%</span><span class="st"> </span>(cycle_length <span class="op">!=</span><span class="st"> "cl_option2"</span>) <span class="op">~</span><span class="st"> </span>StartDateofLastPeriod <span class="op">+</span><span class="st"> </span>ReportedCycleLength,</a>
 <a class="sourceLine" id="cb2-17" data-line-number="17">            <span class="st">"mc_option3"</span> <span class="op">~</span><span class="st"> </span>StartDateNext)</a>
@@ -141,14 +144,14 @@
 <a class="sourceLine" id="cb2-20" data-line-number="20">      <span class="dt">CycleDay =</span> <span class="dv">28</span> <span class="op">-</span><span class="st"> </span>(NextMenstrualOnset <span class="op">-</span><span class="st"> </span>DateTesting),</a>
 <a class="sourceLine" id="cb2-21" data-line-number="21">      <span class="dt">CycleDay =</span> <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;</span><span class="st"> </span><span class="dv">28</span>, CycleDay, <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">28</span>))</a>
 <a class="sourceLine" id="cb2-22" data-line-number="22">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="st">    </span><span class="kw">mutate</span>( <span class="dt">Fertility =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>( fertile,</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="st">    </span><span class="kw">mutate</span>( <span class="dt">Fertility =</span> <span class="kw">branch</span>( fertile,</a>
 <a class="sourceLine" id="cb2-24" data-line-number="24">            <span class="st">"fer_option1"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">7</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">14</span>, <span class="st">"high"</span>, <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">17</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">25</span>, <span class="st">"low"</span>, <span class="ot">NA</span>)) ),</a>
 <a class="sourceLine" id="cb2-25" data-line-number="25">            <span class="st">"fer_option2"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">6</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">14</span>, <span class="st">"high"</span>, <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">17</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">27</span>, <span class="st">"low"</span>, <span class="ot">NA</span>)) ),</a>
 <a class="sourceLine" id="cb2-26" data-line-number="26">            <span class="st">"fer_option3"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">9</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">17</span>, <span class="st">"high"</span>, <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">18</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">25</span>, <span class="st">"low"</span>, <span class="ot">NA</span>)) ),</a>
 <a class="sourceLine" id="cb2-27" data-line-number="27">            <span class="st">"fer_option4"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">14</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) ),</a>
 <a class="sourceLine" id="cb2-28" data-line-number="28">            <span class="st">"fer_option45"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(CycleDay <span class="op">&gt;=</span><span class="st"> </span><span class="dv">8</span> <span class="op">&amp;</span><span class="st"> </span>CycleDay <span class="op">&lt;=</span><span class="st"> </span><span class="dv">17</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) )</a>
 <a class="sourceLine" id="cb2-29" data-line-number="29">    )) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">RelationshipStatus =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>(relationship_status,</a>
+<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">RelationshipStatus =</span> <span class="kw">branch</span>(relationship_status,</a>
 <a class="sourceLine" id="cb2-31" data-line-number="31">            <span class="st">"rs_option1"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(Relationship<span class="op">==</span><span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Relationship<span class="op">==</span><span class="dv">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),</a>
 <a class="sourceLine" id="cb2-32" data-line-number="32">            <span class="st">"rs_option2"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(Relationship<span class="op">==</span><span class="dv">1</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),</a>
 <a class="sourceLine" id="cb2-33" data-line-number="33">            <span class="st">"rs_option3"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(Relationship<span class="op">==</span><span class="dv">1</span>, <span class="st">'Single'</span>, <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(Relationship<span class="op">==</span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>Relationship<span class="op">==</span><span class="dv">4</span>, <span class="st">'Relationship'</span>, <span class="ot">NA</span>))) )</a>
@@ -196,16 +199,16 @@
 <a class="sourceLine" id="cb4-13" data-line-number="13">M<span class="op">$</span>summary_Vote &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>fit_Vote <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb4-14" data-line-number="14"><span class="st">  </span>broom<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>( <span class="dt">conf.int =</span> <span class="ot">TRUE</span> )</a>
 <a class="sourceLine" id="cb4-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="kw"><a href="../reference/execute.html">execute_multiverse</a></span>(M)</a></code></pre></div>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="kw">execute_multiverse</span>(M)</a></code></pre></div>
 </div>
 <div id="extracting-the-results" class="section level3">
 <h3 class="hasAnchor">
 <a href="#extracting-the-results" class="anchor"></a>Extracting the results</h3>
 <p>All the computed summaries (<code>summary_RelComp</code>, <code>summary_FiscConsComp</code>, <code>summary_SocConsComp</code>, <code>summary_Donate</code> and <code>summary_Vote</code>) are stored within <code>.results</code> column (a separate environment) in the multiverse table. We can extract these summaries as a tibble using and store it in a separate column, and then unnest this new column:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">summary =</span> <span class="kw">map</span>(.results, <span class="st">"summary_RelComp"</span>) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>( summary )</a></code></pre></div>
-<pre><code>## # A tibble: 840 x 13
+<pre><code>## # A tibble: 840 x 16
 ##    .universe cycle_length certainty menstrual_calcu… fertile
 ##        &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;  
 ##  1         1 cl_option1   cer_opti… mc_option1       fer_op…
@@ -218,7 +221,8 @@
 ##  8         2 cl_option2   cer_opti… mc_option1       fer_op…
 ##  9         4 cl_option1   cer_opti… mc_option1       fer_op…
 ## 10         4 cl_option1   cer_opti… mc_option1       fer_op…
-## # … with 830 more rows, and 8 more variables: relationship_status &lt;chr&gt;,
+## # … with 830 more rows, and 11 more variables: relationship_status &lt;chr&gt;,
+## #   .parameter_assignment &lt;list&gt;, .code &lt;list&gt;, .results &lt;list&gt;,
 ## #   term &lt;chr&gt;, estimate &lt;dbl&gt;, std.error &lt;dbl&gt;, statistic &lt;dbl&gt;,
 ## #   p.value &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</code></pre>
 <p>We can then use various R packages to visualize the results. Below, we show some standard visualizations.</p>
@@ -231,20 +235,21 @@
 <h3 class="hasAnchor">
 <a href="#animating-the-coefficients-of-the-model-from-each-multiverse" class="anchor"></a>Animating the coefficients of the model from each multiverse</h3>
 <p>One way to visualize over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in <a href="https://dl.acm.org/citation.cfm?id=3300295">Increasing the Transparency of Research Papers with Explorable Multiverse Analyses</a>. This approach allows us to quickly see the robustness of a result — if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="kw">map</span>(.results, <span class="st">"summary_RelComp"</span> ) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">term =</span> <span class="kw">recode</span>( term, </a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">                 <span class="st">"RelationshipStatusSingle"</span> =<span class="st"> "Single"</span>,</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> =<span class="st"> "Single:Fertility_low"</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">  ) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( term <span class="op">!=</span><span class="st"> "(Intercept)"</span> ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span><span class="kw">geom_vline</span>( <span class="dt">xintercept =</span> <span class="dv">0</span>,  <span class="dt">colour =</span> <span class="st">'#979797'</span> ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> estimate, <span class="dt">y =</span> term)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="kw">geom_errorbarh</span>( <span class="kw">aes</span>(<span class="dt">xmin =</span> conf.low, <span class="dt">xmax =</span> conf.high, <span class="dt">y =</span> term), <span class="dt">height =</span> <span class="dv">0</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="st">  </span><span class="kw">transition_manual</span>( .universe )</a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">210</span>, <span class="dt">fps =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">summary_RelComp =</span> <span class="kw">map</span>(.results, <span class="st">"summary_RelComp"</span>) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(summary_RelComp) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">term =</span> <span class="kw">recode</span>( term, </a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">                 <span class="st">"RelationshipStatusSingle"</span> =<span class="st"> "Single"</span>,</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> =<span class="st"> "Single:Fertility_low"</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">  ) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( term <span class="op">!=</span><span class="st"> "(Intercept)"</span> ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="st">  </span><span class="kw">geom_vline</span>( <span class="dt">xintercept =</span> <span class="dv">0</span>,  <span class="dt">colour =</span> <span class="st">'#979797'</span> ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> estimate, <span class="dt">y =</span> term)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_errorbarh</span>( <span class="kw">aes</span>(<span class="dt">xmin =</span> conf.low, <span class="dt">xmax =</span> conf.high, <span class="dt">y =</span> term), <span class="dt">height =</span> <span class="dv">0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="st">  </span><span class="kw">transition_manual</span>( .universe )</a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">210</span>, <span class="dt">fps =</span> <span class="dv">2</span>)</a></code></pre></div>
 <p><img src="visualizing-multiverse_files/figure-html/unnamed-chunk-1-1.gif"><!-- --></p>
 </div>
 <div id="histogram-of-p-values-of-the-fertility-relationship-status-interaction" class="section level3">
@@ -252,7 +257,7 @@
 <a href="#histogram-of-p-values-of-the-fertility-relationship-status-interaction" class="anchor"></a>Histogram of p-values of the Fertility × Relationship status interaction</h3>
 <p>Another approach would be to summarise the results. Steegen et al. which depicts a histogram of p values of the Fertility × Relationship status interaction on religiosity for the multiverse of 210 data sets in Study 2 (<code>summary_RelComp</code>), on fiscal and social political attitudes for the multiverse of 210 data sets in Study 2 (<code>summary_FiscConsComp</code> and <code>summary_SocConsComp</code>), and on voting and donation preferences for the multiverse of 210 data sets in Study 2 (<code>summary_Donate</code> and <code>summary_Vote</code>). The dashed line indicates p = 0.05.</p>
 <p>Below we show how to re-create the visualization.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">index =</span> <span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(.)) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>( </a>
 <a class="sourceLine" id="cb8-4" data-line-number="4">    <span class="dt">summary_RelComp =</span> <span class="kw">map</span>(.results, <span class="st">"summary_RelComp"</span> ),</a>
@@ -275,41 +280,42 @@
 <h3 class="hasAnchor">
 <a href="#specification-curve" class="anchor"></a>Specification curve</h3>
 <p>Simonsohn et al. propose visualizing results from the multiverse as a <code>specification curve</code>, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">data.spec_curve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="kw">map</span>(.results, <span class="st">"summary_RelComp"</span> ) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( term <span class="op">==</span><span class="st"> "Fertilitylow:RelationshipStatusSingle"</span> ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>( .universe, <span class="op">!!</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw"><a href="../reference/accessors.html">parameters</a></span>(M)), estimate, p.value ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">  </span><span class="kw">arrange</span>( estimate ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">.universe =</span> <span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(.))</a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb9-8" data-line-number="8">p1 &lt;-<span class="st"> </span>data.spec_curve <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="st">  </span><span class="kw">gather</span>( <span class="st">"parameter_name"</span>, <span class="st">"parameter_option"</span>, <span class="op">!!</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw"><a href="../reference/accessors.html">parameters</a></span>(M)) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="st">  </span><span class="kw">select</span>( .universe, parameter_name, parameter_option) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb9-12" data-line-number="12">    <span class="dt">parameter_name =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">str_replace</span>(parameter_name, <span class="st">"_"</span>, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>))</a>
-<a class="sourceLine" id="cb9-13" data-line-number="13">    <span class="co">#parameter_option = fct_relevel(factor(parameter_option), "relationship status", after = Inf)</span></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-16" data-line-number="16"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> .universe, <span class="dt">y =</span> parameter_option, <span class="dt">color =</span> parameter_name), <span class="dt">size =</span> <span class="fl">0.5</span> ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-17" data-line-number="17"><span class="st">  </span><span class="kw">labs</span>( <span class="dt">x =</span> <span class="st">"universe #"</span>, <span class="dt">y =</span> <span class="st">"option included in the analysis specification"</span>) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-18" data-line-number="18"><span class="st">  </span><span class="kw">facet_grid</span>(parameter_name <span class="op">~</span><span class="st"> </span>., <span class="dt">space=</span><span class="st">"free_y"</span>, <span class="dt">scales=</span><span class="st">"free_y"</span>, <span class="dt">switch=</span><span class="st">"y"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-19" data-line-number="19"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">strip.placement =</span> <span class="st">"outside"</span>,</a>
-<a class="sourceLine" id="cb9-20" data-line-number="20">        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill=</span><span class="ot">NA</span>,<span class="dt">colour=</span><span class="ot">NA</span>),</a>
-<a class="sourceLine" id="cb9-21" data-line-number="21">        <span class="dt">panel.spacing.x=</span><span class="kw">unit</span>(<span class="fl">0.15</span>,<span class="st">"cm"</span>), </a>
-<a class="sourceLine" id="cb9-22" data-line-number="22">        <span class="dt">strip.text.y =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">180</span>, <span class="dt">face=</span><span class="st">"bold"</span>, <span class="dt">size=</span><span class="dv">10</span>), </a>
-<a class="sourceLine" id="cb9-23" data-line-number="23">        <span class="co">#legend.position = "none",</span></a>
-<a class="sourceLine" id="cb9-24" data-line-number="24">        <span class="dt">panel.spacing =</span> <span class="kw">unit</span>(<span class="fl">0.25</span>, <span class="st">"lines"</span>)</a>
-<a class="sourceLine" id="cb9-25" data-line-number="25">      )</a>
-<a class="sourceLine" id="cb9-26" data-line-number="26"></a>
-<a class="sourceLine" id="cb9-27" data-line-number="27">p2 &lt;-<span class="st"> </span>data.spec_curve <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-28" data-line-number="28"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-29" data-line-number="29"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(.universe, estimate, <span class="dt">color =</span> (p.value <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)), <span class="dt">size =</span> <span class="fl">0.25</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-30" data-line-number="30"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">""</span>, <span class="dt">y =</span> <span class="st">"coefficient of</span><span class="ch">\n</span><span class="st">interaction term:</span><span class="ch">\n</span><span class="st">fertility x relationship"</span>)</a>
-<a class="sourceLine" id="cb9-31" data-line-number="31">  </a>
-<a class="sourceLine" id="cb9-32" data-line-number="32">cowplot<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(p2, p1, <span class="dt">axis =</span> <span class="st">"bltr"</span>,  <span class="dt">align =</span> <span class="st">"v"</span>, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">rel_heights =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">data.spec_curve &lt;-<span class="st"> </span><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">summary_RelComp =</span> <span class="kw">map</span>(.results, <span class="st">"summary_RelComp"</span>) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(summary_RelComp) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( term <span class="op">==</span><span class="st"> "Fertilitylow:RelationshipStatusSingle"</span> ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">  </span><span class="kw">select</span>( .universe, <span class="op">!!</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">parameters</span>(M)), estimate, p.value ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="st">  </span><span class="kw">arrange</span>( estimate ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">.universe =</span> <span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(.))</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">p1 &lt;-<span class="st"> </span>data.spec_curve <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="st">  </span><span class="kw">gather</span>( <span class="st">"parameter_name"</span>, <span class="st">"parameter_option"</span>, <span class="op">!!</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">parameters</span>(M)) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="st">  </span><span class="kw">select</span>( .universe, parameter_name, parameter_option) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13">    <span class="dt">parameter_name =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">str_replace</span>(parameter_name, <span class="st">"_"</span>, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>))</a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">    <span class="co">#parameter_option = fct_relevel(factor(parameter_option), "relationship status", after = Inf)</span></a>
+<a class="sourceLine" id="cb9-15" data-line-number="15">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-16" data-line-number="16"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-17" data-line-number="17"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> .universe, <span class="dt">y =</span> parameter_option, <span class="dt">color =</span> parameter_name), <span class="dt">size =</span> <span class="fl">0.5</span> ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-18" data-line-number="18"><span class="st">  </span><span class="kw">labs</span>( <span class="dt">x =</span> <span class="st">"universe #"</span>, <span class="dt">y =</span> <span class="st">"option included in the analysis specification"</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-19" data-line-number="19"><span class="st">  </span><span class="kw">facet_grid</span>(parameter_name <span class="op">~</span><span class="st"> </span>., <span class="dt">space=</span><span class="st">"free_y"</span>, <span class="dt">scales=</span><span class="st">"free_y"</span>, <span class="dt">switch=</span><span class="st">"y"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-20" data-line-number="20"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">strip.placement =</span> <span class="st">"outside"</span>,</a>
+<a class="sourceLine" id="cb9-21" data-line-number="21">        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill=</span><span class="ot">NA</span>,<span class="dt">colour=</span><span class="ot">NA</span>),</a>
+<a class="sourceLine" id="cb9-22" data-line-number="22">        <span class="dt">panel.spacing.x=</span><span class="kw">unit</span>(<span class="fl">0.15</span>,<span class="st">"cm"</span>), </a>
+<a class="sourceLine" id="cb9-23" data-line-number="23">        <span class="dt">strip.text.y =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">180</span>, <span class="dt">face=</span><span class="st">"bold"</span>, <span class="dt">size=</span><span class="dv">10</span>), </a>
+<a class="sourceLine" id="cb9-24" data-line-number="24">        <span class="co">#legend.position = "none",</span></a>
+<a class="sourceLine" id="cb9-25" data-line-number="25">        <span class="dt">panel.spacing =</span> <span class="kw">unit</span>(<span class="fl">0.25</span>, <span class="st">"lines"</span>)</a>
+<a class="sourceLine" id="cb9-26" data-line-number="26">      )</a>
+<a class="sourceLine" id="cb9-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb9-28" data-line-number="28">p2 &lt;-<span class="st"> </span>data.spec_curve <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-29" data-line-number="29"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-30" data-line-number="30"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(.universe, estimate, <span class="dt">color =</span> (p.value <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)), <span class="dt">size =</span> <span class="fl">0.25</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-31" data-line-number="31"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">""</span>, <span class="dt">y =</span> <span class="st">"coefficient of</span><span class="ch">\n</span><span class="st">interaction term:</span><span class="ch">\n</span><span class="st">fertility x relationship"</span>)</a>
+<a class="sourceLine" id="cb9-32" data-line-number="32">  </a>
+<a class="sourceLine" id="cb9-33" data-line-number="33">cowplot<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(p2, p1, <span class="dt">axis =</span> <span class="st">"bltr"</span>,  <span class="dt">align =</span> <span class="st">"v"</span>, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">rel_heights =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>))</a></code></pre></div>
 <p><img src="visualizing-multiverse_files/figure-html/unnamed-chunk-3-1.png" width="1152"></p>
 <p><strong>Incomplete</strong></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">index =</span> <span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(.)) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>( <span class="kw">map</span>(.results, <span class="st">"summary_RelComp"</span> ) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( term <span class="op">==</span><span class="st"> "Fertilitylow:RelationshipStatusSingle"</span> ) <span class="op">%&gt;%</span></a>
@@ -329,7 +335,6 @@
 <a class="sourceLine" id="cb10-18" data-line-number="18">    <span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="https://rdrr.io/r/grDevices/plotmath.html">atop</a></span>(<span class="st">"combinations of different options for"</span>, <span class="op">~</span><span class="kw"><a href="https://rdrr.io/r/grDevices/plotmath.html">italic</a></span>(<span class="st">"cycle length, certainty and menstrual calc."</span><span class="op">~</span><span class="st">"parameters"</span>))),</a>
 <a class="sourceLine" id="cb10-19" data-line-number="19">    <span class="dt">y =</span> <span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="https://rdrr.io/r/grDevices/plotmath.html">atop</a></span>(<span class="st">"combinations of different options for"</span>, <span class="op">~</span><span class="kw"><a href="https://rdrr.io/r/grDevices/plotmath.html">italic</a></span>(<span class="st">"fertility and relationship"</span><span class="op">~</span><span class="st">"parameters"</span>)))</a>
 <a class="sourceLine" id="cb10-20" data-line-number="20">  )</a></code></pre></div>
-<p><img src="visualizing-multiverse_files/figure-html/unnamed-chunk-4-1.png" width="864"></p>
 </div>
 </div>
   </div>

@@ -9,8 +9,8 @@ get_code(multiverse, .code, .assgn = NULL)
 \arguments{
 \item{multiverse}{The multiverse object with some code passed to it}
 
-\item{.code}{Code that is passed to the multiverse stripped of calls such as `branch_assert`.
-This is the output of `remove_branch_assert` function.}
+\item{.code}{Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
+which can be done using the `remove_branch_assert` function.}
 
 \item{.assgn}{A list containing the assignments for each defined parameter in the multiverse}
 }

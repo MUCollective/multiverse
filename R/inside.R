@@ -83,9 +83,7 @@ inside <- function(multiverse, .expr) {
   }
   .expr = eval_seq_in_code(.expr)
 
-  m_obj = attr(multiverse, "multiverse")
-
-  add_and_parse_code(m_obj, .expr)
+  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
 }
 
 #' @rdname inside
@@ -97,15 +95,13 @@ inside <- function(multiverse, .expr) {
   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
   .expr = eval_seq_in_code(.expr)
 
-  m_obj = attr(multiverse, "multiverse")
-
-  add_and_parse_code(m_obj, .expr)
+  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
 
   multiverse
 }
 
 
-add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
+add_and_parse_code <- function(m_obj, .super_env, .code, execute = TRUE) {
   if (is_null(m_obj$code)) {
     .c = .code
   } else {
@@ -113,25 +109,23 @@ add_and_parse_code <- function(m_obj, .code, execute = TRUE) {
   }
 
   m_obj$code <- .c
-  parse_multiverse(m_obj)
+  parse_multiverse(m_obj, .super_env)
 
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
   if (execute) execute_default(m_obj)
 }
 
-concatenate_expr <- function(ref, .add){
-  if (is_call(.add, "{")) {
-    ref = concatenate_expr(ref, as.list(.add)[-1])
+concatenate_expr <- function(ref, to_add){
+  if (is_call(to_add, "{")) {
+    ref = concatenate_expr( ref, as.list(to_add)[-1] )
   } else {
-    if(length(.add) == 1){
-      ref = ref %>%
-        inset2(., length(.) + 1, .add[[1]])
+    if(length(to_add) == 1){
+      ref = inset2(ref, length(ref) + 1, to_add[[1]])
     } else {
-      ref = ref %>%
-        inset2(., length(.) + 1, .add[[1]])
-      .add = .add[-1]
-      ref = concatenate_expr(ref, .add)
+      ref = inset2(ref, length(ref) + 1, to_add[[1]])
+      to_add = to_add[-1]
+      ref = concatenate_expr(ref, to_add)
     }
   }
 
@@ -139,28 +133,21 @@ concatenate_expr <- function(ref, .add){
 }
 
 eval_seq_in_code <- function(.expr) {
-    switch_expr(.expr,
-        # Base cases
-        constant = , # falls through; the next element is evaluated
-        symbol = .expr,
-
-        # Recursive cases
-        call = {
-          if (is_call(.expr, "branch")) {
-            .new_expr = .expr
-            if(".options" %in% names(.expr)) {
-              .eval_seq = eval(.expr[['.options']])
-              .idx = match(c(".options"), names(.expr))
-              .new_expr = .expr %>%
-                unname() %>%
-                magrittr::inset(c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
-            }
-            return(.new_expr)
-          } else {
-            as.call(map(.expr, ~ eval_seq_in_code(.x)))
-          }
+    if (is.call(.expr)) {
+      if (is_call(.expr, "branch")) {
+        .new_expr = .expr
+        if(".options" %in% names(.expr)) {
+          .eval_seq = eval(.expr[['.options']])
+          .idx = match(c(".options"), names(.expr))
+          .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
         }
-    )
+        return(.new_expr)
+      } else {
+        as.call(map(.expr, ~ eval_seq_in_code(.x)))
+      }
+    } else {
+      .expr
+    }
 }
 
 

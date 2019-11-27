@@ -17,7 +17,7 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(ggplot2)
-library(multidy)
+library(multiverse)
 ```
 
 
@@ -83,7 +83,7 @@ multiverse_table(M)
 The `multiverse_table` shows that there are two rows for each branch. If we look at the code column, we see that the variable `duration` is defined in two separate ways:
 
 ```{r}
-multiverse_table(M)$.code
+multiverse_table(M)
 ```
 
 ## Example 3: A branch as a function
@@ -107,7 +107,7 @@ multiverse_table(M) %>%
   head()
 ```
 
-As you can se, this creates, in each universe within the multiverse, a vector named `duration` which is either untransformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire `branch(...)` gets replaced with either `log()` or `identity()` within a given universe.
+As you can see, this creates, in each universe within the multiverse, a vector named `duration` which is either untransformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire `branch(...)` gets replaced with either `log()` or `identity()` within a given universe.
 
 A more readable pattern might be:
 

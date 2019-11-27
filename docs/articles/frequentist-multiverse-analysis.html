@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A multiverse analysis of the efficiency of physical visualizations • multidy</title>
+<title>A multiverse analysis of the efficiency of physical visualizations • multiverse</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
@@ -30,8 +30,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -60,7 +60,10 @@
       <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+    </li>
+    <li>
+      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
@@ -87,7 +90,7 @@
       <h1>A multiverse analysis of the efficiency of physical visualizations</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2019-10-07</h4>
+            <h4 class="date">2019-11-25</h4>
       
       
       <div class="hidden name"><code>frequentist-multiverse-analysis.Rmd</code></div>
@@ -112,10 +115,10 @@
 <p>Error bars are 95% BCa bootstrap CIs.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">samplemean &lt;-<span class="st"> </span><span class="cf">function</span>(x, d) {<span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(x[d]))}</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">M =<span class="st"> </span><span class="kw"><a href="../reference/multiverse.html">multiverse</a></span>()</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">M =<span class="st"> </span><span class="kw">multiverse</span>()</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb2-5" data-line-number="5">M<span class="op">$</span>df &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>data.userlogs.raw <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">duration =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>( data_transform, </a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">duration =</span> <span class="kw">branch</span>( data_transform, </a>
 <a class="sourceLine" id="cb2-7" data-line-number="7">                         <span class="st">"none"</span> <span class="op">~</span><span class="st"> </span>duration,</a>
 <a class="sourceLine" id="cb2-8" data-line-number="8">                         <span class="st">"log"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(duration)</a>
 <a class="sourceLine" id="cb2-9" data-line-number="9">        )) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -123,36 +126,21 @@
 <a class="sourceLine" id="cb2-11" data-line-number="11"><span class="st">  </span><span class="kw">group_by</span>(subject, modality.f, modalityname) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb2-12" data-line-number="12"><span class="st">  </span><span class="kw">summarise</span>( <span class="dt">duration =</span> <span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(duration) ) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-13" data-line-number="13"><span class="st">  </span><span class="kw">group_by</span>(modality.f) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="st">  </span><span class="kw">nest</span>( duration )</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="st">  </span><span class="kw">summarise</span>( <span class="dt">data =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(duration) )</a>
 <a class="sourceLine" id="cb2-15" data-line-number="15"></a>
 <a class="sourceLine" id="cb2-16" data-line-number="16">M<span class="op">$</span>n_comparisons &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span><span class="dv">3</span></a>
 <a class="sourceLine" id="cb2-17" data-line-number="17"></a>
 <a class="sourceLine" id="cb2-18" data-line-number="18">M<span class="op">$</span>df &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>df <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">ci =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>( confidence_interval, <span class="fl">0.5</span>, <span class="fl">0.68</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>, <span class="fl">0.999</span> )) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">fit =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>(bootstrap,</a>
-<a class="sourceLine" id="cb2-21" data-line-number="21">                       <span class="st">"t-dist"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">tidy</span>(<span class="kw"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span>(.x<span class="op">$</span>duration, <span class="dt">conf.level =</span> .y)) ),</a>
-<a class="sourceLine" id="cb2-22" data-line-number="22">                       <span class="st">"bca"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">boot</span>(<span class="dt">data =</span> .x<span class="op">$</span>duration, <span class="dt">statistic =</span> samplemean, <span class="dt">R =</span> <span class="dv">5000</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">ci =</span> <span class="kw">branch</span>( confidence_interval, <span class="fl">0.5</span>, <span class="fl">0.68</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>, <span class="fl">0.999</span> )) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">fit =</span> <span class="kw">branch</span>(bootstrap,</a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">                       <span class="st">"t-dist"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">tidy</span>(<span class="kw"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span>(.x, <span class="dt">conf.level =</span> .y)) ),</a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">                       <span class="st">"bca"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">boot</span>(<span class="dt">data =</span> .x, <span class="dt">statistic =</span> samplemean, <span class="dt">R =</span> <span class="dv">5000</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-23" data-line-number="23"><span class="st">                              </span><span class="kw">tidy</span>( <span class="dt">conf.int =</span> <span class="ot">TRUE</span>, <span class="dt">conf.method =</span> <span class="st">"bca"</span>, <span class="dt">conf.level =</span> .y) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-24" data-line-number="24"><span class="st">                              </span><span class="kw">rename</span>(<span class="dt">estimate =</span> statistic))</a>
 <a class="sourceLine" id="cb2-25" data-line-number="25">        )) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-26" data-line-number="26"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>data) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="st">  </span><span class="kw">unnest</span>( fit )</a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M)</a></code></pre></div>
-<pre><code>## # A tibble: 28 x 7
-##    .universe data_transform confidence_inte… bootstrap .parameter_assi…
-##        &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;     &lt;list&gt;          
-##  1         1 none           0.5              t-dist    &lt;named list [3]&gt;
-##  2         2 log            0.5              t-dist    &lt;named list [3]&gt;
-##  3         3 none           0.68             t-dist    &lt;named list [3]&gt;
-##  4         4 log            0.68             t-dist    &lt;named list [3]&gt;
-##  5         5 none           0.8              t-dist    &lt;named list [3]&gt;
-##  6         6 log            0.8              t-dist    &lt;named list [3]&gt;
-##  7         7 none           0.9              t-dist    &lt;named list [3]&gt;
-##  8         8 log            0.9              t-dist    &lt;named list [3]&gt;
-##  9         9 none           0.95             t-dist    &lt;named list [3]&gt;
-## 10        10 log            0.95             t-dist    &lt;named list [3]&gt;
-## # … with 18 more rows, and 2 more variables: .code &lt;list&gt;, .results &lt;list&gt;</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/execute.html">execute_multiverse</a></span>(M)</a></code></pre></div>
+<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="st">  </span><span class="kw">unnest</span>( <span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(fit) )</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">execute_multiverse</span>(M)</a></code></pre></div>
 <pre><code>## Warning in norm.inter(t, adj.alpha): extreme order statistics used as
 ## endpoints
 
@@ -161,62 +149,63 @@
 
 ## Warning in norm.inter(t, adj.alpha): extreme order statistics used as
 ## endpoints</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="kw">map</span>(.results, <span class="st">"df"</span> ) )  <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">modality.f =</span> <span class="kw">recode</span>( modality.f, </a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">                 <span class="st">"1"</span> =<span class="st"> "physical-touch"</span>,</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">                 <span class="st">"2"</span> =<span class="st"> "no-touch"</span>,</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">                 <span class="st">"3"</span> =<span class="st"> "virtual-prop"</span>,</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">                 <span class="st">"4"</span> =<span class="st"> "virtual-mouse"</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8">  ) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>( </a>
-<a class="sourceLine" id="cb7-10" data-line-number="10">    <span class="dt">estimate =</span> <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(data_transform <span class="op">==</span><span class="st"> "log"</span>, <span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(estimate), estimate),</a>
-<a class="sourceLine" id="cb7-11" data-line-number="11">    <span class="dt">conf.low =</span> <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(data_transform <span class="op">==</span><span class="st"> "log"</span>, <span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(conf.low), conf.low),</a>
-<a class="sourceLine" id="cb7-12" data-line-number="12">    <span class="dt">conf.high =</span> <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(data_transform <span class="op">==</span><span class="st"> "log"</span>, <span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(conf.high), conf.high)</a>
-<a class="sourceLine" id="cb7-13" data-line-number="13">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="st">  </span><span class="kw">arrange</span>(confidence_interval, <span class="kw">desc</span>(data_transform), <span class="kw">desc</span>(bootstrap)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="st">  </span><span class="kw">geom_vline</span>( <span class="dt">xintercept =</span> <span class="dv">0</span>,  <span class="dt">colour =</span> <span class="st">'#979797'</span> ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> estimate, <span class="dt">y =</span> modality.f)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="st">  </span><span class="kw">geom_errorbarh</span>( <span class="kw">aes</span>(<span class="dt">xmin =</span> conf.low, <span class="dt">xmax =</span> conf.high, <span class="dt">y =</span> modality.f), <span class="dt">height =</span> <span class="dv">0</span>)  <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="st">  </span><span class="kw">transition_manual</span>( .universe )</a>
-<a class="sourceLine" id="cb7-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb7-21" data-line-number="21"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">28</span>,  <span class="dt">fps =</span> <span class="dv">2</span>)</a></code></pre></div>
-<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-5-1.gif"><!-- --></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">df =</span> <span class="kw">map</span>(.results, <span class="st">"df"</span>) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>(<span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(df) )  <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">modality.f =</span> <span class="kw">recode</span>( modality.f, </a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">                 <span class="st">"1"</span> =<span class="st"> "physical-touch"</span>,</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">                 <span class="st">"2"</span> =<span class="st"> "no-touch"</span>,</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">                 <span class="st">"3"</span> =<span class="st"> "virtual-prop"</span>,</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">                 <span class="st">"4"</span> =<span class="st"> "virtual-mouse"</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">  ) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>( </a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">    <span class="dt">estimate =</span> <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(data_transform <span class="op">==</span><span class="st"> "log"</span>, <span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(estimate), estimate),</a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">    <span class="dt">conf.low =</span> <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(data_transform <span class="op">==</span><span class="st"> "log"</span>, <span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(conf.low), conf.low),</a>
+<a class="sourceLine" id="cb5-13" data-line-number="13">    <span class="dt">conf.high =</span> <span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(data_transform <span class="op">==</span><span class="st"> "log"</span>, <span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(conf.high), conf.high)</a>
+<a class="sourceLine" id="cb5-14" data-line-number="14">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="st">  </span><span class="kw">arrange</span>(confidence_interval, <span class="kw">desc</span>(data_transform), <span class="kw">desc</span>(bootstrap)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="st">  </span><span class="kw">geom_vline</span>( <span class="dt">xintercept =</span> <span class="dv">0</span>,  <span class="dt">colour =</span> <span class="st">'#979797'</span> ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> estimate, <span class="dt">y =</span> modality.f)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="st">  </span><span class="kw">geom_errorbarh</span>( <span class="kw">aes</span>(<span class="dt">xmin =</span> conf.low, <span class="dt">xmax =</span> conf.high, <span class="dt">y =</span> modality.f), <span class="dt">height =</span> <span class="dv">0</span>)  <span class="op">+</span></a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="st">  </span><span class="kw">transition_manual</span>( .universe )</a>
+<a class="sourceLine" id="cb5-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">28</span>,  <span class="dt">fps =</span> <span class="dv">2</span>)</a></code></pre></div>
+<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-4-1.gif"><!-- --></p>
 </div>
 <div id="differences-between-mean-completion-times" class="section level2">
 <h2 class="hasAnchor">
 <a href="#differences-between-mean-completion-times" class="anchor"></a>Differences between mean completion times</h2>
 <p>Differences between mean completion times (arithmetic means) between conditions. Error bars are 95% BCa bootstrap CIs.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">M<span class="op">$</span>df.diffs &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>data.userlogs.raw  <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">duration =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>( data_transform, </a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">                         <span class="st">"none"</span> <span class="op">~</span><span class="st"> </span>duration,</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">                         <span class="st">"log"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(duration)</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">  )) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="st">  </span><span class="kw">arrange</span>(modality) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">index =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(.)<span class="op">/</span><span class="dv">4</span>)), <span class="dv">4</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="st">  </span><span class="kw">select</span>(index, modalityname, duration) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="st">  </span><span class="kw">spread</span>(modalityname, duration) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb8-11" data-line-number="11">    <span class="st">`</span><span class="dt">physical-touch - physical-notouch</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">physical-touch</span><span class="st">`</span> <span class="op">-</span><span class="st"> `</span><span class="dt">physical-notouch</span><span class="st">`</span>,</a>
-<a class="sourceLine" id="cb8-12" data-line-number="12">    <span class="st">`</span><span class="dt">physical-notouch - virtual-prop</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">physical-notouch</span><span class="st">`</span> <span class="op">-</span><span class="st"> `</span><span class="dt">virtual-prop</span><span class="st">`</span>,</a>
-<a class="sourceLine" id="cb8-13" data-line-number="13">    <span class="st">`</span><span class="dt">virtual-prop - virtual-mouse</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">virtual-prop</span><span class="st">`</span> <span class="op">-</span><span class="st"> `</span><span class="dt">virtual-mouse</span><span class="st">`</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="st">  </span><span class="kw">select</span>(<span class="st">`</span><span class="dt">physical-touch - physical-notouch</span><span class="st">`</span>, <span class="st">`</span><span class="dt">physical-notouch - virtual-prop</span><span class="st">`</span>, <span class="st">`</span><span class="dt">virtual-prop - virtual-mouse</span><span class="st">`</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="st">  </span><span class="kw">gather</span>(levels) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="st">  </span><span class="kw">group_by</span>(levels) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="st">  </span><span class="kw">nest</span>()</a>
-<a class="sourceLine" id="cb8-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb8-20" data-line-number="20">M<span class="op">$</span>df.diffs &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>df.diffs  <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">ci =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>( confidence_interval, <span class="fl">0.5</span>, <span class="fl">0.68</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>, <span class="fl">0.999</span> )) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">diff =</span> <span class="kw"><a href="../reference/branch.html">branch</a></span>(bootstrap,</a>
-<a class="sourceLine" id="cb8-23" data-line-number="23">                       <span class="st">"t-dist"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">tidy</span>(<span class="kw"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span>(.x<span class="op">$</span>value, <span class="dt">conf.level =</span> .y)) ),</a>
-<a class="sourceLine" id="cb8-24" data-line-number="24">                       <span class="st">"bca"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">boot</span>(<span class="dt">data =</span> .x<span class="op">$</span>value, <span class="dt">statistic =</span> samplemean, <span class="dt">R =</span> <span class="dv">5000</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="st">                              </span><span class="kw">tidy</span>( <span class="dt">conf.int =</span> <span class="ot">TRUE</span>, <span class="dt">conf.method =</span> <span class="st">"bca"</span>, <span class="dt">conf.level =</span> .y) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-26" data-line-number="26"><span class="st">                              </span><span class="kw">rename</span>(<span class="dt">estimate =</span> statistic))</a>
-<a class="sourceLine" id="cb8-27" data-line-number="27">        )) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="st">  </span><span class="kw">unnest</span>(diff)</a></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/execute.html">execute_multiverse</a></span>(M)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">M<span class="op">$</span>df.diffs &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>data.userlogs.raw  <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">duration =</span> <span class="kw">branch</span>( data_transform, </a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">                         <span class="st">"none"</span> <span class="op">~</span><span class="st"> </span>duration,</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">                         <span class="st">"log"</span> <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(duration)</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">  )) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw">arrange</span>(modality) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">index =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(.)<span class="op">/</span><span class="dv">4</span>)), <span class="dv">4</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw">select</span>(index, modalityname, duration) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="st">  </span><span class="kw">spread</span>(modalityname, duration) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">    <span class="st">`</span><span class="dt">physical-touch - physical-notouch</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">physical-touch</span><span class="st">`</span> <span class="op">-</span><span class="st"> `</span><span class="dt">physical-notouch</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">    <span class="st">`</span><span class="dt">physical-notouch - virtual-prop</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">physical-notouch</span><span class="st">`</span> <span class="op">-</span><span class="st"> `</span><span class="dt">virtual-prop</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb6-13" data-line-number="13">    <span class="st">`</span><span class="dt">virtual-prop - virtual-mouse</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">virtual-prop</span><span class="st">`</span> <span class="op">-</span><span class="st"> `</span><span class="dt">virtual-mouse</span><span class="st">`</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="st">  </span><span class="kw">select</span>(<span class="st">`</span><span class="dt">physical-touch - physical-notouch</span><span class="st">`</span>, <span class="st">`</span><span class="dt">physical-notouch - virtual-prop</span><span class="st">`</span>, <span class="st">`</span><span class="dt">virtual-prop - virtual-mouse</span><span class="st">`</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="st">  </span><span class="kw">gather</span>(levels) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="st">  </span><span class="kw">group_by</span>(levels) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="st">  </span><span class="kw">nest</span>()</a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb6-20" data-line-number="20">M<span class="op">$</span>df.diffs &lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>df.diffs  <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">ci =</span> <span class="kw">branch</span>( confidence_interval, <span class="fl">0.5</span>, <span class="fl">0.68</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>, <span class="fl">0.999</span> )) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">diff =</span> <span class="kw">branch</span>(bootstrap,</a>
+<a class="sourceLine" id="cb6-23" data-line-number="23">                       <span class="st">"t-dist"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">tidy</span>(<span class="kw"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span>(.x<span class="op">$</span>value, <span class="dt">conf.level =</span> .y)) ),</a>
+<a class="sourceLine" id="cb6-24" data-line-number="24">                       <span class="st">"bca"</span> <span class="op">~</span><span class="st"> </span><span class="kw">map2</span>(data, ci, <span class="op">~</span><span class="st"> </span><span class="kw">boot</span>(<span class="dt">data =</span> .x<span class="op">$</span>value, <span class="dt">statistic =</span> samplemean, <span class="dt">R =</span> <span class="dv">5000</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-25" data-line-number="25"><span class="st">                              </span><span class="kw">tidy</span>( <span class="dt">conf.int =</span> <span class="ot">TRUE</span>, <span class="dt">conf.method =</span> <span class="st">"bca"</span>, <span class="dt">conf.level =</span> .y) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="st">                              </span><span class="kw">rename</span>(<span class="dt">estimate =</span> statistic))</a>
+<a class="sourceLine" id="cb6-27" data-line-number="27">        )) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="st">  </span><span class="kw">unnest</span>(diff)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">execute_multiverse</span>(M)</a></code></pre></div>
 <pre><code>## Warning in norm.inter(t, adj.alpha): extreme order statistics used as
 ## endpoints
 
@@ -225,46 +214,46 @@
 
 ## Warning in norm.inter(t, adj.alpha): extreme order statistics used as
 ## endpoints</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">M<span class="op">$</span>df.diffs</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">M<span class="op">$</span>df.diffs</a></code></pre></div>
 <pre><code>## # A tibble: 3 x 11
-##   levels data     ci estimate statistic p.value parameter conf.low
-##   &lt;chr&gt;  &lt;lis&gt; &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 physi… &lt;tib…   0.5    -6.72     -3.37 0.00101       127    -8.07
-## 2 physi… &lt;tib…   0.5    -6.13     -2.99 0.00334       127    -7.52
-## 3 virtu… &lt;tib…   0.5    -2.60     -1.48 0.141         127    -3.78
+## # Groups:   levels [3]
+##   levels      data    ci estimate statistic p.value parameter conf.low
+##   &lt;chr&gt;  &lt;list&lt;df&gt; &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 physi… [128 × 1]   0.5    -6.72     -3.37 0.00101       127    -8.07
+## 2 physi… [128 × 1]   0.5    -6.13     -2.99 0.00334       127    -7.52
+## 3 virtu… [128 × 1]   0.5    -2.60     -1.48 0.141         127    -3.78
 ## # … with 3 more variables: conf.high &lt;dbl&gt;, method &lt;chr&gt;,
 ## #   alternative &lt;chr&gt;</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="kw">map</span>(.results, <span class="st">"df.diffs"</span> ) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(confidence_interval, <span class="kw">desc</span>(data_transform), <span class="kw">desc</span>(bootstrap))</a></code></pre></div>
-<pre><code>## # A tibble: 84 x 17
-##    .universe data_transform confidence_inte… bootstrap levels data     ci
-##        &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;     &lt;chr&gt;  &lt;lis&gt; &lt;dbl&gt;
-##  1         1 none           0.5              t-dist    physi… &lt;tib…   0.5
-##  2         1 none           0.5              t-dist    physi… &lt;tib…   0.5
-##  3         1 none           0.5              t-dist    virtu… &lt;tib…   0.5
-##  4        15 none           0.5              bca       physi… &lt;tib…   0.5
-##  5        15 none           0.5              bca       physi… &lt;tib…   0.5
-##  6        15 none           0.5              bca       virtu… &lt;tib…   0.5
-##  7         2 log            0.5              t-dist    physi… &lt;tib…   0.5
-##  8         2 log            0.5              t-dist    physi… &lt;tib…   0.5
-##  9         2 log            0.5              t-dist    virtu… &lt;tib…   0.5
-## 10        16 log            0.5              bca       physi… &lt;tib…   0.5
-## # … with 74 more rows, and 10 more variables: estimate &lt;dbl&gt;,
-## #   statistic &lt;dbl&gt;, p.value &lt;dbl&gt;, parameter &lt;dbl&gt;, conf.low &lt;dbl&gt;,
-## #   conf.high &lt;dbl&gt;, method &lt;chr&gt;, alternative &lt;chr&gt;, bias &lt;dbl&gt;,
-## #   std.error &lt;dbl&gt;</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw"><a href="../reference/accessors.html">multiverse_table</a></span>(M) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw">unnest</span>( <span class="kw">map</span>(.results, <span class="st">"df.diffs"</span> ) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(confidence_interval, <span class="kw">desc</span>(data_transform), <span class="kw">desc</span>(bootstrap)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_vline</span>( <span class="dt">xintercept =</span> <span class="dv">0</span>,  <span class="dt">colour =</span> <span class="st">'#979797'</span> ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> estimate, <span class="dt">y =</span> levels)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_errorbarh</span>( <span class="kw">aes</span>(<span class="dt">xmin =</span> conf.low, <span class="dt">xmax =</span> conf.high, <span class="dt">y =</span> levels), <span class="dt">height =</span> <span class="dv">0</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="st">  </span><span class="kw">transition_manual</span>( .universe )</a>
-<a class="sourceLine" id="cb15-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">28</span>,  <span class="dt">fps =</span> <span class="dv">4</span>)</a></code></pre></div>
-<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-10-1.gif"><!-- --></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">df =</span> <span class="kw">map</span>(.results, <span class="st">"df.diffs"</span>) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>(<span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(df) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw">arrange</span>(confidence_interval, <span class="kw">desc</span>(data_transform), <span class="kw">desc</span>(bootstrap)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</a></code></pre></div>
+<pre><code>## # A tibble: 6 x 20
+##   .universe data_transform confidence_inte… bootstrap .parameter_assi…
+##       &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;     &lt;list&gt;          
+## 1         1 none           0.5              t-dist    &lt;named list [3]&gt;
+## 2         1 none           0.5              t-dist    &lt;named list [3]&gt;
+## 3         1 none           0.5              t-dist    &lt;named list [3]&gt;
+## 4        15 none           0.5              bca       &lt;named list [3]&gt;
+## 5        15 none           0.5              bca       &lt;named list [3]&gt;
+## 6        15 none           0.5              bca       &lt;named list [3]&gt;
+## # … with 15 more variables: .code &lt;list&gt;, .results &lt;list&gt;, levels &lt;chr&gt;,
+## #   data &lt;list&lt;df[,1]&gt;&gt;, ci &lt;dbl&gt;, estimate &lt;dbl&gt;, statistic &lt;dbl&gt;,
+## #   p.value &lt;dbl&gt;, parameter &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;,
+## #   method &lt;chr&gt;, alternative &lt;chr&gt;, bias &lt;dbl&gt;, std.error &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">p &lt;-<span class="st"> </span><span class="kw">multiverse_table</span>(M) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">df =</span> <span class="kw">map</span>(.results, <span class="st">"df.diffs"</span>) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">unnest</span>(<span class="dt">cols =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(df) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw">arrange</span>(confidence_interval, <span class="kw">desc</span>(data_transform), <span class="kw">desc</span>(bootstrap))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_vline</span>( <span class="dt">xintercept =</span> <span class="dv">0</span>,  <span class="dt">colour =</span> <span class="st">'#979797'</span> ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_point</span>( <span class="kw">aes</span>(<span class="dt">x =</span> estimate, <span class="dt">y =</span> levels)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_errorbarh</span>( <span class="kw">aes</span>(<span class="dt">xmin =</span> conf.low, <span class="dt">xmax =</span> conf.high, <span class="dt">y =</span> levels), <span class="dt">height =</span> <span class="dv">0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="st">  </span><span class="kw">transition_manual</span>( .universe )</a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">28</span>,  <span class="dt">fps =</span> <span class="dv">4</span>)</a></code></pre></div>
+<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-9-1.gif"><!-- --></p>
 </div>
   </div>
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a new multiverse object — multiverse • multidy</title>
+<title>Create a new multiverse object — multiverse • multiverse</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -67,8 +67,8 @@ and `FALSE` for all other objects." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">multidy</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <a class="navbar-link" href="../index.html">multiverse</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -97,7 +97,10 @@ and `FALSE` for all other objects." />
       <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+    </li>
+    <li>
+      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
@@ -160,22 +163,22 @@ and `FALSE` for all other objects.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>To perform a multiverse analysis, the user needs to first constructs a new multiverse object. The user can declare 
-multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object is 
+    <p>To perform a multiverse analysis, the user needs to first constructs a new multiverse object. The user can declare
+multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object is
 contains the following slots:</p><ul>
 <li><p>code: This slot stores the user's code for conducting a multiverse analysis. The user can
   define multiple analysis pathways at each step in the analysis using the `branch` call. It supports tidyverse syntax.</p></li>
-<li><p>parameters: This slot contains a named list of lists. It contains each parameter defined in the 
+<li><p>parameters: This slot contains a named list of lists. It contains each parameter defined in the
   code using the `branch()` function, and the options defined for each parameter (as a list).</p></li>
-<li><p>conditions (NOT IMPLEMENTED): This slot contain a list of conditions: if any of the 
-  parameter values are conditional on a specific value of another parameter, these can be defined in the code 
+<li><p>conditions (NOT IMPLEMENTED): This slot contain a list of conditions: if any of the
+  parameter values are conditional on a specific value of another parameter, these can be defined in the code
   using `branch_assert()` or `branch_exclude()`.</p></li>
 <li><p>current_parameter_assignment: This slot is a list which contains a single option
   assigned for each parameter defined in the `code`.</p></li>
-<li><p>multiverse_table: This slot contains a table (in implementation, a tibble which is a 
-  rectangular data structure) where each column of the table will be a unqiue parameter. 
-  The table will contains every possible combination of options for each parameter — the number of rows 
-  corresponds to the number of different analysis paths. The table also contains, for each row, a list of 
+<li><p>multiverse_table: This slot contains a table (in implementation, a tibble which is a
+  rectangular data structure) where each column of the table will be a unqiue parameter.
+  The table will contains every possible combination of options for each parameter — the number of rows
+  corresponds to the number of different analysis paths. The table also contains, for each row, a list of
   option assignments for each parameter (`parameter_assignment` column), code for executing that particular
   analysis (of type `expression`), and environments where each code will be executed.</p></li>
 </ul>
