@@ -4,9 +4,8 @@
 <!-- badges: start -->
 
 [![Build
-status](https://travis-ci.com/MUCollective/multidy.svg)](https://travis-ci.com/MUCollective/multidy)
-[![Codecov test
-coverage](https://codecov.io/gh/MUCollective/multidy/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multidy?branch=master)
+status](https://travis-ci.com/MUCollective/multiverse.svg?branch=master)](https://travis-ci.com/MUCollective/multiverse)
+[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multiverse)
 <!-- badges: end -->
 
 The goal of multidy is to …
