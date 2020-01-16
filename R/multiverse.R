@@ -1,16 +1,5 @@
 setClassUnion("listORnumeric", c("list", "numeric"))
 
-Multiverse <- R6Class("Multiverse",
-    public = list(
-        code = NULL,
-        parameters = list(),
-        conditions = list(),
-        default_parameter_assignment = NULL,
-        multiverse_table = data.frame(parameter_assignment = list())
-        #initialize = function() {}
-    )
-)
-
 #' Create a new multiverse object
 #'
 #' Constructs a new multiverse object which enables conducting a multiverse analysis
@@ -50,12 +39,30 @@ Multiverse <- R6Class("Multiverse",
 #' @name multiverse
 #' @importFrom rlang env
 #' @importFrom R6 R6Class
+#' 
+#' @export
+Multiverse <- R6Class("Multiverse",
+  public = list(
+    code = NULL,
+    parameters = list(),
+    conditions = list(),
+    default_parameter_assignment = NULL,
+    multiverse_table = data.frame(parameter_assignment = list())
+    #initialize = function() {}
+  )
+)
+
+
+#' 
 #' @export
 multiverse <- function() {
   x <- env()
   attr(x, "multiverse_super_env") <- caller_env()
   attr(x, "multiverse") <- Multiverse$new()
-  structure(x, class = "multiverse")
+  structure(x, 
+            ...,
+            class = c(class, "multiverse")
+  )
 }
 
 #' Test if the object is a multiverse
