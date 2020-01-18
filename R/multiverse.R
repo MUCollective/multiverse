@@ -39,7 +39,7 @@ setClassUnion("listORnumeric", c("list", "numeric"))
 #' @name multiverse
 #' @importFrom rlang env
 #' @importFrom R6 R6Class
-#' 
+#'
 #' @export
 Multiverse <- R6Class("Multiverse",
   public = list(
@@ -53,13 +53,13 @@ Multiverse <- R6Class("Multiverse",
 )
 
 
-#' 
+#'
 #' @export
-multiverse <- function() {
+multiverse <- function(..., class=character()) {
   x <- env()
   attr(x, "multiverse_super_env") <- caller_env()
   attr(x, "multiverse") <- Multiverse$new()
-  structure(x, 
+  structure(x,
             ...,
             class = c(class, "multiverse")
   )
@@ -91,4 +91,3 @@ is.multiverse <- function(x) {
 is.r6_multiverse <- function(x) {
   inherits(x, "Multiverse")
 }
-
