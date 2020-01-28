@@ -24,7 +24,7 @@ make_data <- function(nrow = 500) {
 test_df <<- make_data()
 
 M = multiverse()
-an_expr = expr({
+an_expr = quote({
   df <- test_df  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
@@ -62,7 +62,7 @@ inside(M, !!an_expr)
 
 # get_option_name ----------------------------------
 test_that("can extract the option names from a branch", {
-  an_expr.1 = expr(
+  an_expr.1 = quote(
     branch(values,
            "zero" ~ 0,
            "three" ~ 3,
@@ -70,14 +70,14 @@ test_that("can extract the option names from a branch", {
            "y + 5" ~ y + 5
   ))
 
-  an_expr.2 = expr(
+  an_expr.2 = quote(
     branch(cycle_length,
            "no_filter" ~ TRUE,
            "computed_25to35" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
            "reported_25to35" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
   ))
 
-  an_expr.3 = expr(branch(value_x, "a", 1, x + 1, x^2, TRUE))
+  an_expr.3 = quote(branch(value_x, "a", 1, x + 1, x^2, TRUE))
 
   lgl.1.ref = list("zero", "three", "null", "y + 5")
   lgl.2.ref = list("no_filter", "computed_25to35", "reported_25to35")
@@ -89,7 +89,7 @@ test_that("can extract the option names from a branch", {
 })
 
 test_that("exact matching occurs when extracting options_names from a assignment", {
-  an_expr = expr(branch( value_x, 0, 10, 12, 30, 23, 40))
+  an_expr = quote(branch( value_x, 0, 10, 12, 30, 23, 40))
   compute_branch(an_expr, list(value_x = 0))
 
   expect_equal(compute_branch(an_expr, list(value_x = 0)), 0 )
@@ -97,14 +97,14 @@ test_that("exact matching occurs when extracting options_names from a assignment
 
 # get_option_value ----------------------------------
 test_that("can identify the correct option index from a branch", {
-  an_expr.1 = expr(
+  an_expr.1 = quote(
     branch(values,
            "zero" ~ 0,
            "three" ~ 3,
            "null" ~ NULL,
            "y + 5" ~ y + 5
     ))
-  an_expr.2 = expr(
+  an_expr.2 = quote(
     branch(cycle_length,
            "no_filter" ~ TRUE,
            "computed_25to35" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
@@ -131,13 +131,13 @@ test_that("can identify the correct option index from a branch", {
 
 # compute_branch ----------------------------------
 test_that("given parameter assignment, an expression with branch is converted into proper R code for execution", {
-  an_expr.1 = expr(
+  an_expr.1 = quote(
     branch(menstrual_calculation,
            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
            "mc_option3" ~ StartDateNext)
   )
-  an_expr.2 = expr( branch(cycle_length,
+  an_expr.2 = quote( branch(cycle_length,
                            "cl_option1" ~ TRUE,
                            "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
                            "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
@@ -153,8 +153,8 @@ test_that("given parameter assignment, an expression with branch is converted in
 
   .code.1 = compute_branch( an_expr.1, .assgn_list )
   .code.2 = compute_branch( an_expr.2, .assgn_list )
-  .code_ref.1 = expr(StartDateofLastPeriod + ComputedCycleLength)
-  .code_ref.2 = expr(ReportedCycleLength > 25 & ReportedCycleLength < 35)
+  .code_ref.1 = quote(StartDateofLastPeriod + ComputedCycleLength)
+  .code_ref.2 = quote(ReportedCycleLength > 25 & ReportedCycleLength < 35)
   expect_equal(.code.1, .code_ref.1)
   expect_equal(.code.2, .code_ref.2)
 })
@@ -167,12 +167,12 @@ test_that("throws error if multiverse object passed is not R6", {
 })
 
 test_that("syntax tree without branches is correctly returned", {
-  an_expr <- expr({df <- test_df  %>%
+  an_expr <- quote({df <- test_df  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )})
 
   M.no_branch = multiverse()
 
-  add_and_parse_code(attr(M.no_branch, "multiverse"), attr(M.no_branch, "multiverse_super_env"), expr({
+  add_and_parse_code(attr(M.no_branch, "multiverse"), attr(M.no_branch, "multiverse_super_env"), quote({
     df <- test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   }), execute = FALSE)
@@ -183,7 +183,7 @@ test_that("syntax tree without branches is correctly returned", {
 test_that("syntax tree with branches is correctly returned when no parameter is assigned", {
   u.expr = attr(M, "multiverse") %>% get_code(an_expr)
 
-  u.expr.ref = expr({
+  u.expr.ref = quote({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
@@ -216,7 +216,7 @@ test_that("syntax tree with branches is correctly returned when a parameter is a
 
   u.expr = code(M) %>% get_parameter_code(param.assgn)
 
-  u.expr.ref = expr({
+  u.expr.ref = quote({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%

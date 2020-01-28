@@ -38,8 +38,9 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
     #message("Assigning options to parameter from `default_parameter_assignment`")
     .assgn = default_parameter_assignment(multiverse)
   }
-
-  get_parameter_code(.code, .assgn)
+  
+  lapply(.code, get_parameter_code, .assgn)
+  # get_parameter_code(.code, .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches

@@ -38,7 +38,11 @@
 parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
 
-  parameter_conditions_list = get_parameter_conditions( multiverse[['code']] )
+  # parameter_conditions_list = get_parameter_conditions( multiverse[['code']] )
+  l <- lapply( multiverse[['code']], get_parameter_conditions )
+  keys <- unique(unlist(lapply(l, names)))
+  parameter_conditions_list <- setNames(do.call(mapply, c(FUN=c, lapply(l, `[`, keys))), keys)
+  
   multiverse[['parameters']] = parameter_conditions_list$parameters
   multiverse[['conditions']] = parameter_conditions_list$conditions
 
@@ -83,6 +87,8 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_
       .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
       .results = lapply(.parameter_assignment, function(x) new.env(parent = .super_env))
     )), eval(all_conditions))
+  
+  # print(df$.parameter_assignment)
 }
 
 # takes as input an expression
