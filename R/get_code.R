@@ -39,7 +39,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
     .assgn = default_parameter_assignment(multiverse)
   }
   
-  lapply(.code, get_parameter_code, .assgn)
+  x = lapply(.code, get_parameter_code, .assgn)
   # get_parameter_code(.code, .assgn)
 }
 
@@ -47,6 +47,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
 # returns as output an expression (or code) without branches
 get_parameter_code <- function(.expr, .assgn) {
   .expr = rm_branch_assert(.expr)
+  
   if (is.call(.expr)) {
     # Recursive cases
     if (.expr[[1]] == quote(branch)) {
@@ -62,21 +63,21 @@ get_parameter_code <- function(.expr, .assgn) {
 
 ### this function is to allow people to declare `branch_assert` which does not work rn
 rm_branch_assert <- function(.expr) {
-  # if the expression is not of length 3, than there isn't a branch_assert call
+  # if the expression is not of length 3, then there isn't a conditional call
   if(length(.expr) == 3) {
+    
     # checks if the rhs of the expression is a branch_assert call
     # rewrites the expression by removing it
-    if (is.call(.expr[[3]])) {
-      if(.expr[[3]][[1]] == quote(branch_assert)) {
-        .expr = .expr[[2]]
-      }
-    }
-    # checks if the rhs of the expression is a branch_assert call
+    if (is.call(.expr[[3]]) && .expr[[3]][[1]] == quote(branch_assert)) .expr = .expr[[2]]
+    
+    # checks if the lhs of the expression is a branch_assert call
     # rewrites the expression by removing it
-    if (is.call(.expr[[2]])) {
-      if(.expr[[2]][[1]] == quote(branch_assert)) {
-        .expr = .expr[[3]]
-      }
+    else if (is.call(.expr[[2]]) && .expr[[2]][[1]] == quote(branch_assert)) .expr = .expr[[3]]
+    
+    # checks if expression is a %when% conditional
+    # if it is, only return the lhs
+    else if (is.call(.expr) && .expr[[1]] == quote(`%when%`)) {
+      .expr = .expr[[2]]
     }
 
     .expr
@@ -103,6 +104,8 @@ get_option_value <- function(x) {
     return(x)
   }
 }
+
+
 
 
 

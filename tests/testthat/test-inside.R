@@ -3,6 +3,7 @@
 context("inside")
 
 library(rlang)
+library(purrr)
 library(dplyr)
 
 test_that("inside works on new multiverse object", {
@@ -13,14 +14,16 @@ test_that("inside works on new multiverse object", {
     x = data.frame(x = 1:10)
   })
 
-  expect_equal(f_rhs( code(M) ), f_rhs(an_expr))
+  expect_equal( code(M), list(an_expr) )
 })
 
 test_that("multiple lines of code can be passed to inside", {
-  an_expr = expr({
+  some_exprs = list(quote({
     x = data.frame(x = 1:10)
+  }),
+  quote({
     y = data.frame(y = 11:20)
-  })
+  }))
 
   M = multiverse()
   inside(M, {
@@ -31,7 +34,7 @@ test_that("multiple lines of code can be passed to inside", {
     y = data.frame(y = 11:20)
   })
 
-  expect_equal(f_rhs( code(M) ), f_rhs(an_expr))
+  expect_equal( code(M), some_exprs)
 })
 
 test_that("throws error when object is not of type `multiverse`", {
@@ -49,33 +52,40 @@ test_that("`$<-.multiverse` works on new multiverse object", {
   M = multiverse()
   M$x <- ~ data.frame(x = 1:10)
 
-  expect_equal(f_rhs( code(M) ), f_rhs(an_expr))
+  expect_equal( code(M), list(an_expr))
 })
 
 test_that("multiple lines of code can be passed to inside", {
-  an_expr = expr({
+  some_exprs = list(quote({
     x <- data.frame(x = 1:10)
+  }),
+  quote({
     y <- data.frame(y = 11:20)
-  })
+  }))
 
   M = multiverse()
   M$x <- ~ data.frame(x = 1:10)
   M$y <- ~ data.frame(y = 11:20)
 
-  expect_equal(f_rhs( code(M) ), f_rhs(an_expr))
+  expect_equal( code(M), some_exprs)
 })
 
 # add_and_parse_code ___________________________
-test_that("`add_and_parse_code` stores code as `language`", {
-  an_expr = expr({
+test_that("`add_and_parse_code` stores code as a list of `language`", {
+  expr.1 = expr({
     x = data.frame(x = 1:10)
+  })
+  
+  expr.2 = expr({
     y = data.frame(y = 11:20)
   })
 
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), an_expr)
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.1, index = NULL)
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.2, index = NULL)
 
-  expect_true( is.language( f_rhs( code(M) ) ))
+  expect_true( is.list(code(M)) )
+  expect_true( all(map_lgl(code(M), is.language)) )
 })
 
 test_that("`add_and_parse_code` parses the code", {

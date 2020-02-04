@@ -25,7 +25,7 @@
 #' 
 #' @name multiverse_engine
 multiverse_engine <- function(options) {
-  .multiverse_name = options$name
+  .multiverse_name = options$inside
   if ( !(.multiverse_name %in% ls(envir = globalenv()))) {
     stop("Cannot add code to multiverse object which has not been created")
   }

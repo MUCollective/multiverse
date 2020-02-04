@@ -14,7 +14,7 @@ test_that("basic retrieval works with `code()`", {
   M <- multiverse()
   M$x <- ~ 5
 
-  expect_equal(code(M), expr({ x <- 5 }) )
+  expect_equal(code(M), list(expr({ x <- 5 })) )
 })
 
 test_that("`code()` throws error for objects of class other than multiverse", {

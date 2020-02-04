@@ -83,7 +83,7 @@ inside <- function(multiverse, .expr) {
   }
   .expr = eval_seq_in_code(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
+  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, index = NULL)
 }
 
 #' @rdname inside
@@ -95,7 +95,7 @@ inside <- function(multiverse, .expr) {
   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
   .expr = eval_seq_in_code(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
+  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, index = NULL)
 
   multiverse
 }
@@ -112,11 +112,9 @@ compare_code <- function(x, y) {
 }
 
 
-add_and_parse_code <- function(m_obj, .super_env, .code, execute = TRUE) {
+add_and_parse_code <- function(m_obj, .super_env, .code, index, execute = TRUE) {
   # .loc = match( FALSE, compare_code(m_obj$code, .code) )
   .loc = length(m_obj$code)
-  
-  # print(.loc)
   
   if (is_null(m_obj$code)) {
     # .c = .code
@@ -131,7 +129,7 @@ add_and_parse_code <- function(m_obj, .super_env, .code, execute = TRUE) {
 
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
-  execute_default(m_obj)
+  if (execute) execute_default(m_obj)
 }
 
 concatenate_expr <- function(ref, to_add){

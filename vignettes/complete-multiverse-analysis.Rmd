@@ -104,7 +104,7 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 
 ## Defining the multiverse
 
-`multidy` provides flexible functions which can be used to perform a multiverse analysis.
+`multiverse` provides flexible functions which can be used to perform a multiverse analysis.
 
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
@@ -112,7 +112,7 @@ The first step is to define a *new multiverse*. We will use the multiverse objec
 M <- multiverse()
 ```
 
-The next step is to define our possible analyses inside the multiverse. The `multidy` package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above). 
+The next step is to define our possible analyses inside the multiverse. The `multiverse` package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above). 
 
 Consider these first few lines from the transformation code in the single analysis above:
 
@@ -162,7 +162,7 @@ inside(M, {
 ```
 
 
-Alternative to the `inside` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
+Alternative to the `inside()` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
 
 ```{r alternate_add_to_multiverse, eval = FALSE}
 M$df <- ~ data.raw.study2  %>%
@@ -300,14 +300,9 @@ M %>% execute_default( universe_parameter_assignment ) %>%
 
 ## Specifying conditions in the multiverse analysis
 In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
-For example, in our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`.
+For example, in our example, depending on how we filter participants based on *cycle length*, we can only the corresponding value for calculating participants' `NextMenstrualOnset`. In other words, if we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`.
 
-We should be able to express these conditions in the multiverse. We can do this in two ways:
-1. `%when%`: when declaring a branch, we can use this operator to specify the conditional $A | B$ as `A %when% B`. The conditional $A | B$ is also referred to as the connective $A \implies B$. This has the meaning "if A is true, then B is also true" and is an abbreviation for $\neg A | B$
-2. `branch_assert`: this function allows the user to specify any condition in the form of a logical operation
-
-#### The %when% operator
-There are two ways in which you can specify the `%when%` operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.
+We can express these conditionals in the multiverse (See vignette("Conditions") for more details). Below, we use the %when% operator:
 
 ```{r, eval = FALSE}
 M$df <- data.raw.study2  %>%
@@ -317,35 +312,6 @@ M$df <- data.raw.study2  %>%
             "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
             "mc_option3" ~ StartDateNext)
     )
-```
-
-The other is to specify it at the head of the branch, right after the option name:
-
-```{r, eval = FALSE}
-M$df <- df  %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" %when% (cycle_length != "cl_option2") ~ (StartDateofLastPeriod + ReportedCycleLength),
-            "mc_option3" ~ StartDateNext)
-    )
-```
-
-#### The `branch_assert()` function
-Within the branch assert function, the user can specify any logical operation. 
-
-For eg: the above logical operations can be specified as: `branch_assert((menstrual_calculation != "mc_option1" | cycle_length != "cl_option3"))`
-
-Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
-
-```{r, eval = FALSE}
-M$df <- df  %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-            "mc_option3" ~ StartDateNext)
-    ) %>%
-    branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
-    branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
 ```
 
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:
@@ -411,7 +377,7 @@ The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* 
 M$fit_RelComp <- ~ lm( RelComp ~ Fertility * RelationshipStatus, data = df )
 ```
 
-To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using `broom::tidy`. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call `execute_multiverse` to execute our analysis in each multiverse.
+To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using `broom::tidy`. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call `execute_multiverse()` to execute our analysis in each multiverse.
 
 ```{r}
 M$summary_RelComp <- ~ fit_RelComp %>% 

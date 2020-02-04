@@ -6,7 +6,26 @@ library(rlang)
 library(tidyr)
 library(dplyr)
 library(purrr)
+library(lubridate)
 
+set.seed(123)
+make_data <- function(nrow = 500) {
+  data.frame(
+    Relationship = sample(1:4, nrow, replace = TRUE),
+    Sure1 = sample(1:9, nrow, replace = TRUE),
+    Sure2 = sample(1:9, nrow, replace = TRUE),
+    StartDateofLastPeriod = make_date(2012, sample(4:5, nrow, TRUE), sample(1:22, nrow, TRUE)),
+    DateTesting = make_date(2012, 5, sample(21:26, nrow, TRUE))
+  ) %>%
+    mutate(
+      StartDateofPeriodBeforeLast = StartDateofLastPeriod - sample(20:28, nrow, TRUE),
+      StartDateNext = StartDateofLastPeriod - sample(20:28, nrow, TRUE),
+      ReportedCycleLength = sample(14:28, nrow, TRUE)
+    )
+}
+# HACK: code executed in the multiverse only has access to the global environment, so need to put
+# variables into that environment for testing purposes. TODO: come up with better solution
+test_df <<- make_data()
 
 # get_branch_parameter_conditions -----------------------------------------
 
@@ -167,6 +186,55 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
 })
 
 
+test_that("`get_parameter_conditions` returns the correct output (list) when input expression has a single branch", {
+  expr.1 <- exprs({
+    df <- data.raw.study2  %>%
+      filter( branch(cycle_length,
+                     "cl_option1" ~ TRUE,
+                     "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+                     "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      ))
+  }, {
+    df <- df %>%
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
+                                         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                                         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                                         "mc_option3" ~ StartDateNext)
+      ) %>%
+      branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+      branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
+  })
+  
+  expr.2 <- expr({
+    df <- data.raw.study2  %>%
+      filter( branch(cycle_length,
+                     "cl_option1" ~ TRUE,
+                     "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+                     "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      )) %>%
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
+                                         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                                         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                                         "mc_option3" ~ StartDateNext)
+      ) %>%
+      branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+      branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
+  })
+  
+  
+  pc_list.1 <- combine_parameter_conditions_list(lapply( expr.1, get_parameter_conditions ))
+  pc_list.2 <- combine_parameter_conditions_list(lapply( expr.1, get_parameter_conditions ))
+  
+  output = list(
+    parameters = list(menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"), cycle_length = list("cl_option1", "cl_option2", "cl_option3")),
+    conditions = list(quote((menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3"))), quote((menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2"))))
+  )
+  
+  expect_equal(pc_list.1, output)
+  expect_equal(pc_list.2, output)
+})
+
+
 # get_conditions ------------------------------------------------------------
 test_that("`get_condition` is able to extract conditions in the correct format", {
   an_expr = expr(branch(value_z,
@@ -220,7 +288,7 @@ test_that("`get_condition` ignores `%when%` if assigned to subexpression of an o
 test_that("`parse_multiverse` returns the complete parameter table", {
   M = multiverse()
   add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
-    df <- data.raw.study2  %>%
+    df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -267,12 +335,12 @@ test_that("`parse_multiverse` returns the complete parameter table", {
 test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' slot when it is passed an expression without any branches", {
   p_tbl_df.ref = tibble::tibble(
     .parameter_assignment = list( list() ),
-    .code = list( rlang::expr( df <- data.frame(x = 1:10) ) )
+    .code = list( list(rlang::expr( df <- data.frame(x = 1:10) )) )
   )
 
   M = multiverse()
   # this should NOT generate a warning
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr( df <- data.frame(x = 1:10) ), execute = FALSE)
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr( df <- data.frame(x = 1:10) ), index = NULL, execute = FALSE)
   p_tbl_df = multiverse_table(M) %>% select(-.results)
 
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
@@ -399,7 +467,7 @@ test_that("unnamed options in branches are supported", {
 test_that("conditions are extracted when specified using `branch_assert`", {
   M = multiverse()
   add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
-    df <- data.raw.study2  %>%
+    df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate(NextMenstrualOnset = branch(menstrual_calculation,
                                          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -433,7 +501,7 @@ test_that("conditions are extracted when specified using `branch_assert`", {
       branch_assert(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2") %>%
       branch_assert(relationship_status != "rs_option3" | menstrual_calculation == "mc_option1") %>%
       branch_assert(fertile != "fer_option4" | certainty == "cer_option2")
-  }),  execute = FALSE)
+  }), index = NULL, execute = FALSE)
 
   cond.ref = list(
     expr(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2"),

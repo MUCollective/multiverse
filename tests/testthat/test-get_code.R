@@ -24,7 +24,7 @@ make_data <- function(nrow = 500) {
 test_df <<- make_data()
 
 M = multiverse()
-an_expr = quote({
+an_expr = quote(
   df <- test_df  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
@@ -56,9 +56,9 @@ an_expr = quote({
                                 "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
                                 "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
-})
+)
 
-inside(M, !!an_expr)
+inside(M, {!!an_expr} )
 
 # get_option_name ----------------------------------
 test_that("can extract the option names from a branch", {
@@ -175,13 +175,13 @@ test_that("syntax tree without branches is correctly returned", {
   add_and_parse_code(attr(M.no_branch, "multiverse"), attr(M.no_branch, "multiverse_super_env"), quote({
     df <- test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
-  }), execute = FALSE)
+  }), index = FALSE, execute = FALSE)
 
-  expect_equal(f_rhs(code(M.no_branch)), f_rhs(an_expr))
+  expect_equal(code(M.no_branch), list(an_expr))
 })
 
 test_that("syntax tree with branches is correctly returned when no parameter is assigned", {
-  u.expr = attr(M, "multiverse") %>% get_code(an_expr)
+  u.expr = attr(M, "multiverse") %>% get_code(list(expr({!! an_expr})))
 
   u.expr.ref = quote({
     df <- test_df  %>%
@@ -197,11 +197,59 @@ test_that("syntax tree with branches is correctly returned when no parameter is 
       mutate( Fertility = factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ) )
   })
 
-  expect_equal(f_rhs(u.expr), f_rhs(u.expr.ref))
+  expect_equal( u.expr, list(u.expr.ref))
 })
 
-# get_branch_assert ----------------------------------------------------
-## writ etest cases for get_branch_assert which is called from get_code
+# rm_branch_assert ----------------------------------------------------
+## write test cases for rm_branch_assert which is called from get_code
+test_that("syntax tree without `branch_assert` is returned when conditional is present in code", {
+  expr.1 <- expr({
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
+                                         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                                         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                                         "mc_option3" ~ StartDateNext)
+      ) %>%
+      filter( branch(cycle_length,
+                     "cl_option1" ~ TRUE,
+                     "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+                     "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      )) %>%
+      branch_assert(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2")
+  })
+  
+  expr.2 <- expr({
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
+                                         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength ,
+                                         "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
+                                         "mc_option3" ~ StartDateNext)
+      ) %>%
+      filter( branch(cycle_length,
+                     "cl_option1" ~ TRUE,
+                     "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+                     "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      ))
+  })
+  
+  .assgn <- list("menstrual_calculation" = "mc_option1", "cycle_length" = "cl_option1")
+  
+  parsed_expr.1 <- get_parameter_code(expr.1, .assgn)
+  parsed_expr.2 <- get_parameter_code(expr.2, .assgn)
+    
+    
+  ref_expr <- expr({
+    df <- test_df %>% 
+      mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) %>%
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %>% 
+      filter(TRUE)
+  })
+  
+  expect_equal( parsed_expr.1, ref_expr)
+  expect_equal( parsed_expr.2, ref_expr)
+})
 
 # get_parameter_code ----------------------------------
 
@@ -214,7 +262,7 @@ test_that("syntax tree with branches is correctly returned when a parameter is a
     fertile = "fer_option4"
   )
 
-  u.expr = code(M) %>% get_parameter_code(param.assgn)
+  u.expr = lapply(code(M), get_parameter_code, param.assgn)
 
   u.expr.ref = quote({
     df <- test_df  %>%
@@ -230,5 +278,5 @@ test_that("syntax tree with branches is correctly returned when a parameter is a
       mutate( Fertility = factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") ) )
   })
 
-  expect_equal(f_rhs(u.expr), f_rhs(u.expr.ref))
+  expect_equal(u.expr, list(u.expr.ref))
 })

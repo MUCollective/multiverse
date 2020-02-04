@@ -47,7 +47,7 @@ execute_all_in_multiverse <- function(m_obj) {
   m_tbl = m_obj[['multiverse_table']]
 
   for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl$.code[[i]], envir = m_tbl[['.results']][[i]] )
+    invisible( lapply(m_tbl$.code[[i]], eval, envir = m_tbl[['.results']][[i]]) )
   }
 }
 
@@ -74,7 +74,7 @@ execute_default.Multiverse <- function(multiverse) {
     env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
   }
   
-  lapply(.c, eval, envir = env)
+  invisible( lapply(.c, eval, envir = env) )
 }
 
 

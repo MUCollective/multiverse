@@ -6,7 +6,8 @@ Multiverse <- R6Class("Multiverse",
         parameters = list(),
         conditions = list(),
         default_parameter_assignment = NULL,
-        multiverse_table = data.frame(parameter_assignment = list())
+        multiverse_table = data.frame(parameter_assignment = list()),
+        multiverse_chunks = list()
         #initialize = function() {}
     )
 )

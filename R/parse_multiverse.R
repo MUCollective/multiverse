@@ -38,10 +38,12 @@
 parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
 
-  # parameter_conditions_list = get_parameter_conditions( multiverse[['code']] )
   l <- lapply( multiverse[['code']], get_parameter_conditions )
-  keys <- unique(unlist(lapply(l, names)))
-  parameter_conditions_list <- setNames(do.call(mapply, c(FUN=c, lapply(l, `[`, keys))), keys)
+  parameter_conditions_list <- combine_parameter_conditions_list(l)
+  
+  # keys <- unique(unlist(lapply(l, names)))
+  # parameter_conditions_list <- setNames(do.call(mapply, c(FUN=c, lapply(l, `[`, keys))), keys)
+  
   
   multiverse[['parameters']] = parameter_conditions_list$parameters
   multiverse[['conditions']] = parameter_conditions_list$conditions
@@ -77,18 +79,16 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_
   } else {
     all_conditions <- expr(TRUE)
   }
-
+  
   .code = multiverse[['code']]
-  #.code = remove_branch_assert( multiverse[['code']] )
 
   df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
+  
   filter(as_tibble(mutate(df,
       .parameter_assignment = param.assgn,
       .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
       .results = lapply(.parameter_assignment, function(x) new.env(parent = .super_env))
-    )), eval(all_conditions))
-  
-  # print(df$.parameter_assignment)
+  )), eval(all_conditions))
 }
 
 # takes as input an expression
@@ -182,7 +182,7 @@ combine_parameter_conditions <- function(l1, l2) {
   for (n in l2_only_parameters) {
     parameters[[n]] = l2$parameters[[n]]
   }
-
+  
   list(
     parameters = parameters,
     conditions = compact(union(l1$conditions, l2$conditions))
@@ -211,20 +211,16 @@ get_option_name <- function(x) {
   }
 }
 
-remove_branch_assert <- function(.expr) {
-  if (is.call(.expr)) {
-    .expr = get_branch_assert(.expr)
-    if (is.call(.expr)) {
-      as.call(lapply(.expr, remove_branch_assert))
-    } else {
-      remove_branch_assert(.expr)
-    }
-  } else {
-    # Base case: constants and symbols
-    .expr
+combine_parameter_conditions_list <- function(l) {
+  .list = list(parameters = list(), conditions = list())
+  
+  for (i in range(1:length(l))) {
+    .list$parameters <- modifyList(l[[i]]$parameters, .list$parameters)
+    .list$conditions <- modifyList(l[[i]]$conditions, .list$conditions)
   }
+  
+  .list
 }
-
 
 
 

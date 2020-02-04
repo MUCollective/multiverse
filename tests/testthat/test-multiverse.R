@@ -85,8 +85,8 @@ test_that("accessor functions for getting default code", {
       )
   })
 
-  expect_true( is.language(code(M.2)) )
-  expect_equal( code(M.2), ref_code )
+  expect_true( all(map_lgl(code(M.2), is.language)) )
+  expect_equal( code(M.2), list(ref_code) )
 })
 
 test_that("accessor function for parameter list", {
@@ -139,7 +139,7 @@ test_that("accessor functions retrieve the multiverse table", {
   ref_df = ref_df %>%
     mutate(
       .parameter_assignment = param.assgn,
-      .code = map(.parameter_assignment, ~ get_parameter_code(ref_expr, .x))
+      .code = map(.parameter_assignment, ~ list(get_parameter_code(ref_expr, .x)))
     ) %>%
     as_tibble()
 
