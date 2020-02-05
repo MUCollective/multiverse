@@ -17,13 +17,10 @@
 #'
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #'
-#' @importFrom rlang is_call
-#' @importFrom rlang expr_text
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
 #' @importFrom magrittr %>%
 #' @importFrom magrittr extract2
-#' @importFrom stringi stri_detect_regex
 #'
 #' @export
 # wrapper function for get_parameter_code
@@ -65,14 +62,19 @@ get_parameter_code <- function(.expr, .assgn) {
 rm_branch_assert <- function(.expr) {
   # if the expression is not of length 3, then there isn't a conditional call
   if(length(.expr) == 3) {
+    # print(.expr)
     
     # checks if the rhs of the expression is a branch_assert call
     # rewrites the expression by removing it
-    if (is.call(.expr[[3]]) && .expr[[3]][[1]] == quote(branch_assert)) .expr = .expr[[2]]
+    if (is.call(.expr[[3]]) && .expr[[3]][[1]] == quote(branch_assert)) {
+      .expr = rm_branch_assert(.expr[[2]])
+    }
     
     # checks if the lhs of the expression is a branch_assert call
     # rewrites the expression by removing it
-    else if (is.call(.expr[[2]]) && .expr[[2]][[1]] == quote(branch_assert)) .expr = .expr[[3]]
+    else if (is.call(.expr[[2]]) && .expr[[2]][[1]] == quote(branch_assert)) {
+      .expr = rm_branch_assert(.expr[[3]])
+    }
     
     # checks if expression is a %when% conditional
     # if it is, only return the lhs

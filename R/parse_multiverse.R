@@ -37,14 +37,8 @@
 #' @export
 parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
-
-  l <- lapply( multiverse[['code']], get_parameter_conditions )
-  parameter_conditions_list <- combine_parameter_conditions_list(l)
   
-  # keys <- unique(unlist(lapply(l, names)))
-  # parameter_conditions_list <- setNames(do.call(mapply, c(FUN=c, lapply(l, `[`, keys))), keys)
-  
-  
+  parameter_conditions_list <- get_parameter_conditions_list( multiverse[['code']] )
   multiverse[['parameters']] = parameter_conditions_list$parameters
   multiverse[['conditions']] = parameter_conditions_list$conditions
 
@@ -56,6 +50,15 @@ parse_multiverse <- function(multiverse, .super_env) {
     multiverse[['default_parameter_assignment']] = NULL
     multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse, .super_env)
   }
+}
+
+get_parameter_conditions_list <- function(.c) {
+  l <- lapply( .c, get_parameter_conditions )
+  
+  list(
+    parameters = unlist(lapply(l, function(x) x$parameters), recursive = FALSE),
+    conditions = unlist(lapply(l, function(x) x$conditions), recursive = FALSE)
+  )
 }
 
 get_multiverse_table_no_param <- function(multiverse, .super_env) {
@@ -75,7 +78,8 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_
   param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i))
 
   if (length(parameters_conditions.list$condition) > 0) {
-    all_conditions <- parse_expr(paste0(lapply(parameters_conditions.list$conditions, expr_deparse), collapse = "&"))
+    all_conditions <- parse_expr(paste0("(", parameters_conditions.list$conditions, ")", collapse = "&"))
+    #parse_expr(paste0(lapply(parameters_conditions.list$conditions, expr_deparse), collapse = "&"))
   } else {
     all_conditions <- expr(TRUE)
   }
@@ -215,8 +219,8 @@ combine_parameter_conditions_list <- function(l) {
   .list = list(parameters = list(), conditions = list())
   
   for (i in range(1:length(l))) {
-    .list$parameters <- modifyList(l[[i]]$parameters, .list$parameters)
-    .list$conditions <- modifyList(l[[i]]$conditions, .list$conditions)
+    .list$parameters <- modifyList(.list$parameters, l[[i]]$parameters)
+    .list$conditions <- modifyList(.list$conditions, l[[i]]$conditions)
   }
   
   .list

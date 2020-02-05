@@ -222,16 +222,18 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
   })
   
   
-  pc_list.1 <- combine_parameter_conditions_list(lapply( expr.1, get_parameter_conditions ))
-  pc_list.2 <- combine_parameter_conditions_list(lapply( expr.1, get_parameter_conditions ))
+  pc_list.1 <- get_parameter_conditions_list(expr.1)
+  pc_list.2 <- get_parameter_conditions_list(expr.2)
   
   output = list(
-    parameters = list(menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"), cycle_length = list("cl_option1", "cl_option2", "cl_option3")),
+    parameters = list(cycle_length = list("cl_option1", "cl_option2", "cl_option3"), menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3")),
     conditions = list(quote((menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3"))), quote((menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2"))))
   )
   
-  expect_equal(pc_list.1, output)
-  expect_equal(pc_list.2, output)
+ # expect_equal(pc_list.1, output)
+ # expect_equal(pc_list.2, output)
+  expect_true(all(map2_lgl(pc_list.1$parameters, output$parameters, identical)))
+  expect_true(all(map2_lgl(pc_list.1$conditions, output$conditions, identical)))
 })
 
 

@@ -2,8 +2,11 @@
 #' 
 #' @description An easier way to interact with a multiverse object by using a custom code engine
 #' 
+#' @param options The knitr options associated with the code chunk
+#' 
 #' @details This is a custom code engine that allows the users to interface directly with a created multiverse object, 
 #' without using functions such as [inside]. See examples for more details
+#' 
 #' 
 #' @examples
 #' \dontrun{

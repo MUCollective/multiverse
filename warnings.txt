@@ -1,0 +1,68 @@
+W  checking Rd \usage sections ...
+	Undocumented arguments in documentation object 'multiverse_engine'
+	‘options’
+   
+	Functions with \usage entries need to have the appropriate \alias
+	entries, and all their arguments documented.
+	The \usage entries must correspond to syntactically valid R code.
+	See chapter ‘Writing R documentation files’ in the ‘Writing R
+	Extensions’ manual.
+
+
+W  checking files in ‘vignettes’ ...
+	Files in the 'vignettes' directory but no files in 'inst/doc':
+		‘Conditions.Rmd’, ‘branch.Rmd’, ‘calculate-mean-multiverse.Rmd’,
+		‘complete-multiverse-analysis.Rmd’, ‘dance.Rmd’,
+		‘frequentist-multiverse-analysis.Rmd’, ‘multiverse.pdf’,
+		‘multiverse.png’, ‘visualizing-multiverse.Rmd’
+
+
+W checking package vignettes in ‘inst/doc’ ... WARNING
+	dir.exists(dir) is not TRUEdir.exists(dir) is not TRUEdir.exists(dir) is not TRUEdir.exists(dir) is not TRUEdir.exists(dir) is not TRUEdir.exists(dir) is not TRUEdir.exists(dir) is not TRUE
+	Package vignettes without corresponding single PDF/HTML:
+		‘Conditions.Rmd’
+		‘branch.Rmd’
+		‘calculate-mean-multiverse.Rmd’
+		‘complete-multiverse-analysis.Rmd’
+		‘dance.Rmd’
+		‘frequentist-multiverse-analysis.Rmd’
+		‘visualizing-multiverse.Rmd’
+
+W checking re-building of vignette outputs ... WARNING
+	Error(s) in re-building vignettes:
+	--- re-building ‘Conditions.Rmd’ using rmarkdown
+	--- finished re-building ‘Conditions.Rmd’
+
+	--- re-building ‘branch.Rmd’ using rmarkdown
+	Quitting from lines 140-167 (branch.Rmd) 
+	Error: processing vignette 'branch.Rmd' failed with diagnostics:
+	attempt to select less than one element in get1index
+	--- failed re-building ‘branch.Rmd’
+
+	--- re-building ‘calculate-mean-multiverse.Rmd’ using rmarkdown
+	--- finished re-building ‘calculate-mean-multiverse.Rmd’
+
+	--- re-building ‘complete-multiverse-analysis.Rmd’ using rmarkdown
+	Quitting from lines 219-245 (complete-multiverse-analysis.Rmd) 
+	Error: processing vignette 'complete-multiverse-analysis.Rmd' failed with diagnostics:
+	attempt to select less than one element in get1index
+	--- failed re-building ‘complete-multiverse-analysis.Rmd’
+
+	--- re-building ‘dance.Rmd’ using rmarkdown
+	--- finished re-building ‘dance.Rmd’
+
+	--- re-building ‘frequentist-multiverse-analysis.Rmd’ using rmarkdown
+	Quitting from lines 108-136 (frequentist-multiverse-analysis.Rmd) 
+	Error: processing vignette 'frequentist-multiverse-analysis.Rmd' failed with diagnostics:
+	attempt to select less than one element in get1index
+	--- failed re-building ‘frequentist-multiverse-analysis.Rmd’
+
+	--- re-building ‘visualizing-multiverse.Rmd’ using rmarkdown
+	--- finished re-building ‘visualizing-multiverse.Rmd’
+
+	SUMMARY: processing the following files failed:
+	‘branch.Rmd’ ‘complete-multiverse-analysis.Rmd’
+	‘frequentist-multiverse-analysis.Rmd’
+
+	Error: Vignette re-building failed.
+	Execution halted

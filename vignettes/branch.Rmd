@@ -166,6 +166,7 @@ M$fit <- ~ branch(bootstrap,
 M$ci <- ~ branch( ci, 0.5, 0.68, 0.95, 0.99 )
 ```
 
+
 We then write the anaysis and use those variables to indicate branches in our analysis within the multiverse.
 
 ```{r}
