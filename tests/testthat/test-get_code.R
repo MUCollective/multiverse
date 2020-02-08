@@ -280,3 +280,20 @@ test_that("syntax tree with branches is correctly returned when a parameter is a
 
   expect_equal(u.expr, list(u.expr.ref))
 })
+
+test_that("is able to handle missing values passed as index to lists / df / matrices", {
+  .expr <- expr({
+    x <- branch( zero_or_one, 0, 1)
+    
+    y <- matrix(rnorm(16, 0, 5), 8, 2)
+    z <- y[,1]
+  })
+  
+  .l_output <- lapply(.expr, get_parameter_code, list(zero_or_one = "0"))
+  .l_ref <- list( quote(`{`), quote(x <- 0), quote(y <- matrix(rnorm(16, 0, 5), 8, 2)), quote(z <- y[,1]) )
+  
+  expect_equal(.l_output, .l_ref)
+})
+
+
+

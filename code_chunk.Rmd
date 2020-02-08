@@ -2,7 +2,11 @@
 title: "code_chunk"
 author: "Abhraneel Sarma"
 date: "11/25/2019"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 
@@ -19,116 +23,73 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(rlang)
+#library(multiverse)
 ```
 
-
-```{r}
-data("durante")
-
-data.raw.study2 <- durante %>%
-  mutate(
-    Abortion = abs(7 - Abortion) + 1,
-    StemCell = abs(7 - StemCell) + 1,
-    Marijuana = abs(7 - Marijuana) + 1,
-    RichTax = abs(7 - RichTax) + 1,
-    StLiving = abs(7 - StLiving) + 1,
-    Profit = abs(7 - Profit) + 1,
-    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
-    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
-  )
-
-#M = multiverse()
-```
-
-```{multiverse label = default-m-1, inside = M}
-
-```
-
-```{multiverse label = default-m-3, inside = M}
-
-```
-
-```{multiverse label = default-m-3, inside = M}
-
-```
 
 ```{r}
 M = multiverse()
 
 inside(M, {
-  df <- data.raw.study2  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate(NextMenstrualOnset = branch(menstrual_calculation,
-         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-         "mc_option3" ~ StartDateNext)
-      )
+  x <- branch( zero_or_one, 0, 1)
+  
+  y <- matrix(rnorm(16, 0, 5), 8, 2)
+  y[,1]
 })
 
-code(M)
+multiverse_table(M)$.code
 ```
 
 
 ```{r}
-M = multiverse()
+x <- expr({
+  x <- branch( zero_or_one, 0, 1)
+  
+  y <- matrix(rnorm(16, 0, 5), 8, 2)
+  z <- y[,1]
+})
 
-add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({df <- data.raw.study2  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate(NextMenstrualOnset = branch(menstrual_calculation,
-         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-         "mc_option3" ~ StartDateNext)
-      ) %>%
-      mutate(Relationship = branch( relationship_status,
-          "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
-          "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-          "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-      ) %>%
-      mutate(
-          CycleDay = 28 - (NextMenstrualOnset - DateTesting),
-          CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-      ) %>%
-      dplyr::filter( branch(cycle_length,
-          "cl_option1" ~ TRUE,
-          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-      )) %>%
-      dplyr::filter( branch(certainty,
-          "cer_option1" ~ TRUE,
-          "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-      )) %>%
-      mutate( Fertility = branch( fertile,
-          "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ),
-          "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", "medium")) ),
-          "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
-          "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
-      )) %>%
-      branch_assert(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2") %>%
-      branch_assert(relationship_status != "rs_option3" | menstrual_calculation == "mc_option1") %>%
-      branch_assert(fertile != "fer_option4" | certainty == "cer_option2") 
-}), index = NULL, execute = FALSE )
-
+identical(lapply(x, get_parameter_code, list(zero_or_one = "0")), list( quote(`{`), quote(x <- 0), quote(y <- matrix(rnorm(16, 0, 5), 8, 2)), quote(z <- y[,1]) ))
 ```
 
+
+```{multiverse, label = default-m-1, inside = M}
+speed_data <- speed_data %>%
+    mutate(speed = branch(speed_calculation, 
+      "speed_calculation_option1" ~ num_words/(adjust_rt/60000),
+      "speed_calculation_option2" ~ num_words/(rt/60000))
+    )
+
+iqr = IQR(speed_data[speed_data$dyslexia_bin == 0,],na.rm=TRUE)
+cutoff_high = median(speed_data$speed) +3*iqr #3*iqr=645, cutoff_high = 928
+
+twobelow = mean(speed_data$speed) - 2*sd(speed_data$speed)
+twoabove = mean(speed_data$speed) + 2*sd(speed_data$speed)
+
+# remove only if Flesch Kincaid is the same? may be too time consuming for now
+
+speed_data <- speed_data %>%    
+    filter(branch(speed_outlier_filtering, 
+      "speed_outlier_filtering_option1" ~ speed < 10 | speed > cutoff_high,
+      "speed_outlier_filtering_option2" ~ speed < twobelow | speed > twoabove,
+    )) %>%
+    filter(branch(comprehension_score,
+        "comprehension_score,_option1" ~ correct_rate >= 2/3,
+        "comprehension_score,_option2" ~ correct_rate >= 1/3
+    )) %>%
+    mutate(speed = branch(transform_speed,
+        "transform_speed_option1" ~ speed,
+        "transform_speed_option1" ~ log(speed)
+    ))
+
+model <- branch(data_model,
+      "model_1" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + (1 | uuid), data = result_analysis),
+      "model_2" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + Flesch_Kincaid + (1 | uuid), data = result_analysis),
+      "model_3" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + Flesch_Kincaid + (1 | uuid), data = result_analysis))
+```
 
 ```{r}
 multiverse_table(M)
-```
-
-
-```{r}
-xpr <- expr( data.raw.study2 %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
-    StartDateofPeriodBeforeLast) %>% filter(branch(cycle_length, 
-    "cl_option1" ~ TRUE, "cl_option2" ~ ComputedCycleLength > 
-        25 & ComputedCycleLength < 35, "cl_option3" ~ ReportedCycleLength > 
-        25 & ReportedCycleLength < 35)) %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
-    "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
-    "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
-    "mc_option3" ~ StartDateNext)) %>% branch_assert((menstrual_calculation != 
-    "mc_option1" | (cycle_length != "cl_option3"))) )
-
-
-is_call(xpr, "branch")
 ```
 
 

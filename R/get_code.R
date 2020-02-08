@@ -19,6 +19,7 @@
 #'
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
+#' @importFrom rlang is_missing 
 #' @importFrom magrittr %>%
 #' @importFrom magrittr extract2
 #'
@@ -36,7 +37,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
     .assgn = default_parameter_assignment(multiverse)
   }
   
-  x = lapply(.code, get_parameter_code, .assgn)
+  x <- lapply(.code, get_parameter_code, .assgn)
   # get_parameter_code(.code, .assgn)
 }
 
@@ -44,15 +45,21 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
 # returns as output an expression (or code) without branches
 get_parameter_code <- function(.expr, .assgn) {
   .expr = rm_branch_assert(.expr)
-  
-  if (is.call(.expr)) {
-    # Recursive cases
-    if (.expr[[1]] == quote(branch)) {
-      get_parameter_code(compute_branch(.expr, .assgn), .assgn)
+
+  x <- all(unlist(lapply(.expr, function(x) !is_missing(x))))
+  if (x) {
+    if (is.call(.expr) ) {
+      # Recursive cases
+      if (.expr[[1]] == quote(branch)) {
+        get_parameter_code(compute_branch(.expr, .assgn), .assgn)
+      } else {
+        as.call(lapply(.expr, get_parameter_code, .assgn))
+      }
     } else {
-      as.call(lapply(.expr, get_parameter_code, .assgn))
+      # Base case: constants and symbols
+      .expr
     }
-  }  else {
+  } else {
     # Base case: constants and symbols
     .expr
   }
@@ -62,8 +69,6 @@ get_parameter_code <- function(.expr, .assgn) {
 rm_branch_assert <- function(.expr) {
   # if the expression is not of length 3, then there isn't a conditional call
   if(length(.expr) == 3) {
-    # print(.expr)
-    
     # checks if the rhs of the expression is a branch_assert call
     # rewrites the expression by removing it
     if (is.call(.expr[[3]]) && .expr[[3]][[1]] == quote(branch_assert)) {

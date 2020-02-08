@@ -1,0 +1,61 @@
+---
+title: "Untitled"
+author: "Abhraneel Sarma"
+date: "2/7/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(rlang)
+library(readr)
+# library(multiverse)
+```
+
+```{r prepare_data, message=FALSE}
+speed_data <- read_csv('../data/speed_data.csv')
+
+#remove retake participants
+speed_data <- subset(speed_data, retake != 1)
+
+#demographics information
+demographics_data <- subset(speed_data, select = c(uuid, age, device, dyslexia, education, gender, language, retake), !duplicated(uuid))
+
+head(speed_data)
+```
+
+
+```{r}
+M = multiverse()
+```
+
+
+```{multiverse label = default-m-1, inside = M}
+speed_data2 <- speed_data %>% branch(myfilter, 
+  "branch1" ~ filter(device != "smartphone"),
+  "branch2" ~ filter(TRUE)
+)
+
+speed_data2 <- speed_data2 %>% branch(myfilter2, 
+  "branch1" ~ filter(correct_rate == 1),
+  "branch2" ~ filter(TRUE)
+)
+
+fit1 <- lm(log(speed) ~ education, data = speed_data2)
+```
+
+```{r}
+multiverse_table(M)$.code[[1]]
+```
+
+
+
+```{r}
+M$fit1 %>% summary()
+```
+

@@ -112,7 +112,7 @@ compare_code <- function(x, y) {
 }
 
 
-add_and_parse_code <- function(m_obj, .super_env, .code, index, execute = TRUE) {
+add_and_parse_code <- function(m_obj, .super_env, .code, index, execute = FALSE) {
   # .loc = match( FALSE, compare_code(m_obj$code, .code) )
   .loc = length(m_obj$code)
   
