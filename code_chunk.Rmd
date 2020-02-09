@@ -28,26 +28,47 @@ library(rlang)
 
 
 ```{r}
-M = multiverse()
-
-inside(M, {
-  x <- branch( zero_or_one, 0, 1)
+.an_expr <- expr({
+  speed_data <- speed_data %>%
+    mutate(speed = branch(speed_calculation, 
+      "speed_calculation_option1" ~ num_words/(adjust_rt/60000),
+      "speed_calculation_option2" ~ num_words/(rt/60000))
+    ) %>%
+    filter(branch(comprehension_score,
+        "comprehension_score_option1" ~ correct_rate >= 2/3,
+        "comprehension_score_option2" ~ correct_rate >= 1/3
+    )) %>%
+    mutate(speed = branch(transform_speed,
+        "transform_speed_option1" ~ speed,
+        "transform_speed_option2" ~ log(speed)
+    ))
   
-  y <- matrix(rnorm(16, 0, 5), 8, 2)
-  y[,1]
+  iqr = 645
+  cutoff_high = median(speed_data$speed) +3*iqr
+  
+  twobelow = mean(speed_data$speed) - 2*sd(speed_data$speed)
+  twoabove = mean(speed_data$speed) + 2*sd(speed_data$speed)
+  
+  speed_data <- speed_data %>%    
+    filter(branch(speed_outlier_filtering, 
+      "speed_outlier_filtering_option1" ~ speed > 10 | speed < cutoff_high,
+      "speed_outlier_filtering_option2" ~ speed > twobelow | speed < twoabove
+    ))
 })
 
-multiverse_table(M)$.code
+p_list <- list(
+    speed_calculation = "speed_calculation_option1",
+    comprehension_score = "comprehension_score_option1",
+    transform_speed = "transform_speed_option1",
+    speed_outlier_filtering = "speed_outlier_filtering_option1"
+  )
+
+profvis(lapply(.an_expr, get_parameter_code, p_list))
 ```
 
 
 ```{r}
-x <- expr({
-  x <- branch( zero_or_one, 0, 1)
-  
-  y <- matrix(rnorm(16, 0, 5), 8, 2)
-  z <- y[,1]
-})
+x <- 
 
 identical(lapply(x, get_parameter_code, list(zero_or_one = "0")), list( quote(`{`), quote(x <- 0), quote(y <- matrix(rnorm(16, 0, 5), 8, 2)), quote(z <- y[,1]) ))
 ```
