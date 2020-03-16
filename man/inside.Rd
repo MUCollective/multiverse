@@ -29,7 +29,7 @@ a wrapper around the function
 To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-use the [branch] function. See [branch] for more
+use the `branch()` function. See [branch] for more
 details on how to declare multiple analysis options.
 
 The `inside` function only stores the code, and does not execute any code at this step. To execute, we

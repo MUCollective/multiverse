@@ -50,10 +50,18 @@ default_parameter_assignment <- function(multiverse) {
 default_parameter_assignment.multiverse <- function(multiverse) {
   m_obj = attr(multiverse, "multiverse")
   .idx = m_obj[['default_parameter_assignment']]
-
-  m_obj[['multiverse_table']] %>%
-    extract2( '.parameter_assignment' ) %>%
-    extract2(.idx)
+  
+  if (!is.null(.idx)) {
+    m_obj[['multiverse_table']] %>%
+      extract2( '.parameter_assignment' ) %>%
+      extract2(.idx)
+  } else {
+    # this executes if there are no `branches` in the multiverse
+    # i.e. the code in the multiverse is just R code
+    # we still have a multiverse table without parameters
+    # so returns the 1, which executes in the default env
+    NA
+  }
 }
 
 #' @rdname default_parameter_assignment

@@ -6,6 +6,9 @@
 \usage{
 multiverse_engine(options)
 }
+\arguments{
+\item{options}{The knitr options associated with the code chunk}
+}
 \description{
 An easier way to interact with a multiverse object by using a custom code engine
 }

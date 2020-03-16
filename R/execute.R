@@ -69,8 +69,8 @@ execute_default.Multiverse <- function(multiverse) {
     env = multiverse[['multiverse_table']][['.results']][[1]]
     .c = multiverse[['multiverse_table']][['.code']][[1]]
   } else {
-    stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
-    .c = multiverse[['multiverse_table']][['.code']][[1]]
+    stopifnot(is.numeric(.param_assgn) || !is.null(.param_assgn))
+    .c = multiverse[['multiverse_table']][['.code']][[.param_assgn]]
     env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
   }
   

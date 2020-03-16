@@ -23,94 +23,115 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(rlang)
+library(ggplot2)
 #library(multiverse)
 ```
 
 
 ```{r}
-.an_expr <- expr({
-  speed_data <- speed_data %>%
-    mutate(speed = branch(speed_calculation, 
-      "speed_calculation_option1" ~ num_words/(adjust_rt/60000),
-      "speed_calculation_option2" ~ num_words/(rt/60000))
-    ) %>%
-    filter(branch(comprehension_score,
-        "comprehension_score_option1" ~ correct_rate >= 2/3,
-        "comprehension_score_option2" ~ correct_rate >= 1/3
-    )) %>%
-    mutate(speed = branch(transform_speed,
-        "transform_speed_option1" ~ speed,
-        "transform_speed_option2" ~ log(speed)
-    ))
-  
-  iqr = 645
-  cutoff_high = median(speed_data$speed) +3*iqr
-  
-  twobelow = mean(speed_data$speed) - 2*sd(speed_data$speed)
-  twoabove = mean(speed_data$speed) + 2*sd(speed_data$speed)
-  
-  speed_data <- speed_data %>%    
-    filter(branch(speed_outlier_filtering, 
-      "speed_outlier_filtering_option1" ~ speed > 10 | speed < cutoff_high,
-      "speed_outlier_filtering_option2" ~ speed > twobelow | speed < twoabove
-    ))
-})
-
-p_list <- list(
-    speed_calculation = "speed_calculation_option1",
-    comprehension_score = "comprehension_score_option1",
-    transform_speed = "transform_speed_option1",
-    speed_outlier_filtering = "speed_outlier_filtering_option1"
+speed_data <- data.frame( 
+    speed = rlnorm(100, log(200), 1), 
+    device = sample(c("smartphone", "laptop", "tablet"), 100, TRUE, prob= c(0.1, 0.65, 0.25)) 
   )
 
-profvis(lapply(.an_expr, get_parameter_code, p_list))
+median = median(speed_data$speed)
+iqr = IQR(speed_data$speed, na.rm=TRUE)
+
+M = multiverse()
 ```
 
 
-```{r}
-x <- 
+```{multiverse label = default-m-1, inside = M}
+result_analysis <- speed_data %>% 
+  filter(speed < median + 3 * iqr & speed > 10) %>%
+  filter(branch(device,
+    "default" ~ device != "smartphone",
+    "strict" ~ !device %in% c("smartphone", "other") & !is.na(device)
+  ))
 
-identical(lapply(x, get_parameter_code, list(zero_or_one = "0")), list( quote(`{`), quote(x <- 0), quote(y <- matrix(rnorm(16, 0, 5), 8, 2)), quote(z <- y[,1]) ))
+#result_analysis
+x <- 10
+
+x
 ```
 
 
-```{multiverse, label = default-m-1, inside = M}
-speed_data <- speed_data %>%
-    mutate(speed = branch(speed_calculation, 
-      "speed_calculation_option1" ~ num_words/(adjust_rt/60000),
-      "speed_calculation_option2" ~ num_words/(rt/60000))
-    )
+```{multiverse label = default-m-2, inside = M}
+result_analysis <- speed_data %>%
+  filter(branch(outlier,
+    "default" ~ speed < median + 3 * iqr & speed > 10,
+    "strict" ~ speed < median + 2 * iqr & speed > 10
+  ))
 
-iqr = IQR(speed_data[speed_data$dyslexia_bin == 0,],na.rm=TRUE)
-cutoff_high = median(speed_data$speed) +3*iqr #3*iqr=645, cutoff_high = 928
-
-twobelow = mean(speed_data$speed) - 2*sd(speed_data$speed)
-twoabove = mean(speed_data$speed) + 2*sd(speed_data$speed)
-
-# remove only if Flesch Kincaid is the same? may be too time consuming for now
-
-speed_data <- speed_data %>%    
-    filter(branch(speed_outlier_filtering, 
-      "speed_outlier_filtering_option1" ~ speed < 10 | speed > cutoff_high,
-      "speed_outlier_filtering_option2" ~ speed < twobelow | speed > twoabove,
-    )) %>%
-    filter(branch(comprehension_score,
-        "comprehension_score,_option1" ~ correct_rate >= 2/3,
-        "comprehension_score,_option2" ~ correct_rate >= 1/3
-    )) %>%
-    mutate(speed = branch(transform_speed,
-        "transform_speed_option1" ~ speed,
-        "transform_speed_option1" ~ log(speed)
-    ))
-
-model <- branch(data_model,
-      "model_1" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + (1 | uuid), data = result_analysis),
-      "model_2" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + Flesch_Kincaid + (1 | uuid), data = result_analysis),
-      "model_3" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + Flesch_Kincaid + (1 | uuid), data = result_analysis))
+result_analysis
 ```
 
 ```{r}
-multiverse_table(M)
+code(M)
 ```
 
 
+
+```{r}
+M = multiverse()
+
+inside(M, {
+  result_analysis <- speed_data %>%
+      filter(branch(outlier,
+        "default" ~ speed < median + 3 * iqr & speed > 10,
+        "strict" ~ speed < median + 2 * iqr & speed > 10
+      ))
+  }, "label1")
+
+inside(M, {
+  result_analysis <- speed_data %>%
+      filter(branch(device,
+        "default" ~ device != "smartphone",
+        "strict" ~ !device %in% c("smartphone", "other") & !is.na(device)
+      ))
+  }, "label2")
+
+
+
+default_parameter_assignment(M)
+```
+
+```{multiverse label = default-m-2, inside = M}
+result_analysis <- result_analysis %>%
+  filter(branch(device,
+    "default" ~ device != "smartphone",
+    "strict" ~ !device %in% c("smartphone", "other") & !is.na(device)
+  ))
+```
+
+
+
+```{r}
+multiverse_table(M)#[['.code']][[1]]
+
+
+M = multiverse()
+
+test_fun <- function(.code, .name = NULL){
+  .c = list()
+  
+  if (is.null(.name)) append(.c, .code) else .c[[.name]] = .code
+  .c
+}
+
+test_fun(1231, "x")
+test_fun(1231)
+```
+
+
+
+```{r prepare_data, message=FALSE}
+speed_data <- readr::read_csv('data/speed_data.csv')
+#calculate reading speed in WPM
+speed_data$speed <- speed_data$num_words/(speed_data$adjust_rt/60000)
+
+#remove retake participants
+speed_data <- subset(speed_data, retake != 1)
+
+head(speed_data)
+```

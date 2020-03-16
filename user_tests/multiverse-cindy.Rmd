@@ -42,7 +42,7 @@ speed_data <- speed_data %>%
     "speed_calculation_option2" ~ num_words/(rt/60000))
   )
 
-iqr = 645
+iqr = IQR(speed_data[speed_data$dyslexia_bin == 0,]$speed, na.rm=TRUE)
 cutoff_high = median(speed_data$speed) +3*iqr
 
 twobelow = mean(speed_data$speed) - 2*sd(speed_data$speed)
@@ -62,6 +62,9 @@ speed_data <- speed_data %>%
       "transform_speed_option2" ~ log(speed)
   ))
 
+# comments: For people who know additional language (besides English), how does that affect Reading speed
+# or maybe the type of language that they know
+# instead of using a binary variable (english native), use langauge 
 model <- branch(data_model,
   "model_1" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + (1 | uuid), data = speed_data),
   "model_2" ~ lmer(speed ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + Flesch_Kincaid + (1 | uuid), data = speed_data),

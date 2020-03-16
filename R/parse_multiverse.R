@@ -38,7 +38,7 @@
 parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
   
-  parameter_conditions_list <- get_parameter_conditions_list( multiverse[['code']] )
+  parameter_conditions_list <- get_parameter_conditions_list( unname(multiverse[['code']]) )
   multiverse[['parameters']] = parameter_conditions_list$parameters
   multiverse[['conditions']] = parameter_conditions_list$conditions
 

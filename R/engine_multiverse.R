@@ -23,11 +23,13 @@
 #' df = data.frame( x = 1:10 )
 #' }
 #' 
-#' @importFrom knitr knit_engines
-#' @importFrom knitr engine_output
+#' @import knitr
+# @importFrom knitr knit_engines
+# @importFrom knitr engine_output
 #' 
 #' @name multiverse_engine
 multiverse_engine <- function(options) {
+  # print(typeof(options$code))
   .multiverse_name = options$inside
   if ( !(.multiverse_name %in% ls(envir = globalenv()))) {
     stop("Cannot add code to multiverse object which has not been created")
@@ -41,23 +43,33 @@ multiverse_engine <- function(options) {
   code = options$code
   n <- length(code)
   
+  
   pasted <- paste(code, collapse = "\n")
-  parsed <- parse(text = pasted)
+  parsed <- parse_expr(c("{", pasted, "}"))
   
-  y = lapply(parsed, function(x) inside(.multiverse, { !!x }))
+  inside(.multiverse, !! parsed, options$label)
+  # lapply(parsed, function(x) inside(.multiverse, !!x ))
   
-  idx = attr(.multiverse, "multiverse")[['default_parameter_assignment']]
+  .m = attr(.multiverse, "multiverse")
   
-  #if (!is.null(idx)){
-  #  result = eval( attr(.multiverse, "multiverse")[["multiverse_table"]]$.code[[idx]] )
-  #} else {
-  #  result = eval( parsed )
-  #}
+  if ( is.list(.m[['parameters']]) & length(.m[['parameters']]) == 0 ) {
+    # executing everything in the default universe
+    # since there are no branches in the multiverse
+    
+    # env = .m[['multiverse_table']][['.results']][[1]]
+    .c = .m[['multiverse_table']][['.code']][[1]]
+  } else {
+    idx = .m[['default_parameter_assignment']]
+    
+    # env = .m[['multiverse_table']][['.results']][[idx]]
+    .c = .m[['multiverse_table']][['.code']][[idx]]
+  }
   
-  #result = attr(.multiverse, "multiverse")[["multiverse_table"]]$.code[[idx]]
+  options$engine = "R"
+  options$code = deparse(.c[[options$label]])
+  options$comment = ""
   
-  # opts_chunk$merge(list(engine = 'Rscript'))
-  engine_output( options, code = code, out = NULL )
+  engine_output( options, code = code, out = block_exec_R(options))
 }
 
 knitr::knit_engines$set(multiverse = multiverse_engine)

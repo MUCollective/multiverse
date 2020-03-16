@@ -6,7 +6,7 @@
 #' @details To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 #' The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 #' which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-#' use the [branch] function. See [branch] for more
+#' use the `branch()` function. See [branch] for more
 #' details on how to declare multiple analysis options.
 #'
 #' The `inside` function only stores the code, and does not execute any code at this step. To execute, we
@@ -76,14 +76,15 @@
 #'
 #' @name inside
 #' @export
-inside <- function(multiverse, .expr) {
+inside <- function(multiverse, .expr, .name = NULL) {
   .expr = enexpr(.expr)
+  
   if(!is_call(.expr, "{")) {
     .expr = expr({ !!.expr })
   }
   .expr = eval_seq_in_code(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, index = NULL)
+  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, .name)
 }
 
 #' @rdname inside
@@ -92,6 +93,10 @@ inside <- function(multiverse, .expr) {
   # must use call here instead of putting { .. } inside the expr()
   # because otherwise covr::package_coverage() will insert line number stubs
   # *into* the expression and cause tests to break
+  if (!is.call(value)) stop(
+    "Only objects of type language can be passed into the multiverse. Did you forget to add `~`?"
+  )
+  
   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
   .expr = eval_seq_in_code(.expr)
 
@@ -112,16 +117,27 @@ compare_code <- function(x, y) {
 }
 
 
-add_and_parse_code <- function(m_obj, .super_env, .code, index, execute = FALSE) {
+add_and_parse_code <- function(m_obj, .super_env, .code, .name, execute = TRUE) {
   # .loc = match( FALSE, compare_code(m_obj$code, .code) )
   .loc = length(m_obj$code)
   
   if (is_null(m_obj$code)) {
     # .c = .code
-    .c = list(.code)
+    if (is.null(.name)) {
+      .c = list(.code) 
+    } else {
+      .c = list()
+      .c[[.name]] = .code
+    }
   } else {
     # .c = concatenate_expr(m_obj$code, .code)
-    .c = append(m_obj$code[1:.loc], .code)
+    # .c = append(m_obj$code[1:.loc], .code)
+    if (is.null(.name)) {
+      .c = append(m_obj$code[1:.loc], .code)
+    } else {
+      .c = m_obj$code
+      .c[[.name]] = .code
+    }
   }
   
   m_obj$code <- .c
@@ -129,7 +145,7 @@ add_and_parse_code <- function(m_obj, .super_env, .code, index, execute = FALSE)
 
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
-  if (execute) execute_default(m_obj)
+  # if (execute) execute_default(m_obj)
 }
 
 concatenate_expr <- function(ref, to_add){
