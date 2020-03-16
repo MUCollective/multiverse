@@ -94,8 +94,6 @@ rm_branch_assert <- function(.expr) {
 # takes as input:  parameter assignment, and the expression or code containing a branch
 # returns as output an expression (or code) without the branch
 compute_branch <- function(.expr, .assgn) {
-  print(.expr)
-  print(.assgn)
   assigned_parameter_option_name = .assgn[[.expr[[2]]]]
   option_names = lapply(.expr[-1:-2], get_option_name)
 

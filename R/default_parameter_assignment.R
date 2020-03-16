@@ -60,7 +60,7 @@ default_parameter_assignment.multiverse <- function(multiverse) {
     # i.e. the code in the multiverse is just R code
     # we still have a multiverse table without parameters
     # so returns the 1, which executes in the default env
-    NA
+    NULL
   }
 }
 

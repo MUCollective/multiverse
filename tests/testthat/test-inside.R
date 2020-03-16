@@ -81,8 +81,8 @@ test_that("`add_and_parse_code` stores code as a list of `language`", {
   })
 
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.1, index = NULL)
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.2, index = NULL)
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.1)
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.2)
 
   expect_true( is.list(code(M)) )
   expect_true( all(map_lgl(code(M), is.language)) )

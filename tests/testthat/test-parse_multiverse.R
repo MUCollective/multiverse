@@ -342,7 +342,7 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
 
   M = multiverse()
   # this should NOT generate a warning
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr( df <- data.frame(x = 1:10) ), index = NULL, execute = FALSE)
+  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr( df <- data.frame(x = 1:10) ), execute = FALSE)
   p_tbl_df = multiverse_table(M) %>% select(-.results)
 
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
@@ -503,7 +503,7 @@ test_that("conditions are extracted when specified using `branch_assert`", {
       branch_assert(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2") %>%
       branch_assert(relationship_status != "rs_option3" | menstrual_calculation == "mc_option1") %>%
       branch_assert(fertile != "fer_option4" | certainty == "cer_option2")
-  }), index = NULL, execute = FALSE)
+  }), execute = FALSE)
 
   cond.ref = list(
     expr(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2"),
