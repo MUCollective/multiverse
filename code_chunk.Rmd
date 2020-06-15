@@ -1,0 +1,74 @@
+---
+title: "Multiverse code block"
+author: "Abhraneel Sarma"
+date: "`r sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+#opts_knit$set(
+#  echo = TRUE,
+#  fig.width = 6, 
+#  fig.height = 4,
+#  output.dir="vignettes"
+#)
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(rlang)
+library(ggplot2)
+# library(multiverse)
+
+data("durante")
+
+data.raw.study2 <- durante
+```
+
+
+```{r}
+obj <- list(x = 1:10, y = 20:100)
+invisible(lapply(obj, function(x) plot(x, main="some plot", type = "l")))
+```
+
+
+```{r}
+speed_data <- data.frame( 
+    speed = rlnorm(200, log(200), 1), 
+    device = sample(c("smartphone", "laptop", "tablet"), 200, TRUE, prob= c(0.1, 0.65, 0.25)) 
+  )
+
+M = multiverse()
+```
+
+```{r}
+speed_data %>%
+  filter(!(device %in% c("smartphone", "other")) & !is.na(device))%>%
+  extract2("speed") %>%
+  density() %>%
+  plot()
+
+knitr::opts_chunk$get()
+```
+
+
+
+```{multiverse label = default-m-1, inside = M}
+result_analysis <- speed_data %>%
+  filter(branch(outlier,
+    "default" ~ device != "smartphone",
+    "strict" ~ !device %in% c("smartphone", "other") & !is.na(device)
+  ))
+
+# plot(density(result_analysis$speed))
+
+ggplot(cars, aes(speed, dist)) + geom_point()
+```
+
+

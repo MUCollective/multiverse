@@ -22,6 +22,10 @@
 #'
 #' @param name,value If the shorthand assignment `$<-` is used to assign values to variables in the multiverse
 #' name and value of arguments should be specified. Name indicates the variable name; value indicates the value to be assigned to name.
+#' 
+#' @param .label It is extracted automatically from the code block of type `multiverse`
+#' when run in an RMarkdown document. This should be used only within an RMarkdown document. 
+#' Defaults to NULL.
 #'
 #' @return a multiverse object
 #'
@@ -76,7 +80,7 @@
 #'
 #' @name inside
 #' @export
-inside <- function(multiverse, .expr, .name = NULL) {
+inside <- function(multiverse, .expr, .label = NULL) {
   .expr = enexpr(.expr)
   
   if(!is_call(.expr, "{")) {
@@ -84,7 +88,7 @@ inside <- function(multiverse, .expr, .name = NULL) {
   }
   .expr = eval_seq_in_code(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, .name)
+  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, .label)
 }
 
 #' @rdname inside
@@ -145,7 +149,7 @@ add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute =
 
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
-  if (execute) execute_default(m_obj)
+  if (execute) execute_universe(m_obj)
 }
 
 concatenate_expr <- function(ref, to_add){
@@ -163,6 +167,7 @@ concatenate_expr <- function(ref, to_add){
 
   ref
 }
+
 
 eval_seq_in_code <- function(.expr) {
     if (is.call(.expr)) {

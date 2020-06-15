@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/lumnens/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -67,7 +67,7 @@ a wrapper around the function" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -108,6 +108,9 @@ a wrapper around the function" />
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+    </li>
+    <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
     </li>
   </ul>
@@ -141,7 +144,7 @@ a wrapper around the function</p>
     
     </div>
 
-    <pre class="usage">inside(multiverse, .expr)
+    <pre class="usage">inside(multiverse, .expr, .label = NULL)
 
 # S3 method for multiverse
 $(multiverse, name) <- value</pre>
@@ -159,6 +162,12 @@ $(multiverse, name) <- value</pre>
 Since it accepts a single argument, chunks of code can be passed using ``. See example for details.</p></td>
     </tr>
     <tr>
+      <th>.label</th>
+      <td><p>It is extracted automatically from the code block of type `multiverse`
+when run in an RMarkdown document. This should be used only within an RMarkdown document. 
+Defaults to NULL.</p></td>
+    </tr>
+    <tr>
       <th>name, value</th>
       <td><p>If the shorthand assignment `$&lt;-` is used to assign values to variables in the multiverse
 name and value of arguments should be specified. Name indicates the variable name; value indicates the value to be assigned to name.</p></td>
@@ -174,7 +183,7 @@ name and value of arguments should be specified. Name indicates the variable nam
     <p>To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-use the [branch] function. See [branch] for more
+use the `branch()` function. See [branch] for more
 details on how to declare multiple analysis options.</p>
 <p>The `inside` function only stores the code, and does not execute any code at this step. To execute, we
 provide separate functions. See [execute] for executing the code.</p>
@@ -245,7 +254,7 @@ the assignment operator, `&lt;-`. See examples below.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Abhraneel Sarma, Matthew Kay.</p>
+  <p>Developed by <a href='http://abhsarma.github.io'>Abhraneel Sarma</a>, <a href='http://www.mjskay.com'>Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">

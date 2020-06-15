@@ -5,7 +5,7 @@
 \alias{$<-.multiverse}
 \title{Pass code into the multiverse}
 \usage{
-inside(multiverse, .expr)
+inside(multiverse, .expr, .label = NULL)
 
 \method{$}{multiverse}(multiverse, name) <- value
 }
@@ -14,6 +14,10 @@ inside(multiverse, .expr)
 
 \item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed.
 Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.}
+
+\item{.label}{It is extracted automatically from the code block of type `multiverse`
+when run in an RMarkdown document. This should be used only within an RMarkdown document. 
+Defaults to NULL.}
 
 \item{name, value}{If the shorthand assignment `$<-` is used to assign values to variables in the multiverse
 name and value of arguments should be specified. Name indicates the variable name; value indicates the value to be assigned to name.}

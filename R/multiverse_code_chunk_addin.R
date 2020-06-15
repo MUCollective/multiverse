@@ -1,12 +1,7 @@
-#' @title Create a multiverse code chunk
-#' @description Addin for RStudio for creating multiverse code chunks
-#'
-#'
 #' @importFrom rstudioapi getActiveDocumentContext
 #' @importFrom rstudioapi insertText
 #' @importFrom rstudioapi setCursorPosition
-#' 
-#' @export
+
 multiverse_code_chunk_addin <- function() {
   
   # Get cursor position

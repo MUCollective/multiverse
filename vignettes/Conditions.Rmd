@@ -1,7 +1,7 @@
 ---
 title: "Declaring conditions in the multiverse"
 author: "Abhraneel Sarma"
-date: "r Sys.Date()"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
@@ -58,22 +58,22 @@ We should be able to express these conditions in the multiverse. We can do this 
 There are two ways in which you can specify the `%when%` operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.
 
 ```{r, eval = FALSE}
-M$df <- df %>%
+df <- df %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" ~ (StartDateofLastPeriod + ComputedCycleLength) %when% (cycle_length != "cl_option3"),
-            "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
-            "mc_option3" ~ StartDateNext)
+        "mc_option1" ~ (StartDateofLastPeriod + ComputedCycleLength) %when% (cycle_length != "cl_option3"),
+        "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
+        "mc_option3" ~ StartDateNext)
     )
 ```
 
 The other is to specify it at the head of the branch, right after the option name:
 
 ```{r, eval = FALSE}
-M$df <- df  %>%
+df %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" %when% (cycle_length != "cl_option2") ~ (StartDateofLastPeriod + ReportedCycleLength),
-            "mc_option3" ~ StartDateNext)
+        "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" %when% (cycle_length != "cl_option2") ~ (StartDateofLastPeriod + ReportedCycleLength),
+        "mc_option3" ~ StartDateNext)
     )
 ```
 
@@ -82,21 +82,23 @@ We can write the complete analysis by specifying the condition with the %when% o
 ```{r}
 M = multiverse()
 
-M$df <- ~ data.raw.study2  %>%
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
-    dplyr::filter( branch(cycle_length,
-            "cl_option1" ~ TRUE,
-            "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-            "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    )) %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
-            "mc_option3" ~ StartDateNext)
-    )
+inside(M, {
+  df <- data.raw.study2  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+      dplyr::filter( branch(cycle_length,
+          "cl_option1" ~ TRUE,
+          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      )) %>%
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
+          "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+          "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+          "mc_option3" ~ StartDateNext)
+      )
+})
 ```
 
-As the condition implies, the parameter `menstrual_calcaultion` (which is for calclating the variable `NextMenstrualCalculation`) cannot take the value of "mc_option1" when we filter `cycle_length` using "cl_option3". Similarly, `menstrual_calcaultion` cannot take the value of "mc_option2" when we filter `cycle_length` using "cl_option2". In the multiverse table below, you can see that those two parameter combinations are absent.
+As the condition implies, the parameter `menstrual_calcaultion` (which is for calclating the variable `NextMenstrualCalculation`) cannot take the value of "mc_option1" when we filter `cycle_length` using "cl_option3". Similarly, `menstrual_calcaultion` cannot take the value of "mc_option2" when we filter `cycle_length` using "cl_option2". In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.
 
 ```{r}
 multiverse_table(M)
@@ -110,7 +112,7 @@ For eg: the above logical operations can be specified as: `branch_assert((menstr
 Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
 
 ```{r, eval = FALSE}
-M$df <- df %>%
+df %>%
     branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
     branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
 ```
@@ -120,26 +122,30 @@ Using the `branch_assert()`, we can perform the exact same analysis:
 ```{r}
 M = multiverse()
 
-M$df <- ~ data.raw.study2  %>%
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
-    filter( branch(cycle_length,
+inside(M, {
+    df <- data.raw.study2  %>%
+        mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+        filter( branch(cycle_length,
             "cl_option1" ~ TRUE,
             "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
             "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    )) %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
+        )) %>%
+        mutate(NextMenstrualOnset = branch(menstrual_calculation,
             "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
             "mc_option3" ~ StartDateNext)
-    ) %>%
-    branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
-    branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
+        ) %>%
+        branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+        branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
+})
 ```
 
-As we can see, this results in the same multiverse.
+As we can see, this results in the same multiverse where universes indexed 3 and 5 are not compatible.
 
 ```{r}
-multiverse_table(M)$.code
+multiverse_table(M)
 ```
+
+**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
 
 

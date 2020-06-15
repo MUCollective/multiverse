@@ -2,7 +2,8 @@
 #'
 #' In a multiverse, the user can define different values that a parameter can take using the `branch` call.
 #' The `parse_multiverse` identifies the `branch` calls defined in the analysis syntax and parses them into a list of
-#' parameters and the corresponding values that each parameter can take.
+#' parameters and the corresponding values that each parameter can take. This function is called automatically 
+#' and not exported.
 #'
 #' @param multiverse The multiverse object with some code passed to it
 #'
@@ -33,15 +34,16 @@
 #' @importFrom rlang expr_text
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
+#' @importFrom utils modifyList
 #'
-#' @export
+#'
 parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
   
   parameter_conditions_list <- get_parameter_conditions_list( unname(multiverse[['code']]) )
   multiverse[['parameters']] = parameter_conditions_list$parameters
   multiverse[['conditions']] = parameter_conditions_list$conditions
-
+  
   if( length( multiverse[['parameters']] ) >= 1) {
     multiverse[['default_parameter_assignment']] = 1
     multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list, .super_env)
@@ -74,9 +76,9 @@ get_multiverse_table_no_param <- function(multiverse, .super_env) {
 # then enforces the constraints defined in the conditions list
 get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_env) {
   df <- data.frame( lapply(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
-
+  
   param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i))
-
+  
   if (length(parameters_conditions.list$condition) > 0) {
     all_conditions <- parse_expr(paste0("(", parameters_conditions.list$conditions, ")", collapse = "&"))
     #parse_expr(paste0(lapply(parameters_conditions.list$conditions, expr_deparse), collapse = "&"))
@@ -85,13 +87,13 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_
   }
   
   .code = multiverse[['code']]
-
+  
   df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
   
   filter(as_tibble(mutate(df,
-      .parameter_assignment = param.assgn,
-      .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
-      .results = lapply(.parameter_assignment, function(x) new.env(parent = .super_env))
+                          .parameter_assignment = param.assgn,
+                          .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
+                          .results = lapply(.parameter_assignment, function(x) new.env(parent = .super_env))
   )), eval(all_conditions))
 }
 
@@ -102,7 +104,7 @@ get_parameter_conditions <- function(.expr) {
   if (is.call(.expr)) {
     child_parameter_conditions <- lapply(.expr, get_parameter_conditions) %>%
       reduce(combine_parameter_conditions)
-
+    
     if (is_call(.expr, "branch")) {
       get_branch_parameter_conditions(.expr) %>%
         combine_parameter_conditions(child_parameter_conditions)
@@ -128,14 +130,14 @@ get_branch_parameter_conditions <- function(.branch_call) {
   parameter_name <- .branch_call[[2]]
   parameter_options <- lapply(.branch_call[-1:-2], get_option_name )
   parameter_conditions <- lapply(.branch_call[-1:-2], function(x) get_condition(x, parameter_name) )
-
+  
   if (length(unique(lapply(parameter_options, typeof))) != 1) {
     stop("all option names should be of the same type")
   }
-
+  
   parameter_options_list <- list(parameter_options)
   names(parameter_options_list) <- as.character(parameter_name)
-
+  
   list( parameters = parameter_options_list, conditions = parameter_conditions )
 }
 
@@ -153,7 +155,7 @@ get_condition <- function(.x, name) {
   } else {
     .consequent = get_implies_consequent(.x)
   }
-
+  
   if ( !is.null(.consequent)) {
     expr(( !!name != !!.antecedent | !!.consequent ))
   }
@@ -163,7 +165,7 @@ get_implies_consequent <- function(.x) {
   if( is_call(.x, "%when%") ) {
     f_rhs(.x)
   } else if (is_call(.x, "(") | is_call(.x, "{")) {
-      get_implies_consequent(f_rhs(.x))
+    get_implies_consequent(f_rhs(.x))
   }
 }
 
@@ -173,7 +175,7 @@ get_implies_consequent <- function(.x) {
 combine_parameter_conditions <- function(l1, l2) {
   stopifnot(identical(names(l1), c("parameters", "conditions")))
   stopifnot(identical(names(l2), c("parameters", "conditions")))
-
+  
   # merge the parameter lists: when a parameter appears in both lists,
   # take the union of the options provided. the use of two loops and intersect / setdiff
   # up front is to prevent a potentially more expensive linear search inside the loop

@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 
-# Multidy: An R package for creating multiverse analysis
+# Multiverse: An R package for creating multiverse analysis
 
 <!-- badges: start -->
 [![Build status](https://travis-ci.com/MUCollective/multiverse.svg?branch=master)](https://travis-ci.com/MUCollective/multiverse)
@@ -23,16 +23,7 @@ knitr::opts_chunk$set(
 
 The goal of multiverse is to allow users to create multiverse analyses in a concise and easily interpretable manner.
 
-## Installation
-
-You can install the development version from [GitHub](https://github.com/MUcollective/multiverse) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("MUCollective/multidy")
-```
-
-`multidy` is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.
+`multiverse` is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.
 
 Steegen et al. first put forth the concept of [multiverse analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637); Simonsohn et al. put forth a similar notion called the [Specification curve analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
 
@@ -51,12 +42,11 @@ The `multidy` documentation follows the tidyverse syntax
 
 ## Installation
 
-You can install the latest development version from
-GitHub with these R commands:
+You can install the latest development version from GitHub with these R commands:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("mucollective/multidy")
+devtools::install_github("mucollective/multiverse")
 ```
 
 ## Examples

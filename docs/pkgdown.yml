@@ -8,5 +8,9 @@ articles:
   complete-multiverse-analysis: complete-multiverse-analysis.html
   dance: dance.html
   frequentist-multiverse-analysis: frequentist-multiverse-analysis.html
+  multiverse-in-rmd: multiverse-in-rmd.html
   visualizing-multiverse: visualizing-multiverse.html
+urls:
+  reference: http://mucollective.github.io/multiverse/reference
+  article: http://mucollective.github.io/multiverse/articles
 

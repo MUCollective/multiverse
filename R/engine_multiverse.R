@@ -1,33 +1,3 @@
-#' Create custom code chunks for multiverse analysis
-#' 
-#' @description An easier way to interact with a multiverse object by using a custom code engine
-#' 
-#' @param options The knitr options associated with the code chunk
-#' 
-#' @details This is a custom code engine that allows the users to interface directly with a created multiverse object, 
-#' without using functions such as [inside]. See examples for more details
-#' 
-#' 
-#' @examples
-#' \dontrun{
-#' # Typically R users, using RMarkdown could specify code by creating a code chunk, 
-#' # and use the functions provided to add code to the multiverse :
-#' ```{r}
-#' M = multiverse()
-#' inside(M, { df = data.frame( x = 1:10 ) })
-#' ```
-#' 
-#' # Here, they would need to reference the multiverse object everytime they want to add anythign to it
-#' # Instead, they could add code to the multiverse by using a custom code engine:
-#' ```{multiverse, name = M}
-#' df = data.frame( x = 1:10 )
-#' }
-#' 
-#' @import knitr
-# @importFrom knitr knit_engines
-# @importFrom knitr engine_output
-#' 
-#' @name multiverse_engine
 multiverse_engine <- function(options) {
   # print(typeof(options$code))
   .multiverse_name = options$inside
@@ -45,31 +15,41 @@ multiverse_engine <- function(options) {
   
   
   pasted <- paste(code, collapse = "\n")
-  parsed <- parse_expr(c("{", pasted, "}"))
-  
-  inside(.multiverse, !! parsed, options$label)
-  # lapply(parsed, function(x) inside(.multiverse, !!x ))
-  
+  .expr <- parse(text = c("{", pasted, "}"))[[1]]
   .m = attr(.multiverse, "multiverse")
+  
+  #add_and_parse_code(
+  #  m_obj = .m, 
+  #  .super_env = attr(.multiverse, "multiverse_super_env"), 
+  #  .code = eval_seq_in_code(.expr), 
+  #  .name = options$label, 
+  #  execute = FALSE
+  #)
+  
+  inside(.multiverse, !! .expr, options$label)
   
   if ( is.list(.m[['parameters']]) & length(.m[['parameters']]) == 0 ) {
     # executing everything in the default universe
     # since there are no branches in the multiverse
     
-    # env = .m[['multiverse_table']][['.results']][[1]]
     .c = .m[['multiverse_table']][['.code']][[1]]
   } else {
     idx = .m[['default_parameter_assignment']]
     
-    # env = .m[['multiverse_table']][['.results']][[idx]]
     .c = .m[['multiverse_table']][['.code']][[idx]]
   }
+  .c = deparse(.c[[options$label]])
   
+  # print(options)
   options$engine = "R"
-  options$code = deparse(.c[[options$label]])
+  options$code = .c[2:(length(.c)-1)]
   options$comment = ""
+  options$dev = 'png'
   
-  engine_output( options, code = code, out = block_exec_R(options))
+  # block_exec_R(options)
+  invisible(block_exec_R(options))
+  #knitr::engine_output(options, code = code, out = .out)
+  # knitr::engine_output(options, code = code, out = evaluate::evaluate(options$code))
 }
 
 knitr::knit_engines$set(multiverse = multiverse_engine)

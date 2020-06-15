@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Explorable Multiverse data analysis and reports in R • multiverse</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/lumnens/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -72,6 +72,9 @@
       <a href="articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
+      <a href="articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+    </li>
+    <li>
       <a href="articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
     </li>
   </ul>
@@ -93,19 +96,13 @@
 <hr>
 <p>output: github_document: html_preview: false df_print: kable —</p>
 <p><code>{r chunk_options, include=FALSE} knitr::opts_chunk$set(   collapse = TRUE,   comment = "#&gt;",   fig.path = "README_files/" )</code></p>
-<div id="multidy-an-r-package-for-creating-multiverse-analysis" class="section level1">
+<div id="multiverse-an-r-package-for-creating-multiverse-analysis" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#multidy-an-r-package-for-creating-multiverse-analysis" class="anchor"></a>Multidy: An R package for creating multiverse analysis</h1></div>
+<a href="#multiverse-an-r-package-for-creating-multiverse-analysis" class="anchor"></a>Multiverse: An R package for creating multiverse analysis</h1></div>
 <!-- badges: start -->
 
 <p>The goal of multiverse is to allow users to create multiverse analyses in a concise and easily interpretable manner.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the development version from <a href="https://github.com/MUcollective/multiverse">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"MUCollective/multidy"</span>)</a></code></pre></div>
-<p><code>multidy</code> is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.</p>
+<p><code>multiverse</code> is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.</p>
 <p>Steegen et al. first put forth the concept of <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">multiverse analysis</a>; Simonsohn et al. put forth a similar notion called the <a href="https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&amp;context=marketing_papers">Specification curve analysis</a>.</p>
 <p><code>multidy</code> attempts to make it easy to declare alternate analysis paths by declaring <strong>analysis parameters</strong> at different levels of analysis:</p>
 <ul>
@@ -115,13 +112,12 @@
 <li><p><strong>Presentation parameters</strong> offer different ways of presenting analysis outcomes</p></li>
 </ul>
 <p>The <code>multidy</code> documentation follows the tidyverse syntax</p>
-</div>
-<div id="installation-1" class="section level2">
+<div id="installation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#installation-1" class="anchor"></a>Installation</h2>
+<a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the latest development version from GitHub with these R commands:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"mucollective/multidy"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"mucollective/multiverse"</span>)</a></code></pre></div>
 </div>
 <div id="examples" class="section level2">
 <h2 class="hasAnchor">
@@ -298,39 +294,10 @@
 <p>```{r, model-1-vis, message = FALSE} p &lt;- multiverse_table(M) %&gt;% mutate( summary = map(.results, “summary_RelComp”) ) %&gt;% unnest( cols = c(summary) ) %&gt;% mutate( term = recode( term, “RelationshipStatusSingle” = “Single”, “Fertilitylow:RelationshipStatusSingle” = “Single:Fertility_low” ) ) %&gt;% filter( term != “(Intercept)” ) %&gt;% ggplot() + geom_vline( xintercept = 0, colour = ‘#979797’ ) + geom_point( aes(x = estimate, y = term)) + geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) + transition_manual( .universe )</p>
 <p>animate(p, nframes = 210, fps = 2) ```</p>
 </div>
-<div id="models-3---6" class="section level3">
+<div id="notes" class="section level3">
 <h3 class="hasAnchor">
-<a href="#models-3---6" class="anchor"></a>Models #3 - 6</h3>
-<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. Below we perform these analyses and visualize the results.</p>
-<p>```{r, model-3to6} M$fit_FiscConsComp &lt;- ~ lm( FiscConsComp ~ Fertility * RelationshipStatus, data = df) M$summary_FiscConsComp &lt;- ~ fit_FiscConsComp %&gt;% broom::tidy( conf.int = TRUE )</p>
-<p>M$fit_SocConsComp &lt;- ~ lm( SocConsComp ~ Fertility * RelationshipStatus, data = df) M$summary_SocConsComp &lt;- ~ fit_SocConsComp %&gt;% broom::tidy( conf.int = TRUE )</p>
-<p>M$fit_Donate &lt;- ~ glm( Donate ~ Fertility * Relationship, data = df, family = binomial(link = “logit”) ) M$summary_Donate &lt;- ~ fit_Donate %&gt;% broom::tidy( conf.int = TRUE )</p>
-<p>M$fit_Vote &lt;- ~ glm( Vote ~ Fertility * Relationship, data = df, family = binomial(link = “logit”) ) M$summary_Vote &lt;- ~ fit_Vote %&gt;% broom::tidy( conf.int = TRUE )</p>
-<p>execute_multiverse(M) ```</p>
-</div>
-<div id="model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="anchor"></a>Model #3: Effect of Fertility and Relationship status on Fiscal political attitudes</h3>
-<p>```{r, model-3-vis} p &lt;- multiverse_table(M) %&gt;% mutate( summary = map(.results, “summary_FiscConsComp” ) ) %&gt;% unnest( cols = c(summary) ) %&gt;% mutate( term = recode( term, “RelationshipStatusSingle” = “Single”, “Fertilitylow:RelationshipStatusSingle” = “Single:Fertility_low” ) ) %&gt;% filter( term != “(Intercept)” ) %&gt;% ggplot() + geom_vline( xintercept = 0, colour = ‘#979797’ ) + geom_point( aes(x = estimate, y = term)) + geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) + transition_manual( .universe )</p>
-<p>animate(p, nframes = 210, fps = 2) ```</p>
-</div>
-<div id="model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="anchor"></a>Model #4: Effect of Fertility and Relationship status on Social political attitudes</h3>
-<p>```{r, model-4-vis} p &lt;- multiverse_table(M) %&gt;% mutate( summary = map(.results, “summary_SocConsComp” ) ) %&gt;% unnest( cols = c(summary) ) %&gt;% mutate( term = recode( term, “RelationshipStatusSingle” = “Single”, “Fertilitylow:RelationshipStatusSingle” = “Single:Fertility_low” ) ) %&gt;% filter( term != “(Intercept)”) %&gt;% ggplot() + geom_vline( xintercept = 0, colour = ‘#979797’ ) + geom_point( aes(x = estimate, y = term)) + geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) + transition_manual( .universe )</p>
-<p>animate(p, nframes = 210, fps = 2) ```</p>
-</div>
-<div id="model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="section level3">
-<h3 class="hasAnchor">
-<a href="#model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="anchor"></a>Model #5: Effect of Fertility and Relationship status on Voting preferences</h3>
-<p>```{r, model-5-vis} p &lt;- multiverse_table(M) %&gt;% mutate( summary = map(.results, “summary_SocConsComp” ) ) %&gt;% unnest( cols = c(summary) ) %&gt;% mutate( term = recode( term, “RelationshipStatusSingle” = “Single”, “Fertilitylow:RelationshipStatusSingle” = “Single:Fertility_low” ) ) %&gt;% ggplot() + geom_vline( xintercept = 0, colour = ‘#979797’ ) + geom_point( aes(x = estimate, y = term)) + geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) + transition_manual( .universe )</p>
-<p>animate(p, nframes = 210, fps = 2) ```</p>
-</div>
-<div id="model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="section level3">
-<h3 class="hasAnchor">
-<a href="#model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="anchor"></a>Model #6: Effect of Fertility and Relationship status on Donation preferences</h3>
-<p>```{r, model-6-vis} p &lt;- multiverse_table(M) %&gt;% mutate( summary = map(.results, “summary_Donate” ) ) %&gt;% unnest( cols = c(summary) ) %&gt;% mutate( term = recode( term, “RelationshipStatusSingle” = “Single”, “Fertilitylow:RelationshipStatusSingle” = “Single:Fertility_low” ) ) %&gt;% ggplot() + geom_vline( xintercept = 0, colour = ‘#979797’ ) + geom_point( aes(x = estimate, y = term)) + geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) + transition_manual( .universe )</p>
-<p>animate(p, nframes = 210, fps = 2) ```</p>
+<a href="#notes" class="anchor"></a>Notes</h3>
+<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. These analyses can be found in the vignette <a href="complete-multiverse-analysis.html"><code>A complete implementation of a multiverse analysis</code></a></p>
 </div>
 </div>
 </div>
@@ -347,8 +314,10 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Abhraneel Sarma <br><small class="roles"> Author, maintainer </small>  </li>
-<li>Matthew Kay <br><small class="roles"> Author </small>  </li>
+<li>
+<a href="http://abhsarma.github.io">Abhraneel Sarma</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<li>
+<a href="http://www.mjskay.com">Matthew Kay</a> <br><small class="roles"> Author </small>  </li>
 </ul>
 </div>
 
@@ -364,7 +333,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Abhraneel Sarma, Matthew Kay.</p>
+  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">

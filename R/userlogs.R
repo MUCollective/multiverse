@@ -1,7 +1,7 @@
 #' Userlogs
 #'
 #' Data collected by Jansen et al. in their study,
-#' \href{https://journals.sagepub.com/doi/pdf/10.1177/0956797612466416}{Evaluating the Efficiency of Physical Visualizations}
+#' \href{https://doi.org/10.1145/2470654.2481359}{Evaluating the Efficiency of Physical Visualizations}
 #' which investigated factors contributing to the efficiency of physical visualizations.
 #'
 #' @format A data frame with 512 observations and 19 variables:
@@ -26,4 +26,14 @@
 #'     \item{perceivedDifficulty}{ Self reported perceived difficulty of the task by each participant. }
 #'     \item{perceivedTime}{ Self reported perceived time taken to perform the task by each participant. }
 #' }
-"userlogs"
+#' 
+#' @name userlogs
+#' @docType data
+#' @keywords datasets
+#' 
+#' @references
+#' Yvonne Jansen and Pierre Dragicevic and Jean-Daniel Fekete. (2013)
+#' "Evaluating the Efficiency of Physical Visualizations."
+#' *Proceedings of the SIGCHI Conference on Human Factors in Computing Systems* pp. 2593-2602.
+#' 
+NULL

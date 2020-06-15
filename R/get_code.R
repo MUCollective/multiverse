@@ -1,7 +1,8 @@
 #' Code corresponding to a single analysis
 #'
 #' Given a particular set of options for each parameter, extracts the code for performing a
-#' single analysis from the code used to declare the multiverse.
+#' single analysis from the code used to declare the multiverse. This function is called automatically 
+#' and not exported.
 #'
 #' @details For a particular parameter assignment (i.e. one set of options that each defined parameter
 #' in the multiverse takes), this function rewrites the code passed into the multiverse to output the
@@ -23,7 +24,6 @@
 #' @importFrom magrittr %>%
 #' @importFrom magrittr extract2
 #'
-#' @export
 # wrapper function for get_parameter_code
 get_code <- function(multiverse, .code, .assgn = NULL) {
   stopifnot( is.r6_multiverse(multiverse))

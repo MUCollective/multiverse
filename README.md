@@ -1,5 +1,5 @@
 
-# Multidy: An R package for creating multiverse analysis
+# Multiverse: An R package for creating multiverse analysis
 
 <!-- badges: start -->
 
@@ -11,17 +11,7 @@ status](https://travis-ci.com/MUCollective/multiverse.svg?branch=master)](https:
 The goal of multiverse is to allow users to create multiverse analyses
 in a concise and easily interpretable manner.
 
-## Installation
-
-You can install the development version from
-[GitHub](https://github.com/MUcollective/multiverse) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("MUCollective/multidy")
-```
-
-`multidy` is an R package that allows users to specify multiverse of
+`multiverse` is an R package that allows users to specify multiverse of
 statistical analysis, also called a multiverse analysis. In a multiverse
 analysis, researchers identify sets of defensible analysis choices
 (e.g., different ways of excluding outliers, different data
@@ -58,7 +48,7 @@ commands:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("mucollective/multidy")
+devtools::install_github("mucollective/multiverse")
 ```
 
 ## Examples
