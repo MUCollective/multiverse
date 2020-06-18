@@ -1,7 +1,6 @@
 ---
 output: 
   github_document:
-    html_preview: false
     df_print: kable
 ---
 
@@ -17,8 +16,8 @@ knitr::opts_chunk$set(
 # Multiverse: An R package for creating multiverse analysis
 
 <!-- badges: start -->
-[![Build status](https://travis-ci.com/MUCollective/multiverse.svg?branch=master)](https://travis-ci.com/MUCollective/multiverse)
 [![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multiverse)
+[![R build status](https://github.com/MUCollective/multidy/workflows/R-CMD-check/badge.svg)](https://github.com/MUCollective/multidy/actions)
 <!-- badges: end -->
 
 The goal of multiverse is to allow users to create multiverse analyses in a concise and easily interpretable manner.

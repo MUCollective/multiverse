@@ -1,8 +1,8 @@
 #' @import knitr
 #' 
-block_exec = function(options) {
+block_exec_none = function(options, as.engine = "R") {
   # when code is not R language
-  if (options$engine != 'R') {
+  if (as.engine != 'R') {
     res.before = knitr:::run_hooks(before = TRUE, options)
     engine = get_engine(options$engine)
     browser()
@@ -21,88 +21,29 @@ block_exec = function(options) {
     }
     return(if (options$include) output else '')
   } else {
-    block_exec_R(options)
+    print(options)
+    #block_exec_R(options)
   }
 }
 
+custom_block_exec <- function(options) {
+  # options$engine <- "R"
+  if (options$engine == "R") {
+    block_exec_R(options)
+  } else if (options$engine == "multiverse") {
+    .m_block_params <- lapply(strsplit(gsub("[^A-Za-z0-9,=-]+", "", options$params.src), ","), strsplit, split = "=")
+    names <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[1]])
+    alist <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[2]])
+    names(alist) <- names
+    
+    # .code = options$code
+    .c = multiverse_block_code(alist$inside, alist$label, options$code)
+    multiverse_default_block_exec(.c, options)
+  }
+}
+
+
 block_exec_R = function(options) {
-  # now try eval all options except those in eval.after and their aliases
-  af = opts_knit$get('eval.after'); al = opts_knit$get('aliases')
-  if (!is.null(al) && !is.null(af)) af = c(af, names(al[af %in% al]))
-  
-  # expand parameters defined via template
-  if (!is.null(block$params$opts.label)) {
-    block$params = merge_list(opts_template$get(block$params$opts.label), block$params)
-  }
-  
-  params = opts_chunk$merge(block$params)
-  opts_current$restore(params)
-  for (o in setdiff(names(params), af)) params[o] = list(eval_lang(params[[o]]))
-  params = fix_options(params)  # for compatibility
-  
-  label = ref.label = params$label
-  if (!is.null(params$ref.label)) ref.label = sc_split(params$ref.label)
-  params[["code"]] = params[["code"]] %n% unlist(knit_code$get(ref.label), use.names = FALSE)
-  if (opts_knit$get('progress')) print(block)
-  
-  if (!is.null(params$child)) {
-    if (!is_blank(params$code)) warning(
-      "The chunk '", params$label, "' has the 'child' option, ",
-      "and this code chunk must be empty. Its code will be ignored."
-    )
-    if (!params$eval) return('')
-    cmds = lapply(sc_split(params$child), knit_child, options = block$params)
-    out = one_string(unlist(cmds))
-    return(out)
-  }
-  
-  params$code = parse_chunk(params$code) # parse sub-chunk references
-  
-  ohooks = opts_hooks$get()
-  for (opt in names(ohooks)) {
-    hook = ohooks[[opt]]
-    if (!is.function(hook)) {
-      warning("The option hook '", opt, "' should be a function")
-      next
-    }
-    if (!is.null(params[[opt]])) params = as.strict_list(hook(params))
-    if (!is.list(params))
-      stop("The option hook '", opt, "' should return a list of chunk options")
-  }
-  
-  # Check cache
-  if (params$cache > 0) {
-    content = c(
-      params[if (params$cache < 3) cache1.opts else setdiff(names(params), cache0.opts)],
-      75L, if (params$cache == 2) params[cache2.opts]
-    )
-    if (params$engine == 'R' && isFALSE(params$cache.comments)) {
-      content[['code']] = parse_only(content[['code']])
-    }
-    hash = paste(valid_path(params$cache.path, label), digest(content), sep = '_')
-    params$hash = hash
-    if (cache$exists(hash, params$cache.lazy) &&
-        isFALSE(params$cache.rebuild) &&
-        params$engine != 'Rcpp') {
-      if (opts_knit$get('verbose')) message('  loading cache from ', hash)
-      cache$load(hash, lazy = params$cache.lazy)
-      cache_engine(params)
-      if (!params$include) return('')
-      if (params$cache == 3) return(cache$output(hash))
-    }
-    if (params$engine == 'R')
-      cache$library(params$cache.path, save = FALSE) # load packages
-  } else if (label %in% names(dep_list$get()) && !isFALSE(opts_knit$get('warn.uncached.dep')))
-    warning2('code chunks must not depend on the uncached chunk "', label, '"')
-  
-  params$params.src = block$params.src
-  opts_current$restore(params)  # save current options
-  
-  # set local options() for the current R chunk
-  if (is.list(params$R.options)) {
-    op = options(params$R.options); on.exit(options(op), add = TRUE)
-  }
-  
   # eval chunks (in an empty envir if cache)
   env = knit_global()
   obj.before = ls(globalenv(), all.names = TRUE)  # global objects before chunk

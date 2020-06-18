@@ -3,9 +3,9 @@
 
 <!-- badges: start -->
 
-[![Build
-status](https://travis-ci.com/MUCollective/multiverse.svg?branch=master)](https://travis-ci.com/MUCollective/multiverse)
 [![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multiverse)
+[![R build
+status](https://github.com/MUCollective/multidy/workflows/R-CMD-check/badge.svg)](https://github.com/MUCollective/multidy/actions)
 <!-- badges: end -->
 
 The goal of multiverse is to allow users to create multiverse analyses
@@ -316,8 +316,7 @@ parameters(M)
 2.  `conditions`, which is a list of conditions (we’ll define this
     later)
 3.  `multiverse_table`, which is a tibble consisting of all possible
-    combination of values for the
-multiverse
+    combination of values for the multiverse
 
 <!-- end list -->
 
@@ -381,8 +380,7 @@ universes) in our multiverse. Keeping consistency with the interactive
 programming interface of RStudio, we also execute the default analysis
 in each step. In the previous step, we stored the results in the
 variable `df`. We can see the result of this analysis in the appropriate
-row (universe) of the multiverse
-table.
+row (universe) of the multiverse table.
 
 ``` r
 M$df %>% head()
@@ -678,8 +676,7 @@ Now, we’ve created the complete multiverse that was presented as example
 
 Steegen et al. create 6 models. The first model uses data from example
 \#1. The other five models use the data from example \#2, which we’ve
-using so
-far.
+using so far.
 
 ### Model \#2: Effect of Fertility and Relationship status on Religiosity
 
@@ -695,8 +692,7 @@ The authors perform an ANOVA to study the effect of *Fertility*,
 *Relationship* and their interaction term, on the composite Religiosity
 score. We fit the linear model using the call: `lm( RelComp ~ Fertility
 * RelationshipStatus, data = df )` inside our multiverse and save the
-result to a variable called
-`fit_RelComp`.
+result to a variable called `fit_RelComp`.
 
 ``` r
 M$fit_RelComp <- ~ lm( RelComp ~ Fertility * RelationshipStatus, data = df )

@@ -1,7 +1,6 @@
 ---
 title: "Multiverse code block"
 author: "Abhraneel Sarma"
-date: "`r sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
@@ -12,8 +11,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 library(knitr)
-#opts_knit$set(
-#  echo = TRUE,
+opts_knit$set(echo = TRUE)
 #  fig.width = 6, 
 #  fig.height = 4,
 #  output.dir="vignettes"
@@ -24,51 +22,78 @@ library(tidyr)
 library(purrr)
 library(rlang)
 library(ggplot2)
-# library(multiverse)
+library(lme4)
+library(multiverse)
 
-data("durante")
-
-data.raw.study2 <- durante
+M <- multiverse()
 ```
+
+
+```{r, block-exec}
+custom_block_exec <- function(options) {
+  # options$engine <- "R"
+  if (options$engine == "R") {
+    multiverse:::block_exec_R(options)
+  } else if (options$engine == "multiverse") {
+    .m_block_params <- lapply(strsplit(gsub("[^A-Za-z0-9,=-]+", "", options$params.src), ","), strsplit, split = "=")
+    names <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[1]])
+    alist <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[2]])
+    names(alist) <- names
+    
+    # .code = options$code
+    .c = multiverse:::multiverse_block_code(alist$inside, alist$label, options$code)
+    multiverse:::multiverse_default_block_exec(.c, options)
+  }
+}
+
+## Hot patch for knitting: re-assign the function in the relevant namespace
+environment(custom_block_exec) <- asNamespace('knitr')
+assignInNamespace("block_exec", custom_block_exec, ns = "knitr")
+```
+
 
 
 ```{r}
-obj <- list(x = 1:10, y = 20:100)
-invisible(lapply(obj, function(x) plot(x, main="some plot", type = "l")))
+data <- readr::read_csv('data/speed_data.csv')
+
+speed_data <- data %>%
+  mutate( speed = num_words / (adjust_rt/60000) ) %>%
+  filter( retake != 1 )
+
+head(speed_data)
 ```
 
+```{multiverse, label = default-m-1, inside = M}
+iqr = IQR(speed_data[speed_data$dyslexia_bin == 0,]$speed,na.rm=TRUE)
+median = median(speed_data$speed)
 
-```{r}
-speed_data <- data.frame( 
-    speed = rlnorm(200, log(200), 1), 
-    device = sample(c("smartphone", "laptop", "tablet"), 200, TRUE, prob= c(0.1, 0.65, 0.25)) 
-  )
-
-M = multiverse()
-```
-
-```{r}
-speed_data %>%
-  filter(!(device %in% c("smartphone", "other")) & !is.na(device))%>%
-  extract2("speed") %>%
-  density() %>%
-  plot()
-
-knitr::opts_chunk$get()
-```
-
-
-
-```{multiverse label = default-m-1, inside = M}
 result_analysis <- speed_data %>%
   filter(branch(outlier,
+    "default" ~ speed < median + 3 * iqr & speed > 10,
+    "strict" ~ speed < median + 2 * iqr & speed > 10
+  )) %>%
+  filter(branch(device,
     "default" ~ device != "smartphone",
     "strict" ~ !device %in% c("smartphone", "other") & !is.na(device)
-  ))
+  )) %>%
+  filter( correct_rate > .6 )
+```
 
-# plot(density(result_analysis$speed))
+```{multiverse label = default-m-2, inside = M}
+model <- branch(model_spec,
+  "default" ~ lmer(log(speed) ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + num_words + age + english_native + (1 | uuid), data = result_analysis),
+  "conservative" ~ lmer(log(speed) ~ as.factor(page_condition)*as.factor(dyslexia) + img_width + english_native + (1 | uuid), data = result_analysis),
+  "width_dyslexia_interaction" ~ lmer(log(speed) ~ as.factor(page_condition)*as.factor(dyslexia) + img_width*as.factor(dyslexia) + num_words + age + english_native + (1 | uuid), data = result_analysis),
+  "width_dyslexia_interaction_conservative" ~ lmer(log(speed) ~ as.factor(page_condition)*as.factor(dyslexia) + img_width*as.factor(dyslexia) + english_native + (1 | uuid), data = result_analysis))
 
-ggplot(cars, aes(speed, dist)) + geom_point()
+AIC(model)
+summary(model)
+```
+
+
+
+```{r}
+multiverse_table(M)
 ```
 
 
