@@ -2,3 +2,12 @@
 ^\.Rproj\.user$
 ^\.travis\.yml$
 ^codecov\.yml$
+^README.Rmd$
+^README_files$
+^docs$
+^figure$
+^_pkgdown\.yml$
+^code_chunk.Rmd$
+^code_chunk.html$
+^data\.*.csv
+^\.github$
