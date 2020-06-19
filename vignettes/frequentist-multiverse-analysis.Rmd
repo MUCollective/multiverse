@@ -27,6 +27,14 @@ library(multiverse)
 library(boot)
 ```
 
+```{r, block-exec, echo = FALSE}
+custom_block_exec <- multiverse:::custom_block_exec
+
+## Hot patch for knitting: re-assign the function in the relevant namespace
+environment(custom_block_exec) <- asNamespace('knitr')
+assignInNamespace("block_exec", custom_block_exec, ns = "knitr")
+```
+
 ## Introduction
 
 In this vignette, we will recreate the multiverse analysis, [Frequentist](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. The re-analysis is of a study which shows that moving 3D data visualizations to the physical world can improve users' efficiency at information retrieval tasks.
@@ -200,7 +208,7 @@ df.results %>% head()
 ```
 
 
-```{r}
+```{r, fig.width = 9, fig.height = 4}
 p <- df.results %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
@@ -282,7 +290,7 @@ df.results.diff %>%
 
 A value lower than 1 (i.e., on the left side of the dark line) means the condition on the left is faster than the condition on the right. The confidence intervals are not corrected for multiplicity. The results from this study appear to be relatively robust and consistent across all the possible combinations that we have tried.
 
-```{r, fig.width = 6, fig.height = 4}
+```{r, fig.width = 9, fig.height = 4}
 p <- df.results.diff %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +

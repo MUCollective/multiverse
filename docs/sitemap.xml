@@ -25,13 +25,10 @@
     <loc>http://mucollective.github.io/multiverse/reference/inside.html</loc>
   </url>
   <url>
+    <loc>http://mucollective.github.io/multiverse/reference/mulitiverse_code_block.html</loc>
+  </url>
+  <url>
     <loc>http://mucollective.github.io/multiverse/reference/multiverse.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/reference/multiverse_code_chunk_addin.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/reference/multiverse_engine.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/parse_multiverse.html</loc>
@@ -43,9 +40,6 @@
     <loc>http://mucollective.github.io/multiverse/reference/vis_correlation.html</loc>
   </url>
   <url>
-    <loc>http://mucollective.github.io/multiverse/articles/Conditions.html</loc>
-  </url>
-  <url>
     <loc>http://mucollective.github.io/multiverse/articles/branch.html</loc>
   </url>
   <url>
@@ -53,6 +47,9 @@
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/complete-multiverse-analysis.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/conditions.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/dance.html</loc>

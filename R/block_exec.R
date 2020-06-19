@@ -29,7 +29,7 @@ block_exec_none = function(options, as.engine = "R") {
 custom_block_exec <- function(options) {
   # options$engine <- "R"
   if (options$engine == "R") {
-    block_exec_R(options)
+    multiverse:::block_exec_R(options)
   } else if (options$engine == "multiverse") {
     .m_block_params <- lapply(strsplit(gsub("[^A-Za-z0-9,=-]+", "", options$params.src), ","), strsplit, split = "=")
     names <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[1]])
@@ -37,8 +37,8 @@ custom_block_exec <- function(options) {
     names(alist) <- names
     
     # .code = options$code
-    .c = multiverse_block_code(alist$inside, alist$label, options$code)
-    multiverse_default_block_exec(.c, options)
+    .c = multiverse:::multiverse_block_code(alist$inside, alist$label, options$code)
+    multiverse:::multiverse_default_block_exec(.c, options)
   }
 }
 

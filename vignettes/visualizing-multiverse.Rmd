@@ -144,7 +144,7 @@ inside(M, {
 
 Finally, we will execute all the generated analysis combinations in the multiverse, since so far we have only defined them.
 
-```{r, model-summaries}
+```{r, execute-multiverse}
 execute_multiverse(M)
 ```
 
