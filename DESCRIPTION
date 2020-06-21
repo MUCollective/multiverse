@@ -8,7 +8,7 @@ Authors@R: c(
         person("Matthew", "Kay", role = "aut", email = "mjskay@umich.edu")    
     )
 Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
-License: GPL (>= 3) + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.0
 Depends:

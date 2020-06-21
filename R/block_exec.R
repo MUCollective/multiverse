@@ -1,31 +1,37 @@
-#' @import knitr
-#' 
-block_exec_none = function(options, as.engine = "R") {
-  # when code is not R language
-  if (as.engine != 'R') {
-    res.before = knitr:::run_hooks(before = TRUE, options)
-    engine = get_engine(options$engine)
-    browser()
-    #print(engine)
-    output = knitr:::in_dir(knitr:::input_dir(), engine(options))
-    if (is.list(output)) output = unlist(output)
-    res.after = knitr:::run_hooks(before = FALSE, options)
-    output = paste(c(res.before, output, res.after), collapse = '')
-    output = knit_hooks$get('chunk')(output, options)
-    if (options$cache) {
-      cache.exists = cache$exists(options$hash, options$cache.lazy)
-      if (options$cache.rebuild || !cache.exists) block_cache(options, output, switch(
-        options$engine,
-        'stan' = options$output.var, 'sql' = options$output.var, character(0)
-      ))
-    }
-    return(if (options$include) output else '')
-  } else {
-    print(options)
-    #block_exec_R(options)
-  }
-}
+# Names that should be suppressed from global variable check by codetools
+# Names used broadly should be put in _global_variables.R
+# purge_cache --------------------------
+globalVariables(c("cache", "valid_path", "dep_list"))
 
+# process_tangle.block & process_tangle.inline --------------------------
+globalVariables(c("comment_out", "sc_split", "parse_only", "parse_chunk", "one_string", "line_prompt", "parse_only"))
+
+# label_code --------------------------
+globalVariables(c("one_string"))
+
+# chunk_device --------------------------
+globalVariables(c("tikz_dev"))
+
+# block_cache --------------------------
+globalVariables(c("cache_output_name", "cache"))
+
+# block_exec_R --------------------------
+globalVariables(c("par2", "try_silent", "one_string", "comment_out", 
+                  "fix_evaluate", "remove_plot", "merge_low_plot", "copy_env",
+                  "%n%", "find_globals"))
+
+
+#' @import knitr
+#' @importFrom grDevices dev.control
+#' @importFrom grDevices dev.cur
+#' @importFrom grDevices dev.list
+#' @importFrom grDevices dev.new
+#' @importFrom grDevices dev.off
+#' @importFrom graphics par
+#' @importFrom stats na.omit
+#' @importFrom utils head
+#' @importFrom utils tail
+#' 
 custom_block_exec <- function(options) {
   # options$engine <- "R"
   if (options$engine == "R") {

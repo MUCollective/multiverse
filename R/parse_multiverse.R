@@ -1,3 +1,7 @@
+# Names that should be suppressed from global variable check by codetools
+# Names used broadly should be put in _global_variables.R
+globalVariables(c(".universe", ".parameter_assignment"))
+
 #' Parse the multiverse syntax to identify branches
 #'
 #' In a multiverse, the user can define different values that a parameter can take using the `branch` call.
@@ -35,8 +39,9 @@
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
 #' @importFrom utils modifyList
-#'
-#'
+#' @importFrom utils globalVariables
+#' 
+
 parse_multiverse <- function(multiverse, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
   

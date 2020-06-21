@@ -1,3 +1,7 @@
+# Names that should be suppressed from global variable check by codetools
+# Names used broadly should be put in _global_variables.R
+globalVariables(c("."))
+
 #' Retrieve or change the default analysis of the multiverse
 #'
 #' @description Functions which allow the user to retrieve or update the default assignments for

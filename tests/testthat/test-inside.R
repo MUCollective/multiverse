@@ -37,37 +37,27 @@ test_that("multiple lines of code can be passed to inside", {
   expect_equal( code(M), some_exprs)
 })
 
+test_that("multiple lines of code can be passed to inside in a single block", {
+  some_exprs = list(quote({
+    x <- data.frame(x = 1:10)
+    y <- data.frame(y = 11:20)
+  }))
+  
+  M = multiverse()
+  inside(M, {
+    x <- data.frame(x = 1:10)
+    y <- data.frame(y = 11:20)
+  })
+  
+  expect_equal( code(M), some_exprs)
+})
+
 test_that("throws error when object is not of type `multiverse`", {
   M.1 = list(a = 1)
   M.2 = data.frame(a = 1)
 
   expect_error( inside(M.1, {x = data.frame(x = 1:10)}) )
   expect_error( inside(M.2, {x = data.frame(x = 1:10)}) )
-})
-
-# `$<-.multiverse` // multiverse shorthand assignment ___________________________
-test_that("`$<-.multiverse` works on new multiverse object", {
-  an_expr = expr({x <- data.frame(x = 1:10)})
-
-  M = multiverse()
-  M$x <- ~ data.frame(x = 1:10)
-
-  expect_equal( code(M), list(an_expr))
-})
-
-test_that("multiple lines of code can be passed to inside", {
-  some_exprs = list(quote({
-    x <- data.frame(x = 1:10)
-  }),
-  quote({
-    y <- data.frame(y = 11:20)
-  }))
-
-  M = multiverse()
-  M$x <- ~ data.frame(x = 1:10)
-  M$y <- ~ data.frame(y = 11:20)
-
-  expect_equal( code(M), some_exprs)
 })
 
 # add_and_parse_code ___________________________

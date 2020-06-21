@@ -2,12 +2,9 @@
 % Please edit documentation in R/inside.R
 \name{inside}
 \alias{inside}
-\alias{$<-.multiverse}
 \title{Pass code into the multiverse}
 \usage{
 inside(multiverse, .expr, .label = NULL)
-
-\method{$}{multiverse}(multiverse, name) <- value
 }
 \arguments{
 \item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using `multiverse()`}
@@ -18,9 +15,6 @@ Since it accepts a single argument, chunks of code can be passed using `{}`. See
 \item{.label}{It is extracted automatically from the code block of type `multiverse`
 when run in an RMarkdown document. This should be used only within an RMarkdown document. 
 Defaults to NULL.}
-
-\item{name, value}{If the shorthand assignment `$<-` is used to assign values to variables in the multiverse
-name and value of arguments should be specified. Name indicates the variable name; value indicates the value to be assigned to name.}
 }
 \value{
 a multiverse object

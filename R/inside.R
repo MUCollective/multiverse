@@ -19,9 +19,6 @@
 #'
 #' @param .expr R syntax. All the operations that the user wants to perform within the multiverse can be passed.
 #' Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.
-#'
-#' @param name,value If the shorthand assignment `$<-` is used to assign values to variables in the multiverse
-#' name and value of arguments should be specified. Name indicates the variable name; value indicates the value to be assigned to name.
 #' 
 #' @param .label It is extracted automatically from the code block of type `multiverse`
 #' when run in an RMarkdown document. This should be used only within an RMarkdown document. 
@@ -91,23 +88,28 @@ inside <- function(multiverse, .expr, .label = NULL) {
   add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, .label)
 }
 
-#' @rdname inside
-#' @export
-`$<-.multiverse` <- function(multiverse, name, value) {
+
+# @param name,value If the shorthand assignment `$<-` is used to assign values to variables 
+# in the multiverse name and value of arguments should be specified. Name indicates the variable name; 
+# value indicates the value to be assigned to name.
+
+# #' @rdname inside
+# #' @export
+# `$<-.multiverse` <- function(multiverse, name, value) {
   # must use call here instead of putting { .. } inside the expr()
   # because otherwise covr::package_coverage() will insert line number stubs
   # *into* the expression and cause tests to break
-  if (!is.call(value)) stop(
-    "Only objects of type language can be passed into the multiverse. Did you forget to add `~`?"
-  )
+#   if (!is.call(value)) stop(
+#     "Only objects of type language can be passed into the multiverse. Did you forget to add `~`?"
+#  )
   
-  .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
-  .expr = eval_seq_in_code(.expr)
+#   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
+#   .expr = eval_seq_in_code(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
+#   add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
 
-  multiverse
-}
+#   multiverse
+# }
 
 compare_code <- function(x, y) {
   if (!is.list(x)) x <- list(x)
