@@ -6,12 +6,14 @@
 \alias{execute_default}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(multiverse)
+execute_multiverse(multiverse, parallel = FALSE)
 
 execute_default(multiverse)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
+
+\item{parallel}{(Logical) Indicates whether to run the multiverse in parallel. Defaults to FALSE.}
 }
 \description{
 These are functions which allow the user to execute parts or whole of the multiverse.

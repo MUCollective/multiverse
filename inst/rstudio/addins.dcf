@@ -1,0 +1,4 @@
+Name: Insert multiverse code chunk
+Description: Inserts a code chunk for performing multiverse analysis at the cursor position.
+Binding: multiverse_code_chunk_addin
+Interactive: false

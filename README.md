@@ -1,27 +1,17 @@
 
-# Multidy: An R package for creating multiverse analysis
+# Multiverse: An R package for creating multiverse analysis
 
 <!-- badges: start -->
 
-[![Build
-status](https://travis-ci.com/MUCollective/multidy.svg)](https://travis-ci.com/MUCollective/multidy)
-[![Codecov test
-coverage](https://codecov.io/gh/MUCollective/multidy/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multidy?branch=master)
+[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multiverse)
+[![R build
+status](https://github.com/MUCollective/multidy/workflows/R-CMD-check/badge.svg)](https://github.com/MUCollective/multidy/actions)
 <!-- badges: end -->
 
-The goal of multidy is to …
+The goal of multiverse is to allow users to create multiverse analyses
+in a concise and easily interpretable manner.
 
-## Installation
-
-You can install the development version from
-[GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("MUCollective/multidy")
-```
-
-`multidy` is an R package that allows users to specify multiverse of
+`multiverse` is an R package that allows users to specify multiverse of
 statistical analysis, also called a multiverse analysis. In a multiverse
 analysis, researchers identify sets of defensible analysis choices
 (e.g., different ways of excluding outliers, different data
@@ -58,7 +48,7 @@ commands:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("mucollective/multidy")
+devtools::install_github("mucollective/multiverse")
 ```
 
 ## Examples
@@ -326,34 +316,21 @@ parameters(M)
 2.  `conditions`, which is a list of conditions (we’ll define this
     later)
 3.  `multiverse_table`, which is a tibble consisting of all possible
-    combination of values for the
-multiverse
+    combination of values for the multiverse
 
 <!-- end list -->
 
 ``` r
-multiverse_table(M)
+multiverse_table(M) %>% select(-.code)
 ```
 
 <div class="kable-table">
 
-|   .universe | menstrual\_calculation   | .parameter\_assignment                        | .code             | .results |
-| ----------: | :----------------------- | :-------------------------------------------- | :---------------- | :------- |
-|           1 | mc\_option1              | list(menstrual\_calculation = “mc\_option1”)  | {                 |          |
-|   df \<- da | ta.raw.study2            |                                               |                   |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofLastPeriod - StartDateof | PeriodBeforeLast) |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLastPeriod + ComputedCycl | eLength)          |          |
-| } \<environ | ment\>                   |                                               |                   |          |
-|           2 | mc\_option2              | list(menstrual\_calculation = “mc\_option2”)  | {                 |          |
-|   df \<- da | ta.raw.study2            |                                               |                   |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofLastPeriod - StartDateof | PeriodBeforeLast) |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLastPeriod + ReportedCycl | eLength)          |          |
-| } \<environ | ment\>                   |                                               |                   |          |
-|           3 | mc\_option3              | list(menstrual\_calculation = “mc\_option3”)  | {                 |          |
-|   df \<- da | ta.raw.study2            |                                               |                   |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofLastPeriod - StartDateof | PeriodBeforeLast) |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateNext)                       |                   |          |
-|           } | \<e                      | nvironment\>                                  |                   |          |
+| .universe | menstrual\_calculation | .parameter\_assignment                       | .results      |
+| --------: | :--------------------- | :------------------------------------------- | :------------ |
+|         1 | mc\_option1            | list(menstrual\_calculation = “mc\_option1”) | <environment> |
+|         2 | mc\_option2            | list(menstrual\_calculation = “mc\_option2”) | <environment> |
+|         3 | mc\_option3            | list(menstrual\_calculation = “mc\_option3”) | <environment> |
 
 </div>
 
@@ -380,8 +357,13 @@ default_parameter_assignment(M)
 
 ``` r
 code(M)
+#> [[1]]
 #> {
 #>     df <- data.raw.study2
+#> }
+#> 
+#> [[2]]
+#> {
 #>     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
 #>         StartDateofPeriodBeforeLast)
 #>     df <- df %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
@@ -398,8 +380,7 @@ universes) in our multiverse. Keeping consistency with the interactive
 programming interface of RStudio, we also execute the default analysis
 in each step. In the previous step, we stored the results in the
 variable `df`. We can see the result of this analysis in the appropriate
-row (universe) of the multiverse
-table.
+row (universe) of the multiverse table.
 
 ``` r
 M$df %>% head()
@@ -463,14 +444,23 @@ previous code.
 
 ``` r
 code(M)
+#> [[1]]
 #> {
 #>     df <- data.raw.study2
+#> }
+#> 
+#> [[2]]
+#> {
 #>     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
 #>         StartDateofPeriodBeforeLast)
 #>     df <- df %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
 #>         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
 #>         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
 #>         "mc_option3" ~ StartDateNext))
+#> }
+#> 
+#> [[3]]
+#> {
 #>     df <- df %>% mutate(Relationship = branch(relationship_status, 
 #>         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == 
 #>             2, "Single", "Relationship")), "rs_option2" ~ factor(ifelse(Relationship == 
@@ -503,49 +493,20 @@ parameter options that have been identified.
 
 ``` r
 multiverse_table(M) %>%
+  select(-.code) %>%
   head()
 ```
 
 <div class="kable-table">
 
-|   .universe | menstrual\_calculation   | relationship\_status   | cycle\_length   | certainty      | fertile         | .parameter\_assignment                                                                                                                                                  | .code                                                                                                                                                                                     | .results |
-| ----------: | :----------------------- | :--------------------- | :-------------- | :------------- | :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- |
-|           1 | mc\_option1              | rs\_option1            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
-|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Comp | utedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1 |  | Relationship = | \= 2, “Single”, | “Relationship”))) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1   | , 28))) %\>% filter(TRUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”)))) |          |
-| } \<environ | ment\>                   |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|           2 | mc\_option2              | rs\_option1            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
-|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Repo | rtedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1 |  | Relationship = | \= 2, “Single”, | “Relationship”))) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1   | , 28))) %\>% filter(TRUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”)))) |          |
-| } \<environ | ment\>                   |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|           3 | mc\_option3              | rs\_option1            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
-|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateNext | )               |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1 |  | Relationship = | \= 2, “Single”, | “Relationship”))) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1   | , 28))) %\>% filter(TRUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”)))) |          |
-|           } | \<e                      | nvironment\>           |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|           4 | mc\_option1              | rs\_option2            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
-|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Comp | utedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1, " | Single“,”Rela  | tionship"))) %  | \>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% filter(T | RUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”))))                      |          |
-|           } | \<environment            | \>                     |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|           5 | mc\_option2              | rs\_option2            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
-|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateofLa | stPeriod + Repo | rtedCycleLengt | h)              |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1, " | Single“,”Rela  | tionship"))) %  | \>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% filter(T | RUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”))))                      |          |
-|           } | \<environment            | \>                     |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|           6 | mc\_option3              | rs\_option2            | cl\_option1     | cer\_option1   | fer\_option1    | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | {                                                                                                                                                                                         |          |
-|   df \<- da | ta.raw.study2            |                        |                 |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(ComputedCycl | eLength = StartDateofL | astPeriod - Sta | rtDateofPeriod | BeforeLast)     |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(NextMenstrua | lOnset = StartDateNext | )               |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
-|   df \<- df | %\>% mutate(Relationship | \= factor(ifelse(Relat | ionship == 1, " | Single“,”Rela  | tionship"))) %  | \>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% filter(T | RUE) %\>% filter(TRUE) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<= 25, “low”, “medium”))))                      |          |
-|           } |                          | \<env                  | ironment\>      |                |                 |                                                                                                                                                                         |                                                                                                                                                                                           |          |
+| .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                                                                                                                                  | .results      |
+| --------: | :--------------------- | :------------------- | :------------ | :----------- | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------ |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
+|         2 | mc\_option2            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
+|         3 | mc\_option3            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
+|         4 | mc\_option1            | rs\_option2          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
+|         5 | mc\_option2            | rs\_option2          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
+|         6 | mc\_option3            | rs\_option2          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
 
 </div>
 
@@ -715,8 +676,7 @@ Now, we’ve created the complete multiverse that was presented as example
 
 Steegen et al. create 6 models. The first model uses data from example
 \#1. The other five models use the data from example \#2, which we’ve
-using so
-far.
+using so far.
 
 ### Model \#2: Effect of Fertility and Relationship status on Religiosity
 
@@ -732,8 +692,7 @@ The authors perform an ANOVA to study the effect of *Fertility*,
 *Relationship* and their interaction term, on the composite Religiosity
 score. We fit the linear model using the call: `lm( RelComp ~ Fertility
 * RelationshipStatus, data = df )` inside our multiverse and save the
-result to a variable called
-`fit_RelComp`.
+result to a variable called `fit_RelComp`.
 
 ``` r
 M$fit_RelComp <- ~ lm( RelComp ~ Fertility * RelationshipStatus, data = df )
@@ -761,6 +720,7 @@ creating a single tidy data-frame that can be accessed easily.
 
 ``` r
 multiverse_table(M) %>%
+  select(-.code) %>%
   mutate( summary = map(.results, "summary_RelComp" ) ) %>%
   unnest( cols = c(summary) ) %>%
   head( 10 )
@@ -768,78 +728,18 @@ multiverse_table(M) %>%
 
 <div class="kable-table">
 
-|   .universe | cycle\_length     | certainty       | menstrual\_calculation    | fertile         | relationship\_status   | .parameter\_assignment                                                                                                                                                   | .code                                                                                                                                                                                                                                                   | .results | term | estimate | std.error | statistic | p.value | conf.low | conf.high |
-| ----------: | :---------------- | :-------------- | :------------------------ | :-------------- | :--------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------- | :--- | -------: | --------: | --------: | ------: | -------: | --------: |
-|           1 | cl\_option1       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(TRUE) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %\>% mutate(CycleDay = 28 -   | (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<=    |          |      |          |           |           |         |          |           |
-|         25, | “low”, NA)))) %   | \>% mutate(Rela | tionshipStatus = factor(  | ifelse(Relatio  | nship == 1 | Relations | hip == 2, “Single”, “Relationship”)))                                                                                                                                    |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           } |                   |                 | <environment>             | (Intercept)     |                        | 6.374912 0.4044011 15.763834 0.0000000 5.5790575 7.1707671                                                                                                               |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           1 | cl\_option1       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(TRUE) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %\>% mutate(CycleDay = 28 -   | (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<=    |          |      |          |           |           |         |          |           |
-|         25, | “low”, NA)))) %   | \>% mutate(Rela | tionshipStatus = factor(  | ifelse(Relatio  | nship == 1 | Relations | hip == 2, “Single”, “Relationship”)))                                                                                                                                    |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           } |                   |                 | <environment>             | Fertilitylow    |                        | \-1.199386 0.5349724 -2.241958 0.0257021 -2.2522029 -0.1465691                                                                                                           |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           1 | cl\_option1       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(TRUE) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %\>% mutate(CycleDay = 28 -   | (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<=    |          |      |          |           |           |         |          |           |
-|         25, | “low”, NA)))) %   | \>% mutate(Rela | tionshipStatus = factor(  | ifelse(Relatio  | nship == 1 | Relations | hip == 2, “Single”, “Relationship”)))                                                                                                                                    |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           } |                   |                 | <environment>             | Relationship    | StatusSingle           | \-1.456830 0.5396630 -2.699518 0.0073420 -2.5188779 -0.3947823                                                                                                           |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           1 | cl\_option1       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(TRUE) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %\>% mutate(CycleDay = 28 -   | (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>= 17 & CycleDay \<=    |          |      |          |           |           |         |          |           |
-|         25, | “low”, NA)))) %   | \>% mutate(Rela | tionshipStatus = factor(  | ifelse(Relatio  | nship == 1 | Relations | hip == 2, “Single”, “Relationship”)))                                                                                                                                    |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           } |                   |                 | <environment>             | Fertilitylow    | :RelationshipStatusSin | gle 2.028777 0.7155526 2.835260 0.0048931 0.6205818 3.4369732                                                                                                            |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           2 | cl\_option2       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(ComputedCycleLength \> 25 & ComputedCycleLength \< 35) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod +   | ComputedCycleLength) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, |          |      |          |           |           |         |          |           |
-|        "hig | h", ifelse(Cycl   | eDay \>= 17 & C | ycleDay \<= 25, “low”, NA | )))) %\>% mutat | e(RelationshipStatus = | factor(ifelse(Relationship == 1 | Relationship == 2, “Single”, “Relationship”)))                                                                                         |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-| } \<environ | ment\> (Interc    | ept)            | 6.3                       | 10698 0.4703    | 930 13.415798 0.00     | 00000 5.3839511 7.2374442                                                                                                                                                |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           2 | cl\_option2       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(ComputedCycleLength \> 25 & ComputedCycleLength \< 35) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod +   | ComputedCycleLength) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, |          |      |          |           |           |         |          |           |
-|        "hig | h", ifelse(Cycl   | eDay \>= 17 & C | ycleDay \<= 25, “low”, NA | )))) %\>% mutat | e(RelationshipStatus = | factor(ifelse(Relationship == 1 | Relationship == 2, “Single”, “Relationship”)))                                                                                         |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-| } \<environ | ment\> Fertili    | tylow           | \-1.2                     | 24730 0.6121    | 526 -2.000694 0.04     | 65808 -2.4307646 -0.0186953                                                                                                                                              |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           2 | cl\_option2       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(ComputedCycleLength \> 25 & ComputedCycleLength \< 35) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod +   | ComputedCycleLength) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, |          |      |          |           |           |         |          |           |
-|        "hig | h", ifelse(Cycl   | eDay \>= 17 & C | ycleDay \<= 25, “low”, NA | )))) %\>% mutat | e(RelationshipStatus = | factor(ifelse(Relationship == 1 | Relationship == 2, “Single”, “Relationship”)))                                                                                         |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-| } \<environ | ment\> Relatio    | nshipStatusSin  | gle -1.4                  | 85288 0.6142    | 040 -2.418232 0.01     | 63609 -2.6953641 -0.2752116                                                                                                                                              |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           2 | cl\_option2       | cer\_option1    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(ComputedCycleLength \> 25 & ComputedCycleLength \< 35) %\>% dplyr::filter(TRUE) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod +   | ComputedCycleLength) %\>% mutate(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, |          |      |          |           |           |         |          |           |
-|        "hig | h", ifelse(Cycl   | eDay \>= 17 & C | ycleDay \<= 25, “low”, NA | )))) %\>% mutat | e(RelationshipStatus = | factor(ifelse(Relationship == 1 | Relationship == 2, “Single”, “Relationship”)))                                                                                         |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-| } \<environ | ment\> Fertili    | tylow:Relation  | shipStatusSingle 2.0      | 88903 0.8141    | 590 2.565719 0.01      | 09206 0.4848851 3.6929217                                                                                                                                                |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           4 | cl\_option1       | cer\_option2    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option1”, certainty = “cer\_option2”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(TRUE) %\>% dplyr::filter(Sure1 \> 6 | Sure2 \> 6) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %\>% mutat | e(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>=    |          |      |          |           |           |         |          |           |
-|        17 & | CycleDay \<= 25   | , “low”, NA)))  | ) %\>% mutate(Relationshi | pStatus = fact  | or(ifelse(Relationship | \== 1 | Relationship == 2, “Single”, “Relationship”)))                                                                                                                   |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           } |                   | \<enviro        | nment\> (Intercept)       |                 | 6.563125               | 0.4497895 14.591549 0.0000000 5.6769902 7.4492598                                                                                                                        |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           4 | cl\_option1       | cer\_option2    | mc\_option1               | fer\_option1    | rs\_option1            | list(cycle\_length = “cl\_option1”, certainty = “cer\_option2”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”)  | {                                                                                                                                                                                                                                                       |          |      |          |           |           |         |          |           |
-|   df \<- da | ta.raw.study2 %   | \>% mutate(Comp | utedCycleLength = StartD  | ateofLastPerio  | d - StartDateofPeriodB | eforeLast) %\>% dplyr::filter(TRUE) %\>% dplyr::filter(Sure1 \> 6 | Sure2 \> 6) %\>% mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %\>% mutat | e(CycleDay = 28 - (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay \> 1 & CycleDay \< 28, CycleDay, ifelse(CycleDay \< 1, 1, 28))) %\>% mutate(Fertility = factor(ifelse(CycleDay \>= 7 & CycleDay \<= 14, “high”, ifelse(CycleDay \>=    |          |      |          |           |           |         |          |           |
-|        17 & | CycleDay \<= 25   | , “low”, NA)))  | ) %\>% mutate(Relationshi | pStatus = fact  | or(ifelse(Relationship | \== 1 | Relationship == 2, “Single”, “Relationship”)))                                                                                                                   |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   df \<- df | %\>% mutate(Rel   | Comp = round((  | Rel1 + Rel2 + Rel3)/3, 2  | ))              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   fit\_RelC | omp \<- lm(RelCo  | mp ~ Fertility  | \* RelationshipStatus, d  | ata = df)       |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|   summary\_ | RelComp \<- fit\_ | RelComp %\>% br | oom::tidy(conf.int = TRU  | E)              |                        |                                                                                                                                                                          |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
-|           } |                   | \<enviro        | nment\> Fertilitylow      |                 | \-1.461028             | 0.5991144 -2.438646 0.0154841 -2.6413496 -0.2807068                                                                                                                      |                                                                                                                                                                                                                                                         |          |      |          |           |           |         |          |           |
+| .universe | cycle\_length | certainty    | menstrual\_calculation | fertile      | relationship\_status | .parameter\_assignment                                                                                                                                                  | .results      | term                                  |   estimate | std.error |  statistic |   p.value |    conf.low |   conf.high |
+| --------: | :------------ | :----------- | :--------------------- | :----------- | :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------ | :------------------------------------ | ---------: | --------: | ---------: | --------: | ----------: | ----------: |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | (Intercept)                           |   6.374912 | 0.4044011 |  15.763834 | 0.0000000 |   5.5790575 |   7.1707671 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow                          | \-1.199386 | 0.5349724 | \-2.241958 | 0.0257021 | \-2.2522029 | \-0.1465691 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | RelationshipStatusSingle              | \-1.456830 | 0.5396630 | \-2.699518 | 0.0073420 | \-2.5188779 | \-0.3947823 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow:RelationshipStatusSingle |   2.028777 | 0.7155526 |   2.835260 | 0.0048931 |   0.6205818 |   3.4369732 |
+|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | (Intercept)                           |   6.310698 | 0.4703930 |  13.415798 | 0.0000000 |   5.3839511 |   7.2374442 |
+|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow                          | \-1.224730 | 0.6121526 | \-2.000694 | 0.0465808 | \-2.4307646 | \-0.0186953 |
+|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | RelationshipStatusSingle              | \-1.485288 | 0.6142040 | \-2.418232 | 0.0163609 | \-2.6953641 | \-0.2752116 |
+|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow:RelationshipStatusSingle |   2.088903 | 0.8141590 |   2.565719 | 0.0109206 |   0.4848851 |   3.6929217 |
+|         4 | cl\_option1   | cer\_option2 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option2”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | (Intercept)                           |   6.563125 | 0.4497895 |  14.591549 | 0.0000000 |   5.6769902 |   7.4492598 |
+|         4 | cl\_option1   | cer\_option2 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option2”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow                          | \-1.461028 | 0.5991144 | \-2.438646 | 0.0154841 | \-2.6413496 | \-0.2807068 |
 
 </div>
 
@@ -874,118 +774,12 @@ animate(p, nframes = 210, fps = 2)
 
 ![](README_files/model-1-vis-1.gif)<!-- -->
 
-### Models \#3 - 6
+### Notes
 
 The authors also perform a number of other analysis using the same
 independent variables (`Fertility`, `Relationship Status` and their
 interaction term), but with different dependent variables: `Fiscal
 political attitudes`, `Social political attitudes`, `Voting preferences`
-and `Donation preferences`. Below we perform these analyses and
-visualize the
-results.
-
-``` r
-M$fit_FiscConsComp <- ~ lm( FiscConsComp ~ Fertility * RelationshipStatus, data = df)
-M$summary_FiscConsComp <- ~ fit_FiscConsComp %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$fit_SocConsComp <- ~ lm( SocConsComp ~ Fertility * RelationshipStatus, data = df)
-M$summary_SocConsComp <- ~ fit_SocConsComp %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$fit_Donate <- ~ glm( Donate ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
-M$summary_Donate <- ~ fit_Donate %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$fit_Vote <- ~ glm( Vote ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
-M$summary_Vote <- ~ fit_Vote %>% 
-  broom::tidy( conf.int = TRUE )
-
-execute_multiverse(M)
-```
-
-### Model \#3: Effect of Fertility and Relationship status on Fiscal political attitudes
-
-``` r
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_FiscConsComp" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  filter( term != "(Intercept)" ) %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
-![](README_files/model-3-vis-1.gif)<!-- -->
-
-### Model \#4: Effect of Fertility and Relationship status on Social political attitudes
-
-``` r
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  filter( term !=  "(Intercept)") %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
-![](README_files/model-4-vis-1.gif)<!-- -->
-
-### Model \#5: Effect of Fertility and Relationship status on Voting preferences
-
-``` r
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
-![](README_files/model-5-vis-1.gif)<!-- -->
-
-### Model \#6: Effect of Fertility and Relationship status on Donation preferences
-
-``` r
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_Donate" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
-![](README_files/model-6-vis-1.gif)<!-- -->
+and `Donation preferences`. These analyses can be found in the vignette
+[`A complete implementation of a multiverse
+analysis`](complete-multiverse-analysis.html)

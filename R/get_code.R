@@ -1,7 +1,8 @@
 #' Code corresponding to a single analysis
 #'
 #' Given a particular set of options for each parameter, extracts the code for performing a
-#' single analysis from the code used to declare the multiverse.
+#' single analysis from the code used to declare the multiverse. This function is called automatically 
+#' and not exported.
 #'
 #' @details For a particular parameter assignment (i.e. one set of options that each defined parameter
 #' in the multiverse takes), this function rewrites the code passed into the multiverse to output the
@@ -17,15 +18,12 @@
 #'
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #'
-#' @importFrom rlang is_call
-#' @importFrom rlang expr_text
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
+#' @importFrom rlang is_missing 
 #' @importFrom magrittr %>%
 #' @importFrom magrittr extract2
-#' @importFrom stringi stri_detect_regex
 #'
-#' @export
 # wrapper function for get_parameter_code
 get_code <- function(multiverse, .code, .assgn = NULL) {
   stopifnot( is.r6_multiverse(multiverse))
@@ -38,44 +36,53 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
     #message("Assigning options to parameter from `default_parameter_assignment`")
     .assgn = default_parameter_assignment(multiverse)
   }
-
-  get_parameter_code(.code, .assgn)
+  
+  x <- lapply(.code, get_parameter_code, .assgn)
+  # get_parameter_code(.code, .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches
 # returns as output an expression (or code) without branches
 get_parameter_code <- function(.expr, .assgn) {
-  .expr = rm_branch_assert(.expr)
-  if (is.call(.expr)) {
-    # Recursive cases
-    if (.expr[[1]] == quote(branch)) {
-      get_parameter_code(compute_branch(.expr, .assgn), .assgn)
+  if (!is_missing(.expr)) {
+    .expr = rm_branch_assert(.expr)
+    
+    if (is.call(.expr) ) {
+      # Recursive cases
+      if (.expr[[1]] == quote(branch)) {
+        get_parameter_code(compute_branch(.expr, .assgn), .assgn)
+      } else {
+        as.call(lapply(.expr, get_parameter_code, .assgn))
+      }
     } else {
-      as.call(lapply(.expr, get_parameter_code, .assgn))
+      # Base case: constants and symbols
+      .expr
     }
-  }  else {
-    # Base case: constants and symbols
+  } else {
     .expr
   }
 }
 
 ### this function is to allow people to declare `branch_assert` which does not work rn
 rm_branch_assert <- function(.expr) {
-  # if the expression is not of length 3, than there isn't a branch_assert call
+  # if the expression is not of length 3, then there isn't a conditional call
   if(length(.expr) == 3) {
     # checks if the rhs of the expression is a branch_assert call
     # rewrites the expression by removing it
-    if (is.call(.expr[[3]])) {
-      if(.expr[[3]][[1]] == quote(branch_assert)) {
-        .expr = .expr[[2]]
-      }
+    if (is.call(.expr[[3]]) && .expr[[3]][[1]] == quote(branch_assert)) {
+      .expr = rm_branch_assert(.expr[[2]])
     }
-    # checks if the rhs of the expression is a branch_assert call
+    
+    # checks if the lhs of the expression is a branch_assert call
     # rewrites the expression by removing it
-    if (is.call(.expr[[2]])) {
-      if(.expr[[2]][[1]] == quote(branch_assert)) {
-        .expr = .expr[[3]]
-      }
+    else if (is.call(.expr[[2]]) && .expr[[2]][[1]] == quote(branch_assert)) {
+      .expr = rm_branch_assert(.expr[[3]])
+    }
+    
+    # checks if expression is a %when% conditional
+    # if it is, only return the lhs
+    else if (is.call(.expr) && .expr[[1]] == quote(`%when%`)) {
+      .expr = .expr[[2]]
     }
 
     .expr
@@ -102,6 +109,8 @@ get_option_value <- function(x) {
     return(x)
   }
 }
+
+
 
 
 

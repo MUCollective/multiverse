@@ -5,6 +5,8 @@
 #' whole of the multiverse using the [execute_multiverse].
 #'
 #' @param multiverse The multiverse object
+#' 
+#' @param parallel (Logical) Indicates whether to run the multiverse in parallel. Defaults to FALSE.
 #'
 #' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access
 #' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
@@ -31,24 +33,34 @@
 #'   execute_multiverse()
 #' }
 #'
-#' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
-#'
+#' @importFrom parallel detectCores
+#' @importFrom parallel mclapply
+#' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse) {
+execute_multiverse <- function(multiverse, parallel = FALSE) {
   stopifnot( is.multiverse(multiverse) )
   .m_obj = attr(multiverse, "multiverse")
 
-  execute_all_in_multiverse(.m_obj)
+  execute_all_in_multiverse(.m_obj, parallel)
 }
 
-execute_all_in_multiverse <- function(m_obj) {
+execute_all_in_multiverse <- function(m_obj, .in_parallel) {
   m_tbl = m_obj[['multiverse_table']]
-
-  for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl$.code[[i]], envir = m_tbl[['.results']][[i]] )
+  .universe = seq(1:nrow(m_tbl))
+  
+  if (.in_parallel) {
+    results <- parallel::mclapply(.universe, execute_universe, multiverse = m_obj, mc.cores = 2)
+  } else {
+    results <- lapply(.universe, execute_universe, multiverse = m_obj)
   }
+  
+  # results
+  #for (i in 1:nrow(m_tbl)) {
+  #  execute_universe(m_obj, i)
+  #  invisible( lapply(m_tbl$.code[[i]], eval, envir = m_tbl[['.results']][[i]]) )
+  #}
 }
 
 #' @rdname execute
@@ -59,23 +71,26 @@ execute_default <- function(multiverse) {
 
 execute_default.multiverse <- function(multiverse) {
   m_obj = attr(multiverse, "multiverse")
-  execute_default.Multiverse(m_obj)
+  execute_universe(m_obj)
 }
 
-execute_default.Multiverse <- function(multiverse) {
-  .param_assgn = multiverse[['default_parameter_assignment']]
-
-  if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
-    env = multiverse[['multiverse_table']][['.results']][[1]]
-    .c = multiverse[['multiverse_table']][['.code']][[1]]
-
-    eval(.c, env)
+execute_universe <- function(multiverse, .universe = NULL) {
+  if(is.null(.universe)) {
+    .param_assgn = multiverse[['default_parameter_assignment']]
   } else {
-    stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
-    .c = multiverse[['multiverse_table']][['.code']][[1]]
-    env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
-    eval(.c, env)
+    .param_assgn = .universe
   }
+  
+  if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
+    .c = multiverse[['multiverse_table']][['.code']][[1]]
+    env = multiverse[['multiverse_table']][['.results']][[1]]
+  } else {
+    stopifnot(is.numeric(.param_assgn) || !is.null(.param_assgn))
+    .c = multiverse[['multiverse_table']][['.code']][[.param_assgn]]
+    env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
+  }
+  
+  invisible( lapply(.c, eval, envir = env) )
 }
 
 

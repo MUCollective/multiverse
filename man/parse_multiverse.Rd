@@ -21,5 +21,6 @@ parameter, the condition.
 \description{
 In a multiverse, the user can define different values that a parameter can take using the `branch` call.
 The `parse_multiverse` identifies the `branch` calls defined in the analysis syntax and parses them into a list of
-parameters and the corresponding values that each parameter can take.
+parameters and the corresponding values that each parameter can take. This function is called automatically 
+and not exported.
 }

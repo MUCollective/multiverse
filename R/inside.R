@@ -6,7 +6,7 @@
 #' @details To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 #' The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 #' which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-#' use the [branch] function. See [branch] for more
+#' use the `branch()` function. See [branch] for more
 #' details on how to declare multiple analysis options.
 #'
 #' The `inside` function only stores the code, and does not execute any code at this step. To execute, we
@@ -19,9 +19,10 @@
 #'
 #' @param .expr R syntax. All the operations that the user wants to perform within the multiverse can be passed.
 #' Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.
-#'
-#' @param name,value If the shorthand assignment `$<-` is used to assign values to variables in the multiverse
-#' name and value of arguments should be specified. Name indicates the variable name; value indicates the value to be assigned to name.
+#' 
+#' @param .label It is extracted automatically from the code block of type `multiverse`
+#' when run in an RMarkdown document. This should be used only within an RMarkdown document. 
+#' Defaults to NULL.
 #'
 #' @return a multiverse object
 #'
@@ -76,44 +77,81 @@
 #'
 #' @name inside
 #' @export
-inside <- function(multiverse, .expr) {
+inside <- function(multiverse, .expr, .label = NULL) {
   .expr = enexpr(.expr)
+  
   if(!is_call(.expr, "{")) {
     .expr = expr({ !!.expr })
   }
   .expr = eval_seq_in_code(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
+  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, .label)
 }
 
-#' @rdname inside
-#' @export
-`$<-.multiverse` <- function(multiverse, name, value) {
+
+# @param name,value If the shorthand assignment `$<-` is used to assign values to variables 
+# in the multiverse name and value of arguments should be specified. Name indicates the variable name; 
+# value indicates the value to be assigned to name.
+
+# #' @rdname inside
+# #' @export
+# `$<-.multiverse` <- function(multiverse, name, value) {
   # must use call here instead of putting { .. } inside the expr()
   # because otherwise covr::package_coverage() will insert line number stubs
   # *into* the expression and cause tests to break
-  .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
-  .expr = eval_seq_in_code(.expr)
+#   if (!is.call(value)) stop(
+#     "Only objects of type language can be passed into the multiverse. Did you forget to add `~`?"
+#  )
+  
+#   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
+#   .expr = eval_seq_in_code(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
+#   add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
 
-  multiverse
+#   multiverse
+# }
+
+compare_code <- function(x, y) {
+  if (!is.list(x)) x <- list(x)
+  if (!is.list(y)) y <- list(y)
+  
+  n <- max(length(x), length(y))
+  length(x) <- n                      
+  length(y) <- n
+  
+  mapply( function(.x, .y) identical(deparse(.x), deparse(.y)), x, y )
 }
 
 
-add_and_parse_code <- function(m_obj, .super_env, .code, execute = TRUE) {
+add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute = TRUE) {
+  # .loc = match( FALSE, compare_code(m_obj$code, .code) )
+  .loc = length(m_obj$code)
+  
   if (is_null(m_obj$code)) {
-    .c = .code
+    # .c = .code
+    if (is.null(.name)) {
+      .c = list(.code) 
+    } else {
+      .c = list()
+      .c[[.name]] = .code
+    }
   } else {
-    .c = concatenate_expr(m_obj$code, .code)
+    # .c = concatenate_expr(m_obj$code, .code)
+    # .c = append(m_obj$code[1:.loc], .code)
+    if (is.null(.name)) {
+      .c = append(m_obj$code[1:.loc], .code)
+    } else {
+      .c = m_obj$code
+      .c[[.name]] = .code
+    }
   }
-
+  
   m_obj$code <- .c
   parse_multiverse(m_obj, .super_env)
 
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
-  if (execute) execute_default(m_obj)
+  if (execute) execute_universe(m_obj)
 }
 
 concatenate_expr <- function(ref, to_add){
@@ -131,6 +169,7 @@ concatenate_expr <- function(ref, to_add){
 
   ref
 }
+
 
 eval_seq_in_code <- function(.expr) {
     if (is.call(.expr)) {

@@ -16,7 +16,8 @@ which can be done using the `remove_branch_assert` function.}
 }
 \description{
 Given a particular set of options for each parameter, extracts the code for performing a
-single analysis from the code used to declare the multiverse.
+single analysis from the code used to declare the multiverse. This function is called automatically 
+and not exported.
 }
 \details{
 For a particular parameter assignment (i.e. one set of options that each defined parameter

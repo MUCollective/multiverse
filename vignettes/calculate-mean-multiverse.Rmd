@@ -49,7 +49,6 @@ We could also change the fraction of values that we want to trim. This can be co
 
 An overview of the steps involved in creating a multiverse analysis is shown below:
 
-
 ```{r echo = FALSE, out.width = '100%', fig.align = 'center'}
 knitr::include_graphics("multiverse.png")
 ```

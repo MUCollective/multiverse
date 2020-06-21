@@ -1,3 +1,7 @@
+# Names that should be suppressed from global variable check by codetools
+# Names used broadly should be put in _global_variables.R
+globalVariables(c("."))
+
 #' Retrieve or change the default analysis of the multiverse
 #'
 #' @description Functions which allow the user to retrieve or update the default assignments for
@@ -50,10 +54,18 @@ default_parameter_assignment <- function(multiverse) {
 default_parameter_assignment.multiverse <- function(multiverse) {
   m_obj = attr(multiverse, "multiverse")
   .idx = m_obj[['default_parameter_assignment']]
-
-  m_obj[['multiverse_table']] %>%
-    extract2( '.parameter_assignment' ) %>%
-    extract2(.idx)
+  
+  if (!is.null(.idx)) {
+    m_obj[['multiverse_table']] %>%
+      extract2( '.parameter_assignment' ) %>%
+      extract2(.idx)
+  } else {
+    # this executes if there are no `branches` in the multiverse
+    # i.e. the code in the multiverse is just R code
+    # we still have a multiverse table without parameters
+    # so returns the 1, which executes in the default env
+    NULL
+  }
 }
 
 #' @rdname default_parameter_assignment
