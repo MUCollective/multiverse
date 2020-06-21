@@ -9,5 +9,7 @@
 ^_pkgdown\.yml$
 ^code_chunk.Rmd$
 ^code_chunk.html$
-^data\.*.csv
 ^\.github$
+^pkgdown$
+^data/.*\.csv$
+^LICENSE$
