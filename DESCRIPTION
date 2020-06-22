@@ -10,7 +10,7 @@ Authors@R: c(
 Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
 License: GPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.0.9000
 Depends:
     R (>= 3.5.0)
 Suggests:
@@ -39,6 +39,10 @@ Imports:
     magrittr,
     stringi,
     modelr,
+    formatR,
+    styler,
+    codetools,
+    highr,
     rstudioapi
 Language: en-US
 VignetteBuilder: knitr
