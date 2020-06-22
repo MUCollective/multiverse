@@ -33,9 +33,12 @@ globalVariables(c("par2", "try_silent", "one_string", "comment_out",
 #' @importFrom utils tail
 #' 
 custom_block_exec <- function(options) {
+  # ugly hack to get around `:::` warnings (TODO: delete eventually)
+  `%:::%` = `:::`
+  
   # options$engine <- "R"
   if (options$engine == "R") {
-    multiverse:::block_exec_R(options)
+    ('multiverse'%:::%'block_exec_R')(options)
   } else if (options$engine == "multiverse") {
     .m_block_params <- lapply(strsplit(gsub("[^A-Za-z0-9,=-]+", "", options$params.src), ","), strsplit, split = "=")
     names <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[1]])
@@ -43,13 +46,16 @@ custom_block_exec <- function(options) {
     names(alist) <- names
     
     # .code = options$code
-    .c = multiverse:::multiverse_block_code(alist$inside, alist$label, options$code)
-    multiverse:::multiverse_default_block_exec(.c, options)
+    .c = ('multiverse'%:::%'multiverse_block_code')(alist$inside, alist$label, options$code)
+    ('multiverse'%:::%'multiverse_default_block_exec')(.c, options)
   }
 }
 
 
 block_exec_R = function(options) {
+  # ugly hack to get around `:::` warnings (TODO: delete eventually)
+  `%:::%` = `:::`
+  
   # eval chunks (in an empty envir if cache)
   env = knit_global()
   obj.before = ls(globalenv(), all.names = TRUE)  # global objects before chunk
@@ -69,7 +75,7 @@ block_exec_R = function(options) {
     # preserve par() settings from the last code chunk
     if (keep.pars <- opts_knit$get('global.par'))
       par2(opts_knit$get('global.pars'))
-    knitr:::showtext(options$fig.showtext)  # showtext support
+    ('knitr'%:::%'showtext')(options$fig.showtext)  # showtext support
     dv = dev.cur()
     on.exit({
       if (keep.pars) opts_knit$set(global.pars = par(no.readonly = TRUE))
@@ -77,7 +83,7 @@ block_exec_R = function(options) {
     }, add = TRUE)
   }
   
-  res.before = knitr:::run_hooks(before = TRUE, options, env) # run 'before' hooks
+  res.before = ('knitr'%:::%'run_hooks')(before = TRUE, options, env) # run 'before' hooks
   
   code = options$code
   echo = options$echo  # tidy code if echo
@@ -97,29 +103,29 @@ block_exec_R = function(options) {
   # only evaluate certain lines
   if (is.numeric(ev <- options$eval)) {
     # group source code into syntactically complete expressions
-    if (isFALSE(options$tidy)) code = sapply(highr:::group_src(code), one_string)
+    if (isFALSE(options$tidy)) code = sapply(('highr'%:::%'group_src')(code), one_string)
     iss = seq_along(code)
     code = comment_out(code, '##', setdiff(iss, iss[ev]), newline = FALSE)
   }
   # guess plot file type if it is NULL
   if (keep != 'none' && is.null(options$fig.ext))
-    options$fig.ext = knitr:::dev2ext(options$dev)
+    options$fig.ext = ('knitr'%:::%'dev2ext')(options$dev)
   
   cache.exists = FALSE #cache$exists(options$hash, options$cache.lazy)
   evaluate = knit_hooks$get('evaluate')
   # return code with class 'source' if not eval chunks
-  res = if (knitr:::is_blank(code)) list() else if (isFALSE(ev)) {
+  res = if (('knitr'%:::%'is_blank')(code)) list() else if (isFALSE(ev)) {
     as.source(code)
   } else if (cache.exists && isFALSE(options$cache.rebuild)) {
     fix_evaluate(cache$output(options$hash, 'list'), options$cache == 1)
-  } else knitr:::in_dir(
-    knitr:::input_dir(),
+  } else ('knitr'%:::%'in_dir')(
+    ('knitr'%:::%'input_dir')(),
     evaluate(
       code, envir = env, new_device = FALSE,
       keep_warning = !isFALSE(options$warning),
       keep_message = !isFALSE(options$message),
       stop_on_error = if (options$error && options$include) 0L else 2L,
-      output_handler = knitr:::knit_handlers(options$render, options)
+      output_handler = ('knitr'%:::%'knit_handlers')(options$render, options)
     )
   )
   if (options$cache %in% 1:2 && (!cache.exists || isTRUE(options$cache.rebuild))) {
@@ -130,7 +136,7 @@ block_exec_R = function(options) {
   # eval other options after the chunk
   if (!isFALSE(ev))
     for (o in opts_knit$get('eval.after'))
-      options[o] = list(knitr:::eval_lang(options[[o]], env))
+      options[o] = list(('knitr'%:::%'eval_lang')(options[[o]], env))
   
   # remove some components according options
   if (isFALSE(echo)) {
@@ -185,13 +191,13 @@ block_exec_R = function(options) {
   if (isTRUE(options$fig.beforecode)) res = fig_before_code(res)
   
   on.exit({
-    knitr:::plot_counter(reset = TRUE)
-    knitr:::shot_counter(reset = TRUE)
+    ('knitr'%:::%'plot_counter')(reset = TRUE)
+    ('knitr'%:::%'shot_counter')(reset = TRUE)
     opts_knit$delete('plot_files')
   }, add = TRUE)  # restore plot number
   
-  output = unlist(knitr:::wrap(res, options)) # wrap all results together
-  res.after = knitr:::run_hooks(before = FALSE, options, env) # run 'after' hooks
+  output = unlist(('knitr'%:::%'wrap')(res, options)) # wrap all results together
+  res.after = ('knitr'%:::%'run_hooks')(before = FALSE, options, env) # run 'after' hooks
   
   output = paste(c(res.before, output, res.after), collapse = '')  # insert hook results
   output = knit_hooks$get('chunk')(output, options)
@@ -243,6 +249,9 @@ chunk_device = function(
   width, height, record = TRUE, dev, dev.args, dpi, options, tmp = tempfile()
 ) {
   dev_new = function() {
+    # ugly hack to get around `:::` warnings (TODO: delete eventually)
+    `%:::%` = `:::`
+    
     # actually I should adjust the recording device according to dev, but here I
     # have only considered the png and tikz devices (because the measurement
     # results can be very different especially with the latter, see #1066), the
@@ -250,28 +259,28 @@ chunk_device = function(
     if (identical(dev, 'png')) {
       do.call(grDevices::png, c(list(
         filename = tmp, width = width, height = height, units = 'in', res = dpi
-      ), knitr:::get_dargs(dev.args, 'png')))
+      ), ('knitr'%:::%'get_dargs')(dev.args, 'png')))
     } else if (identical(dev, 'tikz')) {
       dargs = c(list(
         file = tmp, width = width, height = height
-      ), knitr:::get_dargs(dev.args, 'tikz'))
+      ), ('knitr'%:::%'get_dargs')(dev.args, 'tikz'))
       dargs$sanitize = options$sanitize; dargs$standAlone = options$external
       if (is.null(dargs$verbose)) dargs$verbose = FALSE
       do.call(tikz_dev, dargs)
     } else if (identical(dev, 'cairo_pdf')) {
       do.call(grDevices::cairo_pdf, c(list(
         filename = tmp, width = width, height = height
-      ), knitr:::get_dargs(dev.args, 'cairo_pdf')))
+      ), ('knitr'%:::%'get_dargs')(dev.args, 'cairo_pdf')))
     } else if (identical(dev, 'svg')) {
       do.call(grDevices::svg, c(list(
         filename = tmp, width = width, height = height
-      ), knitr:::get_dargs(dev.args, 'svg')))
-    } else if (identical(getOption('device'), knitr:::pdf_null)) {
+      ), ('knitr'%:::%'get_dargs')(dev.args, 'svg')))
+    } else if (identical(getOption('device'), ('knitr'%:::%'pdf_null'))) {
       if (!is.null(dev.args)) {
-        dev.args = knitr:::get_dargs(dev.args, 'pdf')
+        dev.args = ('knitr'%:::%'get_dargs')(dev.args, 'pdf')
         dev.args = dev.args[intersect(names(dev.args), c('pointsize', 'bg'))]
       }
-      do.call(knitr:::pdf_null, c(list(width = width, height = height), dev.args))
+      do.call(('knitr'%:::%'pdf_null'), c(list(width = width, height = height), dev.args))
     } else dev.new(width = width, height = height)
   }
   if (!opts_knit$get('global.device')) {
@@ -368,14 +377,20 @@ merge_character = function(res) {
 }
 
 call_inline = function(block) {
+  # ugly hack to get around `:::` warnings (TODO: delete eventually)
+  `%:::%` = `:::`
+  
   if (opts_knit$get('progress')) print(block)
-  knitr:::in_dir(knitr:::input_dir(), inline_exec(block))
+  ('knitr'%:::%'in_dir')(('knitr'%:::%'input_dir')(), inline_exec(block))
 }
 
 inline_exec = function(
   block, envir = knit_global(), hook = knit_hooks$get('inline'),
   hook_eval = knit_hooks$get('evaluate.inline')
 ) {
+  
+  # ugly hack to get around `:::` warnings (TODO: delete eventually)
+  `%:::%` = `:::`
   
   # run inline code and substitute original texts
   code = block$code; input = block$input
@@ -384,7 +399,7 @@ inline_exec = function(
   loc = block$location
   for (i in 1:n) {
     res = hook_eval(code[i], envir)
-    if (inherits(res, 'knit_asis')) res = knitr:::wrap(res, inline = TRUE)
+    if (inherits(res, 'knit_asis')) res = ('knitr'%:::%'wrap')(res, inline = TRUE)
     d = nchar(input)
     # replace with evaluated results
     stringr::str_sub(input, loc[i, 1], loc[i, 2]) = if (length(res)) {
@@ -401,9 +416,12 @@ process_tangle = function(x) {
 }
 #' @export
 process_tangle.block = function(x) {
+  # ugly hack to get around `:::` warnings (TODO: delete eventually)
+  `%:::%` = `:::`
+  
   params = opts_chunk$merge(x$params)
   for (o in c('purl', 'eval', 'child')) {
-    if (inherits(try(params[o] <- list(knitr:::eval_lang(params[[o]]))), 'try-error')) {
+    if (inherits(try(params[o] <- list(('knitr'%:::%'eval_lang')(params[[o]]))), 'try-error')) {
       params[['purl']] = FALSE	# if any of these options cannot be determined, don't purl
     }
   }
