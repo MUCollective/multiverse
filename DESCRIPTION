@@ -10,22 +10,9 @@ Authors@R: c(
 Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
 License: GPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.0.9000
 Depends:
     R (>= 3.5.0)
-Suggests:
-    testthat (>= 2.1.0),
-    lubridate,
-    rmarkdown,
-    covr,
-    broom,
-    boot,
-    gganimate,
-    gifski,
-    forcats,
-    stringr,
-    cowplot,
-    png
 Imports:
     dplyr (>= 0.8.1),
     ggplot2 (>= 3.0.0),
@@ -39,6 +26,24 @@ Imports:
     magrittr,
     stringi,
     modelr,
+    formatR,
+    styler,
+    codetools,
+    highr,
+    evaluate,
     rstudioapi
+Suggests:
+    testthat (>= 2.1.0),
+    lubridate,
+    rmarkdown,
+    covr,
+    broom,
+    boot,
+    gganimate,
+    gifski,
+    forcats,
+    stringr,
+    cowplot,
+    png
 Language: en-US
 VignetteBuilder: knitr
