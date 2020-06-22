@@ -30,6 +30,7 @@ Imports:
     styler,
     codetools,
     highr,
+    evaluate,
     rstudioapi
 Suggests:
     testthat (>= 2.1.0),
