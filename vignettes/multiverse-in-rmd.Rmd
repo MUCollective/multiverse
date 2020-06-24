@@ -24,6 +24,14 @@ library(purrr)
 library(multiverse)
 ```
 
+```{r, block-exec, echo = FALSE}
+custom_block_exec <- multiverse:::custom_block_exec
+
+## Hot patch for knitting: re-assign the function in the relevant namespace
+environment(custom_block_exec) <- asNamespace('knitr')
+assignInNamespace("block_exec", custom_block_exec, ns = "knitr")
+```
+
 ## Introduction
 
 In this document we will describe the usage of the multiverse code block. The multiverse code block is an alternative to the R code block which will parse any code run in it directly in the multiverse, and reduces the need for auxillary functions such as \code(inside). In addition, the default analysis in the multiverse will be executed in the environment in which the multiverse has been declared, which would usually be the global environment. In that case the results of the default analysis can be inspected directly in an R code block, similar to what an user would do if they were running a single universe analysis.

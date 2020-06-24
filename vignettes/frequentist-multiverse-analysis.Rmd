@@ -35,6 +35,8 @@ environment(custom_block_exec) <- asNamespace('knitr')
 assignInNamespace("block_exec", custom_block_exec, ns = "knitr")
 ```
 
+
+
 ## Introduction
 
 In this vignette, we will recreate the multiverse analysis, [Frequentist](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. The re-analysis is of a study which shows that moving 3D data visualizations to the physical world can improve users' efficiency at information retrieval tasks.

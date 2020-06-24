@@ -249,6 +249,7 @@ multiverse_table(M) %>%
   head()
 ```
 
+
 In our multiverse we have identified 5 options for calculating `fertility`, 3 options for calculating `menstrual calculation` and `relationship status` each, 3 wyas of excluding participants based on their `cycle length` and 2 ways of excluding participants based on the self-reported `certainty` of their responses.
 
 This results in $ 5 \times 3 \times 3 \times 3 \times 2 = 270$ possible combinations.
@@ -506,4 +507,3 @@ p <- multiverse_table(M) %>%
 
 animate(p, nframes = 210, fps = 2)
 ```
-
