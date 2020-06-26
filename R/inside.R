@@ -6,11 +6,11 @@
 #' @details To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 #' The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 #' which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-#' use the `branch()` function. See [branch] for more
+#' use the `branch()` function. See \code{\link{branch}} for more
 #' details on how to declare multiple analysis options.
 #'
 #' The `inside` function only stores the code, and does not execute any code at this step. To execute, we
-#' provide separate functions. See [execute] for executing the code.
+#' provide separate functions. See \code{\link{execute}} for executing the code.
 #'
 #' Instead of using the `inside()` function, an alternate implementation of the multiverse is using
 #' the assignment operator, `<-`. See examples below.
@@ -124,7 +124,6 @@ compare_code <- function(x, y) {
 
 
 add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute = TRUE) {
-  # .loc = match( FALSE, compare_code(m_obj$code, .code) )
   .loc = length(m_obj$code)
   
   if (is_null(m_obj$code)) {
@@ -151,7 +150,11 @@ add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute =
 
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
-  if (execute) execute_universe(m_obj)
+  if (execute) {
+    if (!is.null(getOption("knitr.in.progress"))) execute_all_in_multiverse(m_obj, FALSE)
+    execute_universe(m_obj)
+  }
+    
 }
 
 concatenate_expr <- function(ref, to_add){
