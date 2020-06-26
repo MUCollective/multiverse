@@ -56,7 +56,7 @@ data.fertility  \%>\%
     )
 
 # Since this is a multiverse analysis, this is only supported within a multiverse object. Hence:
-M = inside(M, {
+inside(M, {
   df <- data.fertility  \%>\%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) \%>\%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
@@ -65,7 +65,6 @@ M = inside(M, {
                                    "mc_option3" ~ StartDateNext)
     )
 })
-}
 
 # continuous option values for a parameter
 inside(M, {
@@ -75,4 +74,6 @@ inside(M, {
 inside(M, {
   branch(foo, "option1" ~ 1, .options = seq(0, 1, by = 0.1))
 })
+}
+
 }

@@ -17,8 +17,8 @@ execute_default(multiverse)
 }
 \description{
 These are functions which allow the user to execute parts or whole of the multiverse.
-The user can choose to either execute the default analysis using the \link[execute_default], or a part or
-whole of the multiverse using the \link[execute_multiverse].
+The user can choose to either execute the default analysis using the \code{\link{execute_default}}, or a part or
+whole of the multiverse using the \code{\link{execute_multiverse}}.
 }
 \details{
 Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access

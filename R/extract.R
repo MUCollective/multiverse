@@ -19,14 +19,17 @@
 #' 
 #' @param .results (Optional) if the .results column which stores the environments for each unique analysis has been changed, 
 #' specify the new name of the column. Defaults to `.results`
+#' 
+#' @importFrom tidyselect vars_pull
+#' @importFrom tidyr unnest_wider
 #'  
 #' @export
 extract_variables <- function(.data, ..., .results = .results) {
-  results_name = tidyselect::vars_pull(names(.data), {{ .results }})
+  results_name = vars_pull(names(.data), {{ .results }})
   
   mutate(.data, extracted = lapply(.results, extract_from_env, ...)
   ) %>%
-    unnest_wider(extracted)
+    unnest_wider("extracted")
 }
 
 extract_from_env <- function(.env, ...) {
