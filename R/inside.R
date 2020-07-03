@@ -2,6 +2,9 @@
 #'
 #' Add code to the multiverse using the function using a function call, or an assignment operator, which is
 #' a wrapper around the function
+#' 
+#' The inside function can only access variables which can be accessed at the same environment 
+#' where the multiverse object was declared in.
 #'
 #' @details To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 #' The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
@@ -14,6 +17,12 @@
 #'
 #' Instead of using the `inside()` function, an alternate implementation of the multiverse is using
 #' the assignment operator, `<-`. See examples below.
+#' 
+#' **Note:** the `inside()` function can only access variables which can be accessed at the same level as the multiverse
+#' object. Since `inside()` is merely an interface to add analysis to the multiverse object, even if it is being called 
+#' by another function, it is actually manipulating the multiverse object, which will have a different parent environment
+#' from where `inside()` is called, and hence not have access to variables which might be accessible in the environment 
+#' within the function from where `inside()` is called.
 #'
 #' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using `multiverse()`
 #'
@@ -74,6 +83,7 @@
 #' @import rlang
 #' @importFrom magrittr %>%
 #' @importFrom magrittr inset2
+#' @importFrom pryr where
 #'
 #' @name inside
 #' @export
@@ -152,7 +162,7 @@ add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute =
   # actually execute anything. probably more for internal use
   if (execute) {
     if (!is.null(getOption("knitr.in.progress"))) execute_all_in_multiverse(m_obj, FALSE)
-    execute_universe(m_obj)
+    execute_default(m_obj)
   }
     
 }

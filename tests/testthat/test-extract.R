@@ -15,7 +15,7 @@ test_that("can extract one or more single valued variables from the multiverse",
   
   execute_multiverse(M)
   
-  out <- extract_variables(multiverse_table(M), x_value, x2, x3) %>%
+  out <- extract_variables(expand(M), x_value, x2, x3) %>%
     select(x, x_value, x2, x3)
   
   ref <- tibble(x = 1:10) %>% mutate(
@@ -42,7 +42,7 @@ test_that("can extract vectors and lists from the multiverse as list columns", {
   
   execute_multiverse(M)
   
-  out.1 <- extract_variables(multiverse_table(M), avec) %>%
+  out.1 <- extract_variables(expand(M), avec) %>%
     select(x, avec)
   
   ref.1 <- tibble(x = 1:10) %>% mutate(
@@ -50,7 +50,7 @@ test_that("can extract vectors and lists from the multiverse as list columns", {
     x = as.character(x)
   )
   
-  out.2 <- extract_variables(multiverse_table(M), alist) %>%
+  out.2 <- extract_variables(expand(M), alist) %>%
     select(x, alist)
   
   ref.2 <- tibble(x = 1:10) %>% mutate(
@@ -73,7 +73,7 @@ test_that("can extract vectors from the multiverse as list columns", {
   
   execute_multiverse(M)
   
-  out <- extract_variables(multiverse_table(M), df) %>%
+  out <- extract_variables(expand(M), df) %>%
     select(x, df)
   
   ref <- tibble(x = 1:10) %>% mutate(

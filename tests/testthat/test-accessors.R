@@ -3,12 +3,11 @@ context("accessors")
 library(dplyr)
 library(tidyr)
 
-# test_that("basic assignment / retrieval works with `$`", {
-#  M <- multiverse()
-#  M$x <- ~ 5
-#
-#  expect_equal(M$x, 5)
-# })
+test_that("basic assignment with `$` throws error", {
+  M <- multiverse()
+  expect_error(M$x <- ~ 5)
+  expect_error(M$x <- 5)
+})
 
 # test_that("basic retrieval works with `code()`", {
 #  M <- multiverse()
@@ -73,7 +72,7 @@ test_that("basic retrieval works with `multiverse()`", {
       )
   }), execute = FALSE)
 
-  m_tbl = multiverse_table(M) %>% select(-.parameter_assignment, -.code, -.results)
+  m_tbl = expand(M) %>% select(-.parameter_assignment, -.code, -.results)
   m_tbl.ref = expand.grid(list(
     values_y = list("TRUE", "FALSE"),
     values_z = list("constant", "linear", "sum")

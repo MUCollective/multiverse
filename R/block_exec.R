@@ -47,7 +47,7 @@ custom_block_exec <- function(options) {
     
     # .code = options$code
     .c = ('multiverse'%:::%'multiverse_block_code')(alist$inside, alist$label, options$code)
-    ('multiverse'%:::%'multiverse_default_block_exec')(.c, options)
+    ('multiverse'%:::%'multiverse_default_block_exec')(.c, options, knit = TRUE)
   }
 }
 
@@ -86,17 +86,18 @@ block_exec_R = function(options) {
   res.before = ('knitr'%:::%'run_hooks')(before = TRUE, options, env) # run 'before' hooks
   
   code = options$code
+  out.code = options$out.code
   echo = options$echo  # tidy code if echo
-  if (!isFALSE(echo) && !isFALSE(options$tidy) && length(code)) {
+  if (!isFALSE(echo) && !isFALSE(options$tidy) && length(out.code)) {
     tidy.method = if (isTRUE(options$tidy)) 'formatR' else options$tidy
     if (is.character(tidy.method)) tidy.method = switch(
       tidy.method,
-      formatR = function(code, ...) formatR::tidy_source(text = code, output = FALSE, ...)$text.tidy,
-      styler = function(code, ...) unclass(styler::style_text(text = code, ...))
+      formatR = function(out.code, ...) formatR::tidy_source(text = out.code, output = FALSE, ...)$text.tidy,
+      styler = function(out.code, ...) unclass(styler::style_text(text = out.code, ...))
     )
-    res = try_silent(do.call(tidy.method, c(list(code), options$tidy.opts)))
+    res = try_silent(do.call(tidy.method, c(list(out.code), options$tidy.opts)))
     
-    if (!inherits(res, 'try-error')) code = res else warning(
+    if (!inherits(res, 'try-error')) out.code = res else warning(
       "Failed to tidy R code in chunk '", options$label, "'. Reason:\n", res
     )
   }

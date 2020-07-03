@@ -2,7 +2,7 @@
 #'
 #' @description A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
 #' Variables from the analysis that is being performed within the multiverse can be accessed using the `$`.
-#' Object variables such as the `code`, the `multiverse table`, the `parameters` and the `conditions` can be accessed using respective functions
+#' Object variables such as the `code`, the `expanded parameter options table`, the `parameters` and the `conditions` can be accessed using respective functions
 
 #' @name accessors
 #' @param multiverse Object of class multiverse
@@ -15,24 +15,32 @@
   m_obj[['multiverse_table']][['.results']][[.idx]][[name]]
 }
 
-#' @rdname accessors
 #' @export
-multiverse_table <- function(multiverse) {
-  UseMethod("multiverse_table")
+`$<-.multiverse` <- function(multiverse, name, value) {
+  stop(
+    "cannot assign to objects in the multiverse. 
+    The `$` can only be used to extract objects from the default analysis of the multiverse"
+  )
 }
 
 #' @rdname accessors
 #' @export
-multiverse_table.default <- function(multiverse) {
+expand <- function(multiverse) {
+  UseMethod("expand")
+}
+
+#' @rdname accessors
+#' @export
+expand.default <- function(multiverse) {
   stop(
-    "Objects of type ", deparse(class(multiverse)), " do not have method `multiverse_table`. \n",
+    "Objects of type ", deparse(class(multiverse)), " do not have method `expand`. \n",
     "Please use objects of type `multiverse."
   )
 }
 
 #' @rdname accessors
 #' @export
-multiverse_table.multiverse <- function(multiverse) {
+expand.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['multiverse_table']]
 }
 

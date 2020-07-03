@@ -35,32 +35,28 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom parallel detectCores
-#' @importFrom parallel mclapply
+#' @importFrom parallel mcmapply
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, parallel = FALSE) {
+execute_multiverse <- function(multiverse, cores = NULL) {
   stopifnot( is.multiverse(multiverse) )
   .m_obj = attr(multiverse, "multiverse")
 
-  execute_all_in_multiverse(.m_obj, parallel)
+  execute_all_in_multiverse(.m_obj, cores)
 }
 
-execute_all_in_multiverse <- function(m_obj, .in_parallel) {
+execute_all_in_multiverse <- function(m_obj, .cores) {
   m_tbl = m_obj[['multiverse_table']]
+  .code_list = m_tbl[['.code']]
+  .env_list = m_tbl[['.results']]
   .universe = seq(1:nrow(m_tbl))
   
-  if (.in_parallel) {
-    results <- parallel::mclapply(.universe, execute_universe, multiverse = m_obj, mc.cores = 2)
+  if (is.null(.cores)) {
+    results <- mapply(execute_code_from_universe, .code_list, .env_list)
   } else {
-    results <- lapply(.universe, execute_universe, multiverse = m_obj)
+    results <- mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = .cores)
   }
-  
-  # results
-  #for (i in 1:nrow(m_tbl)) {
-  #  execute_universe(m_obj, i)
-  #  invisible( lapply(m_tbl$.code[[i]], eval, envir = m_tbl[['.results']][[i]]) )
-  #}
 }
 
 #' @rdname execute
@@ -72,6 +68,10 @@ execute_default <- function(multiverse) {
 execute_default.multiverse <- function(multiverse) {
   m_obj = attr(multiverse, "multiverse")
   execute_universe(m_obj)
+}
+
+execute_default.Multiverse <- function(multiverse) {
+  execute_universe(multiverse)
 }
 
 execute_universe <- function(multiverse, .universe = NULL) {
@@ -90,7 +90,11 @@ execute_universe <- function(multiverse, .universe = NULL) {
     env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
   }
   
-  invisible( lapply(.c, eval, envir = env) )
+  execute_code_from_universe(.c, env)
+}
+
+execute_code_from_universe <- function(.c, .env) {
+  invisible( lapply(.c, eval, envir = .env) )
 }
 
 

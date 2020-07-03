@@ -313,7 +313,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
       ))
   }), execute = FALSE)
 
-  p_tbl_df = multiverse_table(M) %>% select(-.code, -.results)
+  p_tbl_df = expand(M) %>% select(-.code, -.results)
 
   p_tbl_df.ref <- list(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
@@ -343,7 +343,7 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
   M = multiverse()
   # this should NOT generate a warning
   add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr( df <- data.frame(x = 1:10) ), execute = FALSE)
-  p_tbl_df = multiverse_table(M) %>% select(-.results)
+  p_tbl_df = expand(M) %>% select(-.results)
 
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
 })
@@ -375,7 +375,7 @@ test_that("`parse_multiverse` works when conditions are specified", {
       )
   }), execute = FALSE)
 
-  p_tbl_df = multiverse_table(M) %>% select( -.parameter_assignment, -.code, -.results )
+  p_tbl_df = expand(M) %>% select( -.parameter_assignment, -.code, -.results )
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
 })
 
@@ -409,7 +409,7 @@ test_that("`parameter_assignment` is created appropriately for single parameter 
       )
   }), execute = FALSE)
 
-  m.tbl = multiverse_table(M)
+  m.tbl = expand(M)
 
   expect_equal(m.tbl$.parameter_assignment, ref_list)
 })
@@ -426,7 +426,7 @@ test_that("`parameter_assignment` is created appropriately for two or more param
       ) %>%  filter( branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 ))
   }), execute = FALSE)
 
-  m.list = multiverse_table(M)$.parameter_assignment
+  m.list = expand(M)$.parameter_assignment
 
   ref_list = expand.grid(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
@@ -450,7 +450,7 @@ test_that("unnamed options in branches are supported", {
             y + 5
         ))
     })
-    M.tbl.1 = multiverse_table(M.1) %>% select(-.parameter_assignment, -.code, -.results)
+    M.tbl.1 = expand(M.1) %>% select(-.parameter_assignment, -.code, -.results)
 
     M.2 = multiverse()
     inside(M.2, {
@@ -462,7 +462,7 @@ test_that("unnamed options in branches are supported", {
             "y + 5" ~ y + 5
         ))
     })
-    M.tbl.2 = multiverse_table(M.2) %>% select(-.parameter_assignment, -.code, -.results)
+    M.tbl.2 = expand(M.2) %>% select(-.parameter_assignment, -.code, -.results)
     expect_equal( as.list(M.tbl.1), as.list(M.tbl.2) )
 })
 

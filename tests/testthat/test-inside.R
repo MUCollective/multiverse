@@ -130,3 +130,28 @@ test_that("continuous parameters defined in the multiverse are evaluated", {
   expect_equal(.expr_2, .ref_expr_2)
 })
 
+
+test_that("`add_and_parse_code` executes the default analysis", {
+  M = multiverse()
+  df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
+  
+  expect_error(inside(M, {
+    df <- df %>% mutate( z = branch( value_y, y, log(y)))
+  }), NA)
+  
+  expect_error(inside(M, {
+    df2 <- df %>% mutate( z = branch( value_y, y, log(y)))
+  }), NA)
+})
+
+test_that("inside cannot access variables which is not accessible from the environment the multiverse was declared in", {
+  M <- multiverse()
+  
+  myfun <- function() {
+    df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
+    
+    inside(M, { df <- df %>% mutate( z = branch( value_y, log(y), y)) })
+  }
+  
+  expect_error(myfun())
+})
