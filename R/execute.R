@@ -6,11 +6,13 @@
 #'
 #' @param multiverse The multiverse object
 #' 
-#' @param parallel (Logical) Indicates whether to run the multiverse in parallel. Defaults to FALSE.
+#' @param cores Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
+#' Defaults to NULL (running in a single core)
 #'
-#' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access
-#' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
-#' multiverse table, under the results column.
+#' @details Each single analysis within the multiverse lives in a separate environment. 
+#' We provide convenient functions to access the results for the  default analysis, as well as 
+#' parts or whole of the multiverse. Each analysis can also be accessed from the multiverse table,
+#' under the results column.
 #'
 #' @examples
 #' \dontrun{

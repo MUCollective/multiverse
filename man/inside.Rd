@@ -24,6 +24,9 @@ Add code to the multiverse using the function using a function call, or an assig
 a wrapper around the function
 }
 \details{
+The inside function can only access variables which can be accessed at the same environment 
+where the multiverse object was declared in.
+
 To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
@@ -35,6 +38,12 @@ provide separate functions. See \code{\link{execute}} for executing the code.
 
 Instead of using the `inside()` function, an alternate implementation of the multiverse is using
 the assignment operator, `<-`. See examples below.
+
+**Note:** the `inside()` function can only access variables which can be accessed at the same level as the multiverse
+object. Since `inside()` is merely an interface to add analysis to the multiverse object, even if it is being called 
+by another function, it is actually manipulating the multiverse object, which will have a different parent environment
+from where `inside()` is called, and hence not have access to variables which might be accessible in the environment 
+within the function from where `inside()` is called.
 }
 \examples{
 \dontrun{

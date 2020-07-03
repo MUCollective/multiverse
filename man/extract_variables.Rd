@@ -7,7 +7,7 @@
 extract_variables(.data, ..., .results = .results)
 }
 \arguments{
-\item{.data}{an data frame object created when declaring the multiverse, and accessed using \code{\link{multiverse_table}}
+\item{.data}{an data frame object created when declaring the multiverse, and accessed using \code{\link{expand}}
 See usage.}
 
 \item{...}{one or more variable (or object) names to be extracted from the multiverse object. The names can be quoted or unquoted.}

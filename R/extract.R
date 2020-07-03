@@ -12,7 +12,7 @@
 #' then each such variable will be extracted in its own list column. If the user wants to extract one or more dataframe 
 #' then they a column of type data frame (or tibble) would be created (which is a special instance of a list column).
 #' 
-#' @param .data an data frame object created when declaring the multiverse, and accessed using \code{\link{multiverse_table}}
+#' @param .data an data frame object created when declaring the multiverse, and accessed using \code{\link{expand}}
 #' See usage.
 #' 
 #' @param ... one or more variable (or object) names to be extracted from the multiverse object. The names can be quoted or unquoted.

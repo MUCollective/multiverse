@@ -6,14 +6,15 @@
 \alias{execute_default}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(multiverse, parallel = FALSE)
+execute_multiverse(multiverse, cores = NULL)
 
 execute_default(multiverse)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
 
-\item{parallel}{(Logical) Indicates whether to run the multiverse in parallel. Defaults to FALSE.}
+\item{cores}{Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
+Defaults to NULL (running in a single core)}
 }
 \description{
 These are functions which allow the user to execute parts or whole of the multiverse.
@@ -21,9 +22,10 @@ The user can choose to either execute the default analysis using the \code{\link
 whole of the multiverse using the \code{\link{execute_multiverse}}.
 }
 \details{
-Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access
-the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
-multiverse table, under the results column.
+Each single analysis within the multiverse lives in a separate environment. 
+We provide convenient functions to access the results for the  default analysis, as well as 
+parts or whole of the multiverse. Each analysis can also be accessed from the multiverse table,
+under the results column.
 }
 \examples{
 \dontrun{
