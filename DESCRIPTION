@@ -32,7 +32,6 @@ Imports:
     styler,
     codetools,
     highr,
-    pryr,
     evaluate,
     rstudioapi
 Suggests:

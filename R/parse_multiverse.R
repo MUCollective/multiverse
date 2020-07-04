@@ -29,6 +29,7 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @importFrom dplyr tibble
 #' @importFrom dplyr everything
 #' @importFrom dplyr filter
+#' @importFrom tibble tibble
 #' @importFrom tibble as_tibble
 #' @importFrom purrr compact
 #' @importFrom purrr map_chr
@@ -69,7 +70,7 @@ get_parameter_conditions_list <- function(.c) {
 }
 
 get_multiverse_table_no_param <- function(multiverse, .super_env) {
-  tibble::tibble(
+  tibble(
     .parameter_assignment = list( list() ),
     .code = list( multiverse[['code']] ),
     .results = list( new.env(parent = .super_env) )
