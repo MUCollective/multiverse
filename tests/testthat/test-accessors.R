@@ -33,26 +33,6 @@ test_that("`parameters()` throws error for objects of class other than multivers
   expect_error(parameters(M))
 })
 
-test_that("basic retrieval works with `conditions()`", {
-  M <- multiverse()
-  inside(M, {
-    df <- data.frame (x = 1:10 ) %>%
-      mutate( y = branch( values_y,
-                          TRUE,
-                          FALSE
-      )) %>%
-      mutate(
-        z = branch( values_z,
-                    "constant" ~ 5,
-                    "linear" ~ x + 1,
-                    "sum" ~ (x + y) %when% (values_y == TRUE)
-        )
-      )
-  })
-
-  expect_equal( conditions(M), list(expr((values_z != "sum" | (values_y == TRUE)))) )
-})
-
 test_that("`conditions()` throws error for objects of class other than multiverse", {
   M <- data.frame(x = 1:10)
   expect_error(conditions(M))
@@ -87,4 +67,24 @@ test_that("basic retrieval works with `multiverse()`", {
 test_that("`multiverse_table()` throws error for objects of class other than multiverse", {
   M <- data.frame(x = 1:10)
   expect_error(multiverse_table(M))
+})
+
+test_that("basic retrieval works with `conditions()`", {
+  M <- multiverse()
+  inside(M, {
+    df <- data.frame (x = 1:10 ) %>%
+      mutate( y = branch( values_y,
+                          TRUE,
+                          FALSE
+      )) %>%
+      mutate(
+        z = branch( values_z,
+                    "constant" ~ 5,
+                    "linear" ~ x + 1,
+                    "sum" ~ (x + y) %when% (values_y == TRUE)
+        )
+      )
+  })
+  
+  expect_equal( conditions(M), list(expr((values_z != "sum" | (values_y == TRUE)))) )
 })

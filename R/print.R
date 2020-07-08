@@ -14,8 +14,8 @@
 print.multiverse <- function(x, ...) {
   y <- parameters(x)
   z <- conditions(x)
-  ly <- ifelse(length(x) > 20, 20, length(x))
-  lz <- ifelse(length(x) > 10, 10, length(x))
+  ly <- ifelse(length(y) > 20, 20, length(y))
+  lz <- ifelse(length(z) > 10, 10, length(z))
   
   cat("Multiverse\n\n")
   cat("  Multiverse consists of", nrow(expand(x)), "different analyses\n\n")

@@ -148,9 +148,9 @@ test_that("inside cannot access variables which is not accessible from the envir
   M <- multiverse()
   
   myfun <- function() {
-    df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
+    dat <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
     
-    inside(M, { df <- df %>% mutate( z = branch( value_y, log(y), y)) })
+    inside(M, { dat <- dat %>% mutate( z = branch( value_y, log(y), y)) })
   }
   
   expect_error(myfun())
