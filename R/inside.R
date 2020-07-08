@@ -83,7 +83,6 @@
 #' @import rlang
 #' @importFrom magrittr %>%
 #' @importFrom magrittr inset2
-#' @importFrom pryr where
 #'
 #' @name inside
 #' @export

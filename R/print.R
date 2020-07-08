@@ -12,13 +12,13 @@
 #'
 #' @export
 print.multiverse <- function(x, ...) {
-  y <- parameters(M)
-  x <- conditions(M)
+  y <- parameters(x)
+  z <- conditions(x)
   ly <- ifelse(length(y) > 20, 20, length(y))
-  lx <- ifelse(length(x) > 10, 10, length(x))
+  lz <- ifelse(length(z) > 10, 10, length(z))
   
   cat("Multiverse\n\n")
-  cat("  Multiverse consists of", nrow(expand(M)), "different analyses\n\n")
+  cat("  Multiverse consists of", nrow(expand(x)), "different analyses\n\n")
   for (i in 1:ly) {
     cat("  ", "Parameter:", names(y)[[i]], "\n")
     cat("      ")
@@ -35,12 +35,12 @@ print.multiverse <- function(x, ...) {
   }
   
   cat("\n  ", "Conditions:", "\n")
-  for (i in 1:lx) {
+  for (i in 1:lz) {
     cat("      ", as.character(x[[1]])[2], "\n")
   }
   if (length(x) > 10) {
     cat("  ", "...")
-    cat(" [", (length(x) - 20), " conditions not shown]", "\n", sep = "")
+    cat(" [", (length(z) - 20), " conditions not shown]", "\n", sep = "")
   }
 }
 
