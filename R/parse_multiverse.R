@@ -170,6 +170,8 @@ get_condition <- function(.x, name) {
 get_implies_consequent <- function(.x) {
   if( is_call(.x, "%when%") ) {
     f_rhs(.x)
+  } else if( is_call(.x, "if") ) {
+    f_lhs(.x)
   } else if (is_call(.x, "(") | is_call(.x, "{")) {
     get_implies_consequent(f_rhs(.x))
   }
@@ -201,7 +203,7 @@ combine_parameter_conditions <- function(l1, l2) {
   )
 }
 
-get_option_name <- function(x) {
+get_option_name2 <- function(x) {
   # when option names are specified
   if (is.call(x) && x[[1]] == "~") {
     if (is.call( f_lhs(x) ) && f_lhs(x)[[1]] == "%when%" ) {
@@ -222,6 +224,38 @@ get_option_name <- function(x) {
     create_name_from_expr(x, TRUE)
   }
 }
+
+get_option_name <- function(x) {
+  # when option names are specified
+  if (is.call(x) && x[[1]] == "~") {
+    if (is.call( f_lhs(x) ) && f_lhs(x)[[1]] == "%when%" ) {
+      .expr = f_lhs(f_lhs(x))
+      return( create_name_from_expr(.expr) )
+    } else if (is.call( f_lhs(x)) ) {
+      .expr = f_lhs(x)
+      return( create_name_from_expr(.expr) )
+    }
+    return( f_lhs(x) )
+  }
+  else {
+    if (is.call( x ) && x[[1]] == "if" ) {
+      # check if option name is present
+      if (is.call(f_rhs(x)) && f_rhs(x)[[1]] == "~") {
+        .expr = f_lhs(f_rhs(x))
+      } 
+      # if not present, then the entire expr is the option name
+      if (is.call(f_rhs(x)) && f_rhs(x)[[1]] != "~") {
+        .expr = f_rhs(x)
+      }
+      return( create_name_from_expr(.expr) )
+    } else if (is.call( x ) && x[[1]] == "%when%" ) {
+      .expr = f_lhs(x)
+      return( create_name_from_expr(.expr) )
+    }
+    create_name_from_expr(x, TRUE)
+  }
+}
+
 
 combine_parameter_conditions_list <- function(l) {
   .list = list(parameters = list(), conditions = list())

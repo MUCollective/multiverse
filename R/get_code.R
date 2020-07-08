@@ -38,6 +38,8 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
   }
   
   x <- lapply(.code, get_parameter_code, .assgn)
+  
+  x
   # get_parameter_code(.code, .assgn)
 }
 
@@ -84,7 +86,19 @@ rm_branch_assert <- function(.expr) {
     else if (is.call(.expr) && .expr[[1]] == quote(`%when%`)) {
       .expr = .expr[[2]]
     }
-
+    
+    # checks if expression is a `if` conditional
+    # if it is, only return the rhs of the rhs
+    else if (is.call( .expr ) && .expr[[1]] == "if" ) {
+      # check if option name is present
+      if (is.call(f_rhs(.expr)) && f_rhs(.expr)[[1]] == "~") {
+        .expr = f_rhs(f_rhs(.expr))
+      } 
+      # if not present, then the entire expr is the option name
+      if (is.call(f_rhs(.expr)) && f_rhs(.expr)[[1]] != "~") {
+        .expr = f_rhs(.expr)
+      }
+    }
     .expr
   } else {
     .expr
