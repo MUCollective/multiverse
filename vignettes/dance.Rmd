@@ -157,7 +157,7 @@ inside(M, {
   
   data.i = vis_correlation %>%
     group_by(rbase, sign, vis, approach) %>%
-    summarise( jnd = list(jnd) ) %>%
+    summarise( jnd = list(jnd), .groups = "drop" ) %>%
     mutate( 
       sample_size = map_dbl(jnd, length ),
       bootstrap_samples = map(jnd, ~ sample( .x, size = sample_size, replace = TRUE))

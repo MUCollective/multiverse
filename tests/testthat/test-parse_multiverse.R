@@ -513,3 +513,36 @@ test_that("conditions are extracted when specified using `branch_assert`", {
 
   expect_equal(conditions(M), cond.ref)
 })
+
+# branch with the same parameters -----------------------------------------------------
+test_that("multiverse with same parameter but different option names throw error", {
+  M <- multiverse()
+  
+  # this should work but it wont right now
+  inside(M, { 
+    some_var = branch(parameter, "option1" ~ 1, "option2" ~ 2)
+  })
+  
+  expect_error(inside(M, { 
+    var2 = branch(parameter, "option3" ~ 5, "option2" ~ 6) 
+  }))
+  expect_error(inside(M, { 
+    var3 = branch(parameter1, "option1" ~ 5, "option2" ~ 6) 
+    var2 = branch(parameter, "option3" ~ 5, "option2" ~ 6) 
+  }))
+})
+
+test_that("multiverse with same parameter and option do not throw error with different parameters sharing same option names", {
+  M <- multiverse()
+  
+  # this should work but it wont right now
+  inside(M, { 
+    some_var = branch(parameter, "option1" ~ 1, "option2" ~ 2)
+  })
+  
+  expect_error(inside(M, { 
+    var3 = branch(parameter1, "option1" ~ 5, "option2" ~ 6) 
+    var2 = branch(parameter, "option1" ~ 5, "option2" ~ 6) 
+  }), NA)
+})
+

@@ -8,6 +8,9 @@
 #' 
 #' @param cores Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
 #' Defaults to NULL (running in a single core)
+#' 
+#' @param .universe Indicate which universe to execute, if the user wants to execute a specific combination
+#' of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.
 #'
 #' @details Each single analysis within the multiverse lives in a separate environment. 
 #' We provide convenient functions to access the results for the  default analysis, as well as 
@@ -37,45 +40,41 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom parallel detectCores
-#' @importFrom parallel mcmapply
+#' @importFrom parallel mclapply
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, cores = NULL) {
-  stopifnot( is.multiverse(multiverse) )
-  .m_obj = attr(multiverse, "multiverse")
-
-  execute_all_in_multiverse(.m_obj, cores)
-}
-
-execute_all_in_multiverse <- function(m_obj, .cores) {
-  m_tbl = m_obj[['multiverse_table']]
+execute_multiverse <- function(multiverse, cores = 1L) {
+  m_tbl = attr(multiverse, "multiverse")[['multiverse_table']]
   .code_list = m_tbl[['.code']]
   .env_list = m_tbl[['.results']]
   .universe = seq(1:nrow(m_tbl))
   
-  if (is.null(.cores)) {
-    results <- mapply(execute_code_from_universe, .code_list, .env_list)
-  } else {
-    results <- mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = .cores)
-  }
+  results <- parallel::mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
 }
+
 
 #' @rdname execute
 #' @export
 execute_default <- function(multiverse) {
-  UseMethod("execute_default")
+  UseMethod("execute_default", multiverse)
 }
 
+#' @rdname execute
+#' @export
+execute_default.default <- function(multiverse) {
+  stop("execute_default can only be called on objects of class multiverse")
+}
+
+#' @rdname execute
+#' @export
 execute_default.multiverse <- function(multiverse) {
   m_obj = attr(multiverse, "multiverse")
   execute_universe(m_obj)
 }
 
-execute_default.Multiverse <- function(multiverse) {
-  execute_universe(multiverse)
-}
-
+#' @rdname execute
+#' @export
 execute_universe <- function(multiverse, .universe = NULL) {
   if(is.null(.universe)) {
     .param_assgn = multiverse[['default_parameter_assignment']]
@@ -97,6 +96,14 @@ execute_universe <- function(multiverse, .universe = NULL) {
 
 execute_code_from_universe <- function(.c, .env) {
   invisible( lapply(.c, eval, envir = .env) )
+}
+
+execute_multiverse2 <- function(multiverse, cores = getOption("mc.cores", 1L)) {
+  stopifnot( is.multiverse(multiverse) )
+  .m_obj = attr(multiverse, "multiverse")
+  .universe = seq(1:nrow(expand(multiverse)))
+  
+  results <- mclapply(.universe, execute_universe, multiverse = .m_obj, mc.cores = cores)
 }
 
 

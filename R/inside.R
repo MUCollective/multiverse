@@ -154,14 +154,14 @@ add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute =
     }
   }
   
+  parse_multiverse(m_obj, .c, .super_env)
   m_obj$code <- .c
-  parse_multiverse(m_obj, .super_env)
 
   # the execute parameter is useful for parsing tests where we don't want to
   # actually execute anything. probably more for internal use
   if (execute) {
     if (!is.null(getOption("knitr.in.progress"))) execute_all_in_multiverse(m_obj, FALSE)
-    execute_default(m_obj)
+    execute_universe(m_obj)
   }
     
 }
