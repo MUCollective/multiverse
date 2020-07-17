@@ -172,10 +172,10 @@ test_that("syntax tree without branches is correctly returned", {
 
   M.no_branch = multiverse()
 
-  add_and_parse_code(attr(M.no_branch, "multiverse"), attr(M.no_branch, "multiverse_super_env"), quote({
+  add_and_parse_code(M.no_branch, quote({
     df <- test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
-  }), execute = FALSE)
+  }))
 
   expect_equal(code(M.no_branch), list(an_expr))
 })

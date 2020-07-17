@@ -40,7 +40,7 @@ test_that("`conditions()` throws error for objects of class other than multivers
 
 test_that("basic retrieval works with `multiverse()`", {
   M <- multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
+  add_and_parse_code(M, expr({
     df <- data.frame (x = 1:10 ) %>%
       mutate( y = branch( values_y, TRUE, FALSE )) %>%
       mutate(
@@ -50,7 +50,7 @@ test_that("basic retrieval works with `multiverse()`", {
                     "sum" ~ (x + y)
         )
       )
-  }), execute = FALSE)
+  }))
 
   m_tbl = expand(M) %>% select(-.parameter_assignment, -.code, -.results)
   m_tbl.ref = expand.grid(list(
