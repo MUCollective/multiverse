@@ -173,7 +173,7 @@ block_exec_R = function(options) {
           # keep only selected
           if (keep == 'index') res = res[-which(figs)[-keep.idx]]
           # merge low-level plotting changes
-          if (keep == 'high') res = merge_low_plot(res, figs)
+          if (keep == 'high') res = ('knitr'%:::%'merge_low_plot')(res, figs)
         }
       }
     }
