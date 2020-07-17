@@ -69,26 +69,27 @@ execute_default.default <- function(multiverse) {
 #' @rdname execute
 #' @export
 execute_default.multiverse <- function(multiverse) {
-  m_obj = attr(multiverse, "multiverse")
-  execute_universe(m_obj)
+  execute_universe(multiverse)
 }
 
 #' @rdname execute
 #' @export
 execute_universe <- function(multiverse, .universe = NULL) {
+  m_obj = attr(multiverse, "multiverse")
+  
   if(is.null(.universe)) {
-    .param_assgn = multiverse[['default_parameter_assignment']]
+    .param_assgn = m_obj[['default_parameter_assignment']]
   } else {
     .param_assgn = .universe
   }
   
-  if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
-    .c = multiverse[['multiverse_table']][['.code']][[1]]
-    env = multiverse[['multiverse_table']][['.results']][[1]]
+  if ( is.list(m_obj[['parameters']]) & length(m_obj[['parameters']]) == 0 ) {
+    .c = m_obj[['multiverse_table']][['.code']][[1]]
+    env = m_obj[['multiverse_table']][['.results']][[1]]
   } else {
     stopifnot(is.numeric(.param_assgn) || !is.null(.param_assgn))
-    .c = multiverse[['multiverse_table']][['.code']][[.param_assgn]]
-    env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
+    .c = m_obj[['multiverse_table']][['.code']][[.param_assgn]]
+    env = m_obj[['multiverse_table']][['.results']][[.param_assgn ]]
   }
   
   execute_code_from_universe(.c, env)
