@@ -9,24 +9,24 @@ test_that("basic assignment with `$` throws error", {
   expect_error(M$x <- 5)
 })
 
-# test_that("basic retrieval works with `code()`", {
-#  M <- multiverse()
-#  M$x <- ~ 5
-#
-#  expect_equal(code(M), list(expr({ x <- 5 })) )
-# })
+test_that("basic retrieval works with `code()`", {
+  M <- multiverse()
+  inside(M, {x <- 5})
+
+  expect_equal(code(M), list(quote({ x <- 5 })) )
+})
 
 test_that("`code()` throws error for objects of class other than multiverse", {
   M <- data.frame(x = 1:10)
   expect_error(code(M))
 })
 
-# test_that("basic retrieval works with `parameters()`", {
-#  M <- multiverse()
-#  M$x <- ~ branch( x_values, 0, 3, 5 )
-#
-#  expect_equal(parameters(M), list(x_values = list("0", "3", "5")) )
-# })
+test_that("basic retrieval works with `parameters()`", {
+  M <- multiverse()
+  inside(M, {branch( x_values, 0, 3, 5 )})
+
+  expect_equal(parameters(M), list(x_values = list("0", "3", "5")) )
+})
 
 test_that("`parameters()` throws error for objects of class other than multiverse", {
   M <- data.frame(x = 1:10)

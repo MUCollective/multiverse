@@ -515,7 +515,7 @@ test_that("conditions are extracted when specified using `branch_assert`", {
 })
 
 # branch with the same parameters -----------------------------------------------------
-test_that("multiverse with same parameter but different option names throw error", {
+test_that("multiverse with same parameter but different option names (across different calls to inside) throw error", {
   M <- multiverse()
   
   # this should work but it wont right now
@@ -532,10 +532,33 @@ test_that("multiverse with same parameter but different option names throw error
   }))
 })
 
-test_that("multiverse with same parameter and option do not throw error with different parameters sharing same option names", {
+test_that("multiverse with same parameter but different option names (in the same call to inside) throw error", {
   M <- multiverse()
   
-  # this should work but it wont right now
+  expect_error(inside(M, { 
+    some_var = branch(parameter, "option1" ~ 1, "option2" ~ 2)
+    var2 = branch(parameter, "option3" ~ 5, "option2" ~ 6) 
+  }))
+  expect_error(inside(M, { 
+    some_var = branch(parameter, "option1" ~ 1, "option2" ~ 2)
+    var3 = branch(parameter1, "option1" ~ 5, "option2" ~ 6) 
+    var2 = branch(parameter, "option3" ~ 5, "option2" ~ 6) 
+  }))
+})
+
+test_that("multiverse with same parameter and option do not throw error with different parameters sharing same option names (in the same call to inside)", {
+  M <- multiverse()
+  
+  expect_error(inside(M, { 
+    some_var = branch(parameter, "option1" ~ 1, "option2" ~ 2)
+    var3 = branch(parameter1, "option1" ~ 5, "option2" ~ 6) 
+    var2 = branch(parameter, "option1" ~ 5, "option2" ~ 6) 
+  }), NA)
+})
+
+test_that("multiverse with same parameter and option do not throw error with different parameters sharing same option names (across different calls to inside)", {
+  M <- multiverse()
+  
   inside(M, { 
     some_var = branch(parameter, "option1" ~ 1, "option2" ~ 2)
   })
@@ -545,4 +568,6 @@ test_that("multiverse with same parameter and option do not throw error with dif
     var2 = branch(parameter, "option1" ~ 5, "option2" ~ 6) 
   }), NA)
 })
+
+
 
