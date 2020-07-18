@@ -289,7 +289,7 @@ test_that("`get_condition` ignores `%when%` if assigned to subexpression of an o
 
 test_that("`parse_multiverse` returns the complete parameter table", {
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
+  add_and_parse_code(M, expr({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
@@ -311,7 +311,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
           "cer_option1" ~ TRUE,
           "cer_option2" ~ Sure1 > 6 | Sure2 > 6
       ))
-  }), execute = FALSE)
+  }))
 
   p_tbl_df = expand(M) %>% select(-.code, -.results)
 
@@ -337,12 +337,12 @@ test_that("`parse_multiverse` returns the complete parameter table", {
 test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tbl' slot when it is passed an expression without any branches", {
   p_tbl_df.ref = tibble::tibble(
     .parameter_assignment = list( list() ),
-    .code = list( list(rlang::expr( df <- data.frame(x = 1:10) )) )
+    .code = list( list(rlang::expr( {df <- data.frame(x = 1:10)} )) )
   )
 
   M = multiverse()
   # this should NOT generate a warning
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr( df <- data.frame(x = 1:10) ), execute = FALSE)
+  add_and_parse_code(M, expr( df <- data.frame(x = 1:10) ))
   p_tbl_df = expand(M) %>% select(-.results)
 
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
@@ -360,7 +360,7 @@ test_that("`parse_multiverse` works when conditions are specified", {
   filter( values_z != "sum" | values_y == TRUE )
 
   M <- multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
+  add_and_parse_code(M, expr({
     df <- data.frame (x = 1:10 ) %>%
       mutate( y = branch( values_y,
                           TRUE,
@@ -373,7 +373,7 @@ test_that("`parse_multiverse` works when conditions are specified", {
                     "sum" ~ (x + y) %when% (values_y == TRUE)
         )
       )
-  }), execute = FALSE)
+  }))
 
   p_tbl_df = expand(M) %>% select( -.parameter_assignment, -.code, -.results )
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
@@ -381,7 +381,7 @@ test_that("`parse_multiverse` works when conditions are specified", {
 
 test_that("`parse_multiverse` requires multiple uses of the same paramater to cover all options", {
   M = multiverse()
-  expect_error(add_and_parse_code(attr(M, "multiverse"), execute = FALSE, expr({
+  expect_error(add_and_parse_code(M, expr({
     some_var = branch(parameter,
       "option1" ~ expr1,
       "option2" ~ expr2
@@ -399,7 +399,7 @@ test_that("`parameter_assignment` is created appropriately for single parameter 
   ref_list = lapply(c("mc_option1", "mc_option2", "mc_option3"), function(x) list(menstrual_calculation = x))
 
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
+  add_and_parse_code(M, expr({
     df <- test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
@@ -407,7 +407,7 @@ test_that("`parameter_assignment` is created appropriately for single parameter 
                                           "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
                                           "mc_option3" ~ StartDateNext)
       )
-  }), execute = FALSE)
+  }))
 
   m.tbl = expand(M)
 
@@ -416,7 +416,7 @@ test_that("`parameter_assignment` is created appropriately for single parameter 
 
 test_that("`parameter_assignment` is created appropriately for two or more parameter multiverses", {
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
+  add_and_parse_code(M, expr({
     df <- test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
@@ -424,7 +424,7 @@ test_that("`parameter_assignment` is created appropriately for two or more param
                                           "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
                                           "mc_option3" ~ StartDateNext)
       ) %>%  filter( branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 ))
-  }), execute = FALSE)
+  }))
 
   m.list = expand(M)$.parameter_assignment
 
@@ -468,7 +468,7 @@ test_that("unnamed options in branches are supported", {
 
 test_that("conditions are extracted when specified using `branch_assert`", {
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr({
+  add_and_parse_code(M, expr({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate(NextMenstrualOnset = branch(menstrual_calculation,
@@ -503,7 +503,7 @@ test_that("conditions are extracted when specified using `branch_assert`", {
       branch_assert(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2") %>%
       branch_assert(relationship_status != "rs_option3" | menstrual_calculation == "mc_option1") %>%
       branch_assert(fertile != "fer_option4" | certainty == "cer_option2")
-  }), execute = FALSE)
+  }))
 
   cond.ref = list(
     expr(cycle_length != "cl_option2" | menstrual_calculation == "mc_option2"),

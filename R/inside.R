@@ -87,14 +87,13 @@
 #' @name inside
 #' @export
 inside <- function(multiverse, .expr, .label = NULL) {
-  .expr = enexpr(.expr)
-  
-  if(!is_call(.expr, "{")) {
-    .expr = expr({ !!.expr })
-  }
-  .expr = eval_seq_in_code(.expr)
+  .code = enexpr(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, .label)
+  add_and_parse_code(multiverse, .code, .label)
+
+  # direct calls to inside() by the user result in execution of the
+  # default universe in the global environment.
+  execute_universe(multiverse)
 }
 
 
@@ -113,9 +112,9 @@ inside <- function(multiverse, .expr, .label = NULL) {
 #  )
   
 #   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
-#   .expr = eval_seq_in_code(.expr)
+#   .expr = expand_branch_options(.expr)
 
-#   add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
+#   add_and_parse_code(multiverse, .expr)
 
 #   multiverse
 # }
@@ -132,7 +131,17 @@ compare_code <- function(x, y) {
 }
 
 
-add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute = TRUE) {
+add_and_parse_code <- function(multiverse, .code, .name = NULL) {
+  m_obj <- attr(multiverse, "multiverse")
+  .super_env <- attr(multiverse, "multiverse_super_env")
+  
+  # ensure that .code is a single self-contained { ... } block
+  if(!is_call(.code, "{")) {
+    .code = as.call(list(quote(`{`), .code))
+  }
+  # expand .options arguments in branch calls
+  .code = expand_branch_options(.code)
+  
   .loc = length(m_obj$code)
   
   if (is_null(m_obj$code)) {
@@ -156,14 +165,6 @@ add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute =
   
   parse_multiverse(m_obj, .c, .super_env)
   m_obj$code <- .c
-
-  # the execute parameter is useful for parsing tests where we don't want to
-  # actually execute anything. probably more for internal use
-  if (execute) {
-    if (!is.null(getOption("knitr.in.progress"))) execute_all_in_multiverse(m_obj, FALSE)
-    execute_universe(m_obj)
-  }
-    
 }
 
 concatenate_expr <- function(ref, to_add){
@@ -183,7 +184,8 @@ concatenate_expr <- function(ref, to_add){
 }
 
 
-eval_seq_in_code <- function(.expr) {
+# expand use of .options argument in branch calls
+expand_branch_options <- function(.expr) {
     if (is.call(.expr)) {
       if (is_call(.expr, "branch")) {
         .new_expr = .expr
@@ -194,7 +196,7 @@ eval_seq_in_code <- function(.expr) {
         }
         return(.new_expr)
       } else {
-        as.call(map(.expr, ~ eval_seq_in_code(.x)))
+        as.call(map(.expr, ~ expand_branch_options(.x)))
       }
     } else {
       .expr
