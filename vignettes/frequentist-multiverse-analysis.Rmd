@@ -9,14 +9,8 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -25,6 +19,14 @@ library(broom)
 library(gganimate)
 library(multiverse)
 library(boot)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ```{r, block-exec, echo = FALSE}
@@ -134,7 +136,7 @@ conf_level <-  branch(conf_level,
 We now look at the multiverse table and see that it has created all the possible combinations:
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
 We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options.
@@ -178,7 +180,7 @@ execute_multiverse(M)
 Next, we need to extract the results from the multiverse. The results for each unique analysis combination (a universe in our multiverse), is stored in an environment in the `.results` column. We can extract data frames from this column using the \code{\link[purrr:map]{purrr::map()}} function. This creates a new column in our data frame, `summary` which itself consists of data frames.
 
 ```{r}
-df.mtbl <- multiverse_table(M)
+df.mtbl <- expand(M)
 df.mtbl$summary = map(df.mtbl$.results, "df")
 
 head(df.mtbl)
@@ -227,7 +229,7 @@ The figure above shows the (geometric) mean completion time for each condition. 
 So far we have tried to keep this analysis in base R. However, the steps involved in extracting and visualising results from the multiverse maybe more convenient for some using the tidyverse API. We can implement the steps that we have taken in the previous three code block in the following way using the tidyverse. The result of this is the same data frame that was created in the previous step, and was used as input data to ggplot, `df.results`. The `multiverse` package is flexible, and does not restrict you towards a particular style of R programming.
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( index = seq(1:nrow(.)) ) %>%
   mutate( summary = map(.results, "df") ) %>%
   unnest_wider( c(summary)) %>%
@@ -278,7 +280,7 @@ execute_multiverse(M)
 We then use the workflow described in the previous section to extract results for each universe in the multiverse. We then use gganimate to plot the results.
 
 ```{r}
-df.results.diff <- multiverse_table(M) %>%
+df.results.diff <- expand(M) %>%
   mutate( df = map(.results, "df.diffs") ) %>%
   unnest_wider(c(df) ) %>%
   unnest(cols = c(modality, estimate, conf.low, conf.high) ) %>%

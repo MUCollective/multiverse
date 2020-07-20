@@ -1,5 +1,6 @@
 multiverse_engine <- function(options) {
   .c = multiverse_block_code(options$inside, options$label, options$code)
+  
   if(is.null(getOption("knitr.in.progress"))) {
      multiverse_default_block_exec(.c, options)
   } else {
@@ -58,7 +59,6 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     options$dev = 'png'
     
     block_exec_R(options)
-    
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     

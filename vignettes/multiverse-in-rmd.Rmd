@@ -9,14 +9,8 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-```{r setup, include=FALSE}
+```{r, setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -24,13 +18,14 @@ library(purrr)
 library(multiverse)
 ```
 
-```{r, block-exec, echo = FALSE}
-custom_block_exec <- multiverse:::custom_block_exec
-
-## Hot patch for knitting: re-assign the function in the relevant namespace
-environment(custom_block_exec) <- asNamespace('knitr')
-assignInNamespace("block_exec", custom_block_exec, ns = "knitr")
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
+
 
 ## Introduction
 
@@ -94,9 +89,10 @@ Alternately, users can insert a multiverse We also allow users to create a keybo
 
 ### Multiverse code block
 
-The declaration of the chunk below is (this gets hidden when we knit the document): ` ```{multiverse, label = default-m-1, inside = M_block}`
+The declaration of the chunk below is (this gets hidden when we knit the document): ` ```{multiverse default-m-1, inside = M_block}`
 
-```{multiverse label = default-m-1, inside = M_block}
+
+```{multiverse, label = default-m-1, inside = M_block}
 data_transform <- branch(data_transform,
     "log-transformed" ~ log,
     "untransformed" ~ identity
@@ -105,14 +101,16 @@ data_transform <- branch(data_transform,
 duration <- do.call(data_transform, list(userlogs$duration))
 ```
 
+
+
 The result of this code block will be identical to the result using `inside()`. We first compare whether the multiverse table is generated properly for both the multiverse objects.
 
 ```{r}
-multiverse_table(M_inside)
+expand(M_inside)
 ```
 
 ```{r}
-multiverse_table(M_block)
+expand(M_block)
 ```
 
 As you can see above, both the methods yield the same multiverse table.
@@ -121,12 +119,12 @@ Next, we inspect the `.code` column of the multiverse object. This column contai
 Below is the output from the first multiverse object (`M_inside`), which uses the inside function:
 
 ```{r, echo = FALSE}
-multiverse_table(M_inside)$.code
+expand(M_inside)$.code
 ```
 
 This is the output from the second multiverse object (`M_block`), which uses the multiverse code block:
 
 ```{r, echo = FALSE}
-multiverse_table(M_block)$.code
+expand(M_block)$.code
 ```
 

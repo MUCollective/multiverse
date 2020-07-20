@@ -13,14 +13,8 @@ vignette: >
 
 In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualize the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualizing them can be difficult. We will show how our package can be used to create the visualizations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998), as well as using other uncertainty visualization approaches.
 
-```{r, setup, include=FALSE}
+```{r, setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -31,6 +25,14 @@ library(cowplot)
 library(stringr)
 library(forcats)
 library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ## Data and Analysis
@@ -153,7 +155,7 @@ All the computed summaries (`summary_RelComp`, `summary_FiscConsComp`, `summary_
 
 
 ```{r, multiverse-results}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( summary = map(.results, "summary_RelComp") ) %>%
   unnest( summary )
 ```
@@ -166,7 +168,7 @@ We can then use various R packages to visualize the results. Below, we show some
 One way to visualize over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in [Increasing the Transparency of Research Papers with Explorable Multiverse Analyses](https://dl.acm.org/citation.cfm?id=3300295). This approach allows us to quickly see the robustness of a result --- if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.
 
 ```{r, message = FALSE, fig.width = 6, fig.height = 4}
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
   mutate( term = recode( term, 
@@ -189,7 +191,7 @@ Another approach would be to summarise the results. Steegen et al. which depicts
 Below we show how to re-create the visualization. 
 
 ```{r fig.width = 9, fig.height = 9}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( index = seq(1:nrow(.)) ) %>%
   mutate( 
     summary_RelComp = map(.results, "summary_RelComp" ),
@@ -212,7 +214,7 @@ multiverse_table(M) %>%
 Simonsohn et al. propose visualizing results from the multiverse as a `specification curve`, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.
 
 ```{r, fig.width = 12, fig.height = 6}
-data.spec_curve <- multiverse_table(M) %>%
+data.spec_curve <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
   filter( term == "Fertilitylow:RelationshipStatusSingle" ) %>%
@@ -250,7 +252,7 @@ cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = 
 ```{r, eval = FALSE, fig.width = 9, fig.height = 5}
 ## **Incomplete**
 
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( index = seq(1:nrow(.)) ) %>%
   mutate( summary = map(.results, "summary_RelComp" ) ) %>%
   unnest(summary) %>%

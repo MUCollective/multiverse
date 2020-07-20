@@ -10,14 +10,8 @@ vignette: >
 ---
 
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -25,6 +19,14 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ## Introduction
@@ -238,7 +240,7 @@ execute_multiverse(M)
 
 
 ```{r, vis-errorbars-above, fig.width = 8, fig.height = 5}
-p.above <- multiverse_table(M) %>%
+p.above <- expand(M) %>%
   mutate(data = map(.results, "df.error_bar.i")) %>%
   unnest( cols = c(data) ) %>%
   filter( sign == 1 ) %>%
@@ -256,7 +258,7 @@ animate(p.above, nframes = n, fps = 3, width = 840, height = 320)
 
 
 ```{r, vis-errorbars-below}
-p.below <- multiverse_table(M) %>%
+p.below <- expand(M) %>%
   mutate(data = map(.results, "df.error_bar.i")) %>%
   unnest( cols = c(data) ) %>%
   filter( sign == -1 ) %>%
@@ -273,7 +275,7 @@ animate(p.below, nframes = n, fps = 3, width = 840, height = 320)
 
 
 ```{r, vis-regression-lines}
-p.fitted_lines <- multiverse_table(M) %>%
+p.fitted_lines <- expand(M) %>%
   mutate(data = map(.results, "df.corr_fitted.i")) %>%
   unnest( cols = c(data) ) %>%
   ggplot() +

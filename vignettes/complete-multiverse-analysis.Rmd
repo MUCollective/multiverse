@@ -17,14 +17,8 @@ Data analysis can involve several decisions involving two or more options. In mo
 
 Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis. 
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -32,7 +26,15 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(cowplot)
-# library(multiverse)
+library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ## The data
@@ -175,10 +177,10 @@ parameters(M)
 ```
 
 2. `conditions`, which is a list of conditions (we'll define this later)
-3. `multiverse_table`, which is a tibble consisting of all possible combination of values for the multiverse
+3. `expand`, which is a tibble consisting of all possible combination of values for the multiverse
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
 4. `current_parameter_assignment`, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.
@@ -242,10 +244,10 @@ Since the multiverse object has already been created and the one parameter has a
 code(M)
 ```
 
-The `multiverse_table` will contain all the possible combinations of the parameter options that have been identified.
+The `expand` will contain all the possible combinations of the parameter options that have been identified.
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   head()
 ```
 
@@ -255,7 +257,7 @@ In our multiverse we have identified 5 options for calculating `fertility`, 3 op
 This results in $ 5 \times 3 \times 3 \times 3 \times 2 = 270$ possible combinations.
 
 ```{r}
-multiverse_table(M) %>% nrow()
+expand(M) %>% nrow()
 ```
 
 We can then inspect the default analysis the default single universe analysis from this multiverse:
@@ -344,7 +346,7 @@ inside(M, {
 After excluding the inconsistent choice combinations, $270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210$ choice combinations remain:
 
 ```{r}
-multiverse_table(M) %>% nrow()
+expand(M) %>% nrow()
 ```
 
 Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
@@ -356,21 +358,27 @@ Steegen et al. create 6 models. The first model uses data from example #1. The o
 The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.
 
 ```{r}
-M$df <- ~ df %>%
+inside(M, {
+  df <- df %>%
   mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
+})
 ```
 
 The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`.
 
 ```{r}
-M$fit_RelComp <- ~ lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+inside(M, {
+  fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+})
 ```
 
 To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using `broom::tidy`. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call `execute_multiverse()` to execute our analysis in each multiverse.
 
 ```{r}
-M$summary_RelComp <- ~ fit_RelComp %>% 
-  broom::tidy( conf.int = TRUE )
+inside(M, {
+  summary_RelComp <- fit_RelComp %>% 
+    broom::tidy( conf.int = TRUE )
+})
 
 execute_multiverse(M)
 ```
@@ -378,7 +386,7 @@ execute_multiverse(M)
 Now that we have performed the analysis in each universe of the multiverse, we need to plot the data. To plot the data, we need to extract the relevant result data-frame from each universe into a single data-frame. The following code does this, by extracting the variable where the estimates of the model are stored, `summary_RelComp` and creating a single tidy data-frame that can be accessed easily.
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( summary = map(.results, "summary_RelComp" ) ) %>%
   unnest( cols = c(summary) ) %>%
   head( 10 )
@@ -389,7 +397,7 @@ We then take this data frame and plot the results as a confidence interval and p
 Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette [`Extracting and Visualizing the results of a multiverse analysis`](visualizing-multiverse.html)
 
 ```{r, message = FALSE}
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary = map(.results, "summary_RelComp" ) ) %>%
   unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
@@ -411,21 +419,23 @@ animate(p, nframes = 210, fps = 2)
 The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. Below we perform these analyses and visualize the results.
 
 ```{r}
-M$fit_FiscConsComp <- ~ lm( FiscConsComp ~ Fertility * RelationshipStatus, data = df)
-M$summary_FiscConsComp <- ~ fit_FiscConsComp %>% 
-  broom::tidy( conf.int = TRUE )
+inside(M, {
+  fit_FiscConsComp <- lm( FiscConsComp ~ Fertility * RelationshipStatus, data = df)
+  summary_FiscConsComp <- fit_FiscConsComp %>% 
+    broom::tidy( conf.int = TRUE )
 
-M$fit_SocConsComp <- ~ lm( SocConsComp ~ Fertility * RelationshipStatus, data = df)
-M$summary_SocConsComp <- ~ fit_SocConsComp %>% 
-  broom::tidy( conf.int = TRUE )
+  fit_SocConsComp <- lm( SocConsComp ~ Fertility * RelationshipStatus, data = df)
+  summary_SocConsComp <- fit_SocConsComp %>% 
+    broom::tidy( conf.int = TRUE )
 
-M$fit_Donate <- ~ glm( Donate ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
-M$summary_Donate <- ~ fit_Donate %>% 
-  broom::tidy( conf.int = TRUE )
+  fit_Donate <- glm( Donate ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
+  summary_Donate <- fit_Donate %>% 
+    broom::tidy( conf.int = TRUE )
 
-M$fit_Vote <- ~ glm( Vote ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
-M$summary_Vote <- ~ fit_Vote %>% 
-  broom::tidy( conf.int = TRUE )
+  fit_Vote <- glm( Vote ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
+  summary_Vote <- fit_Vote %>% 
+    broom::tidy( conf.int = TRUE )
+})
 
 execute_multiverse(M)
 ```
@@ -433,7 +443,7 @@ execute_multiverse(M)
 #### Model #3: Effect of Fertility and Relationship status on Fiscal political attitudes
 
 ```{r}
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary = map(.results, "summary_FiscConsComp" ) ) %>%
   unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
@@ -453,7 +463,7 @@ animate(p, nframes = 210, fps = 2)
 #### Model #4: Effect of Fertility and Relationship status on Social political attitudes
 
 ```{r}
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
   unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
@@ -473,7 +483,7 @@ animate(p, nframes = 210, fps = 2)
 #### Model #5: Effect of Fertility and Relationship status on Voting preferences
 
 ```{r}
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary = map(.results, "summary_Donate" ) ) %>%
   unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 
@@ -492,7 +502,7 @@ animate(p, nframes = 210, fps = 2)
 #### Model #6: Effect of Fertility and Relationship status on Donation preferences
 
 ```{r}
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary = map(.results, "summary_Vote" ) ) %>%
   unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 

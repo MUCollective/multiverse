@@ -10,7 +10,7 @@ library(multiverse)
 This document is used for testing interactive Rmd output manually in RStudio.
 
 ```{r}
-M = multiverse()
+M_block = multiverse()
 ```
 
 ## plots, errors, and messages
