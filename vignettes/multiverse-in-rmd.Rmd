@@ -72,7 +72,11 @@ Although the inside function is the only way to add code to the multiverse in an
 
 The language associated with a code block is provided by the first argument: ` ```{r}` Here the first argument is `r` hence the code in the associated block will be executed in R. To convert a code block to execute in multiverse, change the first argument to `multiverse`. Thus the code block would be: ` ```{multiverse}`
 
-To execute a code block in multiverse, the user needs to provide two additional arguments: `label` and `inside`. The label is a unique identifier for the code block, and each code block in the same document must have a different label. The inside argument takes in only multiverse objects, and is used to indicate the multiverse object which will the code inside the code block will be associated with. Thus declaring a multiverse code block would be: ` ```{multiverse, label = default-m-1, inside = M}`
+To execute a code block in multiverse, the user needs to provide two additional arguments: `label` and `inside`. 
+
+The label is a unique identifier for the code block, and each code block in the same document must have a different label. However, the label argument does not need to be explicitly specified (as is the case with an R code block). Therefore,  ` ```{multiverse, label=default-m-1 ...}`, ` ```{multiverse, default-m-1 ...}` and ` ```{multiverse default-m-1 ...}` are all equivalent.
+
+The inside argument takes in only multiverse objects, and is used to indicate the multiverse object which will the code inside the code block will be associated with. Thus declaring a multiverse code block would be: ` ```{multiverse, default-m-1, inside = M}`
 
 We provide the ability to declare multiverse code block as an *AddIn* in RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
 
@@ -83,16 +87,16 @@ knitr::include_graphics("multiverse-addins.png")
 Alternately, users can insert a multiverse We also allow users to create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document. This can be done through the following steps: 
 
 - Tools > AddIns > Browse AddIns… > Keyboard Shortcuts
-- Next, in the filter input field, type *multiverse*. You will see one result with “Insert multiverse code chunk” as the name. 
+- Next, in the filter input field, type *multiverse*. You will see one result with "Insert multiverse code chunk" as the name. 
 - Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).
-- Click “Apply” and exit the dialog box
+- Click "Apply" and exit the dialog box
 
 ### Multiverse code block
 
 The declaration of the chunk below is (this gets hidden when we knit the document): ` ```{multiverse default-m-1, inside = M_block}`
 
 
-```{multiverse, label = default-m-1, inside = M_block}
+```{multiverse default-m-1, inside = M_block}
 data_transform <- branch(data_transform,
     "log-transformed" ~ log,
     "untransformed" ~ identity
@@ -100,7 +104,6 @@ data_transform <- branch(data_transform,
 
 duration <- do.call(data_transform, list(userlogs$duration))
 ```
-
 
 
 The result of this code block will be identical to the result using `inside()`. We first compare whether the multiverse table is generated properly for both the multiverse objects.

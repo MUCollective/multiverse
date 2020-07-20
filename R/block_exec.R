@@ -40,12 +40,16 @@ custom_block_exec <- function(options) {
   if (options$engine == "R") {
     ('multiverse'%:::%'block_exec_R')(options)
   } else if (options$engine == "multiverse") {
-    .m_block_params <- lapply(strsplit(gsub("[^A-Za-z0-9,=_-]+", "", options$params.src), ","), strsplit, split = "=")
-    names <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) {
+    .m_block_params <- unlist(lapply(strsplit(gsub("[^A-Za-z0-9,=_-]+", "", options$params.src), ","), strsplit, split = "="), recursive = FALSE)
+    names <- lapply(.m_block_params, function(l) {
       if (length(l) == 1) "label" # labels are not explicitly specified, so we can assume that this is the label name
       else l[[1]]
     })
-    alist <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[2]])
+    
+    alist <- lapply(.m_block_params, function(l) {
+      if (length(l) == 1) l[[1]] # labels are not explicitly specified
+      else l[[2]]
+    })
     names(alist) <- names
   
     .code = options$code
