@@ -89,11 +89,11 @@
 inside <- function(multiverse, .expr, .label = NULL) {
   .code = enexpr(.expr)
 
-  add_and_parse_code(multiverse, .code, .label)
+  add_and_parse_code2(multiverse, .code, .label)
 
   # direct calls to inside() by the user result in execution of the
   # default universe in the global environment.
-  execute_universe(multiverse)
+  # execute_universe(multiverse)
 }
 
 
@@ -131,39 +131,71 @@ compare_code <- function(x, y) {
 }
 
 
-add_and_parse_code <- function(multiverse, .code, .name = NULL) {
+add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   m_obj <- attr(multiverse, "multiverse")
-  .super_env <- attr(multiverse, "multiverse_super_env")
   
-  # ensure that .code is a single self-contained { ... } block
-  if(!is_call(.code, "{")) {
-    .code = as.call(list(quote(`{`), .code))
+  # ensure that .expr is a single self-contained { ... } block
+  if(!is_call(.expr, "{")) {
+    .expr = as.call(list(quote(`{`), .expr))
   }
-  # expand .options arguments in branch calls
-  .code = expand_branch_options(.code)
   
+  # expand .options arguments in branch calls
+  .expr = expand_branch_options(.expr)
   .loc = length(m_obj$code)
   
   if (is_null(m_obj$code)) {
-    # .c = .code
-    if (is.null(.name)) {
-      .c = list(.code) 
-    } else {
+    if (is.null(.name)) .c = list(.expr) 
+    else {
       .c = list()
-      .c[[.name]] = .code
+      .c[[.name]] = .expr
     }
   } else {
-    # .c = concatenate_expr(m_obj$code, .code)
-    # .c = append(m_obj$code[1:.loc], .code)
-    if (is.null(.name)) {
-      .c = append(m_obj$code[1:.loc], .code)
-    } else {
+    if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
+    else {
       .c = m_obj$code
-      .c[[.name]] = .code
+      .c[[.name]] = .expr
     }
   }
   
   parse_multiverse(m_obj, .c, .super_env)
+  m_obj$code <- .c
+}
+
+
+add_and_parse_code2 <- function(multiverse, .expr, .name = NULL) {
+  m_obj <- attr(multiverse, "multiverse")
+  .super_env <- attr(multiverse, "multiverse_super_env")
+  
+  # ensure that .expr is a single self-contained { ... } block
+  if(!is_call(.expr, "{")) {
+    .expr = as.call(list(quote(`{`), .expr))
+  }
+  
+  # expand .options arguments in branch calls
+  .expr = expand_branch_options(.expr)
+  .loc = length(m_obj$code)
+  
+  if (is_null(m_obj$code)) {
+    if (is.null(.name)) .c = list(.expr) 
+    else {
+      .c = list()
+      .c[[.name]] = .expr
+    }
+  } else {
+    if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
+    else {
+      .c = m_obj$code
+      .c[[.name]] = .expr
+    }
+  }
+  
+  parameter_options <- unlist(lapply(.c, function(x) get_parameter_conditions(x)$parameters), recursive = FALSE)
+  parameter_set <- c(m_obj$parameter_set, setdiff(names(parameter_options), m_obj$parameter_set))
+  
+  n = tail(unlist(m_obj$multiverse_diction$keys()), n = 1)
+  q <- parse_multiverse_expr(multiverse, .expr, parameter_options, n)
+  if (is.null(n)) m_obj$multiverse_diction$set(1, q)
+  else m_obj$multiverse_diction$set(n+1, q)
   m_obj$code <- .c
 }
 

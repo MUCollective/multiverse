@@ -6,7 +6,14 @@ Multiverse <- R6Class("Multiverse",
         parameters = list(),
         conditions = list(),
         default_parameter_assignment = NULL,
-        multiverse_table = tibble(parameter_assignment = list())
+        multiverse_diction = ordered_dict(),
+        parameter_set = c(),
+        multiverse_table = tibble(
+          .universe = 1,
+          .parameter_assignment = list( list() ),
+          .code = list( list("") ),
+          .results = list( new.env(parent = caller_env()) )
+        )
     )
 )
 
@@ -50,6 +57,7 @@ Multiverse <- R6Class("Multiverse",
 #' @importFrom rlang env
 #' @importFrom R6 R6Class
 #' @importFrom tibble tibble
+#' @importFrom collection ordered_dict
 #' @export
 multiverse <- function() {
   x <- env()

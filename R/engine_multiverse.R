@@ -2,7 +2,7 @@ multiverse_engine <- function(options) {
   .c = multiverse_block_code(options$inside, options$label, options$code)
   
   if(is.null(getOption("knitr.in.progress"))) {
-     multiverse_default_block_exec(.c, options)
+    multiverse_default_block_exec(.c, options)
   } else {
      multiverse_default_block_exec(options$code, options, TRUE)
   }
@@ -25,6 +25,12 @@ multiverse_block_code <- function(.multiverse_name, .label, .code) {
   n <- length(.code)
   
   pasted <- paste(.code, collapse = "\n")
+  
+  # the iterate over the expression to separate it out into lists
+  # .expr <- lapply(.expr[2:length(.expr)], function(x) {
+  #  parse(text = c("{", x, "}"), keep.source = FALSE)[[1]]
+  # })
+  
   .expr <- parse(text = c("{", pasted, "}"), keep.source = FALSE)[[1]]
   .m = attr(.multiverse, "multiverse")
   
@@ -85,6 +91,6 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
   }
 }
 
-knitr::knit_engines$set(multiverse = multiverse_engine)
+knit_engines$set(multiverse = multiverse_engine)
 
 

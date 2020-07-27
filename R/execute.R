@@ -40,7 +40,7 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom parallel detectCores
-#' @importFrom parallel mclapply
+#' @importFrom parallel mcmapply
 #' 
 #' @name execute
 #' @export
@@ -50,26 +50,12 @@ execute_multiverse <- function(multiverse, cores = 1L) {
   .env_list = m_tbl[['.results']]
   .universe = seq(1:nrow(m_tbl))
   
-  results <- parallel::mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
-}
-
-
-#' @rdname execute
-#' @export
-execute_default <- function(multiverse) {
-  UseMethod("execute_default", multiverse)
-}
-
-#' @rdname execute
-#' @export
-execute_default.default <- function(multiverse) {
-  stop("execute_default can only be called on objects of class multiverse")
-}
-
-#' @rdname execute
-#' @export
-execute_default.multiverse <- function(multiverse) {
-  execute_universe(multiverse)
+  .results <- mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
+  
+  if( any( unlist(lapply(.results, function(i) is(i, "error")), recursive = FALSE) ) ) {
+    stop("Error encountered in executing multiverse")
+  }  
+  .results
 }
 
 #' @rdname execute
@@ -79,6 +65,7 @@ execute_universe <- function(multiverse, .universe = NULL) {
   
   if(is.null(.universe)) {
     .param_assgn = m_obj[['default_parameter_assignment']]
+    .universe = "1"
   } else {
     .param_assgn = .universe
   }
@@ -92,12 +79,18 @@ execute_universe <- function(multiverse, .universe = NULL) {
     env = m_obj[['multiverse_table']][['.results']][[.param_assgn ]]
   }
   
-  execute_code_from_universe(.c, env)
+  .result <- execute_code_from_universe(.c, env)
+  
+  # if (is(.result[[1]], "error")) stop("Error encountered in executing universe ", .universe)
 }
 
-execute_code_from_universe <- function(.c, .env) {
-  invisible( lapply(.c, eval, envir = .env) )
+# execute_code_from_universe <- function(.c, .env) invisible( lapply(.c, eval, envir = .env) )
+
+execute_code_from_universe <- function(.c, .env = globalenv()) {
+  e <- tryCatch( invisible( lapply(.c, eval, envir = .env) ), error = function(e) e )
+  if (is(e, "error")) list(e) else .env
 }
+
 
 execute_multiverse2 <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   stopifnot( is.multiverse(multiverse) )

@@ -25,21 +25,9 @@
 #' @importFrom magrittr extract2
 #'
 # wrapper function for get_parameter_code
-get_code <- function(multiverse, .code, .assgn = NULL) {
-  stopifnot( is.r6_multiverse(multiverse))
-
-  if (is.numeric(.assgn)) {
-    .assgn = multiverse[['multiverse_table']][['parameter_assignment']][[.assgn]]
-  }
-
-  if( length( multiverse[['default_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
-    #message("Assigning options to parameter from `default_parameter_assignment`")
-    .assgn = default_parameter_assignment(multiverse)
-  }
-  
+get_code <- function(.code, .assgn = NULL) {
   x <- lapply(.code, get_parameter_code, .assgn)
   x
-  # get_parameter_code(.code, .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches
