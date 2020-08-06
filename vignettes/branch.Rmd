@@ -63,7 +63,7 @@ inside(M, {
 Now, we can inspect the multiverse object to see if all the options were created. 
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   select(.universe, everything())
 ```
 
@@ -101,13 +101,13 @@ inside(M, {
 The `multiverse_table` shows that there are two rows for the `data transform` branch which correspond to the two different reasonable alternatives for transforming time spent data.
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
 If we look at the code column, which is a list of expressions, we see that the variable `duration` is defined in two separate ways, one for each row of the multiverse table. In other words, for each alternate analysis path, one of these would get executed and that would be the how the `duration` variable is transformed for that analysis path.
 
 ```{r}
-multiverse_table(M)$.code
+expand(M)$.code
 ```
 
 ## Example 3: A branch as a function
@@ -133,7 +133,7 @@ Then we execute the multiverse and inspect the results:
 ```{r}
 execute_multiverse(M)
 
-multiverse_table(M) %>%
+expand(M) %>%
   mutate(transformed_duration = map(.results, "duration"))
 ```
 

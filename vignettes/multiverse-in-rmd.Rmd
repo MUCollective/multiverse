@@ -18,6 +18,7 @@ library(purrr)
 library(multiverse)
 ```
 
+
 ```{r, chunk-setup, include=FALSE}
 opts_knit$set(
   echo = TRUE,
@@ -25,6 +26,7 @@ opts_knit$set(
   fig.height = 4
 )
 ```
+
 
 
 ## Introduction

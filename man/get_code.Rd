@@ -4,15 +4,15 @@
 \alias{get_code}
 \title{Code corresponding to a single analysis}
 \usage{
-get_code(multiverse, .code, .assgn = NULL)
+get_code(.code, .assgn = NULL)
 }
 \arguments{
-\item{multiverse}{The multiverse object with some code passed to it}
-
 \item{.code}{Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
 which can be done using the `remove_branch_assert` function.}
 
 \item{.assgn}{A list containing the assignments for each defined parameter in the multiverse}
+
+\item{multiverse}{The multiverse object with some code passed to it}
 }
 \description{
 Given a particular set of options for each parameter, extracts the code for performing a

@@ -4,12 +4,12 @@
 \alias{parse_multiverse}
 \title{Parse the multiverse syntax to identify branches}
 \usage{
-parse_multiverse(multiverse, .code, .super_env)
+parse_multiverse(.multiverse, .expr, .code, .name)
 }
 \arguments{
-\item{multiverse}{The multiverse object with some code passed to it}
-
 \item{.code}{The code that is being passed into the multiverse objecct}
+
+\item{multiverse}{The multiverse object with some code passed to it}
 
 \item{.super_env}{The parent environment of the multiverse object i.e. the environment
 in which the multiverse object was called. This is automatically recorded.}
