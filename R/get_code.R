@@ -38,6 +38,7 @@ get_code <- function(multiverse, .code, .assgn = NULL) {
   }
   
   x <- lapply(.code, get_parameter_code, .assgn)
+  x
   # get_parameter_code(.code, .assgn)
 }
 

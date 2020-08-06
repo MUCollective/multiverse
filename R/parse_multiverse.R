@@ -13,6 +13,8 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #'
 #' @param .super_env The parent environment of the multiverse object i.e. the environment
 #' in which the multiverse object was called. This is automatically recorded.
+#' 
+#' @param .code The code that is being passed into the multiverse objecct
 #'
 #' @return The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.
 #' The list of parameters is a named list which defines all the values that each defined parameter can take.
@@ -29,6 +31,7 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @importFrom dplyr tibble
 #' @importFrom dplyr everything
 #' @importFrom dplyr filter
+#' @importFrom tibble tibble
 #' @importFrom tibble as_tibble
 #' @importFrom purrr compact
 #' @importFrom purrr map_chr
@@ -42,36 +45,51 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @importFrom utils globalVariables
 #' 
 
-parse_multiverse <- function(multiverse, .super_env) {
+parse_multiverse <- function(multiverse, .code, .super_env) {
   stopifnot( is.r6_multiverse(multiverse) )
   
-  parameter_conditions_list <- get_parameter_conditions_list( unname(multiverse[['code']]) )
+  parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
   multiverse[['parameters']] = parameter_conditions_list$parameters
   multiverse[['conditions']] = parameter_conditions_list$conditions
   
   if( length( multiverse[['parameters']] ) >= 1) {
     multiverse[['default_parameter_assignment']] = 1
-    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, parameter_conditions_list, .super_env)
+    multiverse[['multiverse_table']] = get_multiverse_table(multiverse, .code, parameter_conditions_list, .super_env)
   }
   else {
     multiverse[['default_parameter_assignment']] = NULL
-    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse, .super_env)
+    multiverse[['multiverse_table']] = get_multiverse_table_no_param(multiverse, .code, .super_env)
   }
 }
 
 get_parameter_conditions_list <- function(.c) {
   l <- lapply( .c, get_parameter_conditions )
   
+  .p = unlist(lapply(l, function(x) x$parameters), recursive = FALSE)
+
+  # check if names are duplicated
+  # if yes, then make sure all the option names of the parameter
+  # are used. If no, throw an error that it should cover all the
+  # options for a parameter. Will address #8 and #14
+  if (isTRUE(any(duplicated(names(.p))))) {
+    duplicate_names <- duplicated(names(.p), fromLast = TRUE) | duplicated(names(.p))
+    if(isFALSE( all(duplicated(.p[duplicate_names], fromLast = TRUE) | duplicated(.p[duplicate_names])) )) {
+        stop("reused parameters should have the same number of options and the same names for each option as the original declaration")
+    }
+    .p <- .p[!duplicated(names(.p))]
+  }
+  .c = unlist(lapply(l, function(x) x$conditions), recursive = FALSE)
+  
   list(
-    parameters = unlist(lapply(l, function(x) x$parameters), recursive = FALSE),
-    conditions = unlist(lapply(l, function(x) x$conditions), recursive = FALSE)
+    parameters = .p,
+    conditions = .c
   )
 }
 
-get_multiverse_table_no_param <- function(multiverse, .super_env) {
-  tibble::tibble(
+get_multiverse_table_no_param <- function(multiverse, .code, .super_env) {
+  tibble(
     .parameter_assignment = list( list() ),
-    .code = list( multiverse[['code']] ),
+    .code = list( .code ),
     .results = list( new.env(parent = .super_env) )
   )
 }
@@ -79,7 +97,7 @@ get_multiverse_table_no_param <- function(multiverse, .super_env) {
 # creates a parameter table from the parameter list
 # first creates a data.frame of all permutations of parameter values
 # then enforces the constraints defined in the conditions list
-get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_env) {
+get_multiverse_table <- function(multiverse, .code, parameters_conditions.list, .super_env) {
   df <- data.frame( lapply(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
   
   param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i))
@@ -91,10 +109,7 @@ get_multiverse_table <- function(multiverse, parameters_conditions.list, .super_
     all_conditions <- expr(TRUE)
   }
   
-  .code = multiverse[['code']]
-  
   df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
-  
   filter(as_tibble(mutate(df,
                           .parameter_assignment = param.assgn,
                           .code = lapply(.parameter_assignment, function(x) get_code(multiverse, .code, x)),
@@ -180,6 +195,11 @@ get_implies_consequent <- function(.x) {
 combine_parameter_conditions <- function(l1, l2) {
   stopifnot(identical(names(l1), c("parameters", "conditions")))
   stopifnot(identical(names(l2), c("parameters", "conditions")))
+  
+  # check that duplicate parameters have the same option names
+  
+  # print(c((l1$parameters), (l2$parameters)))
+  # print(duplicate(c(names(l1$parameters), names(l2$parameters))))
   
   # merge the parameter lists: when a parameter appears in both lists,
   # take the union of the options provided. the use of two loops and intersect / setdiff

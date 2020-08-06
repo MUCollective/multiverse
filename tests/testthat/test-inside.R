@@ -71,8 +71,8 @@ test_that("`add_and_parse_code` stores code as a list of `language`", {
   })
 
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.1)
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), expr.2)
+  add_and_parse_code(M, expr.1)
+  add_and_parse_code(M, expr.2)
 
   expect_true( is.list(code(M)) )
   expect_true( all(map_lgl(code(M), is.language)) )
@@ -85,22 +85,27 @@ test_that("`add_and_parse_code` parses the code", {
   })
 
   M = multiverse()
-  M.R6 = attr(M, "multiverse")
-  add_and_parse_code(M.R6, attr(M, "multiverse_super_env"), an_expr)
+  add_and_parse_code(M, an_expr)
 
+  M.R6 = attr(M, "multiverse")
   expect_equal( dim(M.R6$multiverse_table), c(4, 5) )
   expect_equal( length(M.R6$parameters), 1 )
   expect_equal( length(M.R6$parameters$value_y), 4 )
+  expect_equal( M.R6$multiverse_table$.universe, 1:4 )
+  expect_equal( M.R6$multiverse_table$value_y, c("0", "3", "x + 1", "x^2") )
+  expect_equal( M.R6$multiverse_table$.parameter_assignment, 
+    lapply(c("0", "3", "x + 1", "x^2"), function(x) list(value_y = x))
+  )
 })
 
-test_that("`add_and_parse_code` executes the default analysis", {
+test_that("`inside` executes the default analysis", {
   an_expr = expr({
     x = data.frame(x = 1:10) %>%
       mutate( y = branch( value_y, 0, 3, x + 1, x^2))
   })
 
   M = multiverse()
-  add_and_parse_code(attr(M, "multiverse"), attr(M, "multiverse_super_env"), an_expr)
+  inside(M, !!an_expr)
 
   df = attr(M, "multiverse")$multiverse_table$.results[[1]]$x
   df.ref =  data.frame(x = 1:10) %>%  mutate( y = 0 )
@@ -111,11 +116,11 @@ test_that("`add_and_parse_code` executes the default analysis", {
 test_that("continuous parameters defined in the multiverse are evaluated", {
   .expr_1 = expr({
     y <- branch(foo, "option1" ~ 1, .options = 2:10)
-  }) %>% eval_seq_in_code()
+  }) %>% expand_branch_options()
 
   .expr_2 = expr({
     y <- branch(foo, "option1" ~ 1, .options = seq(2, 3, by = 0.1))
-  }) %>% eval_seq_in_code()
+  }) %>% expand_branch_options()
 
   .ref_expr_1 = expr({
     y <- branch(foo, "option1" ~ 1, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)
@@ -130,3 +135,28 @@ test_that("continuous parameters defined in the multiverse are evaluated", {
   expect_equal(.expr_2, .ref_expr_2)
 })
 
+
+test_that("`inside` executes the default analysis", {
+  M = multiverse()
+  df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
+  
+  expect_error(inside(M, {
+    df <- df %>% mutate( z = branch( value_y, y, log(y)))
+  }), NA)
+  
+  expect_error(inside(M, {
+    df2 <- df %>% mutate( z = branch( value_y, y, log(y)))
+  }), NA)
+})
+
+test_that("inside cannot access variables which is not accessible from the environment the multiverse was declared in", {
+  M <- multiverse()
+  
+  myfun <- function() {
+    dat <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
+    
+    inside(M, { dat <- dat %>% mutate( z = branch( value_y, log(y), y)) })
+  }
+  
+  expect_error(myfun())
+})

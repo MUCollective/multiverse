@@ -1,0 +1,41 @@
+# Quick test for interactive rmarkdown
+
+```{r setup}
+library(tidyverse)
+library(multiverse)
+```
+
+## Introduction
+
+This document is used for testing interactive Rmd output manually in RStudio.
+
+```{r}
+M_block = multiverse()
+```
+
+## plots, errors, and messages
+
+```{multiverse plots, inside = M_block, fig.width = 5, fig.height = 2}
+hist(1:10)
+```
+
+```{multiverse ggplots, inside = M_block, fig.width = 5, fig.height = 2}
+data.frame(x = 1:10) %>%
+  ggplot(aes(x = x, y = x)) +
+  geom_point()
+```
+
+
+```{multiverse plots-errors-messages, inside = M_block, fig.width = 5, fig.height = 2}
+x = list()
+message("hi")
+
+data.frame(x = 1:10) %>%
+  ggplot(aes(x = x, y = x)) +
+  geom_point()
+
+hist(1:10)
+
+print("hello")
+x = x + 1   # should give an error
+```

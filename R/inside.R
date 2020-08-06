@@ -2,18 +2,27 @@
 #'
 #' Add code to the multiverse using the function using a function call, or an assignment operator, which is
 #' a wrapper around the function
+#' 
+#' The inside function can only access variables which can be accessed at the same environment 
+#' where the multiverse object was declared in.
 #'
 #' @details To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
 #' The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
 #' which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-#' use the `branch()` function. See [branch] for more
+#' use the `branch()` function. See \code{\link{branch}} for more
 #' details on how to declare multiple analysis options.
 #'
 #' The `inside` function only stores the code, and does not execute any code at this step. To execute, we
-#' provide separate functions. See [execute] for executing the code.
+#' provide separate functions. See \code{\link{execute}} for executing the code.
 #'
 #' Instead of using the `inside()` function, an alternate implementation of the multiverse is using
 #' the assignment operator, `<-`. See examples below.
+#' 
+#' **Note:** the `inside()` function can only access variables which can be accessed at the same level as the multiverse
+#' object. Since `inside()` is merely an interface to add analysis to the multiverse object, even if it is being called 
+#' by another function, it is actually manipulating the multiverse object, which will have a different parent environment
+#' from where `inside()` is called, and hence not have access to variables which might be accessible in the environment 
+#' within the function from where `inside()` is called.
 #'
 #' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using `multiverse()`
 #'
@@ -78,14 +87,13 @@
 #' @name inside
 #' @export
 inside <- function(multiverse, .expr, .label = NULL) {
-  .expr = enexpr(.expr)
-  
-  if(!is_call(.expr, "{")) {
-    .expr = expr({ !!.expr })
-  }
-  .expr = eval_seq_in_code(.expr)
+  .code = enexpr(.expr)
 
-  add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr, .label)
+  add_and_parse_code(multiverse, .code, .label)
+
+  # direct calls to inside() by the user result in execution of the
+  # default universe in the global environment.
+  execute_universe(multiverse)
 }
 
 
@@ -104,9 +112,9 @@ inside <- function(multiverse, .expr, .label = NULL) {
 #  )
   
 #   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
-#   .expr = eval_seq_in_code(.expr)
+#   .expr = expand_branch_options(.expr)
 
-#   add_and_parse_code(attr(multiverse, "multiverse"), .super_env = attr(multiverse, "multiverse_super_env"), .expr)
+#   add_and_parse_code(multiverse, .expr)
 
 #   multiverse
 # }
@@ -123,8 +131,17 @@ compare_code <- function(x, y) {
 }
 
 
-add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute = TRUE) {
-  # .loc = match( FALSE, compare_code(m_obj$code, .code) )
+add_and_parse_code <- function(multiverse, .code, .name = NULL) {
+  m_obj <- attr(multiverse, "multiverse")
+  .super_env <- attr(multiverse, "multiverse_super_env")
+  
+  # ensure that .code is a single self-contained { ... } block
+  if(!is_call(.code, "{")) {
+    .code = as.call(list(quote(`{`), .code))
+  }
+  # expand .options arguments in branch calls
+  .code = expand_branch_options(.code)
+  
   .loc = length(m_obj$code)
   
   if (is_null(m_obj$code)) {
@@ -146,12 +163,8 @@ add_and_parse_code <- function(m_obj, .super_env, .code, .name = NULL, execute =
     }
   }
   
+  parse_multiverse(m_obj, .c, .super_env)
   m_obj$code <- .c
-  parse_multiverse(m_obj, .super_env)
-
-  # the execute parameter is useful for parsing tests where we don't want to
-  # actually execute anything. probably more for internal use
-  if (execute) execute_universe(m_obj)
 }
 
 concatenate_expr <- function(ref, to_add){
@@ -171,7 +184,8 @@ concatenate_expr <- function(ref, to_add){
 }
 
 
-eval_seq_in_code <- function(.expr) {
+# expand use of .options argument in branch calls
+expand_branch_options <- function(.expr) {
     if (is.call(.expr)) {
       if (is_call(.expr, "branch")) {
         .new_expr = .expr
@@ -182,7 +196,7 @@ eval_seq_in_code <- function(.expr) {
         }
         return(.new_expr)
       } else {
-        as.call(map(.expr, ~ eval_seq_in_code(.x)))
+        as.call(map(.expr, ~ expand_branch_options(.x)))
       }
     } else {
       .expr

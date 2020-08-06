@@ -9,14 +9,8 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -25,6 +19,14 @@ library(broom)
 library(gganimate)
 library(cowplot)
 library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ## The data
@@ -101,7 +103,7 @@ inside(M, {
 As the condition implies, the parameter `menstrual_calcaultion` (which is for calclating the variable `NextMenstrualCalculation`) cannot take the value of "mc_option1" when we filter `cycle_length` using "cl_option3". Similarly, `menstrual_calcaultion` cannot take the value of "mc_option2" when we filter `cycle_length` using "cl_option2". In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
 #### The `branch_assert()` function
@@ -143,7 +145,7 @@ inside(M, {
 As we can see, this results in the same multiverse where universes indexed 3 and 5 are not compatible.
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
 **Note**: in this vignette we used the script-oriented `inside()` function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.

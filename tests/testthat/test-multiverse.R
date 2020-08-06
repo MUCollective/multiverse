@@ -30,8 +30,8 @@ test_that("accessor functions work on newly initialised object", {
   expect_null(default_parameter_assignment(M))
   expect_warning( expect_mapequal( parameters(M), list()) )
   expect_warning( expect_mapequal( conditions(M), list()) )
-  expect_true( is.data.frame(multiverse_table(M)) )
-  expect_equal( nrow(multiverse_table(M)), 0 )
+  expect_true( is.data.frame(expand(M)) )
+  expect_equal( nrow(expand(M)), 0 )
 })
 
 # accessor functions ------------------------------------------------
@@ -143,9 +143,9 @@ test_that("accessor functions retrieve the multiverse table", {
     ) %>%
     as_tibble()
 
-  df = multiverse_table(M.2) %>% select(-.results)
+  df = expand(M.2) %>% select(-.results)
 
-  expect_true( tibble::is_tibble(multiverse_table(M.2)) )
+  expect_true( tibble::is_tibble(expand(M.2)) )
   expect_equal( as.list(ref_df), as.list(df) )
 })
 

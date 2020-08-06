@@ -40,14 +40,21 @@ custom_block_exec <- function(options) {
   if (options$engine == "R") {
     ('multiverse'%:::%'block_exec_R')(options)
   } else if (options$engine == "multiverse") {
-    .m_block_params <- lapply(strsplit(gsub("[^A-Za-z0-9,=-]+", "", options$params.src), ","), strsplit, split = "=")
-    names <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[1]])
-    alist <- lapply(unlist(.m_block_params, recursive = FALSE), function(l) l[[2]])
-    names(alist) <- names
+    .m_block_params <- unlist(lapply(strsplit(gsub("[^A-Za-z0-9,=_-]+", "", options$params.src), ","), strsplit, split = "="), recursive = FALSE)
+    names <- lapply(.m_block_params, function(l) {
+      if (length(l) == 1) "label" # labels are not explicitly specified, so we can assume that this is the label name
+      else l[[1]]
+    })
     
-    # .code = options$code
+    alist <- lapply(.m_block_params, function(l) {
+      if (length(l) == 1) l[[1]] # labels are not explicitly specified
+      else l[[2]]
+    })
+    names(alist) <- names
+  
+    .code = options$code
     .c = ('multiverse'%:::%'multiverse_block_code')(alist$inside, alist$label, options$code)
-    ('multiverse'%:::%'multiverse_default_block_exec')(.c, options)
+    ('multiverse'%:::%'multiverse_default_block_exec')(.c, options, knit = TRUE)
   }
 }
 
@@ -86,17 +93,18 @@ block_exec_R = function(options) {
   res.before = ('knitr'%:::%'run_hooks')(before = TRUE, options, env) # run 'before' hooks
   
   code = options$code
+  out.code = options$out.code
   echo = options$echo  # tidy code if echo
-  if (!isFALSE(echo) && !isFALSE(options$tidy) && length(code)) {
+  if (!isFALSE(echo) && !isFALSE(options$tidy) && length(out.code)) {
     tidy.method = if (isTRUE(options$tidy)) 'formatR' else options$tidy
     if (is.character(tidy.method)) tidy.method = switch(
       tidy.method,
-      formatR = function(code, ...) formatR::tidy_source(text = code, output = FALSE, ...)$text.tidy,
-      styler = function(code, ...) unclass(styler::style_text(text = code, ...))
+      formatR = function(out.code, ...) formatR::tidy_source(text = out.code, output = FALSE, ...)$text.tidy,
+      styler = function(out.code, ...) unclass(styler::style_text(text = out.code, ...))
     )
-    res = try_silent(do.call(tidy.method, c(list(code), options$tidy.opts)))
+    res = try_silent(do.call(tidy.method, c(list(out.code), options$tidy.opts)))
     
-    if (!inherits(res, 'try-error')) code = res else warning(
+    if (!inherits(res, 'try-error')) out.code = res else warning(
       "Failed to tidy R code in chunk '", options$label, "'. Reason:\n", res
     )
   }
@@ -172,7 +180,7 @@ block_exec_R = function(options) {
           # keep only selected
           if (keep == 'index') res = res[-which(figs)[-keep.idx]]
           # merge low-level plotting changes
-          if (keep == 'high') res = merge_low_plot(res, figs)
+          if (keep == 'high') res = ('knitr'%:::%'merge_low_plot')(res, figs)
         }
       }
     }

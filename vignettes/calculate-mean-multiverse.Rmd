@@ -9,15 +9,21 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_chunk$set(echo = TRUE)
-opts_knit$set(output.dir="vignettes")
 library(dplyr)
 library(tidyr)
 library(purrr)
 library(ggplot2)
 library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ## Introduction: Conducting a multiverse analysis
@@ -156,10 +162,10 @@ The `parameter` slot will have a named list of parameters (in this case, the onl
 parameters(M)
 ```
 
-The `multiverse_table` slot contains a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter --- the number of rows corresponds to the number of different analysis paths (here, 4).
+The `multiverse_table` slot contains a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter --- the number of rows corresponds to the number of different analysis paths (here, 4). The table can be accessed using the `expand` function
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
 The `default_parameter_assignment` slot will be initialised to the first option for each parameter (in this case, "trim_none").
@@ -185,7 +191,7 @@ M %>%
 
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   unnest( mean = map(.results, "x.mean") ) %>%
   ggplot() +
   geom_col(aes(x = .universe, y = mean))
@@ -225,7 +231,7 @@ execute_multiverse(M)
 
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   unnest( mean = map(.results, "x.mean") )
 ```
 
