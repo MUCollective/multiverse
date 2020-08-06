@@ -203,7 +203,9 @@ test_that("syntax tree with branches is correctly returned when no parameter is 
 test_that("syntax tree for each universe is computed correctly", {
   M2 = multiverse()
   
-  inside(M2, {
+  df <- test_df
+  
+  add_and_parse_code(M2, quote({
     df <- df %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation, 
                                           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -214,7 +216,7 @@ test_that("syntax tree for each universe is computed correctly", {
                      "cer_option1" ~ TRUE,
                      "cer_option2" ~ Sure1 > 6 | Sure2 > 6
       ))
-  })
+  }))
   
   u.expr.ref.1 = quote({
     df <- df %>% 
