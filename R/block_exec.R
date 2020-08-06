@@ -37,9 +37,9 @@ custom_block_exec <- function(options) {
   `%:::%` = `:::`
   
   # options$engine <- "R"
-  if (options$engine == "R") {
+  if (options$engine != "multiverse") {
     ('multiverse'%:::%'block_exec_R')(options)
-  } else if (options$engine == "multiverse") {
+  } else {
     .m_block_params <- unlist(lapply(strsplit(gsub("[^A-Za-z0-9,=_-]+", "", options$params.src), ","), strsplit, split = "="), recursive = FALSE)
     names <- lapply(.m_block_params, function(l) {
       if (length(l) == 1) "label" # labels are not explicitly specified, so we can assume that this is the label name
