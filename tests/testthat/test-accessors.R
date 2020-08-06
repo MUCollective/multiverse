@@ -13,7 +13,7 @@ test_that("basic retrieval works with `code()`", {
   M <- multiverse()
   inside(M, {x <- 5})
 
-  expect_equal(code(M), list(quote({ x <- 5 })) )
+  expect_equal(unname(code(M)), list(quote({ x <- 5 })) )
 })
 
 test_that("`code()` throws error for objects of class other than multiverse", {
@@ -52,7 +52,7 @@ test_that("basic retrieval works with `multiverse()`", {
       )
   }))
 
-  m_tbl = expand(M) %>% select(-.parameter_assignment, -.code, -.results)
+  m_tbl = expand(M) %>% select(-.parameter_assignment, -.code)
   m_tbl.ref = expand.grid(list(
     values_y = list("TRUE", "FALSE"),
     values_z = list("constant", "linear", "sum")

@@ -26,8 +26,7 @@
 #'
 # wrapper function for get_parameter_code
 get_code <- function(.code, .assgn = NULL) {
-  x <- lapply(.code, get_parameter_code, .assgn)
-  x
+  lapply(.code, get_parameter_code, .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches
@@ -100,6 +99,12 @@ get_option_value <- function(x) {
 }
 
 
+get_code_universe <- function(.m_list, .uni, .level) {
+  if (.level >= 1){
+    .p <- .m_list[[.level]][[.uni]]$parent
+    c(get_code_universe(.m_list, .p, .level - 1), .m_list[[.level]][[.uni]]$code)
+  }
+}
 
 
 

@@ -167,8 +167,8 @@ test_that("throws error if multiverse object passed is not R6", {
 })
 
 test_that("syntax tree without branches is correctly returned", {
-  an_expr <- quote({df <- test_df  %>%
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )})
+  an_expr <- list( `1` = quote({df <- test_df  %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )}) )
 
   M.no_branch = multiverse()
 
@@ -177,34 +177,15 @@ test_that("syntax tree without branches is correctly returned", {
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   }))
 
-  expect_equal(code(M.no_branch), list(an_expr))
-})
-
-test_that("syntax tree with branches is correctly returned when no parameter is assigned", {
-  u.expr = attr(M, "multiverse") %>% get_code(list(expr({!! an_expr})))
-
-  u.expr.ref = quote({
-    df <- test_df  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-      mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
-      mutate( Relationship = factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')) ) %>%
-      mutate(
-        CycleDay = 28 - (NextMenstrualOnset - DateTesting),
-        CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-      ) %>%
-      dplyr::filter( TRUE ) %>%
-      dplyr::filter( TRUE ) %>%
-      mutate( Fertility = factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ) )
-  })
-
-  expect_equal( u.expr, list(u.expr.ref))
+  expect_equal(code(M.no_branch), an_expr)
 })
 
 test_that("syntax tree for each universe is computed correctly", {
   M2 = multiverse()
   
   inside(M2, {
-    df <- df %>%
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation, 
                                           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
                                           "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -217,32 +198,38 @@ test_that("syntax tree for each universe is computed correctly", {
   })
   
   u.expr.ref.1 = quote({
-    df <- df %>% 
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
       mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %>% 
       filter(TRUE)
   })
   u.expr.ref.2 = quote({
-    df <- df %>% 
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
       mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
       filter(TRUE)
   })
   u.expr.ref.3 = quote({
-    df <- df %>% 
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
       mutate(NextMenstrualOnset = StartDateNext) %>% 
       filter(TRUE)
   })
   u.expr.ref.4 = quote({
-    df <- df %>% 
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
       mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %>% 
       filter(Sure1 > 6 | Sure2 > 6)
   })
   u.expr.ref.5 = quote({
-    df <- df %>% 
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
       mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
       filter(Sure1 > 6 | Sure2 > 6)
   })
   u.expr.ref.6 = quote({
-    df <- df %>% 
+    df <- test_df  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
       mutate(NextMenstrualOnset = StartDateNext) %>% 
       filter(Sure1 > 6 | Sure2 > 6)
   })
@@ -319,7 +306,7 @@ test_that("syntax tree with branches is correctly returned when a parameter is a
 
   u.expr = lapply(code(M), get_parameter_code, param.assgn)
 
-  u.expr.ref = quote({
+  u.expr.ref = list(`1` = quote({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
@@ -331,9 +318,9 @@ test_that("syntax tree with branches is correctly returned when a parameter is a
       dplyr::filter( ComputedCycleLength > 25 & ComputedCycleLength < 35 ) %>%
       dplyr::filter( TRUE ) %>%
       mutate( Fertility = factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") ) )
-  })
+  }))
 
-  expect_equal(u.expr, list(u.expr.ref))
+  expect_equal(u.expr, u.expr.ref)
 })
 
 test_that("is able to handle missing values passed as index to lists / df / matrices", {

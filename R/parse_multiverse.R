@@ -45,60 +45,74 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @importFrom utils globalVariables
 #' 
 
-parse_multiverse <- function(multiverse, .code, .super_env) {
-  stopifnot( is.r6_multiverse(multiverse) )
+parse_multiverse <- function(.multiverse, .expr, .code, .name) {
+  m_obj <- attr(.multiverse, "multiverse")
+  
+  # if the newly added code is not the last element, implies
+  # the user is editing pre-declared parameters. We need to recompute
+  # everything after that point
+  if (.name %in% names(head(.code, -1))) {
+    .code <- .code[-((which(names(.code) == .name)+1):length(.code))]
+  }
   
   parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
-  multiverse[['parameters']] = parameter_conditions_list$parameters
-  multiverse[['conditions']] = parameter_conditions_list$conditions
+  parameters = parameter_conditions_list$parameters
+  conditions = parameter_conditions_list$conditions
   
-  multiverse[['default_parameter_assignment']] = 1
-  multiverse[['multiverse_table']] = get_multiverse_table(multiverse, .code, parameter_conditions_list, .super_env)
+  m_obj$parameters <- parameters
+  m_obj$conditions <- conditions
+  
+  parameter_set <- c(m_obj$parameter_set, setdiff(names(parameters), m_obj$parameter_set))
+  
+  if (length( m_obj$multiverse_diction$keys() ) == 0) .parent_key = NULL
+  else {
+    if (.name %in% m_obj$multiverse_diction$keys()) {
+      .parent_key = m_obj$multiverse_diction$keys()[[which(m_obj$multiverse_diction$keys() == .name) - 1]]
+    } else {
+      .parent_key = unlist(tail(m_obj$multiverse_diction$keys(), 1))
+    }
+  }
+ 
+  q <- parse_multiverse_expr(.multiverse, .expr, parameters, .parent_key)
+  
+  invisible( m_obj$multiverse_diction$set(.name, q) )
 }
-
-
-parse_multiverse2 <- function(multiverse, .code, .super_env) {
-  stopifnot( is.r6_multiverse(multiverse) )
-  
-  parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
-  multiverse[['parameters']] = parameter_conditions_list$parameters
-  multiverse[['conditions']] = parameter_conditions_list$conditions
-  
-  multiverse[['default_parameter_assignment']] = 1
-  multiverse[['multiverse_table']] = get_multiverse_table(multiverse, .code, parameter_conditions_list, .super_env)
-}
-
 
 parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_block) {
-  stopifnot(is(M, "multiverse"))
+  stopifnot(is(multiverse, "multiverse"))
   
-  .m_obj <- attr(M, "multiverse")
+  .m_obj <- attr(multiverse, "multiverse")
   .super_env <- attr(multiverse, "multiverse_super_env")
   
   df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
+  
+  n <- ifelse(nrow(df), nrow(df), 1)
   
   # gets the environments from the previous code block in the multiverse
   # these will be the parents for the new environments created from the execution
   # of a new code block.
   if (is.null(.parent_block)) {
-    parent.envs <- lapply(seq_len(nrow(df)), function(x) .super_env)
+    
+    parent.envs <- lapply(seq_len(n), function(x) .super_env)
+    parents <- lapply(seq_len(n), function(x) 0)
   } else {
-    parent.envs <- lapply(.m_obj$multiverse_diction$get(.parent_block)$as_list(), `[[`, "env")
+    parent.envs <- lapply(.m_obj$multiverse_diction$get(.parent_block), `[[`, "env")
+    parents <- lapply(seq_len(length(.m_obj$multiverse_diction$get(.parent_block))), function(x) x)
   }
   
-  lapply(seq_len(nrow(df)), function(i) {
+  lapply(seq_len(n), function(i) {
     .p <- lapply(df, "[[", i)
     
     # new envs per parent env: nrow(df)/length(parent.envs)
     # number of parent env: length(parent.envs)
     # parent: parent.envs[[ceiling(i/(nrow(df)/length(parent.envs)))]]
     list(
-      env = new.env(parent = parent.envs[[ceiling(i/(nrow(df)/length(parent.envs)))]]), 
+      env = new.env(parent = parent.envs[[ceiling(i/(n/length(parent.envs)))]]), 
+      parent = parents[[ceiling(i/(n/length(parent.envs)))]],
       parameter_assignment = .p, 
-      code = get_code(.expr, .p)
+      code = get_code(list(.expr), .p)
     ) 
-  }) %>%
-    queue(items = .)
+  })
 }
 
 
@@ -110,7 +124,7 @@ get_parameter_conditions_list <- function(.c) {
   # check if names are duplicated
   # if yes, then make sure all the option names of the parameter
   # are used. If no, throw an error that it should cover all the
-  # options for a parameter. Will address #8 and #14
+  # options for a parameter.
   if (isTRUE(any(duplicated(names(.p))))) {
     duplicate_names <- duplicated(names(.p), fromLast = TRUE) | duplicated(names(.p))
     if(isFALSE( all(duplicated(.p[duplicate_names], fromLast = TRUE) | duplicated(.p[duplicate_names])) )) {
@@ -144,7 +158,6 @@ get_multiverse_table <- function(multiverse, .code, parameters_conditions.list, 
     
     if (length(parameters_conditions.list$condition) > 0) {
       all_conditions <- parse_expr(paste0("(", parameters_conditions.list$conditions, ")", collapse = "&"))
-      #parse_expr(paste0(lapply(parameters_conditions.list$conditions, expr_deparse), collapse = "&"))
     } else {
       all_conditions <- expr(TRUE)
     }
@@ -238,9 +251,6 @@ combine_parameter_conditions <- function(l1, l2) {
   stopifnot(identical(names(l2), c("parameters", "conditions")))
   
   # check that duplicate parameters have the same option names
-  
-  # print(c((l1$parameters), (l2$parameters)))
-  # print(duplicate(c(names(l1$parameters), names(l2$parameters))))
   
   # merge the parameter lists: when a parameter appears in both lists,
   # take the union of the options provided. the use of two loops and intersect / setdiff

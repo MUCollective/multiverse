@@ -88,12 +88,14 @@
 #' @export
 inside <- function(multiverse, .expr, .label = NULL) {
   .code = enexpr(.expr)
-
-  add_and_parse_code2(multiverse, .code, .label)
-
+  
+  add_and_parse_code(multiverse, .code, .label)
+  
+  ## execute everything from where things have changed
+  
   # direct calls to inside() by the user result in execution of the
   # default universe in the global environment.
-  # execute_universe(multiverse)
+  execute_universe(multiverse)
 }
 
 
@@ -130,42 +132,16 @@ compare_code <- function(x, y) {
   mapply( function(.x, .y) identical(deparse(.x), deparse(.y)), x, y )
 }
 
-
 add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
-  m_obj <- attr(multiverse, "multiverse")
-  
-  # ensure that .expr is a single self-contained { ... } block
-  if(!is_call(.expr, "{")) {
-    .expr = as.call(list(quote(`{`), .expr))
-  }
-  
-  # expand .options arguments in branch calls
-  .expr = expand_branch_options(.expr)
-  .loc = length(m_obj$code)
-  
-  if (is_null(m_obj$code)) {
-    if (is.null(.name)) .c = list(.expr) 
-    else {
-      .c = list()
-      .c[[.name]] = .expr
-    }
-  } else {
-    if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
-    else {
-      .c = m_obj$code
-      .c[[.name]] = .expr
-    }
-  }
-  
-  parse_multiverse(m_obj, .c, .super_env)
-  m_obj$code <- .c
-}
-
-
-add_and_parse_code2 <- function(multiverse, .expr, .name = NULL) {
   m_obj <- attr(multiverse, "multiverse")
   .super_env <- attr(multiverse, "multiverse_super_env")
   
+  # check if .name is NULL
+  # if it is NULL auto-generate
+  if (is.null(.name)) {
+    .name = as.character(length(m_obj$code) + 1)
+  }
+  
   # ensure that .expr is a single self-contained { ... } block
   if(!is_call(.expr, "{")) {
     .expr = as.call(list(quote(`{`), .expr))
@@ -173,30 +149,32 @@ add_and_parse_code2 <- function(multiverse, .expr, .name = NULL) {
   
   # expand .options arguments in branch calls
   .expr = expand_branch_options(.expr)
-  .loc = length(m_obj$code)
   
+  # what has been unchanged so far in the tree
+  # everything post will be edited in the subsequent steps
   if (is_null(m_obj$code)) {
     if (is.null(.name)) .c = list(.expr) 
     else {
       .c = list()
       .c[[.name]] = .expr
     }
+    .expr <- list(.expr)
   } else {
     if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
     else {
       .c = m_obj$code
       .c[[.name]] = .expr
+      
+      #.expr needs to be changed so that we recompute everything that occurs subsequently
+      .expr = unname( .c[which(names(.c) == .name):length(.c)] )
+      .name = names(.c)[which(names(.c) == .name):length(.c)]
     }
   }
   
-  parameter_options <- unlist(lapply(.c, function(x) get_parameter_conditions(x)$parameters), recursive = FALSE)
-  parameter_set <- c(m_obj$parameter_set, setdiff(names(parameter_options), m_obj$parameter_set))
+  mapply(parse_multiverse, .expr, .name, MoreArgs = list(.multiverse = multiverse, .code = .c))
   
-  n = tail(unlist(m_obj$multiverse_diction$keys()), n = 1)
-  q <- parse_multiverse_expr(multiverse, .expr, parameter_options, n)
-  if (is.null(n)) m_obj$multiverse_diction$set(1, q)
-  else m_obj$multiverse_diction$set(n+1, q)
   m_obj$code <- .c
+  m_obj$unchanged_until <- length(.c) - length(.name)
 }
 
 concatenate_expr <- function(ref, to_add){

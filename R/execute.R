@@ -44,60 +44,54 @@
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, cores = 1L) {
-  m_tbl = attr(multiverse, "multiverse")[['multiverse_table']]
-  .code_list = m_tbl[['.code']]
-  .env_list = m_tbl[['.results']]
-  .universe = seq(1:nrow(m_tbl))
+execute_multiverse <- function(multiverse, .universe = 1) {
+  m_diction = attr(multiverse, "multiverse")$multiverse_diction
+  n <- m_diction$as_list() %>% length()
+  .level = attr(multiverse, "multiverse")$unchanged_until
   
-  .results <- mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
-  
-  if( any( unlist(lapply(.results, function(i) is(i, "error")), recursive = FALSE) ) ) {
-    stop("Error encountered in executing multiverse")
-  }  
-  .results
+  .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
+  invisible(lapply(tail(seq_len(n), n = (n - .level)), exec_all, .m_diction = m_diction) )
 }
 
 #' @rdname execute
 #' @export
-execute_universe <- function(multiverse, .universe = NULL) {
-  m_obj = attr(multiverse, "multiverse")
+execute_universe <- function(multiverse, .universe = 1) {
+  m_diction = attr(multiverse, "multiverse")$multiverse_diction
+  .level = attr(multiverse, "multiverse")$unchanged_until
   
-  if(is.null(.universe)) {
-    .param_assgn = m_obj[['default_parameter_assignment']]
-    .universe = "1"
-  } else {
-    .param_assgn = .universe
-  }
+  .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
+  .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
-  if ( is.list(m_obj[['parameters']]) & length(m_obj[['parameters']]) == 0 ) {
-    .c = m_obj[['multiverse_table']][['.code']][[1]]
-    env = m_obj[['multiverse_table']][['.results']][[1]]
-  } else {
-    stopifnot(is.numeric(.param_assgn) || !is.null(.param_assgn))
-    .c = m_obj[['multiverse_table']][['.code']][[.param_assgn]]
-    env = m_obj[['multiverse_table']][['.results']][[.param_assgn ]]
-  }
-  
-  .result <- execute_code_from_universe(.c, env)
-  
-  # if (is(.result[[1]], "error")) stop("Error encountered in executing universe ", .universe)
+  invisible(lapply(.to_exec, exec_in_order, .m_diction = m_diction, .universes = .order) )
 }
-
-# execute_code_from_universe <- function(.c, .env) invisible( lapply(.c, eval, envir = .env) )
 
 execute_code_from_universe <- function(.c, .env = globalenv()) {
   e <- tryCatch( invisible( lapply(.c, eval, envir = .env) ), error = function(e) e )
   if (is(e, "error")) list(e) else .env
 }
 
-
-execute_multiverse2 <- function(multiverse, cores = getOption("mc.cores", 1L)) {
-  stopifnot( is.multiverse(multiverse) )
-  .m_obj = attr(multiverse, "multiverse")
-  .universe = seq(1:nrow(expand(multiverse)))
-  
-  results <- mclapply(.universe, execute_universe, multiverse = .m_obj, mc.cores = cores)
+# for a universe, get the indices which need to be executed
+get_exec_order <- function(.m_diction, .uni, .level) {
+  if (.level >= 1){
+    .p <- .m_diction$get(.m_diction$keys()[[.level]])[[.uni]]$parent
+    c(get_exec_order(.m_diction, .p, .level - 1), .uni)
+  }
 }
+
+exec_in_order <- function(.m_diction, .universes, .i) {
+  x <- .m_diction$get(as.character(.i))[[ .universes[[.i]] ]]
+  
+  execute_code_from_universe(x$code, x$env)
+}
+
+exec_all <- function(.m_diction, .i) {
+  x <- .m_diction$get(as.character(.i))
+  
+  .code_list = lapply(x, `[[`, "code")
+  .env_list = lapply(x, `[[`, "env")
+  
+  mapply(execute_code_from_universe, .code_list, .env_list)
+}
+
 
 

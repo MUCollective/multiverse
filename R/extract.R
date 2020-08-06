@@ -25,8 +25,6 @@
 #'  
 #' @export
 extract_variables <- function(.data, ..., .results = .results) {
-  results_name = vars_pull(names(.data), {{ .results }})
-  
   mutate(.data, extracted = lapply(.results, extract_from_env, ...)
   ) %>%
     unnest_wider("extracted")

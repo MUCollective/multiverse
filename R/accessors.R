@@ -12,7 +12,9 @@
 `$.multiverse` <- function(multiverse, name) {
   .idx = 1
   m_obj = attr(multiverse, "multiverse")
-  m_obj[['multiverse_table']][['.results']][[.idx]][[name]]
+  .env <- unlist(unname(tail(attr(multiverse, "multiverse")$multiverse_diction$as_list(), n = 1)), recursive = FALSE)[[1]]$env
+  
+  get(as.character(name), .env)
 }
 
 #' @export
@@ -41,7 +43,34 @@ expand.default <- function(multiverse) {
 #' @rdname accessors
 #' @export
 expand.multiverse <- function(multiverse) {
-  attr(multiverse, "multiverse")[['multiverse_table']]
+  .m_obj = attr(multiverse, "multiverse")
+  .m_list = .m_obj$multiverse_diction$as_list()
+  
+  df <- data.frame( lapply(expand.grid(.m_obj$parameters, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
+  
+  if (length(.m_obj$conditions) > 0) {
+    all_conditions <- parse_expr(paste0("(", .m_obj$conditions, ")", collapse = "&"))
+  } else {
+    all_conditions <- expr(TRUE)
+  }
+  
+  if (nrow(df) == 0) {
+    n <- 1
+    param.assgn =  list(list())
+    .code = list(code(multiverse))
+    df <- tibble(.universe = seq(1:n))
+  } else {
+    n <- nrow(df)
+    param.assgn =  lapply(seq_len(n), function(i) lapply(df, "[[", i))
+    .code = lapply(seq_len(n), get_code_universe, .m_list = .m_list, .level = length(.m_list))
+    
+    df <- select(mutate(df, .universe = seq(1:n)), .universe, everything())
+  }
+  
+  filter(as_tibble(mutate(df,
+                          .parameter_assignment = param.assgn,
+                          .code = .code
+  )), eval(all_conditions))
 }
 
 #' @rdname accessors
@@ -113,9 +142,11 @@ conditions.multiverse <- function(multiverse) {
 from_universe_i <- function(multiverse, idx, name) {
   name = enquo(name)
   stopifnot( is.multiverse(multiverse) )
-  m_tbl = attr(multiverse, "multiverse")[['multiverse_table']]
-
-  m_tbl$.results[[idx]][[quo_text(name)]]
+  m_diction = attr(multiverse, "multiverse")$multiverse_diction
+  env_list <- lapply(m_diction$get(unlist(tail(m_diction$keys(), n = 1))), `[[`, "env")
+  
+  #m_tbl$.results[[idx]][[quo_text(name)]]
+  get(quo_text(name), env_list[[idx]])
 }
 
 

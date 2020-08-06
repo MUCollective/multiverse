@@ -7,23 +7,21 @@ library(purrr)
 library(dplyr)
 
 test_that("inside works on new multiverse object", {
-  an_expr = expr({x = data.frame(x = 1:10)})
+  an_expr = list( `1` = expr({x = data.frame(x = 1:10)}) )
 
   M = multiverse()
   inside(M, {
     x = data.frame(x = 1:10)
   })
 
-  expect_equal( code(M), list(an_expr) )
+  expect_equal( code(M), an_expr )
 })
 
 test_that("multiple lines of code can be passed to inside", {
-  some_exprs = list(quote({
-    x = data.frame(x = 1:10)
-  }),
-  quote({
-    y = data.frame(y = 11:20)
-  }))
+  some_exprs = list(
+    `1` = quote({  x = data.frame(x = 1:10) }),
+    `2` = quote({  y = data.frame(y = 11:20)  })
+  )
 
   M = multiverse()
   inside(M, {
@@ -38,10 +36,12 @@ test_that("multiple lines of code can be passed to inside", {
 })
 
 test_that("multiple lines of code can be passed to inside in a single block", {
-  some_exprs = list(quote({
-    x <- data.frame(x = 1:10)
-    y <- data.frame(y = 11:20)
-  }))
+  some_exprs = list(
+    `1` = quote({
+      x <- data.frame(x = 1:10)
+      y <- data.frame(y = 11:20)
+    })
+  )
   
   M = multiverse()
   inside(M, {
@@ -87,13 +87,13 @@ test_that("`add_and_parse_code` parses the code", {
   M = multiverse()
   add_and_parse_code(M, an_expr)
 
-  M.R6 = attr(M, "multiverse")
-  expect_equal( dim(M.R6$multiverse_table), c(4, 5) )
-  expect_equal( length(M.R6$parameters), 1 )
-  expect_equal( length(M.R6$parameters$value_y), 4 )
-  expect_equal( M.R6$multiverse_table$.universe, 1:4 )
-  expect_equal( M.R6$multiverse_table$value_y, c("0", "3", "x + 1", "x^2") )
-  expect_equal( M.R6$multiverse_table$.parameter_assignment, 
+  M_tbl = expand(M)
+  expect_equal( dim(M_tbl), c(4, 4) )
+  expect_equal( length(parameters(M)), 1 )
+  expect_equal( length(parameters(M)$value_y), 4 )
+  expect_equal( M_tbl$.universe, 1:4 )
+  expect_equal( M_tbl$value_y, c("0", "3", "x + 1", "x^2") )
+  expect_equal( M_tbl$.parameter_assignment, 
     lapply(c("0", "3", "x + 1", "x^2"), function(x) list(value_y = x))
   )
 })
@@ -107,7 +107,7 @@ test_that("`inside` executes the default analysis", {
   M = multiverse()
   inside(M, !!an_expr)
 
-  df = attr(M, "multiverse")$multiverse_table$.results[[1]]$x
+  df = M$x
   df.ref =  data.frame(x = 1:10) %>%  mutate( y = 0 )
 
   expect_equal( as.list(df), as.list(df.ref) )
@@ -136,7 +136,7 @@ test_that("continuous parameters defined in the multiverse are evaluated", {
 })
 
 
-test_that("`inside` executes the default analysis", {
+test_that("`inside` can access variables defined in the caller environment", {
   M = multiverse()
   df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
   

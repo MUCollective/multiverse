@@ -3,9 +3,11 @@ context("multiverse")
 
 library(dplyr)
 library(lubridate)
+library(purrr)
+library(tidyr)
 
-M = multiverse()
-M.obj = attr(M, "multiverse")
+M <- multiverse()
+M.obj <- attr(M, "multiverse")
 
 test_that("user facing multiverse object is assigned proper class", {
   expect_true(is(M, "multiverse"))
@@ -17,21 +19,21 @@ test_that("identify multiverse object using 'inherits' function", {
 })
 
 test_that("new multiverse object is initialised properly", {
-  expect_null(M.obj[['code']])
-  expect_null(M.obj[['default_parameter_assignment']])
-  expect_warning( expect_mapequal( M.obj[['parameters']], list()) )
-  expect_warning( expect_mapequal( M.obj[['conditions']], list()) )
-  expect_true( is.data.frame(M.obj[['multiverse_table']]) )
-  expect_equal( nrow(M.obj[['multiverse_table']]), 0 )
+  expect_null(M.obj$code)
+  expect_null(M.obj$parameter_set)
+  expect_warning( expect_mapequal( M.obj$parameters, list()) )
+  expect_warning( expect_mapequal( M.obj$conditions, list()) )
+  expect_equal( length(M.obj$multiverse_diction$as_list()), 0 )
 })
 
 test_that("accessor functions work on newly initialised object", {
+  m_tbl <- expand(M)
+  
   expect_null(code(M))
-  expect_null(default_parameter_assignment(M))
   expect_warning( expect_mapequal( parameters(M), list()) )
   expect_warning( expect_mapequal( conditions(M), list()) )
-  expect_true( is.data.frame(expand(M)) )
-  expect_equal( nrow(expand(M)), 0 )
+  expect_true( is.data.frame(m_tbl) )
+  expect_equal( nrow(m_tbl), 1 )
 })
 
 # accessor functions ------------------------------------------------
@@ -86,7 +88,7 @@ test_that("accessor functions for getting default code", {
   })
 
   expect_true( all(map_lgl(code(M.2), is.language)) )
-  expect_equal( code(M.2), list(ref_code) )
+  expect_equal( code(M.2), list(`1` = ref_code) )
 })
 
 test_that("accessor function for parameter list", {
@@ -97,15 +99,6 @@ test_that("accessor function for parameter list", {
 
   expect_true( is.list(parameters(M.2)) )
   expect_mapequal( parameters(M.2), ref_list )
-})
-
-# test_that("accessor function for conditions list", {  })
-
-test_that("accessor functions get default parameter assignment", {
-  ref_list = list(menstrual_calculation = "mc_option1", relationship_status = "rs_option1")
-
-  expect_true( is.list(default_parameter_assignment(M.2)) )
-  expect_mapequal( default_parameter_assignment(M.2), ref_list )
 })
 
 test_that("accessor functions retrieve the multiverse table", {
@@ -143,7 +136,7 @@ test_that("accessor functions retrieve the multiverse table", {
     ) %>%
     as_tibble()
 
-  df = expand(M.2) %>% select(-.results)
+  df = expand(M.2)
 
   expect_true( tibble::is_tibble(expand(M.2)) )
   expect_equal( as.list(ref_df), as.list(df) )
