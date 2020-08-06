@@ -67,7 +67,9 @@ parse_multiverse <- function(.multiverse, .expr, .code, .name) {
   if (length( m_obj$multiverse_diction$keys() ) == 0) .parent_key = NULL
   else {
     if (.name %in% m_obj$multiverse_diction$keys()) {
-      .parent_key = m_obj$multiverse_diction$keys()[[which(m_obj$multiverse_diction$keys() == .name) - 1]]
+      p_idx <- which(m_obj$multiverse_diction$keys() == .name) - 1
+      if (p_idx == 0) .parent_key = NULL
+      else .parent_key = m_obj$multiverse_diction$keys()[[which(m_obj$multiverse_diction$keys() == .name) - 1]]
     } else {
       .parent_key = unlist(tail(m_obj$multiverse_diction$keys(), 1))
     }

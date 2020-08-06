@@ -62,12 +62,13 @@ execute_universe <- function(multiverse, .universe = 1) {
   .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
-  invisible(lapply(.to_exec, exec_in_order, .m_diction = m_diction, .universes = .order) )
+  invisible( lapply(.to_exec, exec_in_order, .m_diction = m_diction, .universes = .order) )
 }
 
 execute_code_from_universe <- function(.c, .env = globalenv()) {
-  e <- tryCatch( invisible( lapply(.c, eval, envir = .env) ), error = function(e) e )
-  if (is(e, "error")) list(e) else .env
+  # e <- tryCatch( invisible( lapply(.c, eval, envir = .env) ), error = function(e) e )
+  # if (is(e, "error")) list(e) else .env
+  lapply(.c, eval, envir = .env)
 }
 
 # for a universe, get the indices which need to be executed
