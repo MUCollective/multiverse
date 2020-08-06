@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -63,16 +66,13 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    </li>
-    <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
@@ -96,23 +96,32 @@
       <h1 data-toc-skip>Declaring conditions in the multiverse</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2020-06-18</h4>
+            <h4 class="date">2020-08-05</h4>
       
       
-      <div class="hidden name"><code>conditions.Rmd</code></div>
+      <div class="hidden name"><code>Conditions.Rmd</code></div>
 
     </div>
 
     
     
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">knitr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">broom</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">gganimate</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cowplot</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">multiverse</span>)</pre></body></html></div>
 <div id="the-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-data" class="anchor"></a>The data</h2>
 <p>We will be using the same data as the Vignette <em>A complete implementation of a multiverse analysis</em> (see vignette(“complete-multiverse-analysis”)).</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"durante"</span>)
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"durante"</span>)
 
 <span class="no">data.raw.study2</span> <span class="kw">&lt;-</span> <span class="no">durante</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
     <span class="kw">Abortion</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="fl">7</span> - <span class="no">Abortion</span>) + <span class="fl">1</span>,
     <span class="kw">StemCell</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="fl">7</span> - <span class="no">StemCell</span>) + <span class="fl">1</span>,
     <span class="kw">Marijuana</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="fl">7</span> - <span class="no">Marijuana</span>) + <span class="fl">1</span>,
@@ -132,38 +141,38 @@
 <h4 class="hasAnchor">
 <a href="#the-when-operator" class="anchor"></a>The %when% operator</h4>
 <p>There are two ways in which you can specify the <code>%when%</code> operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
         <span class="st">"mc_option1"</span> ~ (<span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>) <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>),
         <span class="st">"mc_option2"</span> ~ (<span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>) <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>),
         <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
     )</pre></body></html></div>
 <p>The other is to specify it at the head of the branch, right after the option name:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">df</span> <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">df</span> <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
         <span class="st">"mc_option1"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>) ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
         <span class="st">"mc_option2"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>) ~ (<span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>),
         <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
     )</pre></body></html></div>
 <p>We can write the complete analysis by specifying the condition with the %when% operator as:</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
-      <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )  <span class="kw">%&gt;%</span>
+      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )  <span class="kw">%&gt;%</span>
       <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">cycle_length</span>,
           <span class="st">"cl_option1"</span> ~ <span class="fl">TRUE</span>,
           <span class="st">"cl_option2"</span> ~ <span class="no">ComputedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ComputedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>,
           <span class="st">"cl_option3"</span> ~ <span class="no">ReportedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ReportedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>
       )) <span class="kw">%&gt;%</span>
-      <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
           <span class="st">"mc_option1"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>) ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
           <span class="st">"mc_option2"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>) ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>,
           <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
       )
 })</pre></body></html></div>
 <p>As the condition implies, the parameter <code>menstrual_calcaultion</code> (which is for calclating the variable <code>NextMenstrualCalculation</code>) cannot take the value of “mc_option1” when we filter <code>cycle_length</code> using “cl_option3”. Similarly, <code>menstrual_calcaultion</code> cannot take the value of “mc_option2” when we filter <code>cycle_length</code> using “cl_option2”. In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 7 x 6
 ##   .universe cycle_length menstrual_calculat… .parameter_assign… .code   .results
 ##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;               &lt;list&gt;             &lt;list&gt;  &lt;list&gt;  
@@ -181,21 +190,21 @@
 <p>The same can be performed with the <code>branch_assert()</code> function. The benefit of using this is that within the branch assert function, the user can specify any logical operation.</p>
 <p>For eg: the above logical operations can be specified as: <code>branch_assert((menstrual_calculation != "mc_option1" | cycle_length != "cl_option3"))</code></p>
 <p>Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the <code>branch_assert()</code> function in our example as:</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">df</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">df</span> <span class="kw">%&gt;%</span>
     <span class="fu">branch_assert</span>( (<span class="no">menstrual_calculation</span> <span class="kw">!=</span> <span class="st">"mc_option1"</span> <span class="kw">|</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>)) ) <span class="kw">%&gt;%</span>
     <span class="fu">branch_assert</span>( (<span class="no">menstrual_calculation</span> <span class="kw">!=</span> <span class="st">"mc_option2"</span> <span class="kw">|</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>)) )</pre></body></html></div>
 <p>Using the <code>branch_assert()</code>, we can perform the exact same analysis:</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
     <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
-        <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )  <span class="kw">%&gt;%</span>
-        <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">cycle_length</span>,
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )  <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">cycle_length</span>,
             <span class="st">"cl_option1"</span> ~ <span class="fl">TRUE</span>,
             <span class="st">"cl_option2"</span> ~ <span class="no">ComputedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ComputedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>,
             <span class="st">"cl_option3"</span> ~ <span class="no">ReportedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ReportedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>
         )) <span class="kw">%&gt;%</span>
-        <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
             <span class="st">"mc_option1"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
             <span class="st">"mc_option2"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>,
             <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
@@ -204,7 +213,7 @@
         <span class="fu">branch_assert</span>( (<span class="no">menstrual_calculation</span> <span class="kw">!=</span> <span class="st">"mc_option2"</span> <span class="kw">|</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>)) )
 })</pre></body></html></div>
 <p>As we can see, this results in the same multiverse where universes indexed 3 and 5 are not compatible.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 7 x 6
 ##   .universe cycle_length menstrual_calculat… .parameter_assign… .code   .results
 ##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;               &lt;list&gt;             &lt;list&gt;  &lt;list&gt;  
