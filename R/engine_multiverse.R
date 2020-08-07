@@ -1,6 +1,14 @@
 multiverse_engine <- function(options) {
-  .multiverse_name = options$inside
+  .c = multiverse_block_code(options$inside, options$label, options$code)
   
+  if(is.null(getOption("knitr.in.progress"))) {
+     multiverse_default_block_exec(.c, options)
+  } else {
+     multiverse_default_block_exec(options$code, options, TRUE)
+  }
+}
+
+multiverse_block_code <- function(.multiverse_name, .label, .code) {
   if ( !(.multiverse_name %in% ls(envir = knit_global()))) {
     stop(
       "Multiverse object `", .multiverse_name, "` was not found.\n",
@@ -9,43 +17,33 @@ multiverse_engine <- function(options) {
     )
   }
   
-  .c = multiverse_block_code(.multiverse_name, options$label, options$code)
-  
-  .multiverse = get(.multiverse_name, envir = knit_global())
-  if(is.null(getOption("knitr.in.progress"))) {
-    multiverse_default_block_exec(.c, options)
-  } else {
-    execute_multiverse(.multiverse)
-    multiverse_default_block_exec(options$code, options, TRUE)
-  }
-}
-
-multiverse_block_code <- function(.multiverse_name, .label, .code) {
   if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
     stop("Please provide a label to your multiverse code block")
   }
   
   .multiverse = get(.multiverse_name, envir = knit_global())
-
+  
   n <- length(.code)
   
   pasted <- paste(.code, collapse = "\n")
-  
   .expr <- parse(text = c("{", pasted, "}"), keep.source = FALSE)[[1]]
-  .m = attr(.multiverse, "multiverse")
   
   add_and_parse_code(.multiverse, .expr, .label)
   
-  if ( is.list(.m[['parameters']]) & length(.m[['parameters']]) == 0 ) {
+  .m_list = attr(.multiverse, "multiverse")$multiverse_diction$as_list()
+  
+  if ( is.list(parameters(.multiverse)) & length(parameters(.multiverse)) == 0 ) {
     # executing everything in the default universe
     # since there are no branches in the multiverse
-    .c = .m[['multiverse_table']][['.code']][[1]]
+    .c = get_code_universe(.m_list = .m_list, .uni = 1, .level = length(.m_list))
   } else {
-    idx = .m[['default_parameter_assignment']]
-    .c = .m[['multiverse_table']][['.code']][[idx]]
+    idx = 1 #.m[['default_parameter_assignment']]
+    .c = get_code_universe(.m_list = .m_list, .uni = idx, .level = length(.m_list))
   }
   
-  .c = deparse(.c[[.label]])
+  # .c = deparse(.c[[.label]])
+  
+  # print(.c)
   
   .c
 }
@@ -83,7 +81,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
       new_device = FALSE,
       envir = knit_global()
     )
-
+    
     # only output character vectors and conditions (warnings, etc) values (not plots or
     # source code) here, as everything else (e.g. graphics, messages) will have already
     # been output during evaluate()
@@ -91,6 +89,6 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
   }
 }
 
-knit_engines$set(multiverse = multiverse_engine)
+knitr::knit_engines$set(multiverse = multiverse_engine)
 
 

@@ -106,13 +106,13 @@ inside <- function(multiverse, .expr, .label = NULL) {
 # #' @rdname inside
 # #' @export
 # `$<-.multiverse` <- function(multiverse, name, value) {
-  # must use call here instead of putting { .. } inside the expr()
-  # because otherwise covr::package_coverage() will insert line number stubs
-  # *into* the expression and cause tests to break
+# must use call here instead of putting { .. } inside the expr()
+# because otherwise covr::package_coverage() will insert line number stubs
+# *into* the expression and cause tests to break
 #   if (!is.call(value)) stop(
 #     "Only objects of type language can be passed into the multiverse. Did you forget to add `~`?"
 #  )
-  
+
 #   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
 #   .expr = expand_branch_options(.expr)
 
@@ -190,28 +190,28 @@ concatenate_expr <- function(ref, to_add){
       ref = concatenate_expr(ref, to_add)
     }
   }
-
+  
   ref
 }
 
 
 # expand use of .options argument in branch calls
 expand_branch_options <- function(.expr) {
-    if (is.call(.expr)) {
-      if (is_call(.expr, "branch")) {
-        .new_expr = .expr
-        if(".options" %in% names(.expr)) {
-          .eval_seq = eval(.expr[['.options']])
-          .idx = match(c(".options"), names(.expr))
-          .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
-        }
-        return(.new_expr)
-      } else {
-        as.call(map(.expr, ~ expand_branch_options(.x)))
+  if (is.call(.expr)) {
+    if (is_call(.expr, "branch")) {
+      .new_expr = .expr
+      if(".options" %in% names(.expr)) {
+        .eval_seq = eval(.expr[['.options']])
+        .idx = match(c(".options"), names(.expr))
+        .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
       }
+      return(.new_expr)
     } else {
-      .expr
+      as.call(map(.expr, ~ expand_branch_options(.x)))
     }
+  } else {
+    .expr
+  }
 }
 
 

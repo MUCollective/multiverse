@@ -77,7 +77,7 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
       .parent_key = unlist(tail(m_obj$multiverse_diction$keys(), 1))
     }
   }
- 
+  
   q <- parse_multiverse_expr(.multiverse, .expr, parameters, .parent_key)
   
   invisible( m_obj$multiverse_diction$set(.label, q) )
@@ -125,7 +125,7 @@ get_parameter_conditions_list <- function(.c) {
   l <- lapply( .c, get_parameter_conditions )
   
   .p = unlist(lapply(l, function(x) x$parameters), recursive = FALSE)
-
+  
   # check if names are duplicated
   # if yes, then make sure all the option names of the parameter
   # are used. If no, throw an error that it should cover all the
@@ -133,7 +133,7 @@ get_parameter_conditions_list <- function(.c) {
   if (isTRUE(any(duplicated(names(.p))))) {
     duplicate_names <- duplicated(names(.p), fromLast = TRUE) | duplicated(names(.p))
     if(isFALSE( all(duplicated(.p[duplicate_names], fromLast = TRUE) | duplicated(.p[duplicate_names])) )) {
-        stop("reused parameters should have the same number of options and the same names for each option as the original declaration")
+      stop("reused parameters should have the same number of options and the same names for each option as the original declaration")
     }
     .p <- .p[!duplicated(names(.p))]
   }

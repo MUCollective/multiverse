@@ -19,39 +19,28 @@ print.multiverse <- function(x, ...) {
   
   cat("Multiverse\n\n")
   cat("  Multiverse consists of", nrow(expand(x)), "different analyses\n\n")
-  if(ly <= 0){
-    cat("  ", "Parameters:", "\n")
-    cat("      ", "No parameters declared", "\n")
-  } else {
-    for (i in 1:ly) {
-      cat("  ", "Parameter:", names(y)[[i]], "\n")
-      cat("      ")
-      if (length(y[[i]]) > 5) {
-        cat("options:", unlist(y[[i]])[1:4], "...")
-        cat(" [", length(y[[i]]), " options", "] ", "\n", sep = "")
-      } else {
-        cat("options:", unlist(y[[i]]), "\n")
-      }
+  for (i in 1:ly) {
+    cat("  ", "Parameter:", names(y)[[i]], "\n")
+    cat("      ")
+    if (length(y[[i]]) > 5) {
+      cat("options:", unlist(y[[i]])[1:4], "...")
+      cat(" [", length(y[[i]]), " options", "] ", "\n", sep = "")
+    } else {
+      cat("options:", unlist(y[[i]]), "\n")
     }
-    if (length(y) > 20) {
-      cat("  ", "...")
-      cat(" [", (length(y) - 20), " parameters not shown]", "\n", sep = "")
-    }
+  }
+  if (length(y) > 20) {
+    cat("  ", "...")
+    cat(" [", (length(y) - 20), " parameters not shown]", "\n", sep = "")
   }
   
   cat("\n  ", "Conditions:", "\n")
-  
-  if(lz <= 0){
-    cat("      ", "No conditions declared", "\n")
-  } else {
-    for (i in 1:lz) {
-      cat("      ", as.character(z[[1]])[2], "\n")
-    }
-    if (length(z) > 10) {
-      cat("  ", "...")
-      cat(" [", (length(z) - 20), " conditions not shown]", "\n", sep = "")
-    }
+  for (i in 1:lz) {
+    cat("      ", as.character(z[[1]])[2], "\n")
   }
-  
+  if (length(z) > 10) {
+    cat("  ", "...")
+    cat(" [", (length(z) - 20), " conditions not shown]", "\n", sep = "")
+  }
 }
 
