@@ -1,16 +1,21 @@
 #' Execute parts of, or the entire multiverse
 #'
 #' @description These are functions which allow the user to execute parts or whole of the multiverse.
-#' The user can choose to either execute the default analysis using the [execute_default], or a part or
-#' whole of the multiverse using the [execute_multiverse].
+#' The user can choose to either execute the default analysis using the \code{\link{execute_default}}, or a part or
+#' whole of the multiverse using the \code{\link{execute_multiverse}}.
 #'
 #' @param multiverse The multiverse object
 #' 
-#' @param parallel (Logical) Indicates whether to run the multiverse in parallel. Defaults to FALSE.
+#' @param cores Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
+#' Defaults to NULL (running in a single core)
+#' 
+#' @param .universe Indicate which universe to execute, if the user wants to execute a specific combination
+#' of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.
 #'
-#' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access
-#' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
-#' multiverse table, under the results column.
+#' @details Each single analysis within the multiverse lives in a separate environment. 
+#' We provide convenient functions to access the results for the  default analysis, as well as 
+#' parts or whole of the multiverse. Each analysis can also be accessed from the multiverse table,
+#' under the results column.
 #'
 #' @examples
 #' \dontrun{
@@ -39,58 +44,67 @@
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, parallel = FALSE) {
-  stopifnot( is.multiverse(multiverse) )
-  .m_obj = attr(multiverse, "multiverse")
-
-  execute_all_in_multiverse(.m_obj, parallel)
-}
-
-execute_all_in_multiverse <- function(m_obj, .in_parallel) {
-  m_tbl = m_obj[['multiverse_table']]
+execute_multiverse <- function(multiverse, cores = 1L) {
+  m_tbl = attr(multiverse, "multiverse")[['multiverse_table']]
+  .code_list = m_tbl[['.code']]
+  .env_list = m_tbl[['.results']]
   .universe = seq(1:nrow(m_tbl))
   
-  if (.in_parallel) {
-    results <- parallel::mclapply(.universe, execute_universe, multiverse = m_obj, mc.cores = 2)
-  } else {
-    results <- lapply(.universe, execute_universe, multiverse = m_obj)
-  }
-  
-  # results
-  #for (i in 1:nrow(m_tbl)) {
-  #  execute_universe(m_obj, i)
-  #  invisible( lapply(m_tbl$.code[[i]], eval, envir = m_tbl[['.results']][[i]]) )
-  #}
+  results <- parallel::mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
 }
+
 
 #' @rdname execute
 #' @export
 execute_default <- function(multiverse) {
-  UseMethod("execute_default")
+  UseMethod("execute_default", multiverse)
 }
 
+#' @rdname execute
+#' @export
+execute_default.default <- function(multiverse) {
+  stop("execute_default can only be called on objects of class multiverse")
+}
+
+#' @rdname execute
+#' @export
 execute_default.multiverse <- function(multiverse) {
-  m_obj = attr(multiverse, "multiverse")
-  execute_universe(m_obj)
+  execute_universe(multiverse)
 }
 
+#' @rdname execute
+#' @export
 execute_universe <- function(multiverse, .universe = NULL) {
+  m_obj = attr(multiverse, "multiverse")
+  
   if(is.null(.universe)) {
-    .param_assgn = multiverse[['default_parameter_assignment']]
+    .param_assgn = m_obj[['default_parameter_assignment']]
   } else {
     .param_assgn = .universe
   }
   
-  if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
-    .c = multiverse[['multiverse_table']][['.code']][[1]]
-    env = multiverse[['multiverse_table']][['.results']][[1]]
+  if ( is.list(m_obj[['parameters']]) & length(m_obj[['parameters']]) == 0 ) {
+    .c = m_obj[['multiverse_table']][['.code']][[1]]
+    env = m_obj[['multiverse_table']][['.results']][[1]]
   } else {
     stopifnot(is.numeric(.param_assgn) || !is.null(.param_assgn))
-    .c = multiverse[['multiverse_table']][['.code']][[.param_assgn]]
-    env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
+    .c = m_obj[['multiverse_table']][['.code']][[.param_assgn]]
+    env = m_obj[['multiverse_table']][['.results']][[.param_assgn ]]
   }
   
-  invisible( lapply(.c, eval, envir = env) )
+  execute_code_from_universe(.c, env)
+}
+
+execute_code_from_universe <- function(.c, .env) {
+  invisible( lapply(.c, eval, envir = .env) )
+}
+
+execute_multiverse2 <- function(multiverse, cores = getOption("mc.cores", 1L)) {
+  stopifnot( is.multiverse(multiverse) )
+  .m_obj = attr(multiverse, "multiverse")
+  .universe = seq(1:nrow(expand(multiverse)))
+  
+  results <- mclapply(.universe, execute_universe, multiverse = .m_obj, mc.cores = cores)
 }
 
 

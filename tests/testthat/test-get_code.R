@@ -172,10 +172,10 @@ test_that("syntax tree without branches is correctly returned", {
 
   M.no_branch = multiverse()
 
-  add_and_parse_code(attr(M.no_branch, "multiverse"), attr(M.no_branch, "multiverse_super_env"), quote({
+  add_and_parse_code(M.no_branch, quote({
     df <- test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
-  }), execute = FALSE)
+  }))
 
   expect_equal(code(M.no_branch), list(an_expr))
 })
@@ -198,6 +198,63 @@ test_that("syntax tree with branches is correctly returned when no parameter is 
   })
 
   expect_equal( u.expr, list(u.expr.ref))
+})
+
+test_that("syntax tree for each universe is computed correctly", {
+  M2 = multiverse()
+  
+  df <- test_df
+  
+  add_and_parse_code(M2, quote({
+    df <- df %>%
+      mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+                                          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+                                          "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+                                          "mc_option3" ~ StartDateNext)
+      ) %>%
+      filter( branch(certainty,
+                     "cer_option1" ~ TRUE,
+                     "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+      ))
+  }))
+  
+  u.expr.ref.1 = quote({
+    df <- df %>% 
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %>% 
+      filter(TRUE)
+  })
+  u.expr.ref.2 = quote({
+    df <- df %>% 
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
+      filter(TRUE)
+  })
+  u.expr.ref.3 = quote({
+    df <- df %>% 
+      mutate(NextMenstrualOnset = StartDateNext) %>% 
+      filter(TRUE)
+  })
+  u.expr.ref.4 = quote({
+    df <- df %>% 
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %>% 
+      filter(Sure1 > 6 | Sure2 > 6)
+  })
+  u.expr.ref.5 = quote({
+    df <- df %>% 
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
+      filter(Sure1 > 6 | Sure2 > 6)
+  })
+  u.expr.ref.6 = quote({
+    df <- df %>% 
+      mutate(NextMenstrualOnset = StartDateNext) %>% 
+      filter(Sure1 > 6 | Sure2 > 6)
+  })
+  
+  expect_equal( expand(M2)$.code[[1]], list(u.expr.ref.1) )
+  expect_equal( expand(M2)$.code[[2]], list(u.expr.ref.2) )
+  expect_equal( expand(M2)$.code[[3]], list(u.expr.ref.3) )
+  expect_equal( expand(M2)$.code[[4]], list(u.expr.ref.4) )
+  expect_equal( expand(M2)$.code[[5]], list(u.expr.ref.5) )
+  expect_equal( expand(M2)$.code[[6]], list(u.expr.ref.6) )
 })
 
 # rm_branch_assert ----------------------------------------------------

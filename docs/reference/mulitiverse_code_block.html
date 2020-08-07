@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Articles • multiverse</title>
+<title>Create custom code blocks for multiverse analysis — mulitiverse_code_block • multiverse</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,8 @@
 
 
 
-<meta property="og:title" content="Articles" />
+<meta property="og:title" content="Create custom code blocks for multiverse analysis — mulitiverse_code_block" />
+<meta property="og:description" content="An easier way to interact with a multiverse object by using a custom code block" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-article-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -94,9 +95,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
-    </li>
-    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -106,13 +104,16 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
+      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
     </li>
     <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
@@ -135,32 +136,51 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Articles</h1>
+    <h1>Create custom code blocks for multiverse analysis</h1>
+    
+    <div class="hidden name"><code>mulitiverse_code_block.Rd</code></div>
     </div>
 
-    <div class="section ">
-      <h3>All vignettes</h3>
-      <p class="section-desc"></p>
-
-      <dl>
-        <dt><a href="Conditions.html">Declaring conditions in the multiverse</a></dt>
-        <dd></dt>
-        <dt><a href="branch.html">A discussion on branches in the multiverse</a></dt>
-        <dd></dt>
-        <dt><a href="calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a></dt>
-        <dd></dt>
-        <dt><a href="complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a></dt>
-        <dd></dt>
-        <dt><a href="dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a></dt>
-        <dd></dt>
-        <dt><a href="frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a></dt>
-        <dd></dt>
-        <dt><a href="multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a></dt>
-        <dd></dt>
-        <dt><a href="visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a></dt>
-        <dd></dt>
-      </dl>
+    <div class="ref-description">
+    <p>An easier way to interact with a multiverse object by using a custom code block</p>
     </div>
+
+
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This is a custom code block that allows the users to interface directly with a created multiverse object. 
+This allows users to implement analysis in RMarkdown without using auxillary functions such as [inside]. However,
+[inside] is still required to define and execute multiverse analyses in a RScript using this package. 
+See examples for more details.</p>
+<p>In RStudio, you can create a shortcut for this using RStudio addins
+(we recommend `Cmd + Opt + M` in Mac and `Ctrl + Alt + M` in Windows).
+To add a shortcut, go to Tools &gt; AddIns &gt; Browse AddIns... &gt; Keyboard shortcuts. 
+Search for `insert multiverse code chunk` and add a keyboard shortcut to this function. 
+Once you have set this up, the keyboard shortcut will create a code block in 
+any RMarkdown document.</p>
+    <h2 class="hasAnchor" id="code-block-options"><a class="anchor" href="#code-block-options"></a>Code Block Options</h2>
+
+    
+
+<p>The multiverse code blocks require two named arguments:</p><ol>
+<li><p>label: this is a unique identifier for each code block. 
+  If the same label is used for two different code blocks, the code 
+  associated with the previous block in the multiverse will be 
+  overwritten by the subsequent one. If a code block is created using the keyboard
+  shortcut, it will auto-generate a (unique) label</p></li>
+<li><p>inside: the multiverse object this code block will be associated with.
+  Defaults to "M"</p></li>
+</ol>
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 

@@ -6,9 +6,7 @@ Multiverse <- R6Class("Multiverse",
         parameters = list(),
         conditions = list(),
         default_parameter_assignment = NULL,
-        multiverse_table = data.frame(parameter_assignment = list()),
-        multiverse_chunks = list()
-        #initialize = function() {}
+        multiverse_table = tibble(parameter_assignment = list())
     )
 )
 
@@ -51,6 +49,7 @@ Multiverse <- R6Class("Multiverse",
 #' @name multiverse
 #' @importFrom rlang env
 #' @importFrom R6 R6Class
+#' @importFrom tibble tibble
 #' @export
 multiverse <- function() {
   x <- env()
