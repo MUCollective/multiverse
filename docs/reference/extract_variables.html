@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law" — vis_correlation • multiverse</title>
+<title>Extract variables and objects from the multiverse — extract_variables • multiverse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law" — vis_correlation" />
-<meta property="og:description" content="A dataset containing the responses of the participants. In this study, participants were asked to make multiple judgements about the correlation." />
+<meta property="og:title" content="Extract variables and objects from the multiverse — extract_variables" />
+<meta property="og:description" content="This is a wrapper function for extracting one or more variables and objects declared from within the multiverse
+in a tidy format." />
 
 
 
@@ -136,43 +137,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law"</h1>
+    <h1>Extract variables and objects from the multiverse</h1>
     
-    <div class="hidden name"><code>vis_correlation.Rd</code></div>
+    <div class="hidden name"><code>extract_variables.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A dataset containing the responses of the participants. In this study, participants were asked to make multiple judgements about the correlation.</p>
+    <p>This is a wrapper function for extracting one or more variables and objects declared from within the multiverse
+in a tidy format.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>extract_variables</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>.results</span> <span class='kw'>=</span> <span class='no'>.results</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>.data</th>
+      <td><p>an data frame object created when declaring the multiverse, and accessed using <code><a href='accessors.html'>expand</a></code>
+See usage.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>one or more variable (or object) names to be extracted from the multiverse object. The names can be quoted or unquoted.</p></td>
+    </tr>
+    <tr>
+      <th>.results</th>
+      <td><p>(Optional) if the .results column which stores the environments for each unique analysis has been changed, 
+specify the new name of the column. Defaults to `.results`</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A data frame with 502 rows and 26 variables:</p><dl'>
-  <dt>participant</dt><dd><p>Participant identifier</p></dd>
-  <dt>vis</dt><dd><p>Type of visualization used</p></dd>
-  <dt>rdirection</dt><dd><p>The direction of the slope of the line (positive or negative)</p></dd>
-  <dt>sign</dt><dd><p>The direction of the slope of the line (1 or -1)</p></dd>
-  <dt>visandsign</dt><dd><p>A combination variable of vis(ualization type) and rdirection</p></dd>
-  <dt>rbase</dt><dd><p>The coefficiant of correlation using which the stimuli was generated</p></dd>
-  <dt>approach</dt><dd><p>NA</p></dd>
-  <dt>jnd</dt><dd><p>Estimated JND value for that participant</p></dd>
-  <dt>condition</dt><dd><p>Condition that the participant was placed in (which is a combination of vis, rbase and approach)</p></dd>
-
-</dl>
-
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Pierre Dragicevic, Yvonne Jansen, Abhraneel Sarma, Matthew Kay and Fanny Chevalier. (2019).
-"Increasing the transparency of research papers with explorable multiverse analyses."
-*Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems* pp. 1-15.</p>
-<p>Kay, Matthew, and Jeffrey Heer. (2016).
-"Beyond Weber's law: A second look at ranking visualizations of correlation."
-*IEEE transactions on visualization and computer graphics* 22.1: 469-478.</p>
-<p>Lane Harrison, Fumeng Yang, Steven Franconeri, and Remco Chang. (2014).
-"Ranking visualizations of correlation using Weber's law."
-*IEEE transactions on visualization and computer graphics* 20.12: 1943-1952.</p>
+    <p>In a typical analysis, the user will declare variables and objects inside the multiverse object. 
+However, it might be difficult to access the variables and objects, hence we provide convenient wrappers
+in the form of `extract_variables()`.</p>
+<p>If the user wants to extract one or more literals (strings, integers, doubles or logicals of length 1)
+then each variables is separated out into its own column. If the user wants to extract one or more vectors (or lists)
+then each such variable will be extracted in its own list column. If the user wants to extract one or more dataframe 
+then they a column of type data frame (or tibble) would be created (which is a special instance of a list column).</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

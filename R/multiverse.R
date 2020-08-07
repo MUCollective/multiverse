@@ -20,7 +20,6 @@ Multiverse <- R6Class("Multiverse",
 )
 
 
-
 #' Create a new multiverse object
 #'
 #' Constructs a new multiverse object which enables conducting a multiverse analysis

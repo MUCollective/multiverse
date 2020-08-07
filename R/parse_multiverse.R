@@ -9,12 +9,14 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' parameters and the corresponding values that each parameter can take. This function is called automatically 
 #' and not exported.
 #'
-#' @param multiverse The multiverse object with some code passed to it
-#'
-#' @param .super_env The parent environment of the multiverse object i.e. the environment
-#' in which the multiverse object was called. This is automatically recorded.
+#' @param .multiverse The multiverse object which will contain the analysis
 #' 
-#' @param .code The code that is being passed into the multiverse objecct
+#' @param .expr The expression that is being parsed
+#' 
+#' @param .code All the code that has been passed to the multiverse
+#' 
+#' @param .label The label of the code block or inside call which was used to pass the 
+#' code being parsed into the multiverse
 #'
 #' @return The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.
 #' The list of parameters is a named list which defines all the values that each defined parameter can take.
@@ -43,16 +45,17 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @importFrom rlang f_lhs
 #' @importFrom utils modifyList
 #' @importFrom utils globalVariables
+#' @importFrom methods is
 #' 
 
-parse_multiverse <- function(.multiverse, .expr, .code, .name) {
+parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   m_obj <- attr(.multiverse, "multiverse")
   
   # if the newly added code is not the last element, implies
   # the user is editing pre-declared parameters. We need to recompute
   # everything after that point
-  if (.name %in% names(head(.code, -1))) {
-    .code <- .code[-((which(names(.code) == .name)+1):length(.code))]
+  if (.label %in% names(head(.code, -1))) {
+    .code <- .code[-((which(names(.code) == .label)+1):length(.code))]
   }
   
   parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
@@ -66,10 +69,10 @@ parse_multiverse <- function(.multiverse, .expr, .code, .name) {
   
   if (length( m_obj$multiverse_diction$keys() ) == 0) .parent_key = NULL
   else {
-    if (.name %in% m_obj$multiverse_diction$keys()) {
-      p_idx <- which(m_obj$multiverse_diction$keys() == .name) - 1
+    if (.label %in% m_obj$multiverse_diction$keys()) {
+      p_idx <- which(m_obj$multiverse_diction$keys() == .label) - 1
       if (p_idx == 0) .parent_key = NULL
-      else .parent_key = m_obj$multiverse_diction$keys()[[which(m_obj$multiverse_diction$keys() == .name) - 1]]
+      else .parent_key = m_obj$multiverse_diction$keys()[[which(m_obj$multiverse_diction$keys() == .label) - 1]]
     } else {
       .parent_key = unlist(tail(m_obj$multiverse_diction$keys(), 1))
     }
@@ -77,7 +80,7 @@ parse_multiverse <- function(.multiverse, .expr, .code, .name) {
  
   q <- parse_multiverse_expr(.multiverse, .expr, parameters, .parent_key)
   
-  invisible( m_obj$multiverse_diction$set(.name, q) )
+  invisible( m_obj$multiverse_diction$set(.label, q) )
 }
 
 parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_block) {

@@ -88,7 +88,7 @@ test_that("`add_and_parse_code` parses the code", {
   add_and_parse_code(M, an_expr)
 
   M_tbl = expand(M)
-  expect_equal( dim(M_tbl), c(4, 4) )
+  expect_equal( dim(M_tbl), c(4, 5) )
   expect_equal( length(parameters(M)), 1 )
   expect_equal( length(parameters(M)$value_y), 4 )
   expect_equal( M_tbl$.universe, 1:4 )

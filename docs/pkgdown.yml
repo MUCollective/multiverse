@@ -2,15 +2,15 @@ pandoc: 2.7.3
 pkgdown: 1.5.1
 pkgdown_sha: ~
 articles:
+  Conditions: Conditions.html
   branch: branch.html
   calculate-mean-multiverse: calculate-mean-multiverse.html
   complete-multiverse-analysis: complete-multiverse-analysis.html
-  conditions: conditions.html
   dance: dance.html
   frequentist-multiverse-analysis: frequentist-multiverse-analysis.html
   multiverse-in-rmd: multiverse-in-rmd.html
   visualizing-multiverse: visualizing-multiverse.html
-last_built: 2020-06-19T04:05Z
+last_built: 2020-08-06T23:54Z
 urls:
   reference: http://mucollective.github.io/multiverse/reference
   article: http://mucollective.github.io/multiverse/articles

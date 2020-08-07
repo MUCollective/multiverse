@@ -149,6 +149,7 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   
   # expand .options arguments in branch calls
   .expr = expand_branch_options(.expr)
+  .loc = length(m_obj$code)
   
   # what has been unchanged so far in the tree
   # everything post will be edited in the subsequent steps

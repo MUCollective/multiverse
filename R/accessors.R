@@ -8,6 +8,8 @@
 #' @param multiverse Object of class multiverse
 #' @param name a variable name
 #'
+#'@importFrom dplyr select
+#'
 #' @export
 `$.multiverse` <- function(multiverse, name) {
   .idx = 1
@@ -58,18 +60,25 @@ expand.multiverse <- function(multiverse) {
     n <- 1
     param.assgn =  list(list())
     .code = list(code(multiverse))
+    if (length(.m_list) == 0) {
+      .res = list(list())
+    } else {
+      .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
+    }
     df <- tibble(.universe = seq(1:n))
   } else {
     n <- nrow(df)
     param.assgn =  lapply(seq_len(n), function(i) lapply(df, "[[", i))
     .code = lapply(seq_len(n), get_code_universe, .m_list = .m_list, .level = length(.m_list))
+    .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
     
     df <- select(mutate(df, .universe = seq(1:n)), .universe, everything())
   }
   
   filter(as_tibble(mutate(df,
                           .parameter_assignment = param.assgn,
-                          .code = .code
+                          .code = .code,
+                          .results = .res
   )), eval(all_conditions))
 }
 
@@ -139,7 +148,7 @@ conditions.multiverse <- function(multiverse) {
 #' @rdname accessors
 #' @param idx index of the universe in the multiverse (corresponds to the row in the table)
 #' @export
-from_universe_i <- function(multiverse, idx, name) {
+extract_variable_from_universe <- function(multiverse, idx, name) {
   name = enquo(name)
   stopifnot( is.multiverse(multiverse) )
   m_diction = attr(multiverse, "multiverse")$multiverse_diction

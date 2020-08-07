@@ -108,7 +108,7 @@ However, for this to work, we would need to run this step within the multiverse,
 M = multiverse()
 ```
 
-The multiverse object contains five components (which we will subsequently refer to as slots): `code`, `parameters`, `conditions`, `current_parameter_assignment` and `multiverse_table`; all of them are initialised as empty (*NULL / empty list*). We will describe them in more detail later.
+The multiverse object contains five components (which we will subsequently refer to as slots): `code`, `parameters`, `conditions` and `expand`; all of them are initialised as empty (*NULL / empty list*). We will describe them in more detail later.
 
 ```{r}
 code(M)
@@ -124,10 +124,6 @@ parameters(M) #this is a list
 conditions(M) #this is empty
 ```
 
-
-```{r}
-default_parameter_assignment(M) #this is a list
-```
 
 Inside this new multiverse object, we will declare the code to calculate the mean using four different options. The `multiverse` object will store all possible combinations of analysis (in this case, the analysis is calculating the *mean*). 
 
@@ -162,17 +158,12 @@ The `parameter` slot will have a named list of parameters (in this case, the onl
 parameters(M)
 ```
 
-The `multiverse_table` slot contains a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter --- the number of rows corresponds to the number of different analysis paths (here, 4). The table can be accessed using the `expand` function
+The `expand` function creates a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter --- the number of rows corresponds to the number of different analysis paths (here, 4). This table can be accessed using the `expand` function
 
 ```{r}
 expand(M)
 ```
 
-The `default_parameter_assignment` slot will be initialised to the first option for each parameter (in this case, "trim_none").
-
-```{r}
-default_parameter_assignment(M)
-```
 
 ### Executing the different analysis paths in the multiverse
 

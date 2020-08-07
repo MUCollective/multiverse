@@ -183,13 +183,7 @@ parameters(M)
 expand(M)
 ```
 
-4. `current_parameter_assignment`, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.
-
-```{r}
-default_parameter_assignment(M)
-```
-
-5. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
+4. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
 
 ```{r}
 code(M)
@@ -373,6 +367,7 @@ inside(M, {
 ```
 
 To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using `broom::tidy`. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call `execute_multiverse()` to execute our analysis in each multiverse.
+
 
 ```{r}
 inside(M, {

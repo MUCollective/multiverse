@@ -11,8 +11,6 @@ get_code(.code, .assgn = NULL)
 which can be done using the `remove_branch_assert` function.}
 
 \item{.assgn}{A list containing the assignments for each defined parameter in the multiverse}
-
-\item{multiverse}{The multiverse object with some code passed to it}
 }
 \description{
 Given a particular set of options for each parameter, extracts the code for performing a

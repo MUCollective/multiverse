@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law" — vis_correlation • multiverse</title>
+<title>Create custom code blocks for multiverse analysis — mulitiverse_code_block • multiverse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law" — vis_correlation" />
-<meta property="og:description" content="A dataset containing the responses of the participants. In this study, participants were asked to make multiple judgements about the correlation." />
+<meta property="og:title" content="Create custom code blocks for multiverse analysis — mulitiverse_code_block" />
+<meta property="og:description" content="An easier way to interact with a multiverse object by using a custom code block" />
 
 
 
@@ -136,44 +136,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law"</h1>
+    <h1>Create custom code blocks for multiverse analysis</h1>
     
-    <div class="hidden name"><code>vis_correlation.Rd</code></div>
+    <div class="hidden name"><code>mulitiverse_code_block.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A dataset containing the responses of the participants. In this study, participants were asked to make multiple judgements about the correlation.</p>
+    <p>An easier way to interact with a multiverse object by using a custom code block</p>
     </div>
 
 
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A data frame with 502 rows and 26 variables:</p><dl'>
-  <dt>participant</dt><dd><p>Participant identifier</p></dd>
-  <dt>vis</dt><dd><p>Type of visualization used</p></dd>
-  <dt>rdirection</dt><dd><p>The direction of the slope of the line (positive or negative)</p></dd>
-  <dt>sign</dt><dd><p>The direction of the slope of the line (1 or -1)</p></dd>
-  <dt>visandsign</dt><dd><p>A combination variable of vis(ualization type) and rdirection</p></dd>
-  <dt>rbase</dt><dd><p>The coefficiant of correlation using which the stimuli was generated</p></dd>
-  <dt>approach</dt><dd><p>NA</p></dd>
-  <dt>jnd</dt><dd><p>Estimated JND value for that participant</p></dd>
-  <dt>condition</dt><dd><p>Condition that the participant was placed in (which is a combination of vis, rbase and approach)</p></dd>
+    <p>This is a custom code block that allows the users to interface directly with a created multiverse object. 
+This allows users to implement analysis in RMarkdown without using auxillary functions such as [inside]. However,
+[inside] is still required to define and execute multiverse analyses in a RScript using this package. 
+See examples for more details.</p>
+<p>In RStudio, you can create a shortcut for this using RStudio addins
+(we recommend `Cmd + Opt + M` in Mac and `Ctrl + Alt + M` in Windows).
+To add a shortcut, go to Tools &gt; AddIns &gt; Browse AddIns... &gt; Keyboard shortcuts. 
+Search for `insert multiverse code chunk` and add a keyboard shortcut to this function. 
+Once you have set this up, the keyboard shortcut will create a code block in 
+any RMarkdown document.</p>
+    <h2 class="hasAnchor" id="code-block-options"><a class="anchor" href="#code-block-options"></a>Code Block Options</h2>
 
-</dl>
+    
 
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+<p>The multiverse code blocks require two named arguments:</p><ol>
+<li><p>label: this is a unique identifier for each code block. 
+  If the same label is used for two different code blocks, the code 
+  associated with the previous block in the multiverse will be 
+  overwritten by the subsequent one. If a code block is created using the keyboard
+  shortcut, it will auto-generate a (unique) label</p></li>
+<li><p>inside: the multiverse object this code block will be associated with.
+  Defaults to "M"</p></li>
+</ol>
 
-    <p>Pierre Dragicevic, Yvonne Jansen, Abhraneel Sarma, Matthew Kay and Fanny Chevalier. (2019).
-"Increasing the transparency of research papers with explorable multiverse analyses."
-*Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems* pp. 1-15.</p>
-<p>Kay, Matthew, and Jeffrey Heer. (2016).
-"Beyond Weber's law: A second look at ranking visualizations of correlation."
-*IEEE transactions on visualization and computer graphics* 22.1: 469-478.</p>
-<p>Lane Harrison, Fumeng Yang, Steven Franconeri, and Remco Chang. (2014).
-"Ranking visualizations of correlation using Weber's law."
-*IEEE transactions on visualization and computer graphics* 20.12: 1943-1952.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

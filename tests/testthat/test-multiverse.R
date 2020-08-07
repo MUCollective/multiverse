@@ -136,7 +136,7 @@ test_that("accessor functions retrieve the multiverse table", {
     ) %>%
     as_tibble()
 
-  df = expand(M.2)
+  df = expand(M.2) %>% select(-.results)
 
   expect_true( tibble::is_tibble(expand(M.2)) )
   expect_equal( as.list(ref_df), as.list(df) )

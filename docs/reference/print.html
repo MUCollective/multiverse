@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law" — vis_correlation • multiverse</title>
+<title>Accessing contents of the multiverse object — print • multiverse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,11 @@
 
 
 
-<meta property="og:title" content="Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law" — vis_correlation" />
-<meta property="og:description" content="A dataset containing the responses of the participants. In this study, participants were asked to make multiple judgements about the correlation." />
+<meta property="og:title" content="Accessing contents of the multiverse object — print" />
+<meta property="og:description" content="prints objects of class multiverse. Provides a quick overview of the multiverse by 
+listing the parameters and conditions declared, to get an overview of the number of combinations.
+The function outputs upto 20 of the parameters declared along with their option names (upto 5), 
+and upto 10 of the conditions declared." />
 
 
 
@@ -136,43 +139,34 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law"</h1>
+    <h1>Accessing contents of the multiverse object</h1>
     
-    <div class="hidden name"><code>vis_correlation.Rd</code></div>
+    <div class="hidden name"><code>print.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A dataset containing the responses of the participants. In this study, participants were asked to make multiple judgements about the correlation.</p>
+    <p>prints objects of class multiverse. Provides a quick overview of the multiverse by 
+listing the parameters and conditions declared, to get an overview of the number of combinations.
+The function outputs upto 20 of the parameters declared along with their option names (upto 5), 
+and upto 10 of the conditions declared.</p>
     </div>
 
+    <pre class="usage"><span class='co'># S3 method for multiverse</span>
+<span class='fu'>print</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>An object of class multiverse</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>further arguments passed to or from other methods</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>A data frame with 502 rows and 26 variables:</p><dl'>
-  <dt>participant</dt><dd><p>Participant identifier</p></dd>
-  <dt>vis</dt><dd><p>Type of visualization used</p></dd>
-  <dt>rdirection</dt><dd><p>The direction of the slope of the line (positive or negative)</p></dd>
-  <dt>sign</dt><dd><p>The direction of the slope of the line (1 or -1)</p></dd>
-  <dt>visandsign</dt><dd><p>A combination variable of vis(ualization type) and rdirection</p></dd>
-  <dt>rbase</dt><dd><p>The coefficiant of correlation using which the stimuli was generated</p></dd>
-  <dt>approach</dt><dd><p>NA</p></dd>
-  <dt>jnd</dt><dd><p>Estimated JND value for that participant</p></dd>
-  <dt>condition</dt><dd><p>Condition that the participant was placed in (which is a combination of vis, rbase and approach)</p></dd>
-
-</dl>
-
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Pierre Dragicevic, Yvonne Jansen, Abhraneel Sarma, Matthew Kay and Fanny Chevalier. (2019).
-"Increasing the transparency of research papers with explorable multiverse analyses."
-*Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems* pp. 1-15.</p>
-<p>Kay, Matthew, and Jeffrey Heer. (2016).
-"Beyond Weber's law: A second look at ranking visualizations of correlation."
-*IEEE transactions on visualization and computer graphics* 22.1: 469-478.</p>
-<p>Lane Harrison, Fumeng Yang, Steven Franconeri, and Remco Chang. (2014).
-"Ranking visualizations of correlation using Weber's law."
-*IEEE transactions on visualization and computer graphics* 20.12: 1943-1952.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -11,8 +11,6 @@
 #' This is primarily going to be called by other functions, and perhaps not going to be as useful to
 #' the user for anything other than inspecting the rewritten code.
 #'
-#' @param multiverse The multiverse object with some code passed to it
-#'
 #' @param .code Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
 #' which can be done using the `remove_branch_assert` function.
 #'
@@ -98,13 +96,6 @@ get_option_value <- function(x) {
   }
 }
 
-
-get_code_universe <- function(.m_list, .uni, .level) {
-  if (.level >= 1){
-    .p <- .m_list[[.level]][[.uni]]$parent
-    c(get_code_universe(.m_list, .p, .level - 1), .m_list[[.level]][[.uni]]$code)
-  }
-}
 
 
 

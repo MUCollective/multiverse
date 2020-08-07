@@ -1,14 +1,6 @@
 multiverse_engine <- function(options) {
-  .c = multiverse_block_code(options$inside, options$label, options$code)
+  .multiverse_name = options$inside
   
-  if(is.null(getOption("knitr.in.progress"))) {
-    multiverse_default_block_exec(.c, options)
-  } else {
-     multiverse_default_block_exec(options$code, options, TRUE)
-  }
-}
-
-multiverse_block_code <- function(.multiverse_name, .label, .code) {
   if ( !(.multiverse_name %in% ls(envir = knit_global()))) {
     stop(
       "Multiverse object `", .multiverse_name, "` was not found.\n",
@@ -17,19 +9,27 @@ multiverse_block_code <- function(.multiverse_name, .label, .code) {
     )
   }
   
+  .c = multiverse_block_code(.multiverse_name, options$label, options$code)
+  
+  .multiverse = get(.multiverse_name, envir = knit_global())
+  if(is.null(getOption("knitr.in.progress"))) {
+    multiverse_default_block_exec(.c, options)
+  } else {
+    execute_multiverse(.multiverse)
+    multiverse_default_block_exec(options$code, options, TRUE)
+  }
+}
+
+multiverse_block_code <- function(.multiverse_name, .label, .code) {
   if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
     stop("Please provide a label to your multiverse code block")
   }
   
   .multiverse = get(.multiverse_name, envir = knit_global())
+
   n <- length(.code)
   
   pasted <- paste(.code, collapse = "\n")
-  
-  # the iterate over the expression to separate it out into lists
-  # .expr <- lapply(.expr[2:length(.expr)], function(x) {
-  #  parse(text = c("{", x, "}"), keep.source = FALSE)[[1]]
-  # })
   
   .expr <- parse(text = c("{", pasted, "}"), keep.source = FALSE)[[1]]
   .m = attr(.multiverse, "multiverse")

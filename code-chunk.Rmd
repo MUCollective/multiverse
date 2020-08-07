@@ -1,0 +1,81 @@
+---
+title: "Multiverse code block"
+author: "Abhraneel Sarma"
+output: 
+  html_document
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_knit$set(echo = TRUE)
+
+library(dplyr)
+library(multiverse)
+
+options(mc.cores = parallel::detectCores(logical = FALSE))
+options(execute = "all")
+```
+
+
+```{r multiverse_init}
+data("durante")
+
+df <- durante %>%
+  mutate(
+    Abortion = abs(7 - Abortion) + 1,
+    StemCell = abs(7 - StemCell) + 1,
+    Marijuana = abs(7 - Marijuana) + 1,
+    RichTax = abs(7 - RichTax) + 1,
+    StLiving = abs(7 - StLiving) + 1,
+    Profit = abs(7 - Profit) + 1,
+    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
+    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
+  ) %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
+```
+
+
+```{r multiverse_init}
+M = multiverse()
+
+inside(M, {
+  df <- df %>%
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+      "mc_option3" ~ StartDateNext
+    ))
+  
+  df <- df %>%
+      mutate(
+        CycleDay = 28 - (StartDateNext - DateTesting),
+        CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+      )
+  
+  df <- df %>%
+    filter( branch(certainty,
+      "cer_option1" ~ TRUE,
+      "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+    ))
+})
+
+# execute_multiverse(M)
+```
+
+
+```{r}
+x <- attr(M, "multiverse")$multiverse_diction$as_list()
+
+lapply( unlist(unname(tail(x, n = 1)), recursive = FALSE), `[[`, "env" )
+```
+
+
+
+```{r multiverse_table}
+expand(M) %>%
+  extract_variables(df)
+```
+
+
+

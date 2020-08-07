@@ -15,7 +15,7 @@
 \alias{conditions}
 \alias{conditions.default}
 \alias{conditions.multiverse}
-\alias{from_universe_i}
+\alias{extract_variable_from_universe}
 \title{Accessing contents of the multiverse object}
 \usage{
 \method{$}{multiverse}(multiverse, name)
@@ -44,7 +44,7 @@ conditions(multiverse)
 
 \method{conditions}{multiverse}(multiverse)
 
-from_universe_i(multiverse, idx, name)
+extract_variable_from_universe(multiverse, idx, name)
 }
 \arguments{
 \item{multiverse}{Object of class multiverse}

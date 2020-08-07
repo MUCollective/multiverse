@@ -1,7 +1,7 @@
 #' Execute parts of, or the entire multiverse
 #'
 #' @description These are functions which allow the user to execute parts or whole of the multiverse.
-#' The user can choose to either execute the default analysis using the \code{\link{execute_default}}, or a part or
+#' The user can choose to either execute the default analysis using the \code{\link{execute_universe}}, or a part or
 #' whole of the multiverse using the \code{\link{execute_multiverse}}.
 #'
 #' @param multiverse The multiverse object
@@ -44,13 +44,13 @@
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, .universe = 1) {
+execute_multiverse <- function(multiverse, .universe = 1, cores = getOption("mc.cores", 1L)) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   n <- m_diction$as_list() %>% length()
-  .level = attr(multiverse, "multiverse")$unchanged_until
+  # .level = attr(multiverse, "multiverse")$unchanged_until
   
-  .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
-  invisible(lapply(tail(seq_len(n), n = (n - .level)), exec_all, .m_diction = m_diction) )
+  .to_exec = seq_len(m_diction$size()) #tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
+  invisible(lapply(.to_exec, exec_all, .m_diction = m_diction) )
 }
 
 #' @rdname execute
@@ -80,13 +80,13 @@ get_exec_order <- function(.m_diction, .uni, .level) {
 }
 
 exec_in_order <- function(.m_diction, .universes, .i) {
-  x <- .m_diction$get(as.character(.i))[[ .universes[[.i]] ]]
+  x <- .m_diction$as_list()[[.i]][[ .universes[[.i]] ]]
   
   execute_code_from_universe(x$code, x$env)
 }
 
 exec_all <- function(.m_diction, .i) {
-  x <- .m_diction$get(as.character(.i))
+  x <- .m_diction$as_list()[[.i]]
   
   .code_list = lapply(x, `[[`, "code")
   .env_list = lapply(x, `[[`, "env")

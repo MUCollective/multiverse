@@ -17,8 +17,12 @@ library(ggplot2)
 library(purrr)
 library(broom)
 library(gganimate)
-library(multiverse)
+# library(multiverse)
+devtools::load_all(".")
 library(boot)
+
+options(mc.cores = parallel::detectCores(logical = FALSE))
+options(execute = "default")
 ```
 
 ```{r, chunk-setup, include=FALSE}
@@ -114,14 +118,15 @@ data_transform <- branch(data_transform,
 
 conf_level <-  branch(conf_level,
     "50%" ~ 0.5,
-    "75%" ~ 0.67,
-    "80%" ~ 0.80,
-    "89%" ~ 0.89,
+    #"67%" ~ 0.67,
+    #"80%" ~ 0.80,
+    #"89%" ~ 0.89,
     "95%" ~ 0.95,
-    "99%" ~ 0.99,
+    #"99%" ~ 0.99,
     "99.9%" ~ 0.999
 )
 ```
+
 
 We now look at the multiverse table and see that it has created all the possible combinations:
 
@@ -134,173 +139,18 @@ First, we perform the data transformation operation within the multiverse. This 
 
 ```{multiverse default-m-2, inside = M}
 duration <- do.call(data_transform, list(data.userlogs.raw$duration))
+
+duration
 ```
 
-Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a `data.frame`. We strongly recommend sotring the results that you would wish to extract from the multiverse in a `data.frame` as that would make it much easier for analysing and visualising the results.
-
-```{multiverse default-m-3, inside = M}
-modality <- data.userlogs.raw$modalityname
-
-ci.physical_notouch <- do.call(ci_method, list(duration[modality == 'physical-notouch'], conf_level))
-ci.physical_notouch <- setNames(as.list(c("physical_notouch", ci.physical_notouch)), c("modality", "estimate", "conf.low", "conf.high"))
-
-ci.physical_touch <- do.call(ci_method, list(duration[modality == 'physical-touch'], conf_level))
-ci.physical_touch <- setNames(as.list(c("physical_touch", ci.physical_touch)), c("modality", "estimate", "conf.low", "conf.high"))
-
-ci.virtual_prop <- do.call(ci_method, list(duration[modality == 'virtual-prop'], conf_level))
-ci.virtual_prop <- setNames(as.list(c("virtual_prop", ci.virtual_prop)), c("modality", "estimate", "conf.low", "conf.high"))
-
-ci.virtual_mouse <- do.call(ci_method, list(duration[modality == 'virtual-mouse'], conf_level))
-ci.virtual_mouse <- setNames(as.list(c("virtual_mouse", ci.virtual_mouse)), c("modality", "estimate", "conf.low", "conf.high"))
-
-df <- rbind.data.frame(ci.physical_notouch, ci.physical_touch, ci.virtual_prop, ci.virtual_mouse, make.row.names = FALSE, stringsAsFactors = FALSE)
-df <- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
-```
-
-Since the multiverse only executes the default analysis, we then run the following command to run all the analysis that we have defined in the multiverse.
-
-```{r, warning = FALSE}
-execute_multiverse(M)
-```
-
-## Results #1
-
-### Extracting the results from the multiverse object
-
-Next, we need to extract the results from the multiverse. The results for each unique analysis combination (a universe in our multiverse), is stored in an environment in the `.results` column. We can extract data frames from this column using the \code{\link[purrr:map]{purrr::map()}} function. This creates a new column in our data frame, `summary` which itself consists of data frames.
 
 ```{r}
-df.mtbl <- expand(M)
-df.mtbl$summary = map(df.mtbl$.results, "df")
-
-head(df.mtbl)
+attr(M, "multiverse")$multiverse_diction$as_list() %>% 
+  unname() %>%
+  unlist(recursive = FALSE) %>%
+  lapply(`[[`, "env") %>%
+  lapply(ls)
 ```
-
-As we can see above, each row in the `summary` column consists of a $4 \times 4$, data frame which we will need to unpack. We will use the \code{\link[tidyr:unnest_wider]{tidyr::unnest_wider()}} function to expand the different columns of the data frame into their own columns. Finally, we use the \code{\link[tidyr:unnest]{tidyr::unnest()}} function to unnest the rows of the data frame into their own row. Note that we have a `.universe` column which indexes each universe in our multiverse i.e. each unique analysis combination.
-
-Below we can see the result of this transformation. You can see that we have created four new columns (`modality`, `estimate`, `conf.low`, `conf.high`). In addition, we have four rows for each universe corresponding to the results for each of the four conditions in our experiment.
-
-```{r}
-df.mtbl <- unnest_wider(df.mtbl, c(summary))
-df.mtbl <- unnest(df.mtbl, cols = c(modality, estimate, conf.low, conf.high))
-head(df.mtbl)
-```
-
-### Visualising the results
-
-We will then sort the results, and transform the log transformed variables back on to the natural scale. We are then ready to visualise the result by animating over each universe.
-
-```{r}
-df.mtbl <- arrange(df.mtbl, conf_level, desc(data_transform), desc(ci_method))
-
-df.results <- df.mtbl
-df.results$estimate[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$estimate[df.mtbl$data_transform == "log-transformed"])
-df.results$conf.low[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$conf.low[df.mtbl$data_transform == "log-transformed"])
-df.results$conf.high[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$conf.high[df.mtbl$data_transform == "log-transformed"])
-
-df.results %>% head()
-```
-
-
-```{r, fig.width = 9, fig.height = 4}
-p <- df.results %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = modality)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = modality), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 28,  fps = 2)
-```
-
-The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be cnsistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.
-
-### Sidebar: Using the tidyverse to extract and visualize the results
-So far we have tried to keep this analysis in base R. However, the steps involved in extracting and visualising results from the multiverse maybe more convenient for some using the tidyverse API. We can implement the steps that we have taken in the previous three code block in the following way using the tidyverse. The result of this is the same data frame that was created in the previous step, and was used as input data to ggplot, `df.results`. The `multiverse` package is flexible, and does not restrict you towards a particular style of R programming.
-
-```{r}
-expand(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
-  mutate( summary = map(.results, "df") ) %>%
-  unnest_wider( c(summary)) %>%
-  unnest(cols = c(modality, estimate, conf.low, conf.high)) %>%
-  mutate(
-    estimate = ifelse(data_transform == "log-transformed", exp(estimate), estimate),
-    conf.low = ifelse(data_transform == "log-transformed", exp(conf.low), conf.low),
-    conf.high = ifelse(data_transform == "log-transformed", exp(conf.high), conf.high)
-  ) %>%
-  arrange(conf_level, desc(data_transform), desc(ci_method))
-```
-
-## Analysis #2: Differences between mean completion times between conditions
-
-Next, we compute the pairwise ratios between mean completion times to examine the within-subject differences.
-
-```{multiverse default-m-4, inside = M}
-diff.touch_notouch <- duration[modality == 'physical-notouch'] - duration[modality == 'physical-touch']
-`physical_touch - physical_notouch` <- do.call(ci_method, list(diff.touch_notouch, conf_level))
-`physical_touch - physical_notouch` <- setNames(as.list(c("physical_touch - physical_notouch", `physical_touch - physical_notouch`)), c("modality", "estimate", "conf.low", "conf.high"))
-
-diff.notouch_prop <- duration[modality == 'physical-notouch'] - duration[modality == 'virtual-prop']
-`physical_notouch - virtual_prop` <- do.call(ci_method, list(diff.notouch_prop, conf_level))
-`physical_notouch - virtual_prop` <- setNames(as.list(c("physical_notouch - virtual_prop", `physical_notouch - virtual_prop`)), c("modality", "estimate", "conf.low", "conf.high"))
-
-diff.propr_mouse <- duration[modality == 'virtual-prop'] - duration[modality == 'virtual-mouse']
-`virtual_prop - virtual_mouse` <- do.call(ci_method, list(diff.propr_mouse, conf_level))
-`virtual_prop - virtual_mouse` <- setNames(as.list(c("virtual_prop - virtual_mouse", `virtual_prop - virtual_mouse`)), c("modality", "estimate", "conf.low", "conf.high"))
-
-df.diffs <- rbind.data.frame(`physical_touch - physical_notouch`, `physical_notouch - virtual_prop`, `virtual_prop - virtual_mouse`, make.row.names = FALSE, stringsAsFactors = FALSE)
-df.diffs <- transform(df.diffs, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
-```
-
-We can output the data frame that we have created inside the multiverse code block, as we would for a data frame in R. This would output the result in the default universe (\code{\link{default_parameter_assignment}}) of the multiverse. We can see that this data frame, as intended, has computed the mean differences and 95% confidence intervals between the conditions we care about.
-
-```{multiverse default-m-5, inside = M}
-df.diffs
-```
-
-We then execute all the other analysis combinations (universes) in our multiverse.
-
-```{r, warnings = FALSE}
-execute_multiverse(M)
-```
-
-### Extracting and visualizing the results from the multiverse
-
-We then use the workflow described in the previous section to extract results for each universe in the multiverse. We then use gganimate to plot the results.
-
-```{r}
-df.results.diff <- expand(M) %>%
-  mutate( df = map(.results, "df.diffs") ) %>%
-  unnest_wider(c(df) ) %>%
-  unnest(cols = c(modality, estimate, conf.low, conf.high) ) %>%
-  arrange(desc(data_transform), conf_level, desc(ci_method))
-
-df.results.diff %>%
-  head()
-```
-
-## Results #2
-
-A value lower than 1 (i.e., on the left side of the dark line) means the condition on the left is faster than the condition on the right. The confidence intervals are not corrected for multiplicity. The results from this study appear to be relatively robust and consistent across all the possible combinations that we have tried.
-
-```{r, fig.width = 9, fig.height = 4}
-p <- df.results.diff %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = modality)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = modality), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 28,  fps = 4)
-```
-
-Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 incidates a statistically significant difference at the α=.05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.
-
-## Conclusion
-
-This example was adapted from Dragicevic et al.'s study [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) to show how previously performed multiverse analysis can be reproduced using the package in a flexible, and easily readable manner. It also shows how a multiverse analysis can be implemented in mostly base R syntax.
-
 
 
 
