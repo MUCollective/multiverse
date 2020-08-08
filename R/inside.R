@@ -167,7 +167,7 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
       .c[[.name]] = .expr
       
       #.expr needs to be changed so that we recompute everything that occurs subsequently
-      .expr = unname( .c[which(names(.c) == .name):length(.c)] )
+      .expr = .c[which(names(.c) == .name):length(.c)]
       .name = names(.c)[which(names(.c) == .name):length(.c)]
     }
   }

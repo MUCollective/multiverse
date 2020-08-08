@@ -43,3 +43,5 @@ get_code_universe <- function(.m_list, .uni, .level) {
     c(get_code_universe(.m_list, .p, .level - 1), .m_list[[.level]][[.uni]]$code)
   }
 }
+
+some_function <- function() stop("throw errors at me")

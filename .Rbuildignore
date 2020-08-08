@@ -7,8 +7,9 @@
 ^docs$
 ^figure$
 ^_pkgdown\.yml$
-^code_chunk.Rmd$
-^code_chunk.html$
+^code-chunk.Rmd$
+^tree-structure.Rmd$
+^parallel-opt.Rmd$
 ^\.github$
 ^pkgdown$
 ^data/.*\.csv$

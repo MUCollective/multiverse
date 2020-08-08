@@ -1,14 +1,6 @@
 multiverse_engine <- function(options) {
-  .c = multiverse_block_code(options$inside, options$label, options$code)
+  .multiverse_name = options$inside
   
-  if(is.null(getOption("knitr.in.progress"))) {
-     multiverse_default_block_exec(.c, options)
-  } else {
-     multiverse_default_block_exec(options$code, options, TRUE)
-  }
-}
-
-multiverse_block_code <- function(.multiverse_name, .label, .code) {
   if ( !(.multiverse_name %in% ls(envir = knit_global()))) {
     stop(
       "Multiverse object `", .multiverse_name, "` was not found.\n",
@@ -17,11 +9,28 @@ multiverse_block_code <- function(.multiverse_name, .label, .code) {
     )
   }
   
+  .c = multiverse_block_code(options$inside, options$label, options$code)
+  
+  if(is.null(getOption("knitr.in.progress"))) {
+    .multiverse = get(.multiverse_name, envir = knit_global())
+    
+    if (getOption("execute") == "all") {
+      execute_multiverse(.multiverse)
+    } else if (getOption("execute") == "default") {
+      execute_universe(.multiverse)
+    }
+    multiverse_default_block_exec(.c, options)
+  } else {
+    multiverse_default_block_exec(options$code, options, TRUE)
+  }
+}
+
+multiverse_block_code <- function(.multiverse_name, .label, .code) {
+  .multiverse = get(.multiverse_name, envir = knit_global())
+  
   if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
     stop("Please provide a label to your multiverse code block")
   }
-  
-  .multiverse = get(.multiverse_name, envir = knit_global())
   
   n <- length(.code)
   
@@ -41,11 +50,7 @@ multiverse_block_code <- function(.multiverse_name, .label, .code) {
     .c = get_code_universe(.m_list = .m_list, .uni = idx, .level = length(.m_list))
   }
   
-  # .c = deparse(.c[[.label]])
-  
-  # print(.c)
-  
-  .c
+  deparse(.c[[.label]])
 }
 
 multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
@@ -53,6 +58,9 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
   `%:::%` = `:::`
 
   if (knit) {
+    .multiverse = options$inside
+    execute_multiverse(.multiverse)
+    
     # when knitting we are not performing any traditional evaluation
     # hence we can not evaluate the code chunk using default evaluation
     options$eval = FALSE

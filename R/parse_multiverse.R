@@ -51,6 +51,8 @@ globalVariables(c(".universe", ".parameter_assignment"))
 parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   m_obj <- attr(.multiverse, "multiverse")
   
+  # print(.expr)
+  
   # if the newly added code is not the last element, implies
   # the user is editing pre-declared parameters. We need to recompute
   # everything after that point
@@ -77,6 +79,9 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
       .parent_key = unlist(tail(m_obj$multiverse_diction$keys(), 1))
     }
   }
+  
+  .expr <- list(.expr)
+  names(.expr) <- .label
   
   q <- parse_multiverse_expr(.multiverse, .expr, parameters, .parent_key)
   
@@ -115,7 +120,7 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_blo
       env = new.env(parent = parent.envs[[ceiling(i/(n/length(parent.envs)))]]), 
       parent = parents[[ceiling(i/(n/length(parent.envs)))]],
       parameter_assignment = .p, 
-      code = get_code(list(.expr), .p)
+      code = get_code(.expr, .p)
     ) 
   })
 }
@@ -143,37 +148,6 @@ get_parameter_conditions_list <- function(.c) {
     parameters = .p,
     conditions = .c
   )
-}
-
-# creates a parameter table from the parameter list
-# first creates a data.frame of all permutations of parameter values
-# then enforces the constraints defined in the conditions list
-get_multiverse_table <- function(multiverse, .code, parameters_conditions.list, .super_env) {
-  if (length(parameters_conditions.list$parameters) == 0) {
-    tibble(
-      .universe = 1,
-      .parameter_assignment = list( list() ),
-      .code = list( get_code(.code) ),
-      .results = list( new.env(parent = caller_env()) )
-    )
-  } else {
-    df <- data.frame( lapply(expand.grid(parameters_conditions.list$parameters, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
-    
-    param.assgn =  lapply(seq_len(nrow(df)), function(i) lapply(df, "[[", i))
-    
-    if (length(parameters_conditions.list$condition) > 0) {
-      all_conditions <- parse_expr(paste0("(", parameters_conditions.list$conditions, ")", collapse = "&"))
-    } else {
-      all_conditions <- expr(TRUE)
-    }
-    
-    df <- select(mutate(df, .universe = seq(1:nrow(df))), .universe, everything())
-    filter(as_tibble(mutate(df,
-                            .parameter_assignment = param.assgn,
-                            .code = lapply(.parameter_assignment, function(x) get_code(.code, x)),
-                            .results = lapply(.parameter_assignment, function(x) new.env(parent = .super_env))
-    )), eval(all_conditions))
-  }
 }
 
 # takes as input an expression
