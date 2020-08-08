@@ -102,7 +102,7 @@ test_that("accessor function for parameter list", {
 })
 
 test_that("accessor functions retrieve the multiverse table", {
-  ref_expr = expr({
+  ref_expr = list("1" = expr({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
@@ -115,7 +115,7 @@ test_that("accessor functions retrieve the multiverse table", {
                 "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
                 "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
       )
-  })
+  }))
 
   ref_list = list(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
@@ -132,7 +132,7 @@ test_that("accessor functions retrieve the multiverse table", {
   ref_df = ref_df %>%
     mutate(
       .parameter_assignment = param.assgn,
-      .code = map(.parameter_assignment, ~ list(get_parameter_code(ref_expr, .x)))
+      .code = map(.parameter_assignment, ~ get_code(ref_expr, .x))
     ) %>%
     as_tibble()
 

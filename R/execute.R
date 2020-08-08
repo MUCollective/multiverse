@@ -56,8 +56,6 @@ execute_multiverse <- function(multiverse, .universe = 1, cores = getOption("mc.
 #' @rdname execute
 #' @export
 execute_universe <- function(multiverse, .universe = 1) {
-  print(class(multiverse))
-  stop("throw error")
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   .level = attr(multiverse, "multiverse")$unchanged_until
   

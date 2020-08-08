@@ -6,7 +6,11 @@
 \alias{execute_universe}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(multiverse, .universe = 1, cores = 1L)
+execute_multiverse(
+  multiverse,
+  .universe = 1,
+  cores = getOption("mc.cores", 1L)
+)
 
 execute_universe(multiverse, .universe = 1)
 }

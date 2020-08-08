@@ -114,14 +114,14 @@ data_transform <- branch(data_transform,
 
 conf_level <-  branch(conf_level,
     "50%" ~ 0.5,
-    "75%" ~ 0.67,
-    "80%" ~ 0.80,
-    "89%" ~ 0.89,
+    "67" ~ 0.67,
+    "89" ~ 0.89,
     "95%" ~ 0.95,
     "99%" ~ 0.99,
     "99.9%" ~ 0.999
 )
 ```
+
 
 We now look at the multiverse table and see that it has created all the possible combinations:
 

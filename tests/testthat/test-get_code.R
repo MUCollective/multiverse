@@ -234,12 +234,12 @@ test_that("syntax tree for each universe is computed correctly", {
       filter(Sure1 > 6 | Sure2 > 6)
   })
   
-  expect_equal( expand(M2)$.code[[1]], list(u.expr.ref.1) )
-  expect_equal( expand(M2)$.code[[2]], list(u.expr.ref.2) )
-  expect_equal( expand(M2)$.code[[3]], list(u.expr.ref.3) )
-  expect_equal( expand(M2)$.code[[4]], list(u.expr.ref.4) )
-  expect_equal( expand(M2)$.code[[5]], list(u.expr.ref.5) )
-  expect_equal( expand(M2)$.code[[6]], list(u.expr.ref.6) )
+  expect_equal( expand(M2)$.code[[1]], list("1" = u.expr.ref.1) )
+  expect_equal( expand(M2)$.code[[2]], list("1" =u.expr.ref.2) )
+  expect_equal( expand(M2)$.code[[3]], list("1" =u.expr.ref.3) )
+  expect_equal( expand(M2)$.code[[4]], list("1" =u.expr.ref.4) )
+  expect_equal( expand(M2)$.code[[5]], list("1" =u.expr.ref.5) )
+  expect_equal( expand(M2)$.code[[6]], list("1" =u.expr.ref.6) )
 })
 
 # rm_branch_assert ----------------------------------------------------
