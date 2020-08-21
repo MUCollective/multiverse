@@ -28,6 +28,27 @@ test_that("can extract one or more single valued variables from the multiverse",
   expect_equal(as.list(out), as.list(ref))
 })
 
+test_that("can extract variables from the multiverse which are not at the last level of the tree", {
+  M <- multiverse()
+  
+  inside(M, {
+    x_value = branch(x, x1 = "a", x2 = "b" )
+  })
+  
+  inside(M, {
+    y_value = branch(y, .options = 11:20)
+  })
+  
+  execute_multiverse(M)
+  
+  out <- extract_variables(expand(M), x_value) %>%
+    select(x_value)
+  
+  ref <- tibble(x_value = rep(c("a", "b"), each = 10))
+  
+  expect_equal(as.list(out), as.list(ref))
+})
+
 test_that("can extract vectors and lists from the multiverse as list columns", {
   M <- multiverse()
   

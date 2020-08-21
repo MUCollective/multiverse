@@ -74,7 +74,7 @@ whole of the multiverse using the execute_multiverse." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
       </span>
     </div>
 
@@ -149,7 +149,7 @@ The user can choose to either execute the default analysis using the <code>execu
 whole of the multiverse using the <code>execute_multiverse</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>execute_multiverse</span>(<span class='no'>multiverse</span>, <span class='kw'>.universe</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1L</span>)
+    <pre class="usage"><span class='fu'>execute_multiverse</span>(<span class='no'>multiverse</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"mc.cores"</span>, <span class='fl'>1L</span>))
 
 <span class='fu'>execute_universe</span>(<span class='no'>multiverse</span>, <span class='kw'>.universe</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
 
@@ -161,14 +161,14 @@ whole of the multiverse using the <code>execute_multiverse</code>.</p>
       <td><p>The multiverse object</p></td>
     </tr>
     <tr>
-      <th>.universe</th>
-      <td><p>Indicate which universe to execute, if the user wants to execute a specific combination
-of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.</p></td>
-    </tr>
-    <tr>
       <th>cores</th>
       <td><p>Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
 Defaults to NULL (running in a single core)</p></td>
+    </tr>
+    <tr>
+      <th>.universe</th>
+      <td><p>Indicate which universe to execute, if the user wants to execute a specific combination
+of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.</p></td>
     </tr>
     </table>
 

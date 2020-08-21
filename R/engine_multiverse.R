@@ -14,10 +14,12 @@ multiverse_engine <- function(options) {
   if(is.null(getOption("knitr.in.progress"))) {
     .multiverse = get(.multiverse_name, envir = knit_global())
     
-    if (getOption("execute") == "all") {
-      execute_multiverse(.multiverse)
-    } else if (getOption("execute") == "default") {
-      execute_universe(.multiverse)
+    if (!is.null(getOption("execute"))) {
+      if (getOption("execute") == "all") {
+        execute_multiverse(.multiverse)
+      } else if (getOption("execute") == "default") {
+        execute_universe(.multiverse)
+      }
     }
     multiverse_default_block_exec(.c, options)
   } else {
@@ -31,8 +33,6 @@ multiverse_block_code <- function(.multiverse_name, .label, .code) {
   if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
     stop("Please provide a label to your multiverse code block")
   }
-  
-  n <- length(.code)
   
   pasted <- paste(.code, collapse = "\n")
   .expr <- parse(text = c("{", pasted, "}"), keep.source = FALSE)[[1]]

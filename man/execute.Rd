@@ -6,22 +6,18 @@
 \alias{execute_universe}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(
-  multiverse,
-  .universe = 1,
-  cores = getOption("mc.cores", 1L)
-)
+execute_multiverse(multiverse, cores = getOption("mc.cores", 1L))
 
 execute_universe(multiverse, .universe = 1)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
 
-\item{.universe}{Indicate which universe to execute, if the user wants to execute a specific combination
-of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.}
-
 \item{cores}{Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
 Defaults to NULL (running in a single core)}
+
+\item{.universe}{Indicate which universe to execute, if the user wants to execute a specific combination
+of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.}
 }
 \description{
 These are functions which allow the user to execute parts or whole of the multiverse.

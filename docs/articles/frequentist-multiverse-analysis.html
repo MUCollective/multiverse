@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -63,16 +66,13 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    </li>
-    <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>A multiverse analysis of the efficiency of physical visualizations</h1>
                         <h4 class="author">Yvonne Jansen and Abhraneel Sarma</h4>
             
-            <h4 class="date">2020-06-18</h4>
+            <h4 class="date">2020-08-21</h4>
       
       
       <div class="hidden name"><code>frequentist-multiverse-analysis.Rmd</code></div>
@@ -105,6 +105,15 @@
 
     
     
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">knitr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">broom</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">gganimate</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">multiverse</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">boot</span>)</pre></body></html></div>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
@@ -127,7 +136,7 @@
 <li>how important is visual realism? Visual realism referred to the higher perceptual richness of physical objects compared to on-screen objects, especially concerning depth cues.</li>
 </ol>
 <p>We load the data for this study which is contained in <code><a href="https://rdrr.io/r/utils/data.html">data(userlogs)</a></code> in the <code>multiverse</code> package.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"userlogs"</span>)
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"userlogs"</span>)
 <span class="no">data.userlogs.raw</span> <span class="kw">=</span> <span class="no">userlogs</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">data.userlogs.raw</span>)</pre></body></html></div>
@@ -163,7 +172,7 @@
 <h3 class="hasAnchor">
 <a href="#average-task-completion-time-arithmetic-mean-for-each-condition-" class="anchor"></a>Average task completion time (arithmetic mean) for each condition.</h3>
 <p>We need a few helper functions to so that they take the same arguments and return the same output.These functions will help us calculate the mean point estimate and the upper and lower bounds of the 95% confidence interval using the bootstrap method and t-test method.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">bootstrappedCI</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">observations</span>, <span class="no">conf.level</span>, <span class="no">seed</span> <span class="kw">=</span> <span class="fl">0</span>) {
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">bootstrappedCI</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">observations</span>, <span class="no">conf.level</span>, <span class="no">seed</span> <span class="kw">=</span> <span class="fl">0</span>) {
   <span class="no">samplemean</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">d</span>) {<span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">x</span>[<span class="no">d</span>]))}
   <span class="no">pointEstimate</span> <span class="kw">&lt;-</span> <span class="fu">samplemean</span>(<span class="no">observations</span>)
   <span class="kw">if</span> (!(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">seed</span>) <span class="kw">|</span> <span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span>(<span class="no">seed</span>))){
@@ -182,57 +191,64 @@
   <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">pointEstimate</span>, <span class="no">pointEstimate</span> - <span class="no">sampleError</span>, <span class="no">pointEstimate</span> + <span class="no">sampleError</span>)
 }</pre></body></html></div>
 <p>Next we initialise the multiverse object within which this analysis will take place.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
 <p>Now we define the parameters we want to consider in the multiverse: confidence interval method (<code>ci_method</code>) and data transformation method (<code>data_transform</code>). We also define a parameter for confidence level, as the choice of a 95% confidence level is arbitrary and we can choose to instead present our results with alternate confidence levels. Here we vary between: 50%, 75%, 89%, 85%, 99%, 99.9%. Thus our multiverse consists of: 2 <span class="math inline">\(\times\)</span> 2 <span class="math inline">\(\times\)</span> 7 different analysis combinations.</p>
 <p>We will use the multiverse code block to enter code into the multiverse. See the { for more details.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r">    <span class="no">ci_method</span> <span class="kw">&lt;-</span> <span class="st">"tCI"</span>
-    <span class="no">data_transform</span> <span class="kw">&lt;-</span> <span class="no">log</span>
-    <span class="no">conf_level</span> <span class="kw">&lt;-</span> <span class="fl">0.5</span></pre></body></html></div>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">ci_method</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">ci_method</span>,
+    <span class="st">"t based"</span>   ~ <span class="st">"tCI"</span>,
+    <span class="st">"bootstrap"</span> ~ <span class="st">"bootstrappedCI"</span>
+)
+
+<span class="no">data_transform</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">data_transform</span>,
+    <span class="st">"log-transformed"</span> ~ <span class="no">log</span>,
+    <span class="st">"untransformed"</span> ~ <span class="no">identity</span>
+)
+
+<span class="no">conf_level</span> <span class="kw">&lt;-</span>  <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">conf_level</span>,
+    <span class="st">"50%"</span> ~ <span class="fl">0.5</span>,
+    <span class="st">"67"</span> ~ <span class="fl">0.67</span>,
+    <span class="st">"89"</span> ~ <span class="fl">0.89</span>,
+    <span class="st">"95%"</span> ~ <span class="fl">0.95</span>,
+    <span class="st">"99%"</span> ~ <span class="fl">0.99</span>,
+    <span class="st">"99.9%"</span> ~ <span class="fl">0.999</span>
+)</pre></body></html></div>
 <p>We now look at the multiverse table and see that it has created all the possible combinations:</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>)</pre></body></html></div>
-<pre><code>## # A tibble: 28 x 7
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<pre><code>## # A tibble: 24 x 7
 ##    .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##        &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ##  1         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ##  2         2 bootstrap log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ##  3         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ##  4         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  5         5 t based   log-transform… 75%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  6         6 bootstrap log-transform… 75%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  7         7 t based   untransformed  75%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  8         8 bootstrap untransformed  75%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  9         9 t based   log-transform… 80%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 10        10 bootstrap log-transform… 80%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## # … with 18 more rows</code></pre>
+##  5         5 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  6         6 bootstrap log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  7         7 t based   untransformed  67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  8         8 bootstrap untransformed  67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  9         9 t based   log-transform… 89         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 10        10 bootstrap log-transform… 89         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## # … with 14 more rows</code></pre>
 <p>We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options. First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r">    <span class="no">duration</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">data.userlogs.raw</span>$<span class="no">duration</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">duration</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">data.userlogs.raw</span>$<span class="no">duration</span>))</pre></body></html></div>
 <p>Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a <code>data.frame</code>. We strongly recommend sotring the results that you would wish to extract from the multiverse in a <code>data.frame</code> as that would make it much easier for analysing and visualising the results.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r">    <span class="no">modality</span> <span class="kw">&lt;-</span> <span class="no">data.userlogs.raw</span>$<span class="no">modalityname</span>
-    <span class="no">ci.physical_notouch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span>
-        <span class="st">"physical-notouch"</span>], <span class="no">conf_level</span>))
-    <span class="no">ci.physical_notouch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_notouch"</span>,
-        <span class="no">ci.physical_notouch</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>,
-        <span class="st">"conf.high"</span>))
-    <span class="no">ci.physical_touch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span>
-        <span class="st">"physical-touch"</span>], <span class="no">conf_level</span>))
-    <span class="no">ci.physical_touch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_touch"</span>,
-        <span class="no">ci.physical_touch</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>,
-        <span class="st">"conf.high"</span>))
-    <span class="no">ci.virtual_prop</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span>
-        <span class="st">"virtual-prop"</span>], <span class="no">conf_level</span>))
-    <span class="no">ci.virtual_prop</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"virtual_prop"</span>, <span class="no">ci.virtual_prop</span>)),
-        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
-    <span class="no">ci.virtual_mouse</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span>
-        <span class="st">"virtual-mouse"</span>], <span class="no">conf_level</span>))
-    <span class="no">ci.virtual_mouse</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"virtual_mouse"</span>, <span class="no">ci.virtual_mouse</span>)),
-        <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
-    <span class="no">df</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind.data.frame</a></span>(<span class="no">ci.physical_notouch</span>, <span class="no">ci.physical_touch</span>,
-        <span class="no">ci.virtual_prop</span>, <span class="no">ci.virtual_mouse</span>, <span class="kw">make.row.names</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-        <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-    <span class="no">df</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">df</span>, <span class="kw">estimate</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">estimate</span>), <span class="kw">conf.low</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.low</span>),
-        <span class="kw">conf.high</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.high</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">modality</span> <span class="kw">&lt;-</span> <span class="no">data.userlogs.raw</span>$<span class="no">modalityname</span>
+
+<span class="no">ci.physical_notouch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'physical-notouch'</span>], <span class="no">conf_level</span>))
+<span class="no">ci.physical_notouch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_notouch"</span>, <span class="no">ci.physical_notouch</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
+
+<span class="no">ci.physical_touch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'physical-touch'</span>], <span class="no">conf_level</span>))
+<span class="no">ci.physical_touch</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_touch"</span>, <span class="no">ci.physical_touch</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
+
+<span class="no">ci.virtual_prop</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'virtual-prop'</span>], <span class="no">conf_level</span>))
+<span class="no">ci.virtual_prop</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"virtual_prop"</span>, <span class="no">ci.virtual_prop</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
+
+<span class="no">ci.virtual_mouse</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'virtual-mouse'</span>], <span class="no">conf_level</span>))
+<span class="no">ci.virtual_mouse</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"virtual_mouse"</span>, <span class="no">ci.virtual_mouse</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
+
+<span class="no">df</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind.data.frame</a></span>(<span class="no">ci.physical_notouch</span>, <span class="no">ci.physical_touch</span>, <span class="no">ci.virtual_prop</span>, <span class="no">ci.virtual_mouse</span>, <span class="kw">make.row.names</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<span class="no">df</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">df</span>, <span class="kw">estimate</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">estimate</span>), <span class="kw">conf.low</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.low</span>), <span class="kw">conf.high</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.high</span>))</pre></body></html></div>
 <p>Since the multiverse only executes the default analysis, we then run the following command to run all the analysis that we have defined in the multiverse.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
 </div>
 </div>
 <div id="results-1" class="section level2">
@@ -242,8 +258,8 @@
 <h3 class="hasAnchor">
 <a href="#extracting-the-results-from-the-multiverse-object" class="anchor"></a>Extracting the results from the multiverse object</h3>
 <p>Next, we need to extract the results from the multiverse. The results for each unique analysis combination (a universe in our multiverse), is stored in an environment in the <code>.results</code> column. We can extract data frames from this column using the  function. This creates a new column in our data frame, <code>summary</code> which itself consists of data frames.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>)
-<span class="no">df.mtbl</span>$<span class="no">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">df.mtbl</span>$<span class="no">.results</span>, <span class="st">"df"</span>)
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)
+<span class="no">df.mtbl</span>$<span class="no">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">df.mtbl</span>$<span class="no">.results</span>, <span class="st">"df"</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">df.mtbl</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 6 x 8
@@ -253,13 +269,13 @@
 ## 2         2 bootstrap log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## 3         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## 4         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 5         5 t based   log-transform… 75%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 6         6 bootstrap log-transform… 75%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 5         5 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 6         6 bootstrap log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 1 more variable: summary &lt;list&gt;</code></pre>
 <p>As we can see above, each row in the <code>summary</code> column consists of a <span class="math inline">\(4 \times 4\)</span>, data frame which we will need to unpack. We will use the  function to expand the different columns of the data frame into their own columns. Finally, we use the  function to unnest the rows of the data frame into their own row. Note that we have a <code>.universe</code> column which indexes each universe in our multiverse i.e. each unique analysis combination.</p>
 <p>Below we can see the result of this transformation. You can see that we have created four new columns (<code>modality</code>, <code>estimate</code>, <code>conf.low</code>, <code>conf.high</code>). In addition, we have four rows for each universe corresponding to the results for each of the four conditions in our experiment.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu">unnest_wider</span>(<span class="no">df.mtbl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>))
-<span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu">unnest</span>(<span class="no">df.mtbl</span>, <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">modality</span>, <span class="no">estimate</span>, <span class="no">conf.low</span>, <span class="no">conf.high</span>))
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html">unnest_wider</a></span>(<span class="no">df.mtbl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>))
+<span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="no">df.mtbl</span>, <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">modality</span>, <span class="no">estimate</span>, <span class="no">conf.low</span>, <span class="no">conf.high</span>))
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">df.mtbl</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 6 x 11
 ##   .universe ci_method data_transform conf_level .parameter_assi… .code .results
@@ -277,7 +293,7 @@
 <h3 class="hasAnchor">
 <a href="#visualising-the-results" class="anchor"></a>Visualising the results</h3>
 <p>We will then sort the results, and transform the log transformed variables back on to the natural scale. We are then ready to visualise the result by animating over each universe.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu">arrange</span>(<span class="no">df.mtbl</span>, <span class="no">conf_level</span>, <span class="fu">desc</span>(<span class="no">data_transform</span>), <span class="fu">desc</span>(<span class="no">ci_method</span>))
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">df.mtbl</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">df.mtbl</span>, <span class="no">conf_level</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">data_transform</span>), <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">ci_method</span>))
 
 <span class="no">df.results</span> <span class="kw">&lt;-</span> <span class="no">df.mtbl</span>
 <span class="no">df.results</span>$<span class="no">estimate</span>[<span class="no">df.mtbl</span>$<span class="no">data_transform</span> <span class="kw">==</span> <span class="st">"log-transformed"</span>] <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">df.mtbl</span>$<span class="no">estimate</span>[<span class="no">df.mtbl</span>$<span class="no">data_transform</span> <span class="kw">==</span> <span class="st">"log-transformed"</span>])
@@ -296,14 +312,15 @@
 ## 6         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 4 more variables: modality &lt;chr&gt;, estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;,
 ## #   conf.high &lt;dbl&gt;</code></pre>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df.results</span> <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
-  <span class="fu">geom_vline</span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">transition_manual</span>( <span class="no">.universe</span> )
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df.results</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
-<span class="fu">animate</span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">28</span>,  <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">28</span>,  <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<pre><code>## nframes and fps adjusted to match transition</code></pre>
 <p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-8-1.gif"><!-- --></p>
 <p>The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be cnsistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.</p>
 </div>
@@ -311,18 +328,18 @@
 <h3 class="hasAnchor">
 <a href="#sidebar-using-the-tidyverse-to-extract-and-visualize-the-results" class="anchor"></a>Sidebar: Using the tidyverse to extract and visualize the results</h3>
 <p>So far we have tried to keep this analysis in base R. However, the steps involved in extracting and visualising results from the multiverse maybe more convenient for some using the tidyverse API. We can implement the steps that we have taken in the previous three code block in the following way using the tidyverse. The result of this is the same data frame that was created in the previous step, and was used as input data to ggplot, <code>df.results</code>. The <code>multiverse</code> package is flexible, and does not restrict you towards a particular style of R programming.</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">index</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">.</span>)) ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"df"</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest_wider</span>( <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">modality</span>, <span class="no">estimate</span>, <span class="no">conf.low</span>, <span class="no">conf.high</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">index</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">.</span>)) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"df"</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html">unnest_wider</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">modality</span>, <span class="no">estimate</span>, <span class="no">conf.low</span>, <span class="no">conf.high</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
     <span class="kw">estimate</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">data_transform</span> <span class="kw">==</span> <span class="st">"log-transformed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">estimate</span>), <span class="no">estimate</span>),
     <span class="kw">conf.low</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">data_transform</span> <span class="kw">==</span> <span class="st">"log-transformed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">conf.low</span>), <span class="no">conf.low</span>),
     <span class="kw">conf.high</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">data_transform</span> <span class="kw">==</span> <span class="st">"log-transformed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">conf.high</span>), <span class="no">conf.high</span>)
   ) <span class="kw">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="no">conf_level</span>, <span class="fu">desc</span>(<span class="no">data_transform</span>), <span class="fu">desc</span>(<span class="no">ci_method</span>))</pre></body></html></div>
-<pre><code>## # A tibble: 112 x 12
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">conf_level</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">data_transform</span>), <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">ci_method</span>))</pre></body></html></div>
+<pre><code>## # A tibble: 96 x 12
 ##    .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##        &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ##  1         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
@@ -335,7 +352,7 @@
 ##  8         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ##  9         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## 10         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## # … with 102 more rows, and 5 more variables: index &lt;int&gt;, modality &lt;chr&gt;,
+## # … with 86 more rows, and 5 more variables: index &lt;int&gt;, modality &lt;chr&gt;,
 ## #   estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</code></pre>
 </div>
 </div>
@@ -343,40 +360,24 @@
 <h2 class="hasAnchor">
 <a href="#analysis-2-differences-between-mean-completion-times-between-conditions" class="anchor"></a>Analysis #2: Differences between mean completion times between conditions</h2>
 <p>Next, we compute the pairwise ratios between mean completion times to examine the within-subject differences.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r">    <span class="no">diff.touch_notouch</span> <span class="kw">&lt;-</span> <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">"physical-notouch"</span>] -
-        <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">"physical-touch"</span>]
-    <span class="no">`physical_touch - physical_notouch`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>,
-        <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">diff.touch_notouch</span>, <span class="no">conf_level</span>))
-    <span class="no">`physical_touch - physical_notouch`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_touch - physical_notouch"</span>,
-        <span class="no">`physical_touch - physical_notouch`</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>,
-        <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
-    <span class="no">diff.notouch_prop</span> <span class="kw">&lt;-</span> <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">"physical-notouch"</span>] -
-        <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">"virtual-prop"</span>]
-    <span class="no">`physical_notouch - virtual_prop`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">diff.notouch_prop</span>,
-        <span class="no">conf_level</span>))
-    <span class="no">`physical_notouch - virtual_prop`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_notouch - virtual_prop"</span>,
-        <span class="no">`physical_notouch - virtual_prop`</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>,
-        <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
-    <span class="no">diff.propr_mouse</span> <span class="kw">&lt;-</span> <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">"virtual-prop"</span>] -
-        <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">"virtual-mouse"</span>]
-    <span class="no">`virtual_prop - virtual_mouse`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">diff.propr_mouse</span>,
-        <span class="no">conf_level</span>))
-    <span class="no">`virtual_prop - virtual_mouse`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"virtual_prop - virtual_mouse"</span>,
-        <span class="no">`virtual_prop - virtual_mouse`</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>,
-        <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
-    <span class="no">df.diffs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind.data.frame</a></span>(<span class="no">`physical_touch - physical_notouch`</span>,
-        <span class="no">`physical_notouch - virtual_prop`</span>, <span class="no">`virtual_prop - virtual_mouse`</span>,
-        <span class="kw">make.row.names</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-    <span class="no">df.diffs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">df.diffs</span>, <span class="kw">estimate</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">estimate</span>),
-        <span class="kw">conf.low</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.low</span>), <span class="kw">conf.high</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.high</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">diff.touch_notouch</span> <span class="kw">&lt;-</span> <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'physical-notouch'</span>] - <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'physical-touch'</span>]
+<span class="no">`physical_touch - physical_notouch`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">diff.touch_notouch</span>, <span class="no">conf_level</span>))
+<span class="no">`physical_touch - physical_notouch`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_touch - physical_notouch"</span>, <span class="no">`physical_touch - physical_notouch`</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
+
+<span class="no">diff.notouch_prop</span> <span class="kw">&lt;-</span> <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'physical-notouch'</span>] - <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'virtual-prop'</span>]
+<span class="no">`physical_notouch - virtual_prop`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">diff.notouch_prop</span>, <span class="no">conf_level</span>))
+<span class="no">`physical_notouch - virtual_prop`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"physical_notouch - virtual_prop"</span>, <span class="no">`physical_notouch - virtual_prop`</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
+
+<span class="no">diff.propr_mouse</span> <span class="kw">&lt;-</span> <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'virtual-prop'</span>] - <span class="no">duration</span>[<span class="no">modality</span> <span class="kw">==</span> <span class="st">'virtual-mouse'</span>]
+<span class="no">`virtual_prop - virtual_mouse`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">ci_method</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">diff.propr_mouse</span>, <span class="no">conf_level</span>))
+<span class="no">`virtual_prop - virtual_mouse`</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"virtual_prop - virtual_mouse"</span>, <span class="no">`virtual_prop - virtual_mouse`</span>)), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"modality"</span>, <span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>))
+
+<span class="no">df.diffs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind.data.frame</a></span>(<span class="no">`physical_touch - physical_notouch`</span>, <span class="no">`physical_notouch - virtual_prop`</span>, <span class="no">`virtual_prop - virtual_mouse`</span>, <span class="kw">make.row.names</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<span class="no">df.diffs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span>(<span class="no">df.diffs</span>, <span class="kw">estimate</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">estimate</span>), <span class="kw">conf.low</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.low</span>), <span class="kw">conf.high</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">conf.high</span>))</pre></body></html></div>
 <p>We can output the data frame that we have created inside the multiverse code block, as we would for a data frame in R. This would output the result in the default universe () of the multiverse. We can see that this data frame, as intended, has computed the mean differences and 95% confidence intervals between the conditions we care about.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r">    <span class="no">df.diffs</span></pre></body></html></div>
-<pre><code>                           modality    estimate    conf.low  conf.high
-1 physical_touch - physical_notouch  0.15764964  0.13052972  0.1847696
-2   physical_notouch - virtual_prop -0.13555912 -0.16176768 -0.1093506
-3      virtual_prop - virtual_mouse -0.03398807 -0.05599883 -0.0119773</code></pre>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">df.diffs</span></pre></body></html></div>
 <p>We then execute all the other analysis combinations (universes) in our multiverse.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <pre><code>## Warning in norm.inter(t, adj.alpha): extreme order statistics used as endpoints
 
 ## Warning in norm.inter(t, adj.alpha): extreme order statistics used as endpoints</code></pre>
@@ -384,11 +385,10 @@
 <h3 class="hasAnchor">
 <a href="#extracting-and-visualizing-the-results-from-the-multiverse" class="anchor"></a>Extracting and visualizing the results from the multiverse</h3>
 <p>We then use the workflow described in the previous section to extract results for each universe in the multiverse. We then use gganimate to plot the results.</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">df.results.diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">df</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"df.diffs"</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest_wider</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">modality</span>, <span class="no">estimate</span>, <span class="no">conf.low</span>, <span class="no">conf.high</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="no">data_transform</span>), <span class="no">conf_level</span>, <span class="fu">desc</span>(<span class="no">ci_method</span>))
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="no">df.results.diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">df.diffs</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df.diffs</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">data_transform</span>), <span class="no">conf_level</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">ci_method</span>))
 
 <span class="no">df.results.diff</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
@@ -409,14 +409,15 @@
 <h2 class="hasAnchor">
 <a href="#results-2" class="anchor"></a>Results #2</h2>
 <p>A value lower than 1 (i.e., on the left side of the dark line) means the condition on the left is faster than the condition on the right. The confidence intervals are not corrected for multiplicity. The results from this study appear to be relatively robust and consistent across all the possible combinations that we have tried.</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df.results.diff</span> <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
-  <span class="fu">geom_vline</span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">transition_manual</span>( <span class="no">.universe</span> )
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df.results.diff</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
-<span class="fu">animate</span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">28</span>,  <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">4</span>)</pre></body></html></div>
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">28</span>,  <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">4</span>)</pre></body></html></div>
+<pre><code>## nframes and fps adjusted to match transition</code></pre>
 <p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-12-1.gif"><!-- --></p>
 <p>Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 incidates a statistically significant difference at the α=.05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.</p>
 </div>

@@ -44,14 +44,23 @@
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, .universe = 1, cores = getOption("mc.cores", 1L)) {
+execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   n <- m_diction$as_list() %>% length()
-  # .level = attr(multiverse, "multiverse")$unchanged_until
   
   .to_exec = seq_len(m_diction$size()) #tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
-  invisible(lapply(.to_exec, exec_all, .m_diction = m_diction) )
+  
+  .m_list <- m_diction$as_list()
+  invisible(lapply(.m_list, exec_all))
 }
+
+exec_all <- function(x) {
+  .code_list = lapply(x, `[[`, "code")
+  .env_list = lapply(x, `[[`, "env")
+  
+  mapply(execute_code_from_universe, .code_list, .env_list)
+}
+
 
 #' @rdname execute
 #' @export
@@ -62,7 +71,9 @@ execute_universe <- function(multiverse, .universe = 1) {
   .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
-  invisible( lapply(.to_exec, exec_in_order, .m_diction = m_diction, .universes = .order) )
+  .m_list <- m_diction$as_list()[.to_exec]
+  
+  invisible( mapply(exec_in_order, .m_list, .to_exec, MoreArgs = list(.universes = .order)) )
 }
 
 execute_code_from_universe <- function(.c, .env = globalenv()) {
@@ -79,20 +90,12 @@ get_exec_order <- function(.m_diction, .uni, .level) {
   }
 }
 
-exec_in_order <- function(.m_diction, .universes, .i) {
-  x <- .m_diction$as_list()[[.i]][[ .universes[[.i]] ]]
+exec_in_order <- function(.universe_list, .universes, .i) {
+  x <- .universe_list[[ .universes[[.i]] ]]
   
   execute_code_from_universe(x$code, x$env)
 }
 
-exec_all <- function(.m_diction, .i) {
-  x <- .m_diction$as_list()[[.i]]
-  
-  .code_list = lapply(x, `[[`, "code")
-  .env_list = lapply(x, `[[`, "env")
-  
-  mapply(execute_code_from_universe, .code_list, .env_list)
-}
 
 
 

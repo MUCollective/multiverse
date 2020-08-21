@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -63,16 +66,13 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    </li>
-    <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>A discussion on branches in the multiverse</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2020-06-18</h4>
+            <h4 class="date">2020-08-21</h4>
       
       
       <div class="hidden name"><code>branch.Rmd</code></div>
@@ -105,6 +105,12 @@
 
     
     
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">knitr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">multiverse</span>)</pre></body></html></div>
 <div id="branches-in-a-multiverse-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#branches-in-a-multiverse-analysis" class="anchor"></a>Branches in a multiverse analysis</h2>
@@ -123,52 +129,52 @@
 <h2 class="hasAnchor">
 <a href="#example-1-a-simple-branch" class="anchor"></a>Example 1: A simple branch</h2>
 <p>Let’s say that there is a variable <code>x</code> which can take any of three different values — “low”, “medium”, “high”. We can perform the effect of encoding <code>x</code> as each of these values separately through separate branches. To do this, we first create a <strong>multiverse object</strong>, M:</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
 <p>Then declare <code>x</code> as three possible values within the multiverse using the <code><a href="../reference/branch.html">branch()</a></code> function.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">a_parameter</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>, <span class="st">"high"</span>)
 })</pre></body></html></div>
 <p>Now, we can inspect the multiverse object to see if all the options were created.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">.universe</span>, <span class="fu">everything</span>())</pre></body></html></div>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.universe</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">everything</a></span>())</pre></body></html></div>
 <pre><code>## # A tibble: 3 x 5
-##   .universe a_parameter .parameter_assignment .code      .results
-##       &lt;int&gt; &lt;chr&gt;       &lt;list&gt;                &lt;list&gt;     &lt;list&gt;  
-## 1         1 low         &lt;named list [1]&gt;      &lt;list [1]&gt; &lt;env&gt;   
-## 2         2 medium      &lt;named list [1]&gt;      &lt;list [1]&gt; &lt;env&gt;   
-## 3         3 high        &lt;named list [1]&gt;      &lt;list [1]&gt; &lt;env&gt;</code></pre>
+##   .universe a_parameter .parameter_assignment .code            .results
+##       &lt;int&gt; &lt;chr&gt;       &lt;list&gt;                &lt;list&gt;           &lt;list&gt;  
+## 1         1 low         &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
+## 2         2 medium      &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
+## 3         3 high        &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;</code></pre>
 </div>
 <div id="example-2-a-branch-within-functions-in-a-pipe" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-2-a-branch-within-functions-in-a-pipe" class="anchor"></a>Example 2: A branch within functions in a “pipe”: <code>%&gt;%</code>
 </h2>
 <p>Let’s say that we have some data which indicates the amount of time spent by a user in four different conditions which are indexed 1, 2, 3 and 4 (the <code>modality</code> column in the following dataset). We will first load the data and convert the column into factor from integer.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"userlogs"</span>)
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"userlogs"</span>)
 <span class="no">data.userlogs.raw</span> <span class="kw">=</span> <span class="no">userlogs</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">modality</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">modality</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="no">modality</span>)</pre></body></html></div>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">modality</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">modality</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">modality</span>)</pre></body></html></div>
 <p>We then create the multiverse object for this analysis</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
 <p>The data variable <code>duration</code> is approximately normally distributed, however, as is common with such data it has a long right-tail. Before using a regression model, we can choose to either log-transform the data, or assume that it is normally distribution and analyse it. We can perform both analysis in our multiverse by declaring two branches — one where the variable is log-transformed and the other where it is not.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.userlogs.raw</span> <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">modality</span>, <span class="no">duration</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">duration</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">data_transform</span>,
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">modality</span>, <span class="no">duration</span>) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">duration</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">data_transform</span>,
         <span class="st">"none"</span> ~ <span class="no">duration</span>,
         <span class="st">"log"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="no">duration</span>)
     ))
 })</pre></body></html></div>
-<p>The <code>multiverse_table</code> shows that there are two rows for the <code>data transform</code> branch which correspond to the two different reasonable alternatives for transforming time spent data.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<p>The <code>expand</code> shows that there are two rows for the <code>data transform</code> branch which correspond to the two different reasonable alternatives for transforming time spent data.</p>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 2 x 5
-##   .universe data_transform .parameter_assignment .code      .results
-##       &lt;int&gt; &lt;chr&gt;          &lt;list&gt;                &lt;list&gt;     &lt;list&gt;  
-## 1         1 none           &lt;named list [1]&gt;      &lt;list [1]&gt; &lt;env&gt;   
-## 2         2 log            &lt;named list [1]&gt;      &lt;list [1]&gt; &lt;env&gt;</code></pre>
+##   .universe data_transform .parameter_assignment .code            .results
+##       &lt;int&gt; &lt;chr&gt;          &lt;list&gt;                &lt;list&gt;           &lt;list&gt;  
+## 1         1 none           &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
+## 2         2 log            &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;</code></pre>
 <p>If we look at the code column, which is a list of expressions, we see that the variable <code>duration</code> is defined in two separate ways, one for each row of the multiverse table. In other words, for each alternate analysis path, one of these would get executed and that would be the how the <code>duration</code> variable is transformed for that analysis path.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>)$<span class="no">.code</span></pre></body></html></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)$<span class="no">.code</span></pre></body></html></div>
 <pre><code>## [[1]]
-## [[1]][[1]]
+## [[1]]$`1`
 ## {
 ##     df &lt;- data.userlogs.raw %&gt;% select(modality, duration) %&gt;% 
 ##         mutate(duration = duration)
@@ -176,7 +182,7 @@
 ## 
 ## 
 ## [[2]]
-## [[2]][[1]]
+## [[2]]$`1`
 ## {
 ##     df &lt;- data.userlogs.raw %&gt;% select(modality, duration) %&gt;% 
 ##         mutate(duration = log(duration))
@@ -185,9 +191,9 @@
 <div id="example-3-a-branch-as-a-function" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-3-a-branch-as-a-function" class="anchor"></a>Example 3: A branch as a function</h2>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
 <p>Say we are not familiar with R’s tidyverse packages and it’s style of writing code. An alternate way of declaring a branch for transforming the <code>duration</code> variable in the analysis would be to use two separate functions for the transformation depending on which universe one is.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">duration</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">data_trans</span>,
@@ -196,18 +202,18 @@
     )(<span class="no">data.userlogs.raw</span>$<span class="no">duration</span>)
 })</pre></body></html></div>
 <p>Then we execute the multiverse and inspect the results:</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)
 
-<span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">transformed_duration</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"duration"</span>))</pre></body></html></div>
+<span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">transformed_duration</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"duration"</span>))</pre></body></html></div>
 <pre><code>## # A tibble: 2 x 6
-##   .universe data_trans    .parameter_assignm… .code   .results transformed_dura…
-##       &lt;int&gt; &lt;chr&gt;         &lt;list&gt;              &lt;list&gt;  &lt;list&gt;   &lt;list&gt;           
-## 1         1 log-transfor… &lt;named list [1]&gt;    &lt;list … &lt;env&gt;    &lt;dbl [512]&gt;      
-## 2         2 untransformed &lt;named list [1]&gt;    &lt;list … &lt;env&gt;    &lt;dbl [512]&gt;</code></pre>
+##   .universe data_trans   .parameter_assign… .code     .results transformed_dura…
+##       &lt;int&gt; &lt;chr&gt;        &lt;list&gt;             &lt;list&gt;    &lt;list&gt;   &lt;list&gt;           
+## 1         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;    &lt;dbl [512]&gt;      
+## 2         2 untransform… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;    &lt;dbl [512]&gt;</code></pre>
 <p>As you can see, this creates, in each universe within the multiverse, a vector named <code>duration</code> which is either untransformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire <code><a href="../reference/branch.html">branch(...)</a></code> gets replaced with either <code><a href="https://rdrr.io/r/base/Log.html">log()</a></code> or <code><a href="https://rdrr.io/r/base/identity.html">identity()</a></code> within a given universe.</p>
 <p>A more readable pattern might be:</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">duration_transform</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">data_trans</span>,
@@ -218,40 +224,40 @@
   <span class="no">duration</span> <span class="kw">&lt;-</span> <span class="fu">duration_transform</span>(<span class="no">data.userlogs.raw</span>$<span class="no">duration</span>)
 })</pre></body></html></div>
 <p>Next, we execute and inspect the results. Again, this alternate calculation also leads to the same result.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)
 
-<span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">transformed_duration</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"duration"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">transformed_duration</span>)) <span class="kw">%&gt;%</span>
+<span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">transformed_duration</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"duration"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">transformed_duration</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
 <pre><code>## # A tibble: 6 x 6
-##   .universe data_trans    .parameter_assignm… .code   .results transformed_dura…
-##       &lt;int&gt; &lt;chr&gt;         &lt;list&gt;              &lt;list&gt;  &lt;list&gt;               &lt;dbl&gt;
-## 1         1 log-transfor… &lt;named list [1]&gt;    &lt;list … &lt;env&gt;                 4.25
-## 2         1 log-transfor… &lt;named list [1]&gt;    &lt;list … &lt;env&gt;                 4.80
-## 3         1 log-transfor… &lt;named list [1]&gt;    &lt;list … &lt;env&gt;                 3.89
-## 4         1 log-transfor… &lt;named list [1]&gt;    &lt;list … &lt;env&gt;                 3.75
-## 5         1 log-transfor… &lt;named list [1]&gt;    &lt;list … &lt;env&gt;                 4.01
-## 6         1 log-transfor… &lt;named list [1]&gt;    &lt;list … &lt;env&gt;                 3.41</code></pre>
+##   .universe data_trans   .parameter_assign… .code     .results transformed_dura…
+##       &lt;int&gt; &lt;chr&gt;        &lt;list&gt;             &lt;list&gt;    &lt;list&gt;               &lt;dbl&gt;
+## 1         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 4.25
+## 2         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 4.80
+## 3         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 3.89
+## 4         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 3.75
+## 5         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 4.01
+## 6         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 3.41</code></pre>
 </div>
 <div id="example-4-parameters-can-be-reused" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-4-parameters-can-be-reused" class="anchor"></a>Example 4: Parameters can be reused</h2>
 <p>If you want to use a parameter multiple times, or just want to define it upfront, you can assign it to a variable and use the variable in your code. For example, in the next example, we declare <em>three different branches</em> for data transformation, data modelling and data presentation respectively. We also define any necessary functions along the way.</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">boot</span>)
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">boot</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">broom</span>)
 <span class="no">samplemean</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">d</span>) {<span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">x</span>[<span class="no">d</span>]))}
 
 <span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
 
 <span class="no">t_test_ci</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>) {
-    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span>(<span class="no">x</span>, <span class="kw">conf.level</span> <span class="kw">=</span> <span class="no">y</span>))
+    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span>(<span class="no">x</span>, <span class="kw">conf.level</span> <span class="kw">=</span> <span class="no">y</span>))
 }
 
 <span class="no">bootstrapped_ci</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>) {
     <span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html">boot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">x</span>, <span class="kw">statistic</span> <span class="kw">=</span> <span class="no">samplemean</span>, <span class="kw">R</span> <span class="kw">=</span> <span class="fl">5000</span>) <span class="kw">%&gt;%</span>
-        <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">conf.method</span> <span class="kw">=</span> <span class="st">"bca"</span>, <span class="kw">conf.level</span> <span class="kw">=</span>  <span class="no">y</span>) <span class="kw">%&gt;%</span>
-        <span class="fu">rename</span>(<span class="kw">estimate</span> <span class="kw">=</span> <span class="no">statistic</span>)
+        <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">conf.method</span> <span class="kw">=</span> <span class="st">"bca"</span>, <span class="kw">conf.level</span> <span class="kw">=</span>  <span class="no">y</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span>(<span class="kw">estimate</span> <span class="kw">=</span> <span class="no">statistic</span>)
 }
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
@@ -268,77 +274,43 @@
   <span class="no">ci</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">ci</span>, <span class="fl">0.5</span>, <span class="fl">0.68</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span> )
 
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.userlogs.raw</span>  <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">duration</span> <span class="kw">=</span> <span class="fu">data_trans</span>(<span class="no">duration</span>) ) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">modality.f</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">modality</span>) ) <span class="kw">%&gt;%</span>
-    <span class="fu">group_by</span>(<span class="no">subject</span>, <span class="no">modality.f</span>, <span class="no">modalityname</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">summarise</span>( <span class="kw">duration</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">duration</span>) ) <span class="kw">%&gt;%</span>
-    <span class="fu">group_by</span>(<span class="no">modality.f</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">rename</span>( <span class="kw">value</span> <span class="kw">=</span> <span class="no">duration</span> ) <span class="kw">%&gt;%</span>
-    <span class="fu">summarise</span>( <span class="kw">data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">value</span>) )
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">duration</span> <span class="kw">=</span> <span class="fu">data_trans</span>(<span class="no">duration</span>) ) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">modality.f</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">modality</span>) ) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">subject</span>, <span class="no">modality.f</span>, <span class="no">modalityname</span>) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>( <span class="kw">duration</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">duration</span>), <span class="kw">.groups</span> <span class="kw">=</span> <span class="st">"drop"</span> ) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">modality.f</span>) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span>( <span class="kw">value</span> <span class="kw">=</span> <span class="no">duration</span> ) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>( <span class="kw">data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">value</span>), <span class="kw">.groups</span> <span class="kw">=</span> <span class="st">"keep"</span> )
 
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">fit</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">data</span>, ~ <span class="fu">fit</span>(<span class="no">.x</span>, <span class="no">ci</span>) ) ) <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(-<span class="no">data</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">fit</span>) )
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">fit</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">data</span>, ~ <span class="fu">fit</span>(<span class="no">.x</span>, <span class="no">ci</span>) ) ) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(-<span class="no">data</span>) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">fit</span>) )
 })</pre></body></html></div>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <p>We then write the anaysis and use those variables to indicate branches in our analysis within the multiverse.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` regrouping output by 'subject', 'modality.f' (override with `.groups` argument)</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <p>To see the results of using branches, we plot a part of this multiverse. We see the different transformations (no transformations in the right column and log-transform in the left column). Each row shows the different data presentation branches by presenting different confidence levels.</p>
-<div class="sourceCode" id="cb55"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">df</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"df"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df</span>) )  <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">modality.f</span> <span class="kw">=</span> <span class="fu">recode</span>( <span class="no">modality.f</span>,
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">df</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"df"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df</span>) )  <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">modality.f</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">modality.f</span>,
                  <span class="st">"1"</span> <span class="kw">=</span> <span class="st">"physical-touch"</span>,
                  <span class="st">"2"</span> <span class="kw">=</span> <span class="st">"no-touch"</span>,
                  <span class="st">"3"</span> <span class="kw">=</span> <span class="st">"virtual-prop"</span>,
                  <span class="st">"4"</span> <span class="kw">=</span> <span class="st">"virtual-mouse"</span>
   ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
     <span class="kw">estimate</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">data_trans</span> <span class="kw">==</span> <span class="st">"log"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">estimate</span>), <span class="no">estimate</span>),
     <span class="kw">conf.low</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">data_trans</span> <span class="kw">==</span> <span class="st">"log"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">conf.low</span>), <span class="no">conf.low</span>),
     <span class="kw">conf.high</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">data_trans</span> <span class="kw">==</span> <span class="st">"log"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">conf.high</span>), <span class="no">conf.high</span>)
   ) <span class="kw">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="no">ci</span>, <span class="fu">desc</span>(<span class="no">data_trans</span>), <span class="fu">desc</span>(<span class="no">bootstrap</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="no">bootstrap</span> <span class="kw">==</span> <span class="st">"bca"</span> ) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">ci</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">data_trans</span>), <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">bootstrap</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="no">bootstrap</span> <span class="kw">==</span> <span class="st">"bca"</span> ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
   <span class="co">#geom_vline( xintercept = 0,  colour = '#979797' ) +</span>
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality.f</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality.f</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">facet_grid</span>(<span class="no">ci</span> ~ <span class="no">data_trans</span>, <span class="kw">scales</span> <span class="kw">=</span> <span class="st">"free"</span>)</pre></body></html></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality.f</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality.f</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span>(<span class="no">ci</span> ~ <span class="no">data_trans</span>, <span class="kw">scales</span> <span class="kw">=</span> <span class="st">"free"</span>)</pre></body></html></div>
 <p><img src="branch_files/figure-html/unnamed-chunk-16-1.png" width="768"></p>
 </div>
 <div id="example-5-declaring-continuous-variables-in-branch" class="section level2">
@@ -346,7 +318,7 @@
 <a href="#example-5-declaring-continuous-variables-in-branch" class="anchor"></a>Example 5: Declaring continuous variables in <code>branch</code>
 </h2>
 <p>So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not oo high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.</p>
-<div class="sourceCode" id="cb56"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">seed</span>, <span class="kw">.options</span> <span class="kw">=</span> <span class="fl">1</span>:<span class="fl">25</span>))
@@ -357,21 +329,21 @@
 
   <span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="no">y</span> ~ <span class="no">x1</span>+ <span class="no">x2</span>)
 
-  <span class="no">intervals</span> <span class="kw">&lt;-</span> <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>(<span class="no">m</span>, <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+  <span class="no">intervals</span> <span class="kw">&lt;-</span> <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>(<span class="no">m</span>, <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 })
 
 <span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <p>We then plot the estimates from the multiverse to see if we obtain the correct results:</p>
-<div class="sourceCode" id="cb57"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">df</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"intervals"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>(<span class="no">seed</span>) <span class="kw">%&gt;%</span>  <span class="co"># won't be necessary once issue #34 is fixed</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">.universe</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">ymin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">ymax</span> <span class="kw">=</span> <span class="no">conf.high</span>), <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
-  <span class="fu">geom_pointrange</span>() +
-  <span class="fu">facet_grid</span>( <span class="no">.</span> ~ <span class="no">term</span> )  +
-  <span class="fu">scale_x_continuous</span>( <span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>, <span class="fl">25</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fl">5</span>) ) +
-  <span class="fu">labs</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Universe (i.e. the seed parameter)"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">"Model Parameter Values"</span>, <span class="kw">title</span> <span class="kw">=</span> <span class="st">"Estimates with 95% confidence intervals"</span>)</pre></body></html></div>
-<p><img src="branch_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">df</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"intervals"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="no">seed</span>) <span class="kw">%&gt;%</span>  <span class="co"># won't be necessary once issue #34 is fixed</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">.universe</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">ymin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">ymax</span> <span class="kw">=</span> <span class="no">conf.high</span>), <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span>( <span class="no">.</span> ~ <span class="no">term</span> )  +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span>( <span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>, <span class="fl">25</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fl">5</span>) ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Universe (i.e. the seed parameter)"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">"Model Parameter Values"</span>, <span class="kw">title</span> <span class="kw">=</span> <span class="st">"Estimates with 95% confidence intervals"</span>)</pre></body></html></div>
+<p><img src="branch_files/figure-html/unnamed-chunk-18-1.png" width="768"></p>
 <p><strong>Note</strong>: in this vignette we used the script-oriented <code><a href="../reference/inside.html">inside()</a></code> function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the <code>multiverse-code-block</code> for more interactive programming. To implement this using a <code>multiverse-code-block</code>, we can simply place the code passed into the inside function (the second argument) inside a code block of type <code>multiverse</code>, provide it with the appropriate labels and multiverse object, and execute it. See (multiverse-in-rmd) and (branch) for more details and examples.</p>
 </div>
   </div>
