@@ -34,12 +34,12 @@ reference:
   - parameters
   - conditions
   - default_parameter_assignment
-  - multiverse_table
+  - expand
   
 - title: Executing the multiverse
   desc: Execute specific or the entire multiverse
   contents:
-  - execute_default
+  - execute_universe
   - execute_multiverse
 
 - title: Datasets

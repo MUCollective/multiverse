@@ -63,7 +63,7 @@ inside(M, {
 Now, we can inspect the multiverse object to see if all the options were created. 
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   select(.universe, everything())
 ```
 
@@ -98,16 +98,16 @@ inside(M, {
 ```
 
 
-The `multiverse_table` shows that there are two rows for the `data transform` branch which correspond to the two different reasonable alternatives for transforming time spent data.
+The `expand` shows that there are two rows for the `data transform` branch which correspond to the two different reasonable alternatives for transforming time spent data.
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
 If we look at the code column, which is a list of expressions, we see that the variable `duration` is defined in two separate ways, one for each row of the multiverse table. In other words, for each alternate analysis path, one of these would get executed and that would be the how the `duration` variable is transformed for that analysis path.
 
 ```{r}
-multiverse_table(M)$.code
+expand(M)$.code
 ```
 
 ## Example 3: A branch as a function
@@ -133,7 +133,7 @@ Then we execute the multiverse and inspect the results:
 ```{r}
 execute_multiverse(M)
 
-multiverse_table(M) %>%
+expand(M) %>%
   mutate(transformed_duration = map(.results, "duration"))
 ```
 
@@ -160,7 +160,7 @@ Next, we execute and inspect the results. Again, this alternate calculation also
 ```{r}
 execute_multiverse(M)
 
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( transformed_duration = map(.results, "duration" ) ) %>% 
   unnest(c(transformed_duration)) %>%
   head()
@@ -204,10 +204,10 @@ inside(M, {
     mutate( duration = data_trans(duration) ) %>% 
     mutate( modality.f = factor(modality) ) %>%
     group_by(subject, modality.f, modalityname) %>% 
-    summarise( duration = mean(duration) ) %>%
+    summarise( duration = mean(duration), .groups = "drop" ) %>%
     group_by(modality.f) %>%
     rename( value = duration ) %>%
-    summarise( data = list(value) )
+    summarise( data = list(value), .groups = "keep" )
   
   df <- df %>%
     mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
@@ -227,7 +227,7 @@ To see the results of using branches, we plot a part of this multiverse. We see 
 
 
 ```{r, fig.width = 8, fig.height = 8}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate(df = map(.results, "df" ) ) %>%
   unnest( cols = c(df) )  %>%
   mutate( modality.f = recode( modality.f, 
@@ -274,8 +274,8 @@ execute_multiverse(M)
 
 We then plot the estimates from the multiverse to see if we obtain the correct results:
 
-```{r}
-multiverse_table(M) %>%
+```{r, fig.width = 8, fig.height = 8}
+expand(M) %>%
   mutate(df = map(.results, "intervals" ) ) %>%
   unnest( cols = c(df) ) %>%
   unnest(seed) %>%  # won't be necessary once issue #34 is fixed

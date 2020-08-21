@@ -3,21 +3,12 @@
 \name{execute}
 \alias{execute}
 \alias{execute_multiverse}
-\alias{execute_default}
-\alias{execute_default.default}
-\alias{execute_default.multiverse}
 \alias{execute_universe}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(multiverse, cores = 1L)
+execute_multiverse(multiverse, cores = getOption("mc.cores", 1L))
 
-execute_default(multiverse)
-
-\method{execute_default}{default}(multiverse)
-
-\method{execute_default}{multiverse}(multiverse)
-
-execute_universe(multiverse, .universe = NULL)
+execute_universe(multiverse, .universe = 1)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
@@ -30,7 +21,7 @@ of the parameters using `execute_universe`. Defaults to NULL, which will execute
 }
 \description{
 These are functions which allow the user to execute parts or whole of the multiverse.
-The user can choose to either execute the default analysis using the \code{\link{execute_default}}, or a part or
+The user can choose to either execute the default analysis using the \code{\link{execute_universe}}, or a part or
 whole of the multiverse using the \code{\link{execute_multiverse}}.
 }
 \details{

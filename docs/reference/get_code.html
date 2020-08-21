@@ -74,7 +74,7 @@ and not exported." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
       </span>
     </div>
 
@@ -97,6 +97,9 @@ and not exported." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -106,16 +109,13 @@ and not exported." />
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    </li>
-    <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
@@ -149,15 +149,11 @@ single analysis from the code used to declare the multiverse. This function is c
 and not exported.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_code</span>(<span class='no'>multiverse</span>, <span class='no'>.code</span>, <span class='kw'>.assgn</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>get_code</span>(<span class='no'>.code</span>, <span class='kw'>.assgn</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>multiverse</th>
-      <td><p>The multiverse object with some code passed to it</p></td>
-    </tr>
     <tr>
       <th>.code</th>
       <td><p>Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,

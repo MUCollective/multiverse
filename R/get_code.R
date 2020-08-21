@@ -11,8 +11,6 @@
 #' This is primarily going to be called by other functions, and perhaps not going to be as useful to
 #' the user for anything other than inspecting the rewritten code.
 #'
-#' @param multiverse The multiverse object with some code passed to it
-#'
 #' @param .code Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
 #' which can be done using the `remove_branch_assert` function.
 #'
@@ -25,21 +23,8 @@
 #' @importFrom magrittr extract2
 #'
 # wrapper function for get_parameter_code
-get_code <- function(multiverse, .code, .assgn = NULL) {
-  stopifnot( is.r6_multiverse(multiverse))
-
-  if (is.numeric(.assgn)) {
-    .assgn = multiverse[['multiverse_table']][['parameter_assignment']][[.assgn]]
-  }
-
-  if( length( multiverse[['default_parameter_assignment']] ) != 0 && length(.assgn) == 0 ) {
-    #message("Assigning options to parameter from `default_parameter_assignment`")
-    .assgn = default_parameter_assignment(multiverse)
-  }
-  
-  x <- lapply(.code, get_parameter_code, .assgn)
-  x
-  # get_parameter_code(.code, .assgn)
+get_code <- function(.code, .assgn = NULL) {
+  lapply(.code, get_parameter_code, .assgn)
 }
 
 # takes as input: parameter assignment, and an expression (or code) which contains branches

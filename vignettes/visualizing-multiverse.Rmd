@@ -249,7 +249,7 @@ p2 <- data.spec_curve %>%
 cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 2))
 ```
 
-```{r, eval = FALSE, fig.width = 9, fig.height = 5}
+```{r, echo = FALSE, eval = FALSE, fig.width = 9, fig.height = 5}
 ## **Incomplete**
 
 expand(M) %>%

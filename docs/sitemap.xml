@@ -10,13 +10,13 @@
     <loc>http://mucollective.github.io/multiverse/reference/branch.html</loc>
   </url>
   <url>
-    <loc>http://mucollective.github.io/multiverse/reference/default_parameter_assignment.html</loc>
-  </url>
-  <url>
     <loc>http://mucollective.github.io/multiverse/reference/durante.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/execute.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/reference/extract_variables.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/get_code.html</loc>
@@ -34,10 +34,16 @@
     <loc>http://mucollective.github.io/multiverse/reference/parse_multiverse.html</loc>
   </url>
   <url>
+    <loc>http://mucollective.github.io/multiverse/reference/print.html</loc>
+  </url>
+  <url>
     <loc>http://mucollective.github.io/multiverse/reference/userlogs.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/vis_correlation.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/Conditions.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/branch.html</loc>
@@ -47,9 +53,6 @@
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/complete-multiverse-analysis.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/conditions.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/dance.html</loc>

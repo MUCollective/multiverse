@@ -4,15 +4,17 @@
 \alias{parse_multiverse}
 \title{Parse the multiverse syntax to identify branches}
 \usage{
-parse_multiverse(multiverse, .code, .super_env)
+parse_multiverse(.multiverse, .expr, .code, .label)
 }
 \arguments{
-\item{multiverse}{The multiverse object with some code passed to it}
+\item{.multiverse}{The multiverse object which will contain the analysis}
 
-\item{.code}{The code that is being passed into the multiverse objecct}
+\item{.expr}{The expression that is being parsed}
 
-\item{.super_env}{The parent environment of the multiverse object i.e. the environment
-in which the multiverse object was called. This is automatically recorded.}
+\item{.code}{All the code that has been passed to the multiverse}
+
+\item{.label}{The label of the code block or inside call which was used to pass the 
+code being parsed into the multiverse}
 }
 \value{
 The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.

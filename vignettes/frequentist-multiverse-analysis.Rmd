@@ -114,14 +114,14 @@ data_transform <- branch(data_transform,
 
 conf_level <-  branch(conf_level,
     "50%" ~ 0.5,
-    "75%" ~ 0.67,
-    "80%" ~ 0.80,
-    "89%" ~ 0.89,
+    "67" ~ 0.67,
+    "89" ~ 0.89,
     "95%" ~ 0.95,
     "99%" ~ 0.99,
     "99.9%" ~ 0.999
 )
 ```
+
 
 We now look at the multiverse table and see that it has created all the possible combinations:
 
@@ -271,9 +271,8 @@ We then use the workflow described in the previous section to extract results fo
 
 ```{r}
 df.results.diff <- expand(M) %>%
-  mutate( df = map(.results, "df.diffs") ) %>%
-  unnest_wider(c(df) ) %>%
-  unnest(cols = c(modality, estimate, conf.low, conf.high) ) %>%
+  extract_variables(df.diffs) %>%
+  unnest(c(df.diffs)) %>%
   arrange(desc(data_transform), conf_level, desc(ci_method))
 
 df.results.diff %>%
@@ -300,8 +299,6 @@ Correction for multiplicity can be another analysis option in the multiverse ana
 ## Conclusion
 
 This example was adapted from Dragicevic et al.'s study [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) to show how previously performed multiverse analysis can be reproduced using the package in a flexible, and easily readable manner. It also shows how a multiverse analysis can be implemented in mostly base R syntax.
-
-
 
 
 

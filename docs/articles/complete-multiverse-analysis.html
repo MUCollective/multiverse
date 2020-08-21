@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -63,16 +66,13 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    </li>
-    <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>A complete implementation of a multiverse analysis</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2020-06-18</h4>
+            <h4 class="date">2020-08-21</h4>
       
       
       <div class="hidden name"><code>complete-multiverse-analysis.Rmd</code></div>
@@ -111,15 +111,24 @@
 <p>In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">Increasing Transparency Through a Multiverse Analysis</a>.</p>
 <p>Data analysis can involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable options to choose from. A multiverse analysis is a form of analysis which makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision).</p>
 <p>Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis.</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">knitr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">broom</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">gganimate</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cowplot</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">multiverse</span>)</pre></body></html></div>
 </div>
 <div id="the-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-data" class="anchor"></a>The data</h2>
 <p>The first step is to read the raw data from the file and store it as a tibble. We will be following the <em><em>tidy data</em></em> format here. The data is stored in two text files, and we can use <code>readr</code> to read the files into R. In this example, we will use the data collected by <em>Durante et al.</em>, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in <code>data.raw.study2</code>).</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"durante"</span>)
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"durante"</span>)
 
 <span class="no">data.raw.study2</span> <span class="kw">&lt;-</span> <span class="no">durante</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
     <span class="kw">Abortion</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="fl">7</span> - <span class="no">Abortion</span>) + <span class="fl">1</span>,
     <span class="kw">StemCell</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="fl">7</span> - <span class="no">StemCell</span>) + <span class="fl">1</span>,
     <span class="kw">Marijuana</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="fl">7</span> - <span class="no">Marijuana</span>) + <span class="fl">1</span>,
@@ -130,7 +139,7 @@
     <span class="kw">SocConsComp</span> <span class="kw">=</span> <span class="no">Marriage</span> + <span class="no">RestrictAbortion</span> + <span class="no">Abortion</span> + <span class="no">StemCell</span> + <span class="no">Marijuana</span>
   )</pre></body></html></div>
 <p>The data look like this:</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">data.raw.study2</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">data.raw.study2</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 10 x 26
 ##    WorkerID  Rel1  Rel2  Rel3 Abortion Marriage StemCell RestrictAbortion
@@ -157,22 +166,22 @@
 <h2 class="hasAnchor">
 <a href="#a-single-data-set-analysis-one-possible-analysis-among-many" class="anchor"></a>A single data set analysis: one possible analysis among many</h2>
 <p>The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">one_universe</span> <span class="kw">=</span> <span class="no">data.raw.study2</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span> ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">one_universe</span> <span class="kw">=</span> <span class="no">data.raw.study2</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span> ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
     <span class="kw">CycleDay</span> <span class="kw">=</span> <span class="fl">28</span> - (<span class="no">NextMenstrualOnset</span> - <span class="no">DateTesting</span>),
     <span class="kw">CycleDay</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;</span> <span class="fl">1</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;</span> <span class="fl">28</span>, <span class="no">CycleDay</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&lt;</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">28</span>))
   ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
     <span class="kw">Relationship</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">2</span>, <span class="st">"Single"</span>, <span class="st">"Relationship"</span>))
   ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="no">ComputedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ComputedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="no">Sure1</span> <span class="kw">&gt;</span> <span class="fl">6</span> <span class="kw">|</span> <span class="no">Sure2</span> <span class="kw">&gt;</span> <span class="fl">6</span> ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">Fertility</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">7</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">17</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>)) ) )</pre></body></html></div>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="no">ComputedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ComputedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="no">Sure1</span> <span class="kw">&gt;</span> <span class="fl">6</span> <span class="kw">|</span> <span class="no">Sure2</span> <span class="kw">&gt;</span> <span class="fl">6</span> ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">Fertility</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">7</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">17</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>)) ) )</pre></body></html></div>
 <p>The transformed data for this one universe looks like this:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">one_universe</span> <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>( <span class="no">NextMenstrualOnset</span>, <span class="no">Relationship</span>, <span class="no">Sure1</span>, <span class="no">Sure2</span>, <span class="no">Fertility</span>, <span class="fu">everything</span>() ) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">one_universe</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>( <span class="no">NextMenstrualOnset</span>, <span class="no">Relationship</span>, <span class="no">Sure1</span>, <span class="no">Sure2</span>, <span class="no">Fertility</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">everything</a></span>() ) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 10 x 30
 ##    NextMenstrualOn… Relationship Sure1 Sure2 Fertility WorkerID  Rel1  Rel2
@@ -194,9 +203,9 @@
 ## #   StartDateofLastPeriod &lt;date&gt;, StartDateofPeriodBeforeLast &lt;date&gt;,
 ## #   StartDateNext &lt;date&gt;, FiscConsComp &lt;dbl&gt;, SocConsComp &lt;dbl&gt;,
 ## #   ComputedCycleLength &lt;drtn&gt;, CycleDay &lt;dbl&gt;</code></pre>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">one_universe</span> <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">Relationship</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">Rel1</span> + <span class="no">Rel2</span> + <span class="no">Rel3</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="no">Fertility</span>)) +
-  <span class="fu">stat_summary</span>(<span class="kw">position</span> <span class="kw">=</span> <span class="fu">position_dodge</span>(<span class="kw">width</span> <span class="kw">=</span> <span class="fl">.1</span>), <span class="kw">fun.data</span> <span class="kw">=</span> <span class="st">"mean_se"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">one_universe</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">Relationship</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">Rel1</span> + <span class="no">Rel2</span> + <span class="no">Rel3</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="no">Fertility</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html">stat_summary</a></span>(<span class="kw">position</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_dodge.html">position_dodge</a></span>(<span class="kw">width</span> <span class="kw">=</span> <span class="fl">.1</span>), <span class="kw">fun.data</span> <span class="kw">=</span> <span class="st">"mean_se"</span>)</pre></body></html></div>
 <p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-3-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>However, there also exists other valid processing options: instead of calculating <code>NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength</code>, it can also be calculated as <code>StartDateofLastPeriod + ReportedCycleLength</code>. Such alternate processing options can exist for several decisions that a researcher makes in the data processing, analysis and presentation stages. This can thus result in a <em>multiverse of analysis</em>, with the one described above representing a single <em>universe</em>.</p>
 <p>Below, we describe how our package allows you to conduct a multiverse analysis with ease.</p>
@@ -206,25 +215,25 @@
 <a href="#defining-the-multiverse" class="anchor"></a>Defining the multiverse</h2>
 <p><code>multiverse</code> provides flexible functions which can be used to perform a multiverse analysis.</p>
 <p>The first step is to define a <em>new multiverse</em>. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">M</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">M</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
 <p>The next step is to define our possible analyses inside the multiverse. The <code>multiverse</code> package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above).</p>
 <p>Consider these first few lines from the transformation code in the single analysis above:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>)</pre></body></html></div>
 <p>But <code>NextMenstrualOnset</code> could be calculated in at least two other reasonable ways:</p>
 <ul>
 <li><code>NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength</code></li>
 <li><code>NextMenstrualOnset = StartDateNext</code></li>
 </ul>
 <p>To create a multiverse that includes these three possible processing options, we can use the <code><a href="../reference/branch.html">branch()</a></code> function. The <code><a href="../reference/branch.html">branch()</a></code> function defines a <em>parameter</em> (here <code>menstrual_calculation</code>) and the different <em>options</em> that the parameter can take (here, <code>"mc_option1"</code>, <code>"mc_option2"</code>, <code>"mc_option3"</code>). Each option corresponds to a different chunk of code that would be executed in a different universe.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
   <span class="st">"mc_option1"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
   <span class="st">"mc_option2"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>,
   <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>
 )</pre></body></html></div>
 <p>The <code><a href="../reference/branch.html">branch()</a></code> function indicates that, <em>in our multiverse</em>, NextMenstrualOnset can take either of the three options (here, <code>"mc_option1"</code>, <code>"mc_option2"</code>, <code>"mc_option3"</code>). Thus, we need to declare this data processing step inside the multiverse. We do this by using the <code><a href="../reference/inside.html">inside()</a></code> function. The <code><a href="../reference/inside.html">inside()</a></code> function takes in two arguments: 1. the multiverse object, M; and 2. the code for the analysis (including branches). Note that if you are passing multiple expressions, they should be enclosed within <code>{}</code>.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># here we just create the variable `df` in the multiverse</span>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># here we just create the variable `df` in the multiverse</span>
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>)
 
 <span class="co"># here, we perform two `mutate` operations in the multiverse.</span>
@@ -232,10 +241,10 @@
 <span class="co"># how multiple variables can be declared together using the `{}`</span>
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )
 
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
       <span class="st">"mc_option1"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
       <span class="st">"mc_option2"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>,
       <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
@@ -251,7 +260,7 @@
 <li>
 <code>parameters</code>, which is a list of parameters</li>
 </ol>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">parameters</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">parameters</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <pre><code>## $menstrual_calculation
 ## $menstrual_calculation[[1]]
 ## [1] "mc_option1"
@@ -265,33 +274,26 @@
 <li>
 <code>conditions</code>, which is a list of conditions (we’ll define this later)</li>
 <li>
-<code>multiverse_table</code>, which is a tibble consisting of all possible combination of values for the multiverse</li>
+<code>expand</code>, which is a tibble consisting of all possible combination of values for the multiverse</li>
 </ol>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <pre><code>## # A tibble: 3 x 5
-##   .universe menstrual_calculation .parameter_assignment .code      .results
-##       &lt;int&gt; &lt;chr&gt;                 &lt;list&gt;                &lt;list&gt;     &lt;list&gt;  
-## 1         1 mc_option1            &lt;named list [1]&gt;      &lt;list [2]&gt; &lt;env&gt;   
-## 2         2 mc_option2            &lt;named list [1]&gt;      &lt;list [2]&gt; &lt;env&gt;   
-## 3         3 mc_option3            &lt;named list [1]&gt;      &lt;list [2]&gt; &lt;env&gt;</code></pre>
+##   .universe menstrual_calculation .parameter_assignment .code           .results
+##       &lt;int&gt; &lt;chr&gt;                 &lt;list&gt;                &lt;list&gt;          &lt;list&gt;  
+## 1         1 mc_option1            &lt;named list [1]&gt;      &lt;named list [2… &lt;env&gt;   
+## 2         2 mc_option2            &lt;named list [1]&gt;      &lt;named list [2… &lt;env&gt;   
+## 3         3 mc_option3            &lt;named list [1]&gt;      &lt;named list [2… &lt;env&gt;</code></pre>
 <ol start="4" style="list-style-type: decimal">
-<li>
-<code>current_parameter_assignment</code>, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.</li>
-</ol>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="../reference/default_parameter_assignment.html">default_parameter_assignment</a></span>(<span class="no">M</span>)</pre></body></html></div>
-<pre><code>## $menstrual_calculation
-## [1] "mc_option1"</code></pre>
-<ol start="5" style="list-style-type: decimal">
 <li>
 <code>code</code>, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.</li>
 </ol>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">code</a></span>(<span class="no">M</span>)</pre></body></html></div>
-<pre><code>## [[1]]
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">code</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<pre><code>## $`1`
 ## {
 ##     df &lt;- data.raw.study2
 ## }
 ## 
-## [[2]]
+## $`2`
 ## {
 ##     df &lt;- df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - 
 ##         StartDateofPeriodBeforeLast)
@@ -305,7 +307,7 @@
 <h3 class="hasAnchor">
 <a href="#running-a-single-analysis-from-the-multiverse" class="anchor"></a>Running a single analysis from the multiverse</h3>
 <p>At this point, we have defined three possible processing options (three universes) in our multiverse. Although we don’t execute all the universes in the multiverses once they are defined, we do run the default analysis (i.e. the first row in the multiverse table). We can extract objects from the default analysis using the <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code> operator.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">M</span>$<span class="no">df</span></pre></body></html></div>
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">M</span>$<span class="no">df</span></pre></body></html></div>
 <pre><code>## # A tibble: 502 x 28
 ##    WorkerID  Rel1  Rel2  Rel3 Abortion Marriage StemCell RestrictAbortion
 ##       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
@@ -331,27 +333,27 @@
 <h3 class="hasAnchor">
 <a href="#a-multiverse-with-all-possible-combinations-specified" class="anchor"></a>A multiverse with all possible combinations specified</h3>
 <p>Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining <code>Relationship</code> and <code>Fertility</code>, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. We’ll also try the more concise <code>&lt;-</code> assignment operator now.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-      <span class="fu">mutate</span>(<span class="kw">Relationship</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">relationship_status</span>,
+      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">Relationship</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">relationship_status</span>,
         <span class="st">"rs_option1"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
         <span class="st">"rs_option2"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
         <span class="st">"rs_option3"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">3</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">4</span>, <span class="st">'Relationship'</span>, <span class="fl">NA</span>))) )
       ) <span class="kw">%&gt;%</span>
-      <span class="fu">mutate</span>(
+      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
         <span class="kw">CycleDay</span> <span class="kw">=</span> <span class="fl">28</span> - (<span class="no">NextMenstrualOnset</span> - <span class="no">DateTesting</span>),
         <span class="kw">CycleDay</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;</span> <span class="fl">1</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;</span> <span class="fl">28</span>, <span class="no">CycleDay</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&lt;</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">28</span>))
       ) <span class="kw">%&gt;%</span>
-      <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">cycle_length</span>,
+      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">cycle_length</span>,
         <span class="st">"cl_option1"</span> ~ <span class="fl">TRUE</span>,
         <span class="st">"cl_option2"</span> ~ <span class="no">ComputedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ComputedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>,
         <span class="st">"cl_option3"</span> ~ <span class="no">ReportedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ReportedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>
       )) <span class="kw">%&gt;%</span>
-      <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">certainty</span>,
+      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">certainty</span>,
         <span class="st">"cer_option1"</span> ~ <span class="fl">TRUE</span>,
         <span class="st">"cer_option2"</span> ~ <span class="no">Sure1</span> <span class="kw">&gt;</span> <span class="fl">6</span> <span class="kw">|</span> <span class="no">Sure2</span> <span class="kw">&gt;</span> <span class="fl">6</span>
       )) <span class="kw">%&gt;%</span>
-      <span class="fu">mutate</span>( <span class="kw">Fertility</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">fertile</span>,
+      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">Fertility</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">fertile</span>,
         <span class="st">"fer_option1"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">7</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">17</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>)) ),
         <span class="st">"fer_option2"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">6</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">17</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">27</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>)) ),
         <span class="st">"fer_option3"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">9</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">18</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>)) ),
@@ -360,13 +362,13 @@
       ))
 })</pre></body></html></div>
 <p>Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">code</a></span>(<span class="no">M</span>)</pre></body></html></div>
-<pre><code>## [[1]]
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">code</a></span>(<span class="no">M</span>)</pre></body></html></div>
+<pre><code>## $`1`
 ## {
 ##     df &lt;- data.raw.study2
 ## }
 ## 
-## [[2]]
+## $`2`
 ## {
 ##     df &lt;- df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - 
 ##         StartDateofPeriodBeforeLast)
@@ -376,7 +378,7 @@
 ##         "mc_option3" ~ StartDateNext))
 ## }
 ## 
-## [[3]]
+## $`3`
 ## {
 ##     df &lt;- df %&gt;% mutate(Relationship = branch(relationship_status, 
 ##         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == 
@@ -403,8 +405,8 @@
 ##             factor(ifelse(CycleDay &gt;= 8 &amp; CycleDay &lt;= 17, "high", 
 ##                 "low"))))
 ## }</code></pre>
-<p>The <code>multiverse_table</code> will contain all the possible combinations of the parameter options that have been identified.</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+<p>The <code>expand</code> will contain all the possible combinations of the parameter options that have been identified.</p>
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
 <pre><code>## # A tibble: 6 x 9
 ##   .universe menstrual_calcu… relationship_st… cycle_length certainty fertile
@@ -419,10 +421,10 @@
 ## #   .results &lt;list&gt;</code></pre>
 <p>In our multiverse we have identified 5 options for calculating <code>fertility</code>, 3 options for calculating <code>menstrual calculation</code> and <code>relationship status</code> each, 3 wyas of excluding participants based on their <code>cycle length</code> and 2 ways of excluding participants based on the self-reported <code>certainty</code> of their responses.</p>
 <p>This results in $ 5 3 3 3 2 = 270$ possible combinations.</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()</pre></body></html></div>
 <pre><code>## [1] 270</code></pre>
 <p>We can then inspect the default analysis the default single universe analysis from this multiverse:</p>
-<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
 <pre><code>## # A tibble: 6 x 30
 ##   WorkerID  Rel1  Rel2  Rel3 Abortion Marriage StemCell RestrictAbortion
@@ -446,9 +448,9 @@
 <a href="#specifying-conditions-in-the-multiverse-analysis" class="anchor"></a>Specifying conditions in the multiverse analysis</h3>
 <p>In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. For example, in our example, depending on how we filter participants based on <em>cycle length</em>, we can only the corresponding value for calculating participants’ <code>NextMenstrualOnset</code>. In other words, if we are using <code>ComputedCycleLength</code> to exclude participants, this means that we should not calculate the variable <code>NextMenstrualOnset</code> (date for the onset of the next menstrual cycle) using the <code>ReportedCycleLength</code> value. Similarly, if we are using <code>ReportedCycleLength</code> to exclude participants it is inconsistent to calculate <code>NextMenstrualOnset</code> using <code>ComputedCycleLength</code>.</p>
 <p>We can express these conditionals in the multiverse (See vignette(“Conditions”) for more details). Below, we use the %when% operator:</p>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> ) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+<div class="sourceCode" id="cb30"><html><body><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> ) <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
             <span class="st">"mc_option1"</span> ~ (<span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>) <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>),
             <span class="st">"mc_option2"</span> ~ (<span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>) <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>),
             <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
@@ -458,11 +460,11 @@
 <h3 class="hasAnchor">
 <a href="#putting-it-all-together" class="anchor"></a>Putting it all together</h3>
 <p>Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let’s update our example by including these conditions:</p>
-<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
+<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )  <span class="kw">%&gt;%</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )  <span class="kw">%&gt;%</span>
     <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">cycle_length</span>,
         <span class="st">"cl_option1"</span> ~ <span class="fl">TRUE</span>,
         <span class="st">"cl_option2"</span> ~ <span class="no">ComputedCycleLength</span> <span class="kw">&gt;</span> <span class="fl">25</span> <span class="kw">&amp;</span> <span class="no">ComputedCycleLength</span> <span class="kw">&lt;</span> <span class="fl">35</span>,
@@ -472,30 +474,30 @@
         <span class="st">"cer_option1"</span> ~ <span class="fl">TRUE</span>,
         <span class="st">"cer_option2"</span> ~ <span class="no">Sure1</span> <span class="kw">&gt;</span> <span class="fl">6</span> <span class="kw">|</span> <span class="no">Sure2</span> <span class="kw">&gt;</span> <span class="fl">6</span>
     )) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
         <span class="st">"mc_option1"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>) ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
         <span class="st">"mc_option2"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>) ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>,
         <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
     )  <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
       <span class="kw">CycleDay</span> <span class="kw">=</span> <span class="fl">28</span> - (<span class="no">NextMenstrualOnset</span> - <span class="no">DateTesting</span>),
       <span class="kw">CycleDay</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;</span> <span class="fl">1</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;</span> <span class="fl">28</span>, <span class="no">CycleDay</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&lt;</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">28</span>))
     ) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>( <span class="kw">Fertility</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">fertile</span>,
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">Fertility</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>( <span class="no">fertile</span>,
         <span class="st">"fer_option1"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">7</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">17</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="fl">NA</span>)) ),
         <span class="st">"fer_option2"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">6</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">17</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">27</span>, <span class="st">"low"</span>, <span class="fl">NA</span>)) ),
         <span class="st">"fer_option3"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">9</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">18</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="fl">NA</span>)) ),
         <span class="st">"fer_option4"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">8</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) ),
         <span class="st">"fer_option45"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">8</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) )
     )) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">RelationshipStatus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">relationship_status</span>,
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">RelationshipStatus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">relationship_status</span>,
         <span class="st">"rs_option1"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
         <span class="st">"rs_option2"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
         <span class="st">"rs_option3"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">3</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">4</span>, <span class="st">'Relationship'</span>, <span class="fl">NA</span>))) )
     )
 })</pre></body></html></div>
 <p>After excluding the inconsistent choice combinations, <span class="math inline">\(270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210\)</span> choice combinations remain:</p>
-<div class="sourceCode" id="cb33"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()</pre></body></html></div>
 <pre><code>## [1] 210</code></pre>
 <p>Now, we’ve created the complete multiverse that was presented as example #2 from Steegen et al.’s paper.</p>
 </div>
@@ -508,19 +510,25 @@
 <h3 class="hasAnchor">
 <a href="#model-2-effect-of-fertility-and-relationship-status-on-religiosity" class="anchor"></a>Model #2: Effect of Fertility and Relationship status on Religiosity</h3>
 <p>The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.</p>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">&lt;-</span> ~ <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">RelComp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>((<span class="no">Rel1</span> + <span class="no">Rel2</span> + <span class="no">Rel3</span>)/<span class="fl">3</span>, <span class="fl">2</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">RelComp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>((<span class="no">Rel1</span> + <span class="no">Rel2</span> + <span class="no">Rel3</span>)/<span class="fl">3</span>, <span class="fl">2</span>))
+})</pre></body></html></div>
 <p>The authors perform an ANOVA to study the effect of <em>Fertility</em>, <em>Relationship</em> and their interaction term, on the composite Religiosity score. We fit the linear model using the call: <code><a href="https://rdrr.io/r/stats/lm.html">lm( RelComp ~ Fertility * RelationshipStatus, data = df )</a></code> inside our multiverse and save the result to a variable called <code>fit_RelComp</code>.</p>
-<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="no">M</span>$<span class="no">fit_RelComp</span> <span class="kw">&lt;-</span> ~ <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">RelComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span> )</pre></body></html></div>
-<p>To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using <code><a href="https://rdrr.io/pkg/broom/man/reexports.html">broom::tidy</a></code>. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call <code><a href="../reference/execute.html">execute_multiverse()</a></code> to execute our analysis in each multiverse.</p>
-<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="no">M</span>$<span class="no">summary_RelComp</span> <span class="kw">&lt;-</span> ~ <span class="no">fit_RelComp</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">fit_RelComp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">RelComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span> )
+})</pre></body></html></div>
+<p>To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using <code><a href="https://broom.tidymodels.org/reference/reexports.html">broom::tidy</a></code>. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call <code><a href="../reference/execute.html">execute_multiverse()</a></code> to execute our analysis in each multiverse.</p>
+<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">summary_RelComp</span> <span class="kw">&lt;-</span> <span class="no">fit_RelComp</span> <span class="kw">%&gt;%</span>
+    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+})
 
 <span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <p>Now that we have performed the analysis in each universe of the multiverse, we need to plot the data. To plot the data, we need to extract the relevant result data-frame from each universe into a single data-frame. The following code does this, by extracting the variable where the estimates of the model are stored, <code>summary_RelComp</code> and creating a single tidy data-frame that can be accessed easily.</p>
-<div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>( <span class="fl">10</span> )</pre></body></html></div>
 <pre><code>## # A tibble: 10 x 16
 ##    .universe cycle_length certainty menstrual_calcu… fertile relationship_st…
@@ -540,121 +548,123 @@
 ## #   statistic &lt;dbl&gt;, p.value &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</code></pre>
 <p>We then take this data frame and plot the results as a confidence interval and point estimate using <code>ggplot2</code>. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use <code>gganimate</code> to animate through the results of each universe to quickly get an overview of the robustness of the results.</p>
 <p>Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette <a href="visualizing-multiverse.html"><code>Extracting and Visualizing the results of a multiverse analysis</code></a></p>
-<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu">recode</span>( <span class="no">term</span>,
+<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
   ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="no">term</span> <span class="kw">!=</span> <span class="st">"(Intercept)"</span> ) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
-  <span class="fu">geom_vline</span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">transition_manual</span>( <span class="no">.universe</span> )
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="no">term</span> <span class="kw">!=</span> <span class="st">"(Intercept)"</span> ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
-<span class="fu">animate</span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-22-1.gif"><!-- --></p>
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-21-1.gif"><!-- --></p>
 </div>
 <div id="models-3---6" class="section level3">
 <h3 class="hasAnchor">
 <a href="#models-3---6" class="anchor"></a>Models #3 - 6</h3>
 <p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. Below we perform these analyses and visualize the results.</p>
-<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="no">M</span>$<span class="no">fit_FiscConsComp</span> <span class="kw">&lt;-</span> ~ <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">FiscConsComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>)
-<span class="no">M</span>$<span class="no">summary_FiscConsComp</span> <span class="kw">&lt;-</span> ~ <span class="no">fit_FiscConsComp</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">fit_FiscConsComp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">FiscConsComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>)
+  <span class="no">summary_FiscConsComp</span> <span class="kw">&lt;-</span> <span class="no">fit_FiscConsComp</span> <span class="kw">%&gt;%</span>
+    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
 
-<span class="no">M</span>$<span class="no">fit_SocConsComp</span> <span class="kw">&lt;-</span> ~ <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">SocConsComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>)
-<span class="no">M</span>$<span class="no">summary_SocConsComp</span> <span class="kw">&lt;-</span> ~ <span class="no">fit_SocConsComp</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+  <span class="no">fit_SocConsComp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">SocConsComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>)
+  <span class="no">summary_SocConsComp</span> <span class="kw">&lt;-</span> <span class="no">fit_SocConsComp</span> <span class="kw">%&gt;%</span>
+    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
 
-<span class="no">M</span>$<span class="no">fit_Donate</span> <span class="kw">&lt;-</span> ~ <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>( <span class="no">Donate</span> ~ <span class="no">Fertility</span> * <span class="no">Relationship</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>(<span class="kw">link</span> <span class="kw">=</span> <span class="st">"logit"</span>) )
-<span class="no">M</span>$<span class="no">summary_Donate</span> <span class="kw">&lt;-</span> ~ <span class="no">fit_Donate</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+  <span class="no">fit_Donate</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>( <span class="no">Donate</span> ~ <span class="no">Fertility</span> * <span class="no">Relationship</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>(<span class="kw">link</span> <span class="kw">=</span> <span class="st">"logit"</span>) )
+  <span class="no">summary_Donate</span> <span class="kw">&lt;-</span> <span class="no">fit_Donate</span> <span class="kw">%&gt;%</span>
+    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
 
-<span class="no">M</span>$<span class="no">fit_Vote</span> <span class="kw">&lt;-</span> ~ <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>( <span class="no">Vote</span> ~ <span class="no">Fertility</span> * <span class="no">Relationship</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>(<span class="kw">link</span> <span class="kw">=</span> <span class="st">"logit"</span>) )
-<span class="no">M</span>$<span class="no">summary_Vote</span> <span class="kw">&lt;-</span> ~ <span class="no">fit_Vote</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/broom/man/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+  <span class="no">fit_Vote</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>( <span class="no">Vote</span> ~ <span class="no">Fertility</span> * <span class="no">Relationship</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span>(<span class="kw">link</span> <span class="kw">=</span> <span class="st">"logit"</span>) )
+  <span class="no">summary_Vote</span> <span class="kw">&lt;-</span> <span class="no">fit_Vote</span> <span class="kw">%&gt;%</span>
+    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+})
 
 <span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <div id="model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="anchor"></a>Model #3: Effect of Fertility and Relationship status on Fiscal political attitudes</h4>
-<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_FiscConsComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu">recode</span>( <span class="no">term</span>,
+<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_FiscConsComp"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
   ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="no">term</span> <span class="kw">!=</span> <span class="st">"(Intercept)"</span> ) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
-  <span class="fu">geom_vline</span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">transition_manual</span>( <span class="no">.universe</span> )
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="no">term</span> <span class="kw">!=</span> <span class="st">"(Intercept)"</span> ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
-<span class="fu">animate</span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-24-1.gif"><!-- --></p>
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-23-1.gif"><!-- --></p>
 </div>
 <div id="model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="anchor"></a>Model #4: Effect of Fertility and Relationship status on Social political attitudes</h4>
-<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_SocConsComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu">recode</span>( <span class="no">term</span>,
+<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_SocConsComp"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
   ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>( <span class="no">term</span> <span class="kw">!=</span>  <span class="st">"(Intercept)"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
-  <span class="fu">geom_vline</span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">transition_manual</span>( <span class="no">.universe</span> )
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="no">term</span> <span class="kw">!=</span>  <span class="st">"(Intercept)"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
-<span class="fu">animate</span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-25-1.gif"><!-- --></p>
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-24-1.gif"><!-- --></p>
 </div>
 <div id="model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="section level4">
 <h4 class="hasAnchor">
 <a href="#model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="anchor"></a>Model #5: Effect of Fertility and Relationship status on Voting preferences</h4>
-<div class="sourceCode" id="cb44"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_Donate"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu">recode</span>( <span class="no">term</span>,
+<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_Donate"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
   ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
-  <span class="fu">geom_vline</span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">transition_manual</span>( <span class="no">.universe</span> )
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
-<span class="fu">animate</span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-26-1.gif"><!-- --></p>
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-25-1.gif"><!-- --></p>
 </div>
 <div id="model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="section level4">
 <h4 class="hasAnchor">
 <a href="#model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="anchor"></a>Model #6: Effect of Fertility and Relationship status on Donation preferences</h4>
-<div class="sourceCode" id="cb45"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">multiverse_table</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_Vote"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu">recode</span>( <span class="no">term</span>,
+<div class="sourceCode" id="cb44"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_Vote"</span> ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
   ) ) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>() +
-  <span class="fu">geom_vline</span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu">geom_point</span>( <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
-  <span class="fu">geom_errorbarh</span>( <span class="fu">aes</span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu">transition_manual</span>( <span class="no">.universe</span> )
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
-<span class="fu">animate</span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-27-1.gif"><!-- --></p>
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-26-1.gif"><!-- --></p>
 </div>
 </div>
 </div>

@@ -88,9 +88,11 @@
 #' @export
 inside <- function(multiverse, .expr, .label = NULL) {
   .code = enexpr(.expr)
-
+  
   add_and_parse_code(multiverse, .code, .label)
-
+  
+  ## execute everything from where things have changed
+  
   # direct calls to inside() by the user result in execution of the
   # default universe in the global environment.
   execute_universe(multiverse)
@@ -104,13 +106,13 @@ inside <- function(multiverse, .expr, .label = NULL) {
 # #' @rdname inside
 # #' @export
 # `$<-.multiverse` <- function(multiverse, name, value) {
-  # must use call here instead of putting { .. } inside the expr()
-  # because otherwise covr::package_coverage() will insert line number stubs
-  # *into* the expression and cause tests to break
+# must use call here instead of putting { .. } inside the expr()
+# because otherwise covr::package_coverage() will insert line number stubs
+# *into* the expression and cause tests to break
 #   if (!is.call(value)) stop(
 #     "Only objects of type language can be passed into the multiverse. Did you forget to add `~`?"
 #  )
-  
+
 #   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
 #   .expr = expand_branch_options(.expr)
 
@@ -130,41 +132,50 @@ compare_code <- function(x, y) {
   mapply( function(.x, .y) identical(deparse(.x), deparse(.y)), x, y )
 }
 
-
-add_and_parse_code <- function(multiverse, .code, .name = NULL) {
+add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   m_obj <- attr(multiverse, "multiverse")
   .super_env <- attr(multiverse, "multiverse_super_env")
   
-  # ensure that .code is a single self-contained { ... } block
-  if(!is_call(.code, "{")) {
-    .code = as.call(list(quote(`{`), .code))
+  # check if .name is NULL
+  # if it is NULL auto-generate
+  if (is.null(.name)) {
+    .name = as.character(length(m_obj$code) + 1)
   }
-  # expand .options arguments in branch calls
-  .code = expand_branch_options(.code)
   
+  # ensure that .expr is a single self-contained { ... } block
+  if(!is_call(.expr, "{")) {
+    .expr = as.call(list(quote(`{`), .expr))
+  }
+  
+  # expand .options arguments in branch calls
+  .expr = expand_branch_options(.expr)
   .loc = length(m_obj$code)
   
+  # what has been unchanged so far in the tree
+  # everything post will be edited in the subsequent steps
   if (is_null(m_obj$code)) {
-    # .c = .code
-    if (is.null(.name)) {
-      .c = list(.code) 
-    } else {
+    if (is.null(.name)) .c = list(.expr) 
+    else {
       .c = list()
-      .c[[.name]] = .code
+      .c[[.name]] = .expr
     }
+    .expr <- list(.expr)
   } else {
-    # .c = concatenate_expr(m_obj$code, .code)
-    # .c = append(m_obj$code[1:.loc], .code)
-    if (is.null(.name)) {
-      .c = append(m_obj$code[1:.loc], .code)
-    } else {
+    if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
+    else {
       .c = m_obj$code
-      .c[[.name]] = .code
+      .c[[.name]] = .expr
+      
+      #.expr needs to be changed so that we recompute everything that occurs subsequently
+      .expr = .c[which(names(.c) == .name):length(.c)]
+      .name = names(.c)[which(names(.c) == .name):length(.c)]
     }
   }
   
-  parse_multiverse(m_obj, .c, .super_env)
+  mapply(parse_multiverse, .expr, .name, MoreArgs = list(.multiverse = multiverse, .code = .c))
+  
   m_obj$code <- .c
+  m_obj$unchanged_until <- length(.c) - length(.name)
 }
 
 concatenate_expr <- function(ref, to_add){
@@ -179,28 +190,28 @@ concatenate_expr <- function(ref, to_add){
       ref = concatenate_expr(ref, to_add)
     }
   }
-
+  
   ref
 }
 
 
 # expand use of .options argument in branch calls
 expand_branch_options <- function(.expr) {
-    if (is.call(.expr)) {
-      if (is_call(.expr, "branch")) {
-        .new_expr = .expr
-        if(".options" %in% names(.expr)) {
-          .eval_seq = eval(.expr[['.options']])
-          .idx = match(c(".options"), names(.expr))
-          .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
-        }
-        return(.new_expr)
-      } else {
-        as.call(map(.expr, ~ expand_branch_options(.x)))
+  if (is.call(.expr)) {
+    if (is_call(.expr, "branch")) {
+      .new_expr = .expr
+      if(".options" %in% names(.expr)) {
+        .eval_seq = eval(.expr[['.options']])
+        .idx = match(c(".options"), names(.expr))
+        .new_expr =  magrittr::inset(unname(.expr), c(.idx:((.idx-1) + length(.eval_seq))), .eval_seq)
       }
+      return(.new_expr)
     } else {
-      .expr
+      as.call(map(.expr, ~ expand_branch_options(.x)))
     }
+  } else {
+    .expr
+  }
 }
 
 

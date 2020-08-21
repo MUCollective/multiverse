@@ -36,3 +36,12 @@ switch_expr <- function(x, ...) {
 safe_f_rhs <- purrr::safely(f_rhs)
 
 safe_f_lhs <- purrr::safely(f_lhs)
+
+get_code_universe <- function(.m_list, .uni, .level) {
+  if (.level >= 1){
+    .p <- .m_list[[.level]][[.uni]]$parent
+    c(get_code_universe(.m_list, .p, .level - 1), .m_list[[.level]][[.uni]]$code)
+  }
+}
+
+some_function <- function() stop("throw errors at me")

@@ -41,8 +41,8 @@
 
 <meta property="og:title" content="Execute parts of, or the entire multiverse — execute" />
 <meta property="og:description" content="These are functions which allow the user to execute parts or whole of the multiverse.
-The user can choose to either execute the default analysis using the [execute_default], or a part or
-whole of the multiverse using the [execute_multiverse]." />
+The user can choose to either execute the default analysis using the execute_universe, or a part or
+whole of the multiverse using the execute_multiverse." />
 
 
 
@@ -74,7 +74,7 @@ whole of the multiverse using the [execute_multiverse]." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
       </span>
     </div>
 
@@ -97,6 +97,9 @@ whole of the multiverse using the [execute_multiverse]." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -106,16 +109,13 @@ whole of the multiverse using the [execute_multiverse]." />
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    </li>
-    <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
@@ -145,13 +145,13 @@ whole of the multiverse using the [execute_multiverse]." />
 
     <div class="ref-description">
     <p>These are functions which allow the user to execute parts or whole of the multiverse.
-The user can choose to either execute the default analysis using the [execute_default], or a part or
-whole of the multiverse using the [execute_multiverse].</p>
+The user can choose to either execute the default analysis using the <code>execute_universe</code>, or a part or
+whole of the multiverse using the <code>execute_multiverse</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>execute_multiverse</span>(<span class='no'>multiverse</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="usage"><span class='fu'>execute_multiverse</span>(<span class='no'>multiverse</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"mc.cores"</span>, <span class='fl'>1L</span>))
 
-<span class='fu'>execute_default</span>(<span class='no'>multiverse</span>)</pre>
+<span class='fu'>execute_universe</span>(<span class='no'>multiverse</span>, <span class='kw'>.universe</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,16 +161,23 @@ whole of the multiverse using the [execute_multiverse].</p>
       <td><p>The multiverse object</p></td>
     </tr>
     <tr>
-      <th>parallel</th>
-      <td><p>(Logical) Indicates whether to run the multiverse in parallel. Defaults to FALSE.</p></td>
+      <th>cores</th>
+      <td><p>Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
+Defaults to NULL (running in a single core)</p></td>
+    </tr>
+    <tr>
+      <th>.universe</th>
+      <td><p>Indicate which universe to execute, if the user wants to execute a specific combination
+of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access
-the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
-multiverse table, under the results column.</p>
+    <p>Each single analysis within the multiverse lives in a separate environment. 
+We provide convenient functions to access the results for the  default analysis, as well as 
+parts or whole of the multiverse. Each analysis can also be accessed from the multiverse table,
+under the results column.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {

@@ -8,8 +8,8 @@
 ^figure$
 ^_pkgdown\.yml$
 ^code-chunk.Rmd$
-^parallel-opt.Rmd$
 ^tree-structure.Rmd$
+^parallel-opt.Rmd$
 ^\.github$
 ^pkgdown$
 ^data/.*\.csv$
