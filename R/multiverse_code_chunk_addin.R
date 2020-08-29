@@ -10,6 +10,6 @@ multiverse_code_chunk_addin <- function() {
   start <- context$selection[1][[1]]$range$start
   
   insertText(start, 
-                         paste("```{multiverse label = default-m-", label_index, ", inside = M}\n\n```", sep = ""))
+                         paste("```{multiverse default-m-", label_index, ", inside = M}\n\n```", sep = ""))
   setCursorPosition(c(start['row'] + 1, 1), id = NULL)
 }
