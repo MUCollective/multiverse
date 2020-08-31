@@ -46,9 +46,9 @@
 #' @export
 execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
-  n <- m_diction$as_list() %>% length()
-  
-  .to_exec = seq_len(m_diction$size()) #tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
+  # n <- m_diction$as_list() %>% length()
+  # .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
+  # .to_exec = seq_len(m_diction$size()) 
   
   .m_list <- m_diction$as_list()
   .res <- lapply(.m_list, exec_all)
@@ -62,7 +62,8 @@ exec_all <- function(x) {
   
   lapply(seq_along(.res), function(i, x) {
     # print(.res)
-    if (is(x[[i]], "error") | is(x[[i]], "warning"))  warning("error in universe ", i, "\n", x[[i]])
+    if (is(x[[i]], "error"))  warning("error in universe ", i, "\n", x[[i]])
+    else if (is(x[[i]], "warning"))  warning("warning in universe ", i, "\n", x[[i]])
   }, x = .res)
 }
 
@@ -87,7 +88,7 @@ execute_code_from_universe <- function(.c, .env = globalenv()) {
           warning = function(w) w,
           error = function(e) e
       )
-  if (is(e, "error") | is(e, "warning")) e else .env
+  if (is(e, "error") | is(e, "warning")) e else NULL
   # lapply(.c, eval, envir = .env)
 }
 

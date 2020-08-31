@@ -48,7 +48,8 @@ expand.multiverse <- function(multiverse) {
   .m_obj = attr(multiverse, "multiverse")
   .m_list = .m_obj$multiverse_diction$as_list()
   
-  df <- data.frame( lapply(expand.grid(.m_obj$parameters, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
+  df <- data.frame( lapply(expand.grid(rev(.m_obj$parameters), KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE ) %>%
+    select(names(.m_obj$parameters))
   
   if (length(.m_obj$conditions) > 0) {
     all_conditions <- parse_expr(paste0("(", .m_obj$conditions, ")", collapse = "&"))

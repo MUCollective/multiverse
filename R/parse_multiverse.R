@@ -40,6 +40,7 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @importFrom rlang parse_expr
 #' @importFrom rlang expr_deparse
 #' @importFrom rlang is_call
+#' @importFrom rlang is_empty
 #' @importFrom rlang expr_text
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
@@ -83,7 +84,7 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   .expr <- list(.expr)
   names(.expr) <- .label
   
-  q <- parse_multiverse_expr(.multiverse, .expr, parameters, .parent_key)
+  q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), .parent_key)
   
   invisible( m_obj$multiverse_diction$set(.label, q) )
 }
@@ -92,10 +93,17 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_blo
   stopifnot(is(multiverse, "multiverse"))
   
   .m_obj <- attr(multiverse, "multiverse")
-  all_conditions <- .m_obj$conditions
   .super_env <- attr(multiverse, "multiverse_super_env")
   
-  df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )
+  if (is_empty(.m_obj$conditions)) {
+    all_conditions <- expr(TRUE) 
+  } else { 
+    all_conditions <- parse_expr(paste0("(", .m_obj$conditions, ")", collapse = "&"))
+    # print(all_conditions)
+  }
+  
+  df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE ) %>%
+    filter(eval(all_conditions))
   
   n <- ifelse(nrow(df), nrow(df), 1)
   
@@ -103,7 +111,6 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_blo
   # these will be the parents for the new environments created from the execution
   # of a new code block.
   if (is.null(.parent_block)) {
-    
     parent.envs <- lapply(seq_len(n), function(x) .super_env)
     parents <- lapply(seq_len(n), function(x) 0)
   } else {
