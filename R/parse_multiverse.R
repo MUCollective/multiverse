@@ -92,6 +92,7 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_blo
   stopifnot(is(multiverse, "multiverse"))
   
   .m_obj <- attr(multiverse, "multiverse")
+  all_conditions <- .m_obj$conditions
   .super_env <- attr(multiverse, "multiverse_super_env")
   
   df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE )

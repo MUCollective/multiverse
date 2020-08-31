@@ -51,14 +51,19 @@ execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   .to_exec = seq_len(m_diction$size()) #tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
   .m_list <- m_diction$as_list()
-  invisible(lapply(.m_list, exec_all))
+  .res <- lapply(.m_list, exec_all)
 }
 
 exec_all <- function(x) {
   .code_list = lapply(x, `[[`, "code")
   .env_list = lapply(x, `[[`, "env")
   
-  mapply(execute_code_from_universe, .code_list, .env_list)
+  .res <- mapply(execute_code_from_universe, .code_list, .env_list)
+  
+  lapply(seq_along(.res), function(i, x) {
+    # print(.res)
+    if (is(x[[i]], "error") | is(x[[i]], "warning"))  warning("error in universe ", i, "\n", x[[i]])
+  }, x = .res)
 }
 
 
@@ -77,9 +82,13 @@ execute_universe <- function(multiverse, .universe = 1) {
 }
 
 execute_code_from_universe <- function(.c, .env = globalenv()) {
-  # e <- tryCatch( invisible( lapply(.c, eval, envir = .env) ), error = function(e) e )
-  # if (is(e, "error")) list(e) else .env
-  lapply(.c, eval, envir = .env)
+  e <- tryCatch( 
+          invisible( lapply(.c, eval, envir = .env) ), 
+          warning = function(w) w,
+          error = function(e) e
+      )
+  if (is(e, "error") | is(e, "warning")) e else .env
+  # lapply(.c, eval, envir = .env)
 }
 
 # for a universe, get the indices which need to be executed

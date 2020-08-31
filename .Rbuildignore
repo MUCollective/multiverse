@@ -10,6 +10,9 @@
 ^code-chunk.Rmd$
 ^tree-structure.Rmd$
 ^parallel-opt.Rmd$
+^data/hurricane-multiverse.rds$
+^data/all_judgements.csv$
+^data/vis_correlation_all_judgements.rda$
 ^\.github$
 ^pkgdown$
 ^data/.*\.csv$

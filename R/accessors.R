@@ -71,15 +71,11 @@ expand.multiverse <- function(multiverse) {
     param.assgn =  lapply(seq_len(n), function(i) lapply(df, "[[", i))
     .code = lapply(seq_len(n), get_code_universe, .m_list = .m_list, .level = length(.m_list))
     .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
-    
-    df <- select(mutate(df, .universe = seq(1:n)), .universe, everything())
   }
   
-  filter(as_tibble(mutate(df,
-                          .parameter_assignment = param.assgn,
-                          .code = .code,
-                          .results = .res
-  )), eval(all_conditions))
+  df <- filter(mutate(df, .parameter_assignment = param.assgn, .code = .code, .results = .res), eval(all_conditions))
+  
+  select(mutate(df, .universe = 1:nrow(df)), .universe, everything())
 }
 
 #' @rdname accessors
