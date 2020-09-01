@@ -206,26 +206,26 @@ test_that("syntax tree for each universe is computed correctly", {
   u.expr.ref.2 = quote({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
-      mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
-      filter(TRUE)
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %>% 
+      filter(Sure1 > 6 | Sure2 > 6)
   })
   u.expr.ref.3 = quote({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
-      mutate(NextMenstrualOnset = StartDateNext) %>% 
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
       filter(TRUE)
   })
   u.expr.ref.4 = quote({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
-      mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength) %>% 
+      mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
       filter(Sure1 > 6 | Sure2 > 6)
   })
   u.expr.ref.5 = quote({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>% 
-      mutate(NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength) %>% 
-      filter(Sure1 > 6 | Sure2 > 6)
+      mutate(NextMenstrualOnset = StartDateNext) %>% 
+      filter(TRUE)
   })
   u.expr.ref.6 = quote({
     df <- test_df  %>%
@@ -235,16 +235,16 @@ test_that("syntax tree for each universe is computed correctly", {
   })
   
   expect_equal( expand(M2)$.code[[1]], list("1" = u.expr.ref.1) )
-  expect_equal( expand(M2)$.code[[2]], list("1" =u.expr.ref.2) )
-  expect_equal( expand(M2)$.code[[3]], list("1" =u.expr.ref.3) )
-  expect_equal( expand(M2)$.code[[4]], list("1" =u.expr.ref.4) )
-  expect_equal( expand(M2)$.code[[5]], list("1" =u.expr.ref.5) )
-  expect_equal( expand(M2)$.code[[6]], list("1" =u.expr.ref.6) )
+  expect_equal( expand(M2)$.code[[2]], list("1" = u.expr.ref.2) )
+  expect_equal( expand(M2)$.code[[3]], list("1" = u.expr.ref.3) )
+  expect_equal( expand(M2)$.code[[4]], list("1" = u.expr.ref.4) )
+  expect_equal( expand(M2)$.code[[5]], list("1" = u.expr.ref.5) )
+  expect_equal( expand(M2)$.code[[6]], list("1" = u.expr.ref.6) )
 })
 
 # rm_branch_assert ----------------------------------------------------
 ## write test cases for rm_branch_assert which is called from get_code
-test_that("syntax tree without `branch_assert` is returned when conditional is present in code", {
+test_that("syntax tree with `%when% conditional` is returned", {
   expr.1 <- expr({
     df <- test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%

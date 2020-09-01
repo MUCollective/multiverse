@@ -314,14 +314,17 @@ test_that("`parse_multiverse` returns the complete parameter table", {
   }))
 
   p_tbl_df = expand(M) %>% select(-.code, -.results)
-
-  p_tbl_df.ref <- list(
+  
+  params.list <- list(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
     relationship_status = list("rs_option1", "rs_option2", "rs_option3"),
     cycle_length = list("cl_option1", "cl_option2", "cl_option3"),
     certainty = list("cer_option1", "cer_option2")
-  ) %>%
+  )
+  
+  p_tbl_df.ref <- rev(params.list) %>%
     expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
+    select(names(params.list)) %>%
     unnest( cols = everything() ) %>%
     mutate( .universe = seq(1:nrow(.)) ) %>%
     select(.universe, everything())
@@ -350,15 +353,18 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
 })
 
 test_that("`parse_multiverse` works when conditions are specified", {
-  p_tbl_df.ref = list(
+  param.list = list(
       values_y = list("TRUE", "FALSE"),
       values_z = list("constant", "linear", "sum")
-    ) %>%
+    )
+  
+  p_tbl_df.ref = rev(param.list) %>%
     expand.grid(KEEP.OUT.ATTRS = FALSE) %>%
+    select(names(param.list)) %>%
     unnest( cols = everything() ) %>%
+    filter( values_z != "sum" | values_y == TRUE ) %>%
     mutate( .universe = seq(1:nrow(.)) ) %>%
-    select(.universe, everything()) %>%
-    filter( values_z != "sum" | values_y == TRUE )
+    select(.universe, everything())
 
   M <- multiverse()
   add_and_parse_code(M, expr({
@@ -430,9 +436,10 @@ test_that("`parameter_assignment` is created appropriately for two or more param
   m.list = expand(M)$.parameter_assignment
 
   ref_list = expand.grid(
-    menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
-    certainty = list("cer_option1", "cer_option2")
+    certainty = list("cer_option1", "cer_option2"),
+    menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3")
   ) %>%
+    select(menstrual_calculation, certainty) %>%
     transpose()
 
   expect_equal( m.list, ref_list )

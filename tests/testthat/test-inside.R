@@ -158,5 +158,5 @@ test_that("inside cannot access variables which is not accessible from the envir
     inside(M, { dat <- dat %>% mutate( z = branch( value_y, log(y), y)) })
   }
   
-  expect_error(myfun())
+  expect_warning(myfun())
 })

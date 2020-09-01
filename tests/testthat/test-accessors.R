@@ -53,11 +53,13 @@ test_that("basic retrieval works with `multiverse()`", {
   }))
 
   m_tbl = expand(M) %>% select(-.parameter_assignment, -.code, -.results)
-  m_tbl.ref = expand.grid(list(
+  params.list <- list(
     values_y = list("TRUE", "FALSE"),
     values_z = list("constant", "linear", "sum")
-  ), KEEP.OUT.ATTRS = FALSE)  %>%
+  )
+  m_tbl.ref = expand.grid(rev(params.list), KEEP.OUT.ATTRS = FALSE)  %>%
     unnest(cols = everything()) %>%
+    select(names(params.list)) %>%
     mutate( .universe = seq(1:nrow(.)) ) %>%
     select(.universe, everything())
 

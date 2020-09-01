@@ -68,15 +68,19 @@ expand.multiverse <- function(multiverse) {
     }
     df <- tibble(.universe = seq(1:n))
   } else {
+    df <- filter(df, eval(all_conditions))
     n <- nrow(df)
     param.assgn =  lapply(seq_len(n), function(i) lapply(df, "[[", i))
     .code = lapply(seq_len(n), get_code_universe, .m_list = .m_list, .level = length(.m_list))
     .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
   }
   
-  df <- filter(mutate(df, .parameter_assignment = param.assgn, .code = .code, .results = .res), eval(all_conditions))
-  
-  select(mutate(df, .universe = 1:nrow(df)), .universe, everything())
+  select(mutate(as_tibble(df), 
+                      .universe = 1:nrow(df), 
+                      .parameter_assignment = param.assgn, 
+                      .code = .code, 
+                      .results = .res
+                    ), .universe, everything())
 }
 
 #' @rdname accessors

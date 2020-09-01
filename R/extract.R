@@ -74,7 +74,10 @@ extract_variables.data.frame <- function(x, ..., .results = .results) {
 extract_from_env <- function(.env, ...) {
   pluck <- lapply(enquos(...), as_name)
   
-  y <- lapply(pluck, function(x) get(as.character(x), .env) )
+  y <- lapply(pluck, function(x) {
+    e <- tryCatch(get(as.character(x), .env), error = function(e) e)
+    if (is(e, "error")) NA else e
+  })
   names(y) <- pluck
   y
 }

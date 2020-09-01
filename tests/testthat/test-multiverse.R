@@ -122,8 +122,9 @@ test_that("accessor functions retrieve the multiverse table", {
     relationship_status = list("rs_option1", "rs_option2", "rs_option3")
   )
 
-  ref_df = expand.grid(ref_list, KEEP.OUT.ATTRS = FALSE) %>%
+  ref_df = expand.grid(rev(ref_list), KEEP.OUT.ATTRS = FALSE) %>%
     unnest( cols = everything() ) %>%
+    select(names(ref_list)) %>%
     mutate( .universe = seq(1:nrow(.)) ) %>%
     select(.universe, everything())
 
