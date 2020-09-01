@@ -45,7 +45,7 @@ test_that("`execute_multiverse` sends error and warning messages but does not st
 })
 
 
-test_that("`execute_universe` sends error and warning messages but does not stop execution", {
+test_that("`execute_universe` sends message about error but does not stop execution", {
   M <- multiverse()
   an_expr <- expr({
     y <- runif(10, 2, 1)
@@ -53,4 +53,31 @@ test_that("`execute_universe` sends error and warning messages but does not stop
   })
   
   expect_warning( inside(M, !! an_expr) )
+  
+  M2 <- multiverse()
+  inside(M2, {
+    y <- runif(10, 0, 1)
+    x <- branch(value_x, 1, 0, stop("error"), 10, 14)
+  })
+  expect_warning(execute_multiverse(M2))
+  
+  expect_true( env_has(expand(M2)$.results[[4]], "x") )
+  expect_equal( env_get(expand(M2)$.results[[4]], "x"), 10 )
+  expect_true( env_has(expand(M2)$.results[[5]], "x") )
+  expect_equal( env_get(expand(M2)$.results[[5]], "x"), 14 )
+})
+
+test_that("multiverse sends warning message and continues to execute when warnings are encountered", {
+  M <- multiverse()
+  
+  inside(M, {
+    x <- branch(a_param,
+                "1" ~ 1,
+                "warning" ~ warning(10),
+                "3" ~ 3
+    )
+  })
+  
+  expect_warning(execute_multiverse(M))
+  expect_true(env_has(expand(M)$.results[[2]], "x"))
 })

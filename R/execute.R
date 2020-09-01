@@ -62,7 +62,7 @@ exec_all <- function(x) {
   
   lapply(seq_along(.res), function(i, x) {
     if (is(x[[i]], "error"))  warning("error in universe ", i, "\n", x[[i]])
-    else if (is(x[[i]], "warning"))  warning("warning in universe ", i, "\n", x[[i]])
+    # else if (is(x[[i]], "warning"))  warning("warning in universe ", i, "\n", x[[i]])
   }, x = .res)
 }
 
@@ -83,16 +83,15 @@ execute_universe <- function(multiverse, .universe = 1) {
 
 execute_code_from_universe <- function(.c, .env = globalenv()) {
   e <- tryCatch( 
-          invisible( lapply(.c, eval, envir = .env) ), 
-          warning = function(w) w,
+          #invisible( lapply(.c, eval, envir = .env) ), 
+          lapply(.c, eval, envir = .env),
+          # warning = function(w) w,
           error = function(e) e
       )
   
   if (is(e, "error")) {
     # traceback()
     return(e)
-  }  else if (is(e, "warning")) { 
-    return(e) 
   } else {
     return(NULL)
   }
