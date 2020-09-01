@@ -87,8 +87,15 @@ execute_code_from_universe <- function(.c, .env = globalenv()) {
           warning = function(w) w,
           error = function(e) e
       )
-  if (is(e, "error") | is(e, "warning")) e else NULL
-  # lapply(.c, eval, envir = .env)
+  
+  if (is(e, "error")) {
+    # traceback()
+    return(e)
+  }  else if (is(e, "warning")) { 
+    return(e) 
+  } else {
+    return(NULL)
+  }
 }
 
 # for a universe, get the indices which need to be executed
