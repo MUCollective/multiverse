@@ -8,6 +8,7 @@ Multiverse <- R6Class("Multiverse",
                         multiverse_diction = NULL,
                         parameter_set = NULL,
                         unchanged_until = NULL,
+                        exec_all_until = NULL,
                         initialize= function() {
                           self$code = NULL
                           self$parameters = list()
@@ -15,6 +16,7 @@ Multiverse <- R6Class("Multiverse",
                           self$multiverse_diction = ordered_dict()
                           self$parameter_set = c()
                           self$unchanged_until = NA
+                          self$exec_all_until = 0
                         }
                       )
 )
