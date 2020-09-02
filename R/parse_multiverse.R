@@ -52,8 +52,6 @@ globalVariables(c(".universe", ".parameter_assignment"))
 parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   m_obj <- attr(.multiverse, "multiverse")
   
-  # print(.expr)
-  
   # if the newly added code is not the last element, implies
   # the user is editing pre-declared parameters. We need to recompute
   # everything after that point
@@ -61,14 +59,16 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
     .code <- .code[-((which(names(.code) == .label)+1):length(.code))]
   }
   
+  # extracts the parameters and conditions declared as lists of lists
   parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
   parameters = parameter_conditions_list$parameters
   conditions = parameter_conditions_list$conditions
   
+  # stores parameters and conditions in the multiverse object
   m_obj$parameters <- parameters
   m_obj$conditions <- conditions
   
-  parameter_set <- c(m_obj$parameter_set, setdiff(names(parameters), m_obj$parameter_set))
+  # parameter_set <- c(m_obj$parameter_set, setdiff(names(parameters), m_obj$parameter_set))
   
   if (length( m_obj$multiverse_diction$keys() ) == 0) .parent_key = NULL
   else {
@@ -99,7 +99,6 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_blo
     all_conditions <- expr(TRUE) 
   } else { 
     all_conditions <- parse_expr(paste0("(", .m_obj$conditions, ")", collapse = "&"))
-    # print(all_conditions)
   }
   
   df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE ) %>%
@@ -118,6 +117,9 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_blo
     parents <- lapply(seq_len(length(.m_obj$multiverse_diction$get(.parent_block))), function(x) x)
   }
   
+  # the number of universes is equal to the number of unique combinations of parameters
+  # i.e. new nodes in the lowest level of the tree
+  # we go over each and find the associated parent and parent.env
   lapply(seq_len(n), function(i) {
     .p <- lapply(df, "[[", i)
     

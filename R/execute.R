@@ -50,7 +50,6 @@ execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   
   .level = min(m_obj$unchanged_until, m_obj$exec_all_until)
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
-  print(.to_exec)
   
   .m_list <- m_diction$as_list()[.to_exec]
   .res <- lapply(.m_list, exec_all)
