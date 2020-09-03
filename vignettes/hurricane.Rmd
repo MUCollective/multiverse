@@ -1,0 +1,119 @@
+---
+title: "reading-speed-data"
+author: "Abhraneel Sarma"
+date: "8/26/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(modelr)
+library(tidyr)
+```
+
+
+```{r}
+data("hurricane")
+
+# read and process data
+hurricane_data <- hurricane %>%
+    # rename some variables
+    rename(
+        year = Year,
+        name = Name,
+        dam = NDAM,
+        death = alldeaths,
+        female = Gender_MF,
+        masfem = MasFem,
+        category = Category,
+        pressure = Minpressure_Updated_2014,
+        wind = HighestWindSpeed
+    ) %>%
+    # create new variables
+    mutate(
+        post = ifelse(year>1979, 1, 0),
+        zcat = as.numeric(scale(category)),
+        zmin = -scale(pressure),
+        zwin = as.numeric(scale(wind)),
+        z3 = as.numeric((zmin + zcat + zwin) / 3)
+    )
+```
+
+
+```{r}
+M <- multiverse()
+```
+
+```{multiverse default-m-1, inside = M}
+df <- hurricane_data %>%
+    filter(branch(death_outlier_removal_death, 
+        "no_exclusion" ~ TRUE,
+        "most_extreme_deaths" ~ name != "Katrina",
+        "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
+    )) %>%
+    filter(branch(damage_outlier_removal, 
+        "no_exclusion" ~ TRUE,
+        "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
+        "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
+        "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
+    ))
+```
+
+
+```{multiverse label = default-m-2, inside = M}
+df <- df %>%
+    mutate(
+        femininity = branch(femininity_calculation,
+          "female" ~ female,
+          "masfem" ~ masfem
+        ),
+        damage = branch(damage_transform,
+          "no_transform" ~ identity(dam),
+          "log_transform" ~ log(dam)
+        )
+    )
+```
+
+
+
+```{multiverse label = default-m-3, inside = M}
+fit <- glm(branch(model,
+              "linear_model" ~ log(death + 1),
+              "poisson" ~ death
+          ) ~ branch(predictors,
+              "1" ~ femininity * damage,
+              "2" ~ femininity * damage + femininity * zmin,
+              "3" ~ femininity * damage + femininity * zwin,
+              "4" ~ femininity * damage + femininity * zcat,
+              "5" ~ femininity * damage + femininity * z3,
+              "6" ~ femininity + damage + z3
+          ) + 
+          branch(covariates,
+              "1" ~ NULL,
+              "2" ~ year:damage,
+              "3" ~ post:damage
+          ), 
+          family = branch(model,
+              "linear_model" ~ gaussian,
+              "poisson" ~ poisson
+          ),
+          data = df
+    )
+
+coef <- broom::tidy(fit)
+```
+
+
+```{r}
+execute_multiverse(M)
+```
+
+
+```{r}
+multiverse::expand(M) %>%
+  extract_variables(coef) %>%
+  unnest(coef)
+```
+
+
