@@ -172,9 +172,6 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
     }
   }
   
-  # print(.expr)
-  # print(.c)
-  
   mapply(parse_multiverse, .expr, .name, MoreArgs = list(.multiverse = multiverse, .code = .c))
   
   m_obj$code <- .c
