@@ -61,6 +61,7 @@ df <- hurricane_data %>%
 ```
 
 
+
 ```{multiverse label = default-m-2, inside = M}
 df <- df %>%
     mutate(
@@ -79,30 +80,35 @@ df <- df %>%
 
 ```{multiverse label = default-m-3, inside = M}
 fit <- glm(branch(model,
-              "linear_model" ~ log(death + 1),
+              "linear" ~ log(death + 1),
               "poisson" ~ death
-          ) ~ branch(predictors,
-              "1" ~ femininity * damage,
-              "2" ~ femininity * damage + femininity * zmin,
-              "3" ~ femininity * damage + femininity * zwin,
-              "4" ~ femininity * damage + femininity * zcat,
-              "5" ~ femininity * damage + femininity * z3,
-              "6" ~ femininity + damage + z3
-          ) + 
-          branch(covariates,
-              "1" ~ NULL,
-              "2" ~ year:damage,
-              "3" ~ post:damage
-          ), 
-          family = branch(model,
-              "linear_model" ~ gaussian,
+          ) ~ branch(femininity_damage_interaction,
+              "yes" ~ femininity * damage,
+              "no" ~ femininity + damage
+            ) + branch(other_predictors,
+                "pressure" %when% (femininity_damage_interaction == "yes") ~ femininity * zmin,
+                "wind" %when% (femininity_damage_interaction == "yes") ~ femininity * zwin,
+                "category" %when% (femininity_damage_interaction == "yes") ~ femininity * zcat,
+                "all" %when% (femininity_damage_interaction == "yes") ~ femininity * z3,
+                "all_no_interaction" %when% (femininity_damage_interaction == "no") ~ z3,
+                "none" %when% (femininity_damage_interaction == "no") ~ NULL
+            ) + branch(covariates,
+                "1" ~ NULL,
+                "2" ~ year:damage,
+                "3" ~ post:damage
+            ), family = branch(model,
+              "linear" ~ gaussian,
               "poisson" ~ poisson
-          ),
-          data = df
+            ),  data = df
     )
 
 coef <- broom::tidy(fit)
 ```
+
+```{r}
+expand(M)
+```
+
 
 
 ```{r}
@@ -115,5 +121,3 @@ multiverse::expand(M) %>%
   extract_variables(coef) %>%
   unnest(coef)
 ```
-
-
