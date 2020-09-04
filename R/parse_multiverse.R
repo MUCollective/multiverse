@@ -49,6 +49,10 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @importFrom methods is
 #' 
 
+# takes in multiverse object
+# .expr an unevaluated expression in current code block
+# .code named list of unevaluated expression of code declared in previous code blocks (NULL if not declared)
+# .label name of the code block
 parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   m_obj <- attr(.multiverse, "multiverse")
   
@@ -59,80 +63,106 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
     .code <- .code[-((which(names(.code) == .label)+1):length(.code))]
   }
   
+  # multiverse_diction is an ordered dictionary with keys corresponding to the names of the code blocks (.label)
+  # calculates the previous row in the multiverse dictionary
+  if (length( m_obj$multiverse_diction$keys() ) == 0) .parent_key = NULL
+  else {
+    if (.label %in% m_obj$multiverse_diction$keys()) {
+      # user is editing a previously created code block or inside() with same label
+      p_idx <- which(m_obj$multiverse_diction$keys() == .label) - 1
+      if (p_idx == 0) .parent_key = NULL
+      else .parent_key = m_obj$multiverse_diction$keys()[[which(m_obj$multiverse_diction$keys() == .label) - 1]]
+    } else {
+      # user is declaring a new code block or inside()
+      .parent_key = unlist(tail(m_obj$multiverse_diction$keys(), 1))
+    }
+  }
+  
   # extracts the parameters and conditions declared as lists of lists
   parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
   parameters = parameter_conditions_list$parameters
   conditions = parameter_conditions_list$conditions
   
-  # stores parameters and conditions in the multiverse object
-  m_obj$parameters <- parameters
-  m_obj$conditions <- conditions
-  
-  # parameter_set <- c(m_obj$parameter_set, setdiff(names(parameters), m_obj$parameter_set))
-  
-  if (length( m_obj$multiverse_diction$keys() ) == 0) .parent_key = NULL
-  else {
-    if (.label %in% m_obj$multiverse_diction$keys()) {
-      p_idx <- which(m_obj$multiverse_diction$keys() == .label) - 1
-      if (p_idx == 0) .parent_key = NULL
-      else .parent_key = m_obj$multiverse_diction$keys()[[which(m_obj$multiverse_diction$keys() == .label) - 1]]
-    } else {
-      .parent_key = unlist(tail(m_obj$multiverse_diction$keys(), 1))
-    }
-  }
-  
   .expr <- list(.expr)
   names(.expr) <- .label
   
-  q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), .parent_key)
+  q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), conditions, .parent_key)
+  
+  # stores parameters and conditions in the multiverse object
+  m_obj$parameters <- parameters
+  m_obj$conditions <- conditions
+  m_obj$parameter_set <- names(parameters)
   
   invisible( m_obj$multiverse_diction$set(.label, q) )
 }
 
-parse_multiverse_expr <- function(multiverse, .expr, .param_options, .parent_block) {
-  stopifnot(is(multiverse, "multiverse"))
-  
+parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditions, .parent_block) {
   .m_obj <- attr(multiverse, "multiverse")
   .super_env <- attr(multiverse, "multiverse_super_env")
   
-  if (is_empty(.m_obj$conditions)) {
+  if (is_empty(all_conditions)) {
     all_conditions <- expr(TRUE) 
   } else { 
-    all_conditions <- parse_expr(paste0("(", .m_obj$conditions, ")", collapse = "&"))
+    # creates a chained expression with all the conditions 
+    all_conditions <- parse_expr(paste0("(", all_conditions, ")", collapse = "&"))
   }
   
-  df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE ) %>%
-    filter(eval(all_conditions))
+  new_params <- setdiff(names(.param_options), .m_obj$parameter_set)
+  #parameter_set <- c(.m_obj$parameter_set, setdiff(names(.param_options), .m_obj$parameter_set))
   
-  n <- ifelse(nrow(df), nrow(df), 1)
+  ## take a parameter set from the previous level and a parameter set from the current level, do a set diff
+  ## do the expand_grid of the set of new parameters
+  ## for each node in the previous level, take the parameter assignment of the previous with the new parameter assignments
+  if (is.null(.parent_block)) {
+    df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE) %>%
+      filter(eval(all_conditions))
+    n <- ifelse(nrow(df), nrow(df), 1)
+    
+    lapply(seq_len(n), function(i) {
+      .p <- lapply(df, "[[", i)
+      
+      list(
+        env = new.env(parent = .super_env), 
+        parent = 0,
+        parameter_assignment = .p, 
+        code = get_code(.expr, .p)
+      )
+    })
+  } else {
+    # lapply(.m_obj$multiverse_diction$get(.parent_block), `[[`, "env")
+    parents <- .m_obj$multiverse_diction$get(.parent_block)
+    
+    q <- lapply(seq_along(parents), function(i, dat) {
+      if (length(new_params) == 0) {
+        # implies no new parameters have been declared.
+        # so number of child environments should be the same as the number of parent environments
+        df <- data.frame(parents[[i]]$parameter_assignment)
+      } else {
+        df <- data.frame( lapply(expand.grid(.param_options[new_params], KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE)  %>%
+          cbind(., parents[[i]]$parameter_assignment) %>%
+          filter(eval(all_conditions))
+      }
+      
+      n <- ifelse(nrow(df), nrow(df), 1)
+      
+      lapply(seq_len(n), function(j) {
+        .p <- c(parents[[i]]$parameter_assignment, lapply(df, "[[", j))
+        
+        list(
+          env = new.env(parent = parents[[i]]$env), 
+          parent = i,
+          parameter_assignment = .p, 
+          code = get_code(.expr, .p)
+        )
+      })
+    }, dat = df)
+    
+    unlist(q, recursive = FALSE)
+  }
   
   # gets the environments from the previous code block in the multiverse
   # these will be the parents for the new environments created from the execution
   # of a new code block.
-  if (is.null(.parent_block)) {
-    parent.envs <- lapply(seq_len(n), function(x) .super_env)
-    parents <- lapply(seq_len(n), function(x) 0)
-  } else {
-    parent.envs <- lapply(.m_obj$multiverse_diction$get(.parent_block), `[[`, "env")
-    parents <- lapply(seq_len(length(.m_obj$multiverse_diction$get(.parent_block))), function(x) x)
-  }
-  
-  # the number of universes is equal to the number of unique combinations of parameters
-  # i.e. new nodes in the lowest level of the tree
-  # we go over each and find the associated parent and parent.env
-  lapply(seq_len(n), function(i) {
-    .p <- lapply(df, "[[", i)
-    
-    # new envs per parent env: nrow(df)/length(parent.envs)
-    # number of parent env: length(parent.envs)
-    # parent: parent.envs[[ceiling(i/(nrow(df)/length(parent.envs)))]]
-    list(
-      env = new.env(parent = parent.envs[[ceiling(i/(n/length(parent.envs)))]]), 
-      parent = parents[[ceiling(i/(n/length(parent.envs)))]],
-      parameter_assignment = .p, 
-      code = get_code(.expr, .p)
-    ) 
-  })
 }
 
 

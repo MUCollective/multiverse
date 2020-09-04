@@ -1,0 +1,62 @@
+---
+title: "Style Guide"
+author: "Abhraneel Sarma"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## don't do this
+
+```{r}
+df <- tibble( x = rnorm(100), y = runif(100), z = rpois(100, 1))
+M = multiverse()
+```
+
+
+```{multiverse default-m-2, inside = M}
+df <- branch(some,
+        "1" ~ select(df, -x),
+        "2" ~ mutate(df, x = exp(x))
+    )
+```
+
+
+```{r}
+execute_multiverse(M)
+```
+
+
+
+## do this
+
+```{r}
+M = multiverse()
+```
+
+
+```{multiverse default-m-1, inside = M}
+df <- tibble( x = rnorm(100), y = runif(100), z = rpois(100, 1))
+
+df <- branch(some,
+        "1" ~ select(df, -x),
+        "2" ~ mutate(df, x = exp(x))
+    )
+```
+
+
+```{r}
+execute_multiverse(M)
+```
+
+
+```{r}
+expand(M)
+```

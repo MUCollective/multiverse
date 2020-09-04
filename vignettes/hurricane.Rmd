@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(modelr)
 library(tidyr)
+library(multiverse)
 ```
 
 
@@ -43,24 +44,59 @@ hurricane_data <- hurricane %>%
 
 ```{r}
 M <- multiverse()
+  
+inside(M, {
+  df <- tibble(x = 1:5)
+  
+  df <- df %>%
+    mutate(y = branch(times,
+                      "2" ~ x*2,
+                      "3" ~ x*3,
+                      "4" ~ x*4
+    ))
+}, .label = "b1")
+
+inside(M, {
+  df <- df %>%
+    mutate(z = branch(exp,
+                      "2" %when% (times != "3") ~ x^2,
+                      "3" ~ x^3,
+                      "4" ~ x^4
+    ))
+}, .label = "b2")
 ```
+
+
+
+```{r}
+M = multiverse()
+df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
+  
+inside(M, {
+  df <- df %>% mutate( z = branch( value_y, y, log(y)))
+})
+  
+inside(M, {
+  df2 <- df %>% mutate( z = branch( value_y, y, log(y)))
+})
+```
+
+
 
 ```{multiverse default-m-1, inside = M}
 df <- hurricane_data %>%
-    filter(branch(death_outlier_removal_death, 
+    filter(branch(death_outliers, 
         "no_exclusion" ~ TRUE,
         "most_extreme_deaths" ~ name != "Katrina",
         "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
     )) %>%
-    filter(branch(damage_outlier_removal, 
+    filter(branch(damage_outliers,, 
         "no_exclusion" ~ TRUE,
         "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
         "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
         "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
     ))
 ```
-
-
 
 ```{multiverse label = default-m-2, inside = M}
 df <- df %>%
@@ -91,7 +127,7 @@ fit <- glm(branch(model,
                 "category" %when% (femininity_damage_interaction == "yes") ~ femininity * zcat,
                 "all" %when% (femininity_damage_interaction == "yes") ~ femininity * z3,
                 "all_no_interaction" %when% (femininity_damage_interaction == "no") ~ z3,
-                "none" %when% (femininity_damage_interaction == "no") ~ NULL
+                "none" ~ NULL
             ) + branch(covariates,
                 "1" ~ NULL,
                 "2" ~ year:damage,

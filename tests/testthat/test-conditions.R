@@ -1,3 +1,43 @@
+test_that("correct parent environments are identified for multiverse with conditions", {
+  M <- multiverse()
+  
+  inside(M, {
+    df <- tibble(x = 1:5)
+    
+    df <- df %>%
+      mutate(y = branch(times,
+                        "2" ~ x*2,
+                        "3" ~ x*3,
+                        "4" ~ x*4
+      ))
+  }, .label = "b1")
+  
+  inside(M, {
+    df <- df %>%
+      mutate(z = branch(exp,
+                        "2" %when% (times != "3") ~ x^2,
+                        "3" ~ x^3,
+                        "4" ~ x^4
+      ))
+  }, .label = "b2")
+  
+  block_1 <- attr(M, "multiverse")$multiverse_diction$as_list()[["b1"]]
+  envs_block1 <- lapply(block_1, `[[`, "env")
+  
+  block_2 <- attr(M, "multiverse")$multiverse_diction$as_list()[["b2"]]
+  envs_block2 <- lapply(lapply(block_2, `[[`, "env"), parent.env)
+  
+  expect_true(identical(envs_block2[[1]], envs_block1[[1]]))
+  expect_true(identical(envs_block2[[2]], envs_block1[[1]]))
+  expect_true(identical(envs_block2[[3]], envs_block1[[1]]))
+  expect_true(identical(envs_block2[[4]], envs_block1[[2]]))
+  expect_true(identical(envs_block2[[5]], envs_block1[[2]]))
+  expect_true(identical(envs_block2[[6]], envs_block1[[3]]))
+  expect_true(identical(envs_block2[[7]], envs_block1[[3]]))
+  expect_true(identical(envs_block2[[8]], envs_block1[[3]]))
+})
+
+
 test_that("invalid conditions are removed in multiverse_diction when parsing a multiverse #1", {
   M <- multiverse()
   

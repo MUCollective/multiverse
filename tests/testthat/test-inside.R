@@ -136,7 +136,7 @@ test_that("continuous parameters defined in the multiverse are evaluated", {
 })
 
 
-test_that("`inside` can access variables defined in the caller environment", {
+test_that("`inside` can access variables defined in the caller environment / parameters can be reused", {
   M = multiverse()
   df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
   

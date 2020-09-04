@@ -1,8 +1,12 @@
 ---
-title: "parse-multiverse-test"
-author: "Abhraneel Sarma"
-date: "9/2/2020"
-output: html_document
+title: "Multiverse implementation of Ranking Correlations in Visualization"
+author: "Alex Kale"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
