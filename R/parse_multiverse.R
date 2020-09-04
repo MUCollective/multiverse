@@ -138,15 +138,23 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
         # so number of child environments should be the same as the number of parent environments
         df <- data.frame(parents[[i]]$parameter_assignment)
       } else {
-        df <- data.frame( lapply(expand.grid(.param_options[new_params], KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE)  %>%
-          cbind(., parents[[i]]$parameter_assignment) %>%
+        df <- data.frame( lapply(expand.grid(.param_options[new_params], KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE)
+        
+        if (! (is_empty(parents[[i]]$parameter_assignment)) ) {
+          df <- df %>%
+            cbind(., parents[[i]]$parameter_assignment)
+        }
+        
+        df <- df %>%
           filter(eval(all_conditions))
       }
+      
+      # print(parents[[i]]$parameter_assignment)
       
       n <- ifelse(nrow(df), nrow(df), 1)
       
       lapply(seq_len(n), function(j) {
-        .p <- c(parents[[i]]$parameter_assignment, lapply(df, "[[", j))
+        .p <- lapply(df, "[[", j)
         
         list(
           env = new.env(parent = parents[[i]]$env), 
