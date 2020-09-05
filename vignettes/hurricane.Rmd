@@ -10,12 +10,16 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(modelr)
 library(tidyr)
-library(multiverse)
+library(ggplot2)
+library(tidybayes)
+# library(multiverse)
 ```
 
 
 ```{r}
 data("hurricane")
+
+M <- multiverse()
 
 # read and process data
 hurricane_data <- hurricane %>%
@@ -42,47 +46,6 @@ hurricane_data <- hurricane %>%
 ```
 
 
-```{r}
-M <- multiverse()
-  
-inside(M, {
-  df <- tibble(x = 1:5)
-  
-  df <- df %>%
-    mutate(y = branch(times,
-                      "2" ~ x*2,
-                      "3" ~ x*3,
-                      "4" ~ x*4
-    ))
-}, .label = "b1")
-
-inside(M, {
-  df <- df %>%
-    mutate(z = branch(exp,
-                      "2" %when% (times != "3") ~ x^2,
-                      "3" ~ x^3,
-                      "4" ~ x^4
-    ))
-}, .label = "b2")
-```
-
-
-
-```{r}
-M = multiverse()
-df <- data.frame(x = 1:10) %>% mutate( y = x^2 + sample(10:20, 10))
-  
-inside(M, {
-  df <- df %>% mutate( z = branch( value_y, y, log(y)))
-})
-  
-inside(M, {
-  df2 <- df %>% mutate( z = branch( value_y, y, log(y)))
-})
-```
-
-
-
 ```{multiverse default-m-1, inside = M}
 df <- hurricane_data %>%
     filter(branch(death_outliers, 
@@ -90,7 +53,7 @@ df <- hurricane_data %>%
         "most_extreme_deaths" ~ name != "Katrina",
         "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
     )) %>%
-    filter(branch(damage_outliers,, 
+    filter(branch(damage_outliers,
         "no_exclusion" ~ TRUE,
         "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
         "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
@@ -112,10 +75,43 @@ df <- df %>%
     )
 ```
 
+```{r}
+cross <- function (df, func, fml, folds = 5) {
+  l = nrow(df) %/% folds
+  mse = 0
+  for (i in c(1:folds)) {
+    # properly splitting train/test
+    i1 = l*(i-1)+1
+    i2 = l*i
+    d_test = df[i1:i2, ]
+    if (i1 > 1) {
+      if (i2+1 < nrow(df)) {
+        d_train = rbind(df[1:(i1-1), ], df[(i2+1):nrow(df), ])
+      } else {
+        d_train = df[1:(i1-1), ]
+      }
+    } else {
+      d_train = df[(i2+1):nrow(df), ]
+    }
+
+    model <- func(fml, data = d_train)
+    mu <- predict(model, d_test, type = "response")
+    sigma <- sigma(model)
+    expected_deaths <- pred2expectation(mu, sigma)
+
+    mse = mse + sum((d_test$death - expected_deaths)^2)
+  }
+
+  mse = sqrt(mse / nrow(df))
+  return(mse)
+}
+```
+
+
 
 
 ```{multiverse label = default-m-3, inside = M}
-fit <- glm(branch(model,
+model <- glm(branch(model,
               "linear" ~ log(death + 1),
               "poisson" ~ death
           ) ~ branch(femininity_damage_interaction,
@@ -138,13 +134,107 @@ fit <- glm(branch(model,
             ),  data = df
     )
 
-coef <- broom::tidy(fit)
+
+# a function for post-processing predicted means and standard deviations into expected number of deaths
+pred2expectation <- function(mu, sigma) {
+  branch(model, 
+         "linear" ~ exp(mu + sigma^2/2) - 1,
+         "poisson" ~ mu
+  )
+}
+
+coef <- broom::tidy(model)
 ```
+
+
+```{r, fig.height=3, fig.width = 8}
+execute_multiverse(M)
+
+multiverse::expand(M) %>%
+  extract_variables(coef) %>%
+  unnest(coef) %>%
+  filter(term == "femininity") %>%
+  arrange(estimate) %>%
+  mutate(.id = 1:nrow(.)) %>%
+  ggplot(aes(y = estimate, x = .id)) +
+  geom_point(alpha = 0.1) +
+  geom_pointrange(aes(ymin = estimate - qnorm(0.025)*std.error, ymax = estimate + qnorm(0.025)*std.error), alpha = 0.1) +
+  theme_minimal()
+```
+
+
+```{multiverse default-m-4, inside = M}
+fit = cross(
+    df, 
+    glm, 
+    branch(model,
+        "linear" ~ log(death + 1),
+        "poisson" ~ death
+    ) ~ branch(femininity_damage_interaction,
+        "yes" ~ femininity * damage,
+        "no" ~ femininity + damage
+    ) + branch(other_predictors,
+        "pressure" %when% (femininity_damage_interaction == "yes") ~ femininity * zmin,
+        "wind" %when% (femininity_damage_interaction == "yes") ~ femininity * zwin,
+        "category" %when% (femininity_damage_interaction == "yes") ~ femininity * zcat,
+        "all" %when% (femininity_damage_interaction == "yes") ~ femininity * z3,
+        "all_no_interaction" %when% (femininity_damage_interaction == "no") ~ z3,
+        "none" ~ NULL
+    ) + branch(covariates,
+        "1" ~ NULL,
+        "2" ~ year:damage,
+        "3" ~ post:damage
+    )
+) # cross validation
+
+nrmse = fit / (max(df$death) - min(df$death))
+
+# get prediction
+pred <- predict(model, se.fit = TRUE, type = "response")
+
+disagg_fit <- df  %>%
+    mutate(
+        fit = pred$fit,                                 # add fitted predictions and standard errors to dataframe
+        se.fit = pred$se.fit,
+        df = df.residual(model),                        # get degrees of freedom
+        sigma = sigma(model),                           # get residual standard deviation
+        se.residual = sqrt(sum(residuals(model)^2) / df)    # get residual standard errors
+    )
+
+# aggregate fitted effect of female storm name
+expectation <- disagg_fit %>%
+    mutate(expected_deaths = pred2expectation(fit, sigma)) %>% 
+    group_by(female) %>%                                            # group by predictor(s) of interest
+    summarise(expected_deaths = weighted.mean(expected_deaths), .groups = "drop_last") %>% # marninalize across other predictors       
+    compare_levels(expected_deaths, by = female) %>%
+    ungroup() %>%
+    dplyr::select(expected_diff = expected_deaths) %>%
+    tibble::add_column(NRMSE = nrmse)                                       # add cross validatation metric
+
+# propagate uncertainty in fit to model predictions
+uncertainty <- disagg_fit %>%
+    mutate(
+        .draw = list(1:5000),                               # generate list of draw numbers
+        t = map(df, ~rt(5000, .)),                          # simulate draws from t distribution to transform into means
+        x = map(df, ~rchisq(5000, .))                       # simulate draws from chi-squared distribution to transform into sigmas
+    ) %>%
+    unnest(cols = c(".draw", "t", "x")) %>%
+    mutate(
+        mu = t * se.fit + fit,                              # scale and shift t to get a sampling distribution of means
+        sigma = sqrt(df * se.residual^2 / x),               # scale and take inverse of x to get a sampling distribution of sigmas
+        expected_deaths = pred2expectation(mu, sigma)
+    ) %>%        
+    group_by(.draw, female) %>%                             # group by predictor(s) of interest
+    summarise(expected_deaths = mean(expected_deaths), .groups = "drop_last") %>%  # marninalize across other predictors
+    compare_levels(expected_deaths, by = female) %>%
+    ungroup() %>%
+    dplyr::select(expected_diff = expected_deaths)
+```
+
 
 ```{r}
-expand(M)
+uncertainty
 ```
-
 
 
 ```{r}
@@ -152,8 +242,57 @@ execute_multiverse(M)
 ```
 
 
+
 ```{r}
-multiverse::expand(M) %>%
-  extract_variables(coef) %>%
-  unnest(coef)
+disagg_fit %>%
+  mutate(se.residual = sqrt(sum(residuals(model)^2) / df))
+
+sum(residuals(model)^2) / df.residual(model)
 ```
+
+
+
+```{multiverse default-m-4, inside = M}
+# aggregate fitted effect of female storm name
+expectation <- disagg_fit %>%
+    mutate(expected_deaths = pred2expectation(fit, sigma)) %>% 
+    group_by(female) %>%                                            # group by predictor(s) of interest
+    summarize(expected_deaths = weighted.mean(expected_deaths)) %>% # marninalize across other predictors       
+    compare_levels(expected_deaths, by = female) %>%
+    ungroup() %>%
+    dplyr::select(expected_diff = expected_deaths) %>%
+    add_column(NRMSE = nrmse)                                       # add cross validatation metric
+
+# propagate uncertainty in fit to model predictions
+uncertainty <- disagg_fit %>%
+    mutate(
+        .draw = list(1:5000),                               # generate list of draw numbers
+        t = map(df, ~rt(5000, .)),                          # simulate draws from t distribution to transform into means
+        x = map(df, ~rchisq(5000, .))                       # simulate draws from chi-squared distribution to transform into sigmas
+    ) %>%
+    unnest(cols = c(".draw", "t", "x")) %>%
+    mutate(
+        mu = t * se.fit + fit,                              # scale and shift t to get a sampling distribution of means
+        sigma = sqrt(df * se.residual^2 / x),               # scale and take inverse of x to get a sampling distribution of sigmas
+        expected_deaths = pred2expectation(mu, sigma)
+    ) %>%        
+    group_by(.draw, female) %>%                             # group by predictor(s) of interest
+    summarize(expected_deaths = mean(expected_deaths)) %>%  # marninalize across other predictors
+    compare_levels(expected_deaths, by = female) %>%
+    ungroup() %>%
+    dplyr::select(expected_diff = expected_deaths)
+
+# only output relevant fields in disagg_fit
+disagg_fit <- disagg_fit %>%
+    mutate(expected_deaths = pred2expectation(fit, sigma)) %>%
+    dplyr::select(
+        observed = death,
+        expected = expected_deaths
+    )
+```
+
+
+```{r}
+execute_multiverse(M)
+```
+

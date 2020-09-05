@@ -40,6 +40,10 @@ First, we load the data and change some variable names.
 ```{multiverse, data, inside = M}
 data("vis_correlation2")
 
+set.seed(100)
+
+workers <- sample(unique(vis_correlation2$participant), 20)
+
 df <- vis_correlation2 %>%
   # one column for visualization condition and correlation direction
   unite("visandsign", vis:rdirection) %>%
@@ -55,9 +59,8 @@ df <- vis_correlation2 %>%
     participant = as.factor(participant)
   ) %>%
   # remove pre-computed JNDs; we will calculate our own JNDs
-  select(-jnd) %>% 
-  # select handful of participants for debugging
-  filter(participant %in% c("hrqfen7i", "hs1tlxtw", "hskjvwol", "hsyws9iw", "hsi8loaf")) 
+  select(-jnd) %>%
+  filter(participant %in% workers)
 ```
 
 Next we operationalize just-noticeable differences (JNDs), the dependent variable in our analysis. This is a major decision point where we will multiplex across multiple common strategies.
@@ -74,6 +77,7 @@ jnd_from_logistic <- function(intercept, slope) {
   return((qlogis(0.75) - intercept) / slope)
 }
 ```
+
 
 ```{multiverse, jnds, inside = M}
 # operationalize just-noticeable differences (jnd)
@@ -94,11 +98,11 @@ derive_jnd <- branch(operationalize_jnd,
       summarise(
         dr = list(dr),
         correct = list(as.integer(correct)),
-        group = "drop"
+        .groups = "drop"
       ) %>%
       mutate(
         # logistic regression with log stimulus intensity as predictor
-        fit = map2(dr, correct, ~glm(.y ~ log(.x), family = binomial)), 
+        fit = map2(dr, correct, ~ glm(.y ~ log(.x), family = binomial)), 
         b_0 = unlist(map(fit, ~coef(.x)[[1]])),
         b_1 = unlist(map(fit, ~coef(.x)[[2]])),
         # fit = map2(dr, correct, ~gamlss(.y ~ log(.x), family = BI)), 
@@ -119,7 +123,7 @@ derive_jnd <- branch(operationalize_jnd,
         # number correct and number of trials at each level of stimulus intensity for each staircase
         k = sum(as.integer(correct)),
         n = n(),
-        group = "drop"
+        .groups = "drop"
       ) 
     
     # fit a scaled and shifted cumulative Gaussian psychometric function with 
@@ -141,7 +145,7 @@ derive_jnd <- branch(operationalize_jnd,
 
 df <- derive_jnd(df)
 ```
-  
+
 Here, we create and apply a logical index for exclusion criteria. First, we handle chance performance by excluding entire `visandsign` conditions where there are too many staircases with performance worse than chance (as in Harrison et al.). Kay and Heer addressed this issue by censoring the data, but we were not able to get censored models to converge for our analysis. Thus, we leave this decision out.
 
 Second, we make a decision about how to handle the fact that JNDs are not normally distributed. Do we exclude outliers (as in Harrison et al.) or log-transform our JNDs later on (as in Kay and Heer)?
@@ -191,6 +195,55 @@ df <- df %>%
 
 Now, we are ready to model our data. Multiple decisions impact the implementation here, so we use multiple branches to represent the impacts of *decisions we have already made* at the modeling stage. The only new decision we introduce at this point is whether or not to include random intercepts per participant in our model specification.
 
+
+```{r}
+inside(M, {
+  m <- branch(random_effects, 
+        "yes" ~  branch(handle_non_normality,
+              "exclude" ~ # linear model
+                lmer(
+                  jnd ~ r * visandsign * branch(adjust_for_approach_bias,
+                    "adjusted_correlation" ~ NULL,
+                    "approach_as_covariate" ~ approach_value
+                  ) + (1 | participant),
+                  data = df
+              ),
+              "log_transform" ~ # log-linear model
+                glmer(jnd ~ r * visandsign * branch(adjust_for_approach_bias, # conditions avoid fit issues in specific universes
+                        "adjusted_correlation" ~ NULL,
+                        "approach_as_covariate" %when% (operationalize_jnd == "guess_lapse_curve_fitting") ~ approach_value
+                      ) + (1 | participant),
+                      data = df,
+                  family = gaussian(link = "log")
+                )
+            ),
+        "no" ~  branch(handle_non_normality,
+            "exclude" ~ # linear model
+              lm(jnd ~ r * visandsign
+                  * branch(adjust_for_approach_bias,
+                      "adjusted_correlation" ~ NULL,
+                      "approach_as_covariate" ~ approach_value
+                    ), data = df
+              ),
+            "log_transform" ~ # log-linear model
+              glm(jnd ~ r * visandsign
+                  * branch(adjust_for_approach_bias,
+                      "adjusted_correlation" ~ NULL,
+                      "approach_as_covariate" ~ approach_value
+                    ), data = df, family = gaussian(link = "log")
+              )
+        )
+    )
+}, .label = "modeling")
+```
+
+
+```{r}
+expand(M)
+```
+
+
+
 ```{multiverse, modeling, inside = M}
 m <- branch(random_effects, 
         "yes" ~  branch(handle_non_normality,
@@ -231,6 +284,17 @@ m <- branch(random_effects,
 ```
 
 Now we postprocess our models. The way we do this depends on *decisions we've already made* about how to derive JNDs and adjust for approach bias. The primary branch below is that when we derive JNDs before fitting an inferential model, we just need to extract and aggregate model predictions, whereas when we fit a hierarchical logistic regression to all the data, we need to derive JNDs from this model fit after fitting the model.
+
+
+```{r}
+attr(M, "multiverse")$multiverse_diction$get("exclusions")[[]]
+```
+
+
+```{r}
+expand(M)$.code[[5]]
+```
+
 
 ```{r}
 # AMK: "crossed wires" issue causes errors in universes 11 and 12 (see the errors below on execution)
