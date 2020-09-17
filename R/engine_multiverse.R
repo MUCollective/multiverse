@@ -1,6 +1,9 @@
 multiverse_engine <- function(options) {
   .multiverse_name = options$inside
   
+  if(is.null(options$inside)) stop("A multiverse object should be specified with", 
+                                   "a multiverse code block using the `inside` argument")
+  
   if ( !(.multiverse_name %in% ls(envir = knit_global()))) {
     stop(
       "Multiverse object `", .multiverse_name, "` was not found.\n",
@@ -32,6 +35,10 @@ multiverse_block_code <- function(.multiverse_name, .label, .code) {
   
   if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
     stop("Please provide a label to your multiverse code block")
+  }
+  
+  if (!is(.multiverse, "multiverse")) {
+    stop("Objects passed to inside should be a multiverse object")
   }
   
   pasted <- paste(.code, collapse = "\n")

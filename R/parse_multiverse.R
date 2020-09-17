@@ -56,12 +56,20 @@ globalVariables(c(".universe", ".parameter_assignment"))
 parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   m_obj <- attr(.multiverse, "multiverse")
   
-  # if the newly added code is not the last element, implies
+  # if the newly added code is part of the multiverse dictionary, implies
   # the user is editing pre-declared parameters. We need to recompute
   # everything after that point
-  if (.label %in% names(head(.code, -1))) {
-    .code <- .code[-((which(names(.code) == .label)+1):length(.code))]
+  .names_in_m <- unlist(m_obj$multiverse_diction$keys())
+  if (.label %in% .names_in_m) {
+    if ( which(names(.code) == .label) < length(.code)) {
+      .code = .code[-((which(names(.code) == .label)+1):length(.code))]
+    }
+    
+    # means that we need to remove parameters in the current .expr from parameter_set
+    new_params = get_parameter_conditions_list( unname(.expr) )$parameters
+    m_obj$parameter_set <- setdiff(m_obj$parameter_set, names(new_params))
   }
+  # print(m_obj$parameter_set)
   
   # multiverse_diction is an ordered dictionary with keys corresponding to the names of the code blocks (.label)
   # calculates the previous row in the multiverse dictionary

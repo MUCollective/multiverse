@@ -153,22 +153,30 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   
   # what has been unchanged so far in the tree
   # everything post will be edited in the subsequent steps
+  
+  # there is no code declared in the multiverse
   if (is_null(m_obj$code)) {
+    # code block is not named, it is just appended to a unnamed list -> inside() declaration
     if (is.null(.name)) .c = list(.expr) 
+    
+    # code block is named, it is just appended to a named list
     else {
       .c = list()
       .c[[.name]] = .expr
     }
+    
     .expr <- list(.expr)
   } else {
+    # there is code already declared in the multiverse
     if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
     else {
+      # replaces existing code
       .c = m_obj$code
       .c[[.name]] = .expr
       
       #.expr needs to be changed so that we recompute everything that occurs subsequently
-      .expr = .c[which(names(.c) == .name):length(.c)]
-      .name = names(.c)[which(names(.c) == .name):length(.c)]
+      .expr = .c[which(names(.c) == .name)]
+      .name = names(.c)[which(names(.c) == .name)]
     }
   }
   
