@@ -122,8 +122,8 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
   ## do the expand_grid of the set of new parameters
   ## for each node in the previous level, take the parameter assignment of the previous with the new parameter assignments
   if (is.null(.parent_block)) {
-    df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE) %>%
-      filter(eval(all_conditions))
+    df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE)
+    df <- filter(df, eval(all_conditions))
     n <- ifelse(nrow(df), nrow(df), 1)
     
     lapply(seq_len(n), function(i) {
@@ -149,12 +149,10 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
         df <- data.frame( lapply(expand.grid(.param_options[new_params], KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE)
         
         if (! (is_empty(parents[[i]]$parameter_assignment)) ) {
-          df <- df %>%
-            cbind(., parents[[i]]$parameter_assignment)
+          df <- cbind(df, parents[[i]]$parameter_assignment)
         }
         
-        df <- df %>%
-          filter(eval(all_conditions))
+        df <- filter(df, eval(all_conditions))
       }
       
       # print(parents[[i]]$parameter_assignment)

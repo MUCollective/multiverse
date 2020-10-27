@@ -1,13 +1,6 @@
 
 # Multiverse: An R package for creating multiverse analysis
 
-<!-- badges: start -->
-
-[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multiverse)
-[![R build
-status](https://github.com/MUCollective/multidy/workflows/R-CMD-check/badge.svg)](https://github.com/MUCollective/multidy/actions)
-<!-- badges: end -->
-
 The goal of multiverse is to allow users to create multiverse analyses
 in a concise and easily interpretable manner.
 

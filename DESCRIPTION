@@ -2,13 +2,13 @@ Package: multiverse
 Version: 0.3.0.1
 Date: 2020-06-21
 Title: Explorable Multiverse Data Analysis and Reports in R
-Description: Create Explorable Multiverse Analysis in R. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are.
 Authors@R: c(
 		person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
-        person("Matthew", "Kay", role = "aut", email = "mjskay@umich.edu"),
-        person("Michael", "Moon", role = "ctb", email = "micbon.site@gmail.com")
+		person("Michael", "Moon", role = "aut", email = "moon@utstat.toronto.edu"),
+        person("Matthew", "Kay", role = "aut", email = "mjskay@umich.edu")    
     )
 Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
+Description: Create Explorable Multiverse Analysis in R. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are.
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.0.9000
@@ -34,7 +34,8 @@ Imports:
     collections,
     highr,
     evaluate,
-    rstudioapi
+    rstudioapi,
+    berryFunctions
 Suggests:
     testthat (>= 2.1.0),
     lubridate,

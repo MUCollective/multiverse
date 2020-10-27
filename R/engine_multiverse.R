@@ -70,6 +70,9 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     
     # when knitting we are not performing any traditional evaluation
     # hence we can not evaluate the code chunk using default evaluation
+    # changing this to TRUE would execute the default universe and show 
+    # the relevant output
+    # What we want is to create a `div` for each universe
     options$eval = FALSE
     options$class.source = "multiverse"
 

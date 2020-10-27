@@ -12,8 +12,9 @@
 #'   was compared to values of r above it in the staircase procedure;
 #'   or from below, indicated it was compared to values of r below it}
 #'   \item{correctChoice}{L or R. What was the correct choice}
-#'   \item{correctChoice}{L or R. What was the choice selected by participant}
+#'   \item{currentChoice}{L or R. What was the choice selected by participant}
 #'   \item{gotItRight}{TRUE or FALSE. Whether the participant was correct or incorrect}
+#'   \item{jnd}{Just Noticeable Difference value for the trial}
 #'   \item{index}{Trial number within a block for each participant}
 #'   \item{participant}{Participant identifier}
 #'   \item{vis}{Type of visualization used}

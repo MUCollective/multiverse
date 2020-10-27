@@ -41,6 +41,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom parallel detectCores
 #' @importFrom parallel mcmapply
+#' @importFrom berryFunctions tryStack
 #' 
 #' @name execute
 #' @export
@@ -63,8 +64,10 @@ exec_all <- function(x) {
   .res <- mapply(execute_code_from_universe, .code_list, .env_list)
   
   lapply(seq_along(.res), function(i, x) {
-    if (is(x[[i]], "error"))  warning("error in universe ", i, "\n", x[[i]])
-    # else if (is(x[[i]], "warning"))  warning("warning in universe ", i, "\n", x[[i]])
+    if (is(x[[i]], "try-error"))  {
+      warning("error in universe ", i, "\n")
+       cat(x[[i]])
+    }
   }, x = .res)
 }
 
@@ -84,19 +87,8 @@ execute_universe <- function(multiverse, .universe = 1) {
 }
 
 execute_code_from_universe <- function(.c, .env = globalenv()) {
-  e <- tryCatch( 
-          #invisible( lapply(.c, eval, envir = .env) ), 
-          lapply(.c, eval, envir = .env),
-          # warning = function(w) w,
-          error = function(e) e
-      )
-  
-  if (is(e, "error")) {
-    # traceback()
-    return(e)
-  } else {
-    return(NULL)
-  }
+  # lapply(.c, eval, envir = .env)
+  tryStack(lapply(.c, eval, envir = .env), silent = TRUE)
 }
 
 # for a universe, get the indices which need to be executed
@@ -111,7 +103,7 @@ exec_in_order <- function(.universe_list, .universes, .i) {
   x <- .universe_list[[ .universes[[.i]] ]]
   
   .exec_res <- execute_code_from_universe(x$code, x$env)
-  if (is(.exec_res, "error"))  warning("error in default universe", "\n", .exec_res)
+  if (is(.exec_res, "try-error"))  warning("error in default universe", "\n", .exec_res)
   else if (is(.exec_res, "warning"))  warning("warning in default universe", "\n", .exec_res)
 }
 

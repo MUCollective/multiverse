@@ -2,7 +2,8 @@
 
 ```{r setup}
 library(tidyverse)
-library(multiverse)
+#library(multiverse)
+devtools::load_all(".")
 ```
 
 ## Introduction
@@ -37,5 +38,5 @@ data.frame(x = 1:10) %>%
 hist(1:10)
 
 print("hello")
-x = x + 1   # should give an error
+# x = x + 1   # should give an error
 ```

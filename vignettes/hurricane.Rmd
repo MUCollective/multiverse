@@ -1,12 +1,8 @@
 ---
 title: "Are hurricanes with more female names deadlier --- an implementation using multiverse"
-author: "Abhraneel Sarma"
+author: ""
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
-  %\usepackage[UTF-8]{inputenc}
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -102,8 +98,8 @@ We implement these two decisions in our multiverse as follows:
 df <- df %>%
     mutate(
         femininity = branch(femininity_calculation,
-          "female" ~ female,
-          "masfem" ~ masfem
+          "masfem" ~ masfem,
+          "female" ~ female
         ),
         damage = branch(damage_transform,
           "no_transform" ~ identity(dam),
@@ -113,50 +109,68 @@ df <- df %>%
 ```
 
 ### Declaring alternative specifications of regression model
-
 The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`
 
 ```{multiverse label = default-m-3, inside = M}
-model <- glm(branch(model,
-              "linear" ~ log(death + 1),
-              "poisson" ~ death
-          ) ~ branch(femininity_damage_interaction,
-              "yes" ~ femininity * damage,
-              "no" ~ femininity + damage
+fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+          branch(main_interaction,
+              "no" ~ femininity + damage,
+              "yes" ~ femininity * damage
           ) + branch(other_predictors,
-              "pressure" %when% (femininity_damage_interaction == "yes") ~ femininity * zpressure,
-              "wind" %when% (femininity_damage_interaction == "yes") ~ femininity * zwind,
-              "category" %when% (femininity_damage_interaction == "yes") ~ femininity * zcat,
-              "all" %when% (femininity_damage_interaction == "yes") ~ femininity * z3,
-              "all_no_interaction" %when% (femininity_damage_interaction == "no") ~ z3,
-              "none" ~ NULL
-          ) + branch(covariates,
-              "1" ~ NULL,
-              "2" ~ year:damage,
-              "3" ~ post:damage
-          ),  data = df
+              "none" ~ NULL,
+              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+              "all" %when% (main_interaction == "yes") ~ femininity * z3,
+              "all_no_interaction" %when% (main_interaction == "no") ~ z3
+          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
+          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+          data = df)
+
+broom::tidy(fit)
+```
+
+
+```{multiverse label = default-m-3, inside = M}
+pred <- predict(fit, se.fit = TRUE, type = "response")
+
+pred2expectation <- function(mu, sigma) {
+    branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
+}
+
+disagg_fit <- df  %>%
+    mutate(
+        fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
+        se.fit = pred$se.fit,
+        deg_f = df.residual(fit),                         # get degrees of freedom
+        sigma = sigma(fit),                               # get residual standard deviation
+        se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
     )
 
-coef <- broom::tidy(model)
-
-coef
+# aggregate fitted effect of female storm name
+expectation <- disagg_fit %>%
+    mutate(expected_deaths = pred2expectation(fitted, sigma)) %>% 
+    group_by(female) %>%
+    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") %>% 
+    compare_levels(mean_deaths, by = female)
 ```
 
 ### Execution and Results
 
-After we've specified our multiverse analysis, we would like to execute the entire multiverse, and view the results. Below, we plot the mean point estimate and 95% confidence interval for the coefficient of `femininity` for each unique analysis path. We find that based on these arbitrary specifications of the multiverse, there is perhaps no relation between `femininity` of the name of a hurricane and the number of deaths that it causes.
+After we've specified our multiverse analysis, we would like to execute the entire multiverse, and view the results. Below, we plot the mean difference point estimate for expected deaths when a hurricane has a more feminine name, for each unique analysis path. We find that based on these arbitrary specifications of the multiverse, there is perhaps no relation between `femininity` of the name of a hurricane and the number of deaths that it causes, as some models predict a lower number of deaths, and some predict much higher.
 
 ```{r, fig.height=3, fig.width = 8}
 execute_multiverse(M)
 
-multiverse::expand(M) %>%
-  extract_variables(coef) %>%
-  unnest(coef) %>%
-  filter(term == "femininity") %>%
-  arrange(estimate) %>%
+mean_deaths <- multiverse::expand(M) %>%
+  extract_variables(expectation) %>%
+  unnest(expectation)
+
+mean_deaths %>%
+  arrange(mean_deaths) %>%
   mutate(.id = 1:nrow(.)) %>%
-  ggplot(aes(y = estimate, x = .id)) +
-  geom_pointrange(aes(ymin = estimate - qnorm(0.025)*std.error, ymax = estimate + qnorm(0.025)*std.error, color = (p.value < 0.05)), alpha = 0.2) +
+  ggplot(aes(y = mean_deaths, x = .id)) +
+  geom_point() +
   theme_minimal() +
-  labs(x = "universe", y = "Mean estimate & 95% CI of the coefficient for femininity")
+  labs(x = "universe", y = "Mean difference in expected deaths")
 ```

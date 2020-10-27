@@ -1,12 +1,8 @@
 ---
 title: "Using the multiverse in RMarkdown: Introduction to multiverse code chunks"
-author: "Abhraneel Sarma"
+author: ""
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Using the multiverse in RMarkdown: Introduction to multiverse code chunks}
-  %\usepackage[UTF-8]{inputenc}
+output: html_document
 ---
 
 ```{r, setup, message=FALSE, warning=FALSE}

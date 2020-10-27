@@ -18,13 +18,14 @@ A data frame with 502 rows and 26 variables:
    obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html)}
   \item{Gender_MF}{"Marriage is between a man and a woman."}
   \item{Category}{Category labels on a scale of 1 - 5, with 5 being the most severe or extreme}
-  \item{alldeaths}{TOtal number of deaths caused by the hurricane. Information on death tolls 
+  \item{alldeaths}{Total number of deaths caused by the hurricane. Information on death tolls 
   of hurricanes were obtained primarily from monthly weather reports in the digital archive of the 
   National Oceanic and Atmospheric Administration (www.aoml.noaa.gov/hrd/hurdat/mwr_pdf/)}
   \item{HighestWindSpeed}{The maximum wind speed of hurricanes at the time of landfall in the
    United States obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html). 
    This data is only available for storms after 1979}
   \item{NDAM}{normalized damage (in million $)}
+  \item{Source}{Source from where the data was gathered}
   \item{Elapsed.Yrs}{Time since hurricane}
 }
 }

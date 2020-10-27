@@ -1,12 +1,8 @@
 ---
 title: "A multiverse analysis of the efficiency of physical visualizations"
-author: "Yvonne Jansen and Abhraneel Sarma"
+author: ""
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{A multiverse analysis of the efficiency of physical visualizations}
-  %\usepackage[UTF-8]{inputenc}
+output: html_document
 ---
 
 ```{r setup, message=FALSE, warning=FALSE}
