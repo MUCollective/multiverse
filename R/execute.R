@@ -53,15 +53,15 @@ execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
   .m_list <- m_diction$as_list()[.to_exec]
-  .res <- lapply(.m_list, exec_all)
+  .res <- lapply(.m_list, exec_all, cores = cores)
   m_obj$exec_all_until <- length(m_diction$as_list())
 }
 
-exec_all <- function(x) {
+exec_all <- function(x, cores) {
   .code_list = lapply(x, `[[`, "code")
   .env_list = lapply(x, `[[`, "env")
   
-  .res <- mapply(execute_code_from_universe, .code_list, .env_list)
+  .res <- mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
   
   lapply(seq_along(.res), function(i, x) {
     if (is(x[[i]], "try-error"))  {
