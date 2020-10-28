@@ -66,10 +66,13 @@
       <a href="articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
+      <a href="articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
     </li>
     <li>
       <a href="articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+    </li>
+    <li>
+      <a href="articles/hurricane.html">Are hurricanes with more female names deadlier --- an implementation using multiverse</a>
     </li>
     <li>
       <a href="articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
@@ -95,19 +98,17 @@
 <div id="multiverse-an-r-package-for-creating-multiverse-analysis" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#multiverse-an-r-package-for-creating-multiverse-analysis" class="anchor"></a>Multiverse: An R package for creating multiverse analysis</h1></div>
-<!-- badges: start -->
-
 <p>The goal of multiverse is to allow users to create multiverse analyses in a concise and easily interpretable manner.</p>
 <p><code>multiverse</code> is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.</p>
 <p>Steegen et al. first put forth the concept of <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">multiverse analysis</a>; Simonsohn et al. put forth a similar notion called the <a href="https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&amp;context=marketing_papers">Specification curve analysis</a>.</p>
-<p><code>multidy</code> attempts to make it easy to declare alternate analysis paths by declaring <strong>analysis parameters</strong> at different levels of analysis:</p>
+<p><code>multiverse</code> attempts to make it easy to declare alternate analysis paths by declaring <strong>analysis parameters</strong> at different levels of analysis:</p>
 <ul>
 <li><p><strong>Data substitution parameters</strong> offer to switch between different raw datasets, either collected or simulated.</p></li>
 <li><p><strong>Data processing parameters</strong> offer to process the same raw data in different ways before it is analyzed.</p></li>
 <li><p><strong>Modeling parameters</strong> offer different ways of analyzing the same processed data</p></li>
 <li><p><strong>Presentation parameters</strong> offer different ways of presenting analysis outcomes</p></li>
 </ul>
-<p>The <code>multidy</code> documentation follows the tidyverse syntax</p>
+<p>The <code>multiverse</code> documentation follows the tidyverse syntax</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -907,10 +908,10 @@
 <div id="defining-the-multiverse" class="section level2">
 <h2 class="hasAnchor">
 <a href="#defining-the-multiverse" class="anchor"></a>Defining the multiverse</h2>
-<p><code>multidy</code> provides flexible functions which can be used to perform a multiverse analysis.</p>
+<p><code>multiverse</code> provides flexible functions which can be used to perform a multiverse analysis.</p>
 <p>The first step is to define a <em>new multiverse</em>. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.</p>
 <div class="sourceCode" id="cb7"><pre class="r"><span class="no">M</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/multiverse.html">multiverse</a></span>()</pre></div>
-<p>The next step is to define our possible analyses inside the multiverse. The <code>multidy</code> package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above).</p>
+<p>The next step is to define our possible analyses inside the multiverse. The <code>multiverse</code> package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above).</p>
 <p>Consider these first few lines from the transformation code in the single analysis above:</p>
 <div class="sourceCode" id="cb8"><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span> <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>(<span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span>) <span class="kw">%&gt;%</span>
@@ -976,9 +977,9 @@
 <li>
 <code>conditions</code>, which is a list of conditions (we’ll define this later)</li>
 <li>
-<code>multiverse_table</code>, which is a tibble consisting of all possible combination of values for the multiverse</li>
+<code>expand</code>, which is a tibble consisting of all possible combination of values for the multiverse</li>
 </ol>
-<!-- end list --><div class="sourceCode" id="cb13"><pre class="r"><span class="fu">multiverse_table</span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu">select</span>(-<span class="no">.code</span>)</pre></div>
+<!-- end list --><div class="sourceCode" id="cb13"><pre class="r"><span class="fu"><a href="reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu">select</span>(-<span class="no">.code</span>)</pre></div>
 <div class="kable-table">
 <table class="table">
 <thead><tr class="header">
@@ -991,42 +992,35 @@
 <tr class="odd">
 <td align="right">1</td>
 <td align="left">mc_option1</td>
-<td align="left">list(menstrual_calculation = “mc_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">mc_option1</td>
+<td align="left">&lt;environment: 0x7f8e594aa478&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">mc_option2</td>
-<td align="left">list(menstrual_calculation = “mc_option2”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">mc_option2</td>
+<td align="left">&lt;environment: 0x7f8e594d3c50&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="left">mc_option3</td>
-<td align="left">list(menstrual_calculation = “mc_option3”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">mc_option3</td>
+<td align="left">&lt;environment: 0x7f8e594feef8&gt;</td>
 </tr>
 </tbody>
 </table>
 </div>
 <ol>
 <li>
-<code>current_parameter_assignment</code>, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.</li>
-</ol>
-<!-- end list --><div class="sourceCode" id="cb14"><pre class="r"><span class="fu">default_parameter_assignment</span>(<span class="no">M</span>)
-<span class="co">#&gt; $menstrual_calculation</span>
-<span class="co">#&gt; [1] "mc_option1"</span></pre></div>
-<ol>
-<li>
 <code>code</code>, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.</li>
 </ol>
-<!-- end list --><div class="sourceCode" id="cb15"><pre class="r"><span class="fu"><a href="reference/accessors.html">code</a></span>(<span class="no">M</span>)
-<span class="co">#&gt; [[1]]</span>
+<!-- end list --><div class="sourceCode" id="cb14"><pre class="r"><span class="fu"><a href="reference/accessors.html">code</a></span>(<span class="no">M</span>)
+<span class="co">#&gt; $`1`</span>
 <span class="co">#&gt; {</span>
 <span class="co">#&gt;     df &lt;- data.raw.study2</span>
 <span class="co">#&gt; }</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; $`2`</span>
 <span class="co">#&gt; {</span>
 <span class="co">#&gt;     df &lt;- df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - </span>
 <span class="co">#&gt;         StartDateofPeriodBeforeLast)</span>
@@ -1040,7 +1034,7 @@
 <h2 class="hasAnchor">
 <a href="#running-a-single-analysis-from-the-multiverse" class="anchor"></a>Running a single analysis from the multiverse</h2>
 <p>At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable <code>df</code>. We can see the result of this analysis in the appropriate row (universe) of the multiverse table.</p>
-<div class="sourceCode" id="cb16"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
+<div class="sourceCode" id="cb15"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
 <div class="kable-table">
 <table class="table">
 <colgroup>
@@ -1292,7 +1286,8 @@
 <h2 class="hasAnchor">
 <a href="#a-multiverse-with-all-possible-combinations-specified" class="anchor"></a>A multiverse with all possible combinations specified</h2>
 <p>Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining <code>Relationship</code> and <code>Fertility</code>, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. We’ll also try the more concise <code>&lt;-</code> assignment operator now.</p>
-<div class="sourceCode" id="cb17"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">&lt;-</span> ~ <span class="no">df</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb16"><pre class="r"><span class="fu"><a href="reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
     <span class="fu">mutate</span>(<span class="kw">Relationship</span> <span class="kw">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span>( <span class="no">relationship_status</span>,
       <span class="st">"rs_option1"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
       <span class="st">"rs_option2"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
@@ -1317,15 +1312,16 @@
         <span class="st">"fer_option3"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">9</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">18</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>)) ),
         <span class="st">"fer_option4"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">8</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) ),
         <span class="st">"fer_option5"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">8</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) )
-    ))</pre></div>
+    ))
+})</pre></div>
 <p>Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.</p>
-<div class="sourceCode" id="cb18"><pre class="r"><span class="fu"><a href="reference/accessors.html">code</a></span>(<span class="no">M</span>)
-<span class="co">#&gt; [[1]]</span>
+<div class="sourceCode" id="cb17"><pre class="r"><span class="fu"><a href="reference/accessors.html">code</a></span>(<span class="no">M</span>)
+<span class="co">#&gt; $`1`</span>
 <span class="co">#&gt; {</span>
 <span class="co">#&gt;     df &lt;- data.raw.study2</span>
 <span class="co">#&gt; }</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; $`2`</span>
 <span class="co">#&gt; {</span>
 <span class="co">#&gt;     df &lt;- df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - </span>
 <span class="co">#&gt;         StartDateofPeriodBeforeLast)</span>
@@ -1335,7 +1331,7 @@
 <span class="co">#&gt;         "mc_option3" ~ StartDateNext))</span>
 <span class="co">#&gt; }</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; $`3`</span>
 <span class="co">#&gt; {</span>
 <span class="co">#&gt;     df &lt;- df %&gt;% mutate(Relationship = branch(relationship_status, </span>
 <span class="co">#&gt;         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == </span>
@@ -1362,21 +1358,21 @@
 <span class="co">#&gt;             factor(ifelse(CycleDay &gt;= 8 &amp; CycleDay &lt;= 17, "high", </span>
 <span class="co">#&gt;                 "low"))))</span>
 <span class="co">#&gt; }</span></pre></div>
-<p>The <code>multiverse_table</code> will contain all the possible combinations of the parameter options that have been identified.</p>
-<div class="sourceCode" id="cb19"><pre class="r"><span class="fu">multiverse_table</span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+<p>The <code>expand</code> function will contain all the possible combinations of the parameter options that have been identified.</p>
+<div class="sourceCode" id="cb18"><pre class="r"><span class="fu"><a href="reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(-<span class="no">.code</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
 <div class="kable-table">
 <table class="table">
 <colgroup>
-<col width="3%">
-<col width="8%">
-<col width="7%">
 <col width="4%">
-<col width="4%">
-<col width="4%">
-<col width="62%">
-<col width="4%">
+<col width="11%">
+<col width="10%">
+<col width="6%">
+<col width="6%">
+<col width="6%">
+<col width="36%">
+<col width="16%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">.universe</th>
@@ -1396,68 +1392,68 @@
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">list(menstrual_calculation = “mc_option1”, relationship_status = “rs_option1”, cycle_length = “cl_option1”, certainty = “cer_option1”, fertile = “fer_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
+<td align="left">&lt;environment: 0x7f8e5a050590&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="left">mc_option2</td>
+<td align="left">mc_option1</td>
 <td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">list(menstrual_calculation = “mc_option2”, relationship_status = “rs_option1”, cycle_length = “cl_option1”, certainty = “cer_option1”, fertile = “fer_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">fer_option2</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
+<td align="left">&lt;environment: 0x7f8e5a1ac818&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
-<td align="left">mc_option3</td>
+<td align="left">mc_option1</td>
 <td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">list(menstrual_calculation = “mc_option3”, relationship_status = “rs_option1”, cycle_length = “cl_option1”, certainty = “cer_option1”, fertile = “fer_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">fer_option3</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option3</td>
+<td align="left">&lt;environment: 0x7f8e5a2267a8&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
 <td align="left">mc_option1</td>
-<td align="left">rs_option2</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">list(menstrual_calculation = “mc_option1”, relationship_status = “rs_option2”, cycle_length = “cl_option1”, certainty = “cer_option1”, fertile = “fer_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">fer_option4</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option4</td>
+<td align="left">&lt;environment: 0x7f8e5a2c3260&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
-<td align="left">mc_option2</td>
-<td align="left">rs_option2</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">list(menstrual_calculation = “mc_option2”, relationship_status = “rs_option2”, cycle_length = “cl_option1”, certainty = “cer_option1”, fertile = “fer_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">fer_option5</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option5</td>
+<td align="left">&lt;environment: 0x7f8e5a358e00&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
-<td align="left">mc_option3</td>
-<td align="left">rs_option2</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
-<td align="left">cer_option1</td>
+<td align="left">cer_option2</td>
 <td align="left">fer_option1</td>
-<td align="left">list(menstrual_calculation = “mc_option3”, relationship_status = “rs_option2”, cycle_length = “cl_option1”, certainty = “cer_option1”, fertile = “fer_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option2, fer_option1</td>
+<td align="left">&lt;environment: 0x7f8e5a3c9bc8&gt;</td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>In our multiverse we have identified 5 options for calculating <code>fertility</code>, 3 options for calculating <code>menstrual calculation</code> and <code>relationship status</code> each, 3 wyas of excluding participants based on their <code>cycle length</code> and 2 ways of excluding participants based on the self-reported <code>certainty</code> of their responses.</p>
 <p>This results in $ 5 3 3 3 2 = 270$ possible combinations.</p>
-<div class="sourceCode" id="cb20"><pre class="r"><span class="fu">multiverse_table</span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()
+<div class="sourceCode" id="cb19"><pre class="r"><span class="fu"><a href="reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()
 <span class="co">#&gt; [1] 270</span></pre></div>
 <p>We can then inspect the default analysis the default single universe analysis from this multiverse:</p>
-<div class="sourceCode" id="cb21"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb20"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
 <div class="kable-table">
 <table class="table">
@@ -1731,7 +1727,7 @@
 <h4 class="hasAnchor">
 <a href="#the-when-operator" class="anchor"></a>The %when% operator</h4>
 <p>There are two ways in which you can specify the <code>%when%</code> operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.</p>
-<div class="sourceCode" id="cb22"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb21"><pre class="r">  <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
     <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> ) <span class="kw">%&gt;%</span>
     <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
             <span class="st">"mc_option1"</span> ~ (<span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>) <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>),
@@ -1739,7 +1735,7 @@
             <span class="st">"mc_option3"</span> ~ <span class="no">StartDateNext</span>)
     )</pre></div>
 <p>The other is to specify it at the head of the branch, right after the option name:</p>
-<div class="sourceCode" id="cb23"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span>  <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb22"><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span>  <span class="kw">%&gt;%</span>
     <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
             <span class="st">"mc_option1"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option3"</span>) ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
             <span class="st">"mc_option2"</span> <span class="kw">%when%</span> (<span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>) ~ (<span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>),
@@ -1752,7 +1748,7 @@
 <p>Within the branch assert function, the user can specify any logical operation.</p>
 <p>For eg: the above logical operations can be specified as: <code>branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3")</code> or <code>branch_assert(!(menstrual_calculation == "mc_option1" | cycle_length == "cl_option3"))</code></p>
 <p>Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the <code>branch_assert()</code> function in our example as:</p>
-<div class="sourceCode" id="cb24"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span>  <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb23"><pre class="r"><span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span>  <span class="kw">%&gt;%</span>
     <span class="fu">mutate</span>(<span class="kw">NextMenstrualOnset</span> <span class="kw">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span>(<span class="no">menstrual_calculation</span>,
             <span class="st">"mc_option1"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ComputedCycleLength</span>,
             <span class="st">"mc_option2"</span> ~ <span class="no">StartDateofLastPeriod</span> + <span class="no">ReportedCycleLength</span>,
@@ -1761,8 +1757,10 @@
     <span class="fu">branch_assert</span>( ! (<span class="no">menstrual_calculation</span> <span class="kw">==</span> <span class="st">"mc_option1"</span> <span class="kw">&amp;</span> <span class="no">cycle_length</span> <span class="kw">==</span> <span class="st">"cl_option3"</span>)) <span class="kw">%&gt;%</span>
     <span class="fu">branch_assert</span>( !(<span class="no">menstrual_calculation</span> <span class="kw">==</span> <span class="st">"mc_option2"</span> <span class="kw">&amp;</span> <span class="no">cycle_length</span> <span class="kw">!=</span> <span class="st">"cl_option2"</span>))</pre></div>
 <p>Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let’s update our example by including these cnditions:</p>
-<div class="sourceCode" id="cb25"><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="reference/multiverse.html">multiverse</a></span>()
-<span class="no">M</span>$<span class="no">df</span> <span class="kw">&lt;-</span> ~ <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb24"><pre class="r"><span class="no">M</span> <span class="kw">=</span> <span class="fu"><a href="reference/multiverse.html">multiverse</a></span>()
+
+<span class="fu"><a href="reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">data.raw.study2</span>  <span class="kw">%&gt;%</span>
     <span class="fu">mutate</span>( <span class="kw">ComputedCycleLength</span> <span class="kw">=</span> <span class="no">StartDateofLastPeriod</span> - <span class="no">StartDateofPeriodBeforeLast</span> )  <span class="kw">%&gt;%</span>
     <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>( <span class="fu"><a href="reference/branch.html">branch</a></span>(<span class="no">cycle_length</span>,
             <span class="st">"cl_option1"</span> ~ <span class="fl">TRUE</span>,
@@ -1793,9 +1791,10 @@
             <span class="st">"rs_option1"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
             <span class="st">"rs_option2"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
             <span class="st">"rs_option3"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">3</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">4</span>, <span class="st">'Relationship'</span>, <span class="fl">NA</span>))) )
-    )</pre></div>
+    )
+})</pre></div>
 <p>After excluding the inconsistent choice combinations, <span class="math inline">270 − 2 × (5 × 1 × 3 × 1 × 2) = 210</span> choice combinations remain:</p>
-<div class="sourceCode" id="cb26"><pre class="r"><span class="fu">multiverse_table</span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()
+<div class="sourceCode" id="cb25"><pre class="r"><span class="fu"><a href="reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()
 <span class="co">#&gt; [1] 210</span></pre></div>
 <p>Now, we’ve created the complete multiverse that was presented as example #2 from Steegen et al.’s paper.</p>
 </div>
@@ -1808,17 +1807,23 @@
 <h3 class="hasAnchor">
 <a href="#model-2-effect-of-fertility-and-relationship-status-on-religiosity" class="anchor"></a>Model #2: Effect of Fertility and Relationship status on Religiosity</h3>
 <p>The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.</p>
-<div class="sourceCode" id="cb27"><pre class="r"><span class="no">M</span>$<span class="no">df</span> <span class="kw">&lt;-</span> ~ <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>( <span class="kw">RelComp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>((<span class="no">Rel1</span> + <span class="no">Rel2</span> + <span class="no">Rel3</span>)/<span class="fl">3</span>, <span class="fl">2</span>))</pre></div>
+<div class="sourceCode" id="cb26"><pre class="r"><span class="fu"><a href="reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>( <span class="kw">RelComp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>((<span class="no">Rel1</span> + <span class="no">Rel2</span> + <span class="no">Rel3</span>)/<span class="fl">3</span>, <span class="fl">2</span>))
+})</pre></div>
 <p>The authors perform an ANOVA to study the effect of <em>Fertility</em>, <em>Relationship</em> and their interaction term, on the composite Religiosity score. We fit the linear model using the call: <code><a href="https://rdrr.io/r/stats/lm.html">lm( RelComp ~ Fertility * RelationshipStatus, data = df )</a></code> inside our multiverse and save the result to a variable called <code>fit_RelComp</code>.</p>
-<div class="sourceCode" id="cb28"><pre class="r"><span class="no">M</span>$<span class="no">fit_RelComp</span> <span class="kw">&lt;-</span> ~ <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">RelComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span> )</pre></div>
-<p>To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using <code><a href="https://broom.tidymodels.org/reference/reexports.html">broom::tidy</a></code>. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call <code>execute_multiverse</code> to execute our analysis in each multiverse.</p>
-<div class="sourceCode" id="cb29"><pre class="r"><span class="no">M</span>$<span class="no">summary_RelComp</span> <span class="kw">&lt;-</span> ~ <span class="no">fit_RelComp</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+<div class="sourceCode" id="cb27"><pre class="r"><span class="fu"><a href="reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">fit_RelComp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">RelComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span> )
+})</pre></div>
+<p>To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using <code><a href="https://broom.tidymodels.org/reference/reexports.html">broom::tidy</a></code>. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call <code><a href="reference/execute.html">execute_multiverse()</a></code> to execute our analysis in each multiverse.</p>
+<div class="sourceCode" id="cb28"><pre class="r"><span class="fu"><a href="reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+  <span class="no">summary_RelComp</span> <span class="kw">&lt;-</span> <span class="no">fit_RelComp</span> <span class="kw">%&gt;%</span>
+    <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
+})
 
 <span class="fu"><a href="reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></div>
 <p>Now that we have performed the analysis in each universe of the multiverse, we need to plot the data. To plot the data, we need to extract the relevant result data-frame from each universe into a single data-frame. The following code does this, by extracting the variable where the estimates of the model are stored, <code>summary_RelComp</code> and creating a single tidy data-frame that can be accessed easily.</p>
-<div class="sourceCode" id="cb30"><pre class="r"><span class="fu">multiverse_table</span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb29"><pre class="r"><span class="fu"><a href="reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
   <span class="fu">select</span>(-<span class="no">.code</span>) <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span> ) ) <span class="kw">%&gt;%</span>
   <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
@@ -1826,19 +1831,19 @@
 <div class="kable-table">
 <table class="table">
 <colgroup>
-<col width="2%">
 <col width="3%">
-<col width="3%">
-<col width="6%">
-<col width="3%">
-<col width="5%">
-<col width="45%">
-<col width="3%">
+<col width="4%">
+<col width="4%">
+<col width="7%">
+<col width="4%">
+<col width="7%">
+<col width="23%">
 <col width="10%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
+<col width="13%">
+<col width="3%">
+<col width="3%">
+<col width="3%">
+<col width="3%">
 <col width="3%">
 <col width="3%">
 </colgroup>
@@ -1867,10 +1872,10 @@
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option1”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
+<td align="left">&lt;environment: 0x7f8e5a9c1468&gt;</td>
 <td align="left">(Intercept)</td>
-<td align="right">6.374912</td>
+<td align="right">6.3749123</td>
 <td align="right">0.4044011</td>
 <td align="right">15.763834</td>
 <td align="right">0.0000000</td>
@@ -1884,10 +1889,10 @@
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option1”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
+<td align="left">&lt;environment: 0x7f8e5a9c1468&gt;</td>
 <td align="left">Fertilitylow</td>
-<td align="right">-1.199386</td>
+<td align="right">-1.1993860</td>
 <td align="right">0.5349724</td>
 <td align="right">-2.241958</td>
 <td align="right">0.0257021</td>
@@ -1901,10 +1906,10 @@
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option1”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
+<td align="left">&lt;environment: 0x7f8e5a9c1468&gt;</td>
 <td align="left">RelationshipStatusSingle</td>
-<td align="right">-1.456830</td>
+<td align="right">-1.4568301</td>
 <td align="right">0.5396630</td>
 <td align="right">-2.699518</td>
 <td align="right">0.0073420</td>
@@ -1918,10 +1923,10 @@
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option1”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
+<td align="left">&lt;environment: 0x7f8e5a9c1468&gt;</td>
 <td align="left">Fertilitylow:RelationshipStatusSingle</td>
-<td align="right">2.028777</td>
+<td align="right">2.0287775</td>
 <td align="right">0.7155526</td>
 <td align="right">2.835260</td>
 <td align="right">0.0048931</td>
@@ -1930,112 +1935,112 @@
 </tr>
 <tr class="odd">
 <td align="right">2</td>
-<td align="left">cl_option2</td>
+<td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option2”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">rs_option2</td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
+<td align="left">&lt;environment: 0x7f8e5a9fe400&gt;</td>
 <td align="left">(Intercept)</td>
-<td align="right">6.310698</td>
-<td align="right">0.4703930</td>
-<td align="right">13.415798</td>
+<td align="right">5.8375556</td>
+<td align="right">0.3230419</td>
+<td align="right">18.070582</td>
 <td align="right">0.0000000</td>
-<td align="right">5.3839511</td>
-<td align="right">7.2374442</td>
+<td align="right">5.2018144</td>
+<td align="right">6.4732968</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="left">cl_option2</td>
+<td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option2”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">rs_option2</td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
+<td align="left">&lt;environment: 0x7f8e5a9fe400&gt;</td>
 <td align="left">Fertilitylow</td>
-<td align="right">-1.224730</td>
-<td align="right">0.6121526</td>
-<td align="right">-2.000694</td>
-<td align="right">0.0465808</td>
-<td align="right">-2.4307646</td>
-<td align="right">-0.0186953</td>
+<td align="right">-0.6595047</td>
+<td align="right">0.4288936</td>
+<td align="right">-1.537688</td>
+<td align="right">0.1251895</td>
+<td align="right">-1.5035602</td>
+<td align="right">0.1845508</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
-<td align="left">cl_option2</td>
+<td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option2”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">rs_option2</td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
+<td align="left">&lt;environment: 0x7f8e5a9fe400&gt;</td>
 <td align="left">RelationshipStatusSingle</td>
-<td align="right">-1.485288</td>
-<td align="right">0.6142040</td>
-<td align="right">-2.418232</td>
-<td align="right">0.0163609</td>
-<td align="right">-2.6953641</td>
-<td align="right">-0.2752116</td>
+<td align="right">-0.9123056</td>
+<td align="right">0.5823721</td>
+<td align="right">-1.566534</td>
+<td align="right">0.1182885</td>
+<td align="right">-2.0584043</td>
+<td align="right">0.2337932</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="left">cl_option2</td>
+<td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option2”, certainty = “cer_option1”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">rs_option2</td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
+<td align="left">&lt;environment: 0x7f8e5a9fe400&gt;</td>
 <td align="left">Fertilitylow:RelationshipStatusSingle</td>
-<td align="right">2.088903</td>
-<td align="right">0.8141590</td>
-<td align="right">2.565719</td>
-<td align="right">0.0109206</td>
-<td align="right">0.4848851</td>
-<td align="right">3.6929217</td>
+<td align="right">1.9293490</td>
+<td align="right">0.7719840</td>
+<td align="right">2.499208</td>
+<td align="right">0.0129869</td>
+<td align="right">0.4100972</td>
+<td align="right">3.4486009</td>
 </tr>
 <tr class="odd">
-<td align="right">4</td>
+<td align="right">3</td>
 <td align="left">cl_option1</td>
-<td align="left">cer_option2</td>
+<td align="left">cer_option1</td>
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option1”, certainty = “cer_option2”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">rs_option3</td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option3</td>
+<td align="left">&lt;environment: 0x7f8e5aa43a88&gt;</td>
 <td align="left">(Intercept)</td>
-<td align="right">6.563125</td>
-<td align="right">0.4497895</td>
-<td align="right">14.591549</td>
+<td align="right">6.3749123</td>
+<td align="right">0.4024088</td>
+<td align="right">15.841881</td>
 <td align="right">0.0000000</td>
-<td align="right">5.6769902</td>
-<td align="right">7.4492598</td>
+<td align="right">5.5818823</td>
+<td align="right">7.1679422</td>
 </tr>
 <tr class="even">
-<td align="right">4</td>
+<td align="right">3</td>
 <td align="left">cl_option1</td>
-<td align="left">cer_option2</td>
+<td align="left">cer_option1</td>
 <td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">list(cycle_length = “cl_option1”, certainty = “cer_option2”, menstrual_calculation = “mc_option1”, fertile = “fer_option1”, relationship_status = “rs_option1”)</td>
-<td align="left"><environment></environment></td>
+<td align="left">rs_option3</td>
+<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option3</td>
+<td align="left">&lt;environment: 0x7f8e5aa43a88&gt;</td>
 <td align="left">Fertilitylow</td>
-<td align="right">-1.461028</td>
-<td align="right">0.5991144</td>
-<td align="right">-2.438646</td>
-<td align="right">0.0154841</td>
-<td align="right">-2.6413496</td>
-<td align="right">-0.2807068</td>
+<td align="right">-1.1993860</td>
+<td align="right">0.5323368</td>
+<td align="right">-2.253059</td>
+<td align="right">0.0252328</td>
+<td align="right">-2.2484660</td>
+<td align="right">-0.1503059</td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>We then take this data frame and plot the results as a confidence interval and point estimate using <code>ggplot2</code>. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use <code>gganimate</code> to animate through the results of each universe to quickly get an overview of the robustness of the results.</p>
 <p>Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette <a href="visualizing-multiverse.html"><code>Extracting and Visualizing the results of a multiverse analysis</code></a></p>
-<div class="sourceCode" id="cb31"><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu">multiverse_table</span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb30"><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu">map</span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu">unnest</span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu">mutate</span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu">recode</span>( <span class="no">term</span>,
@@ -2079,25 +2084,18 @@
 <ul class="list-unstyled">
 <li>
 <a href="http://abhsarma.github.io">Abhraneel Sarma</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Michael Moon <br><small class="roles"> Author </small>  </li>
 <li>
 <a href="http://www.mjskay.com">Matthew Kay</a> <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://codecov.io/gh/MUCollective/multiverse"><img src="https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="https://github.com/MUCollective/multidy/actions"><img src="https://github.com/MUCollective/multidy/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-</ul>
-</div>
-</div>
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
+  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, Michael Moon, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">

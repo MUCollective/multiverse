@@ -66,10 +66,13 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
+      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+    </li>
+    <li>
+      <a href="../articles/hurricane.html">Are hurricanes with more female names deadlier --- an implementation using multiverse</a>
     </li>
     <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
@@ -90,13 +93,12 @@
 
       
 
-      </header><div class="row">
+      </header><script src="Conditions_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Declaring conditions in the multiverse</h1>
-                        <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2020-08-21</h4>
+            <h4 class="date">2020-10-28</h4>
       
       
       <div class="hidden name"><code>Conditions.Rmd</code></div>
@@ -177,12 +179,12 @@
 ##   .universe cycle_length menstrual_calcula… .parameter_assign… .code    .results
 ##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;              &lt;list&gt;             &lt;list&gt;   &lt;list&gt;  
 ## 1         1 cl_option1   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 2         2 cl_option2   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 3         4 cl_option1   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 4         6 cl_option3   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 5         7 cl_option1   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 6         8 cl_option2   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 7         9 cl_option3   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;</code></pre>
+## 2         2 cl_option1   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 3         3 cl_option1   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 4         4 cl_option2   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 5         5 cl_option2   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 6         6 cl_option3   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 7         7 cl_option3   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;</code></pre>
 </div>
 <div id="the-branch_assert-function" class="section level4">
 <h4 class="hasAnchor">
@@ -218,12 +220,12 @@
 ##   .universe cycle_length menstrual_calcula… .parameter_assign… .code    .results
 ##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;              &lt;list&gt;             &lt;list&gt;   &lt;list&gt;  
 ## 1         1 cl_option1   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 2         2 cl_option2   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 3         4 cl_option1   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 4         6 cl_option3   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 5         7 cl_option1   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 6         8 cl_option2   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
-## 7         9 cl_option3   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;</code></pre>
+## 2         2 cl_option1   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 3         3 cl_option1   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 4         4 cl_option2   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 5         5 cl_option2   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 6         6 cl_option3   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 7         7 cl_option3   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;</code></pre>
 <p><strong>Note</strong>: in this vignette we used the script-oriented <code><a href="../reference/inside.html">inside()</a></code> function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the <code>multiverse-code-block</code> for more interactive programming. To implement this using a <code>multiverse-code-block</code>, we can simply place the code passed into the inside function (the second argument) inside a code block of type <code>multiverse</code>, provide it with the appropriate labels and multiverse object, and execute it. See (multiverse-in-rmd) and (branch) for more details and examples.</p>
 </div>
 </div>
@@ -240,7 +242,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
+  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, Michael Moon, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">

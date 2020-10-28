@@ -17,8 +17,9 @@ Simonsohn et al. put forth a similar notion called the [Specification
 curve
 analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
 
-`multidy` attempts to make it easy to declare alternate analysis paths
-by declaring **analysis parameters** at different levels of analysis:
+`multiverse` attempts to make it easy to declare alternate analysis
+paths by declaring **analysis parameters** at different levels of
+analysis:
 
   - **Data substitution parameters** offer to switch between different
     raw datasets, either collected or simulated.
@@ -32,7 +33,7 @@ by declaring **analysis parameters** at different levels of analysis:
   - **Presentation parameters** offer different ways of presenting
     analysis outcomes
 
-The `multidy` documentation follows the tidyverse syntax
+The `multiverse` documentation follows the tidyverse syntax
 
 ## Installation
 
@@ -189,7 +190,7 @@ analysis with ease.
 
 ## Defining the multiverse
 
-`multidy` provides flexible functions which can be used to perform a
+`multiverse` provides flexible functions which can be used to perform a
 multiverse analysis.
 
 The first step is to define a *new multiverse*. We will use the
@@ -201,7 +202,7 @@ M <- multiverse()
 ```
 
 The next step is to define our possible analyses inside the multiverse.
-The `multidy` package includes functions that aim to make it easy to
+The `multiverse` package includes functions that aim to make it easy to
 write multiverse analyses in as close a way to a single universe
 analysis as possible (as seen in the single analysis shown above).
 
@@ -308,39 +309,26 @@ parameters(M)
 
 2.  `conditions`, which is a list of conditions (we’ll define this
     later)
-3.  `multiverse_table`, which is a tibble consisting of all possible
-    combination of values for the multiverse
+3.  `expand`, which is a tibble consisting of all possible combination
+    of values for the multiverse
 
 <!-- end list -->
 
 ``` r
-multiverse_table(M) %>% select(-.code)
+expand(M) %>% select(-.code)
 ```
 
 <div class="kable-table">
 
-| .universe | menstrual\_calculation | .parameter\_assignment                       | .results      |
-| --------: | :--------------------- | :------------------------------------------- | :------------ |
-|         1 | mc\_option1            | list(menstrual\_calculation = “mc\_option1”) | <environment> |
-|         2 | mc\_option2            | list(menstrual\_calculation = “mc\_option2”) | <environment> |
-|         3 | mc\_option3            | list(menstrual\_calculation = “mc\_option3”) | <environment> |
+| .universe | menstrual\_calculation | .parameter\_assignment | .results                        |
+| --------: | :--------------------- | :--------------------- | :------------------------------ |
+|         1 | mc\_option1            | mc\_option1            | \<environment: 0x7f8e594aa478\> |
+|         2 | mc\_option2            | mc\_option2            | \<environment: 0x7f8e594d3c50\> |
+|         3 | mc\_option3            | mc\_option3            | \<environment: 0x7f8e594feef8\> |
 
 </div>
 
-4.  `current_parameter_assignment`, which is a list of one set of
-    options for each parameter defined in the multiverse. It initialises
-    to the first option for each parameter. This should be the default
-    analysis.
-
-<!-- end list -->
-
-``` r
-default_parameter_assignment(M)
-#> $menstrual_calculation
-#> [1] "mc_option1"
-```
-
-5.  `code`, which is the code that the user passes to the multiverse to
+4.  `code`, which is the code that the user passes to the multiverse to
     conduct a multiverse analysis. However, we do not execute this code
     and it is stored unevaluated. The user can interactively edit and
     rewrte this code, and can execute it for the current analysis or the
@@ -350,12 +338,12 @@ default_parameter_assignment(M)
 
 ``` r
 code(M)
-#> [[1]]
+#> $`1`
 #> {
 #>     df <- data.raw.study2
 #> }
 #> 
-#> [[2]]
+#> $`2`
 #> {
 #>     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
 #>         StartDateofPeriodBeforeLast)
@@ -403,7 +391,8 @@ multiverse object defined above. We’ll also try the more concise `<-`
 assignment operator now.
 
 ``` r
-M$df <- ~ df %>%
+inside(M, {
+  df <- df %>%
     mutate(Relationship = branch( relationship_status, 
       "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
       "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
@@ -429,6 +418,7 @@ M$df <- ~ df %>%
         "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
         "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     ))
+})
 ```
 
 Since the multiverse object has already been created and the one
@@ -437,12 +427,12 @@ previous code.
 
 ``` r
 code(M)
-#> [[1]]
+#> $`1`
 #> {
 #>     df <- data.raw.study2
 #> }
 #> 
-#> [[2]]
+#> $`2`
 #> {
 #>     df <- df %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
 #>         StartDateofPeriodBeforeLast)
@@ -452,7 +442,7 @@ code(M)
 #>         "mc_option3" ~ StartDateNext))
 #> }
 #> 
-#> [[3]]
+#> $`3`
 #> {
 #>     df <- df %>% mutate(Relationship = branch(relationship_status, 
 #>         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == 
@@ -481,25 +471,25 @@ code(M)
 #> }
 ```
 
-The `multiverse_table` will contain all the possible combinations of the
+The `expand` function will contain all the possible combinations of the
 parameter options that have been identified.
 
 ``` r
-multiverse_table(M) %>%
+expand(M) %>%
   select(-.code) %>%
   head()
 ```
 
 <div class="kable-table">
 
-| .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                                                                                                                                  | .results      |
-| --------: | :--------------------- | :------------------- | :------------ | :----------- | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------ |
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
-|         2 | mc\_option2            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
-|         3 | mc\_option3            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option1”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
-|         4 | mc\_option1            | rs\_option2          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option1”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
-|         5 | mc\_option2            | rs\_option2          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option2”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
-|         6 | mc\_option3            | rs\_option2          | cl\_option1   | cer\_option1 | fer\_option1 | list(menstrual\_calculation = “mc\_option3”, relationship\_status = “rs\_option2”, cycle\_length = “cl\_option1”, certainty = “cer\_option1”, fertile = “fer\_option1”) | <environment> |
+| .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                        |
+| --------: | :--------------------- | :------------------- | :------------ | :----------- | :----------- | :------------------------------------------------------------------- | :------------------------------ |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7f8e5a050590\> |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7f8e5a1ac818\> |
+|         3 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option3 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option3 | \<environment: 0x7f8e5a2267a8\> |
+|         4 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option4 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option4 | \<environment: 0x7f8e5a2c3260\> |
+|         5 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option5 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option5 | \<environment: 0x7f8e5a358e00\> |
+|         6 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option2 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option2, fer\_option1 | \<environment: 0x7f8e5a3c9bc8\> |
 
 </div>
 
@@ -512,7 +502,7 @@ self-reported `certainty` of their responses.
 This results in $ 5 3 3 3 2 = 270$ possible combinations.
 
 ``` r
-multiverse_table(M) %>% nrow()
+expand(M) %>% nrow()
 #> [1] 270
 ```
 
@@ -567,7 +557,7 @@ first is to specify it at the end of the branch. This will work even if
 you omit the branch option name.
 
 ``` r
-M$df <- data.raw.study2  %>%
+  df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
             "mc_option1" ~ (StartDateofLastPeriod + ComputedCycleLength) %when% (cycle_length != "cl_option3"),
@@ -580,7 +570,7 @@ The other is to specify it at the head of the branch, right after the
 option name:
 
 ``` r
-M$df <- df  %>%
+df <- df  %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
             "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
             "mc_option2" %when% (cycle_length != "cl_option2") ~ (StartDateofLastPeriod + ReportedCycleLength),
@@ -603,7 +593,7 @@ easily interpretable. We specify the conditionals using the
 `branch_assert()` function in our example as:
 
 ``` r
-M$df <- df  %>%
+df <- df  %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
             "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -619,7 +609,9 @@ these cnditions:
 
 ``` r
 M = multiverse()
-M$df <- ~ data.raw.study2  %>%
+
+inside(M, {
+  df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
     dplyr::filter( branch(cycle_length,
             "cl_option1" ~ TRUE,
@@ -651,6 +643,7 @@ M$df <- ~ data.raw.study2  %>%
             "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
             "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
     )
+})
 ```
 
 After excluding the inconsistent choice combinations,
@@ -658,7 +651,7 @@ After excluding the inconsistent choice combinations,
 choice combinations remain:
 
 ``` r
-multiverse_table(M) %>% nrow()
+expand(M) %>% nrow()
 #> [1] 210
 ```
 
@@ -677,8 +670,10 @@ The authors compute a composite score of Religiosity by calculating the
 average of the three Religiosity items.
 
 ``` r
-M$df <- ~ df %>%
+inside(M, {
+  df <- df %>%
   mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
+})
 ```
 
 The authors perform an ANOVA to study the effect of *Fertility*,
@@ -688,18 +683,22 @@ score. We fit the linear model using the call: `lm( RelComp ~ Fertility
 result to a variable called `fit_RelComp`.
 
 ``` r
-M$fit_RelComp <- ~ lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+inside(M, {
+  fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+})
 ```
 
 To extract the results from the analysis, we first create a tidy
 data-frame of the results of the model, using `broom::tidy`. Recall that
 declaring a variable in the multiverse only executes it in the default
-universe, and hence we need to call `execute_multiverse` to execute our
-analysis in each multiverse.
+universe, and hence we need to call `execute_multiverse()` to execute
+our analysis in each multiverse.
 
 ``` r
-M$summary_RelComp <- ~ fit_RelComp %>% 
-  broom::tidy( conf.int = TRUE )
+inside(M, {
+  summary_RelComp <- fit_RelComp %>% 
+    broom::tidy( conf.int = TRUE )
+})
 
 execute_multiverse(M)
 ```
@@ -712,7 +711,7 @@ where the estimates of the model are stored, `summary_RelComp` and
 creating a single tidy data-frame that can be accessed easily.
 
 ``` r
-multiverse_table(M) %>%
+expand(M) %>%
   select(-.code) %>%
   mutate( summary = map(.results, "summary_RelComp" ) ) %>%
   unnest( cols = c(summary) ) %>%
@@ -721,18 +720,18 @@ multiverse_table(M) %>%
 
 <div class="kable-table">
 
-| .universe | cycle\_length | certainty    | menstrual\_calculation | fertile      | relationship\_status | .parameter\_assignment                                                                                                                                                  | .results      | term                                  |   estimate | std.error |  statistic |   p.value |    conf.low |   conf.high |
-| --------: | :------------ | :----------- | :--------------------- | :----------- | :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------ | :------------------------------------ | ---------: | --------: | ---------: | --------: | ----------: | ----------: |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | (Intercept)                           |   6.374912 | 0.4044011 |  15.763834 | 0.0000000 |   5.5790575 |   7.1707671 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow                          | \-1.199386 | 0.5349724 | \-2.241958 | 0.0257021 | \-2.2522029 | \-0.1465691 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | RelationshipStatusSingle              | \-1.456830 | 0.5396630 | \-2.699518 | 0.0073420 | \-2.5188779 | \-0.3947823 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow:RelationshipStatusSingle |   2.028777 | 0.7155526 |   2.835260 | 0.0048931 |   0.6205818 |   3.4369732 |
-|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | (Intercept)                           |   6.310698 | 0.4703930 |  13.415798 | 0.0000000 |   5.3839511 |   7.2374442 |
-|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow                          | \-1.224730 | 0.6121526 | \-2.000694 | 0.0465808 | \-2.4307646 | \-0.0186953 |
-|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | RelationshipStatusSingle              | \-1.485288 | 0.6142040 | \-2.418232 | 0.0163609 | \-2.6953641 | \-0.2752116 |
-|         2 | cl\_option2   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option2”, certainty = “cer\_option1”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow:RelationshipStatusSingle |   2.088903 | 0.8141590 |   2.565719 | 0.0109206 |   0.4848851 |   3.6929217 |
-|         4 | cl\_option1   | cer\_option2 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option2”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | (Intercept)                           |   6.563125 | 0.4497895 |  14.591549 | 0.0000000 |   5.6769902 |   7.4492598 |
-|         4 | cl\_option1   | cer\_option2 | mc\_option1            | fer\_option1 | rs\_option1          | list(cycle\_length = “cl\_option1”, certainty = “cer\_option2”, menstrual\_calculation = “mc\_option1”, fertile = “fer\_option1”, relationship\_status = “rs\_option1”) | <environment> | Fertilitylow                          | \-1.461028 | 0.5991144 | \-2.438646 | 0.0154841 | \-2.6413496 | \-0.2807068 |
+| .universe | cycle\_length | certainty    | menstrual\_calculation | fertile      | relationship\_status | .parameter\_assignment                                              | .results                        | term                                  |    estimate | std.error |  statistic |   p.value |    conf.low |   conf.high |
+| --------: | :------------ | :----------- | :--------------------- | :----------- | :------------------- | :------------------------------------------------------------------ | :------------------------------ | :------------------------------------ | ----------: | --------: | ---------: | --------: | ----------: | ----------: |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | (Intercept)                           |   6.3749123 | 0.4044011 |  15.763834 | 0.0000000 |   5.5790575 |   7.1707671 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | Fertilitylow                          | \-1.1993860 | 0.5349724 | \-2.241958 | 0.0257021 | \-2.2522029 | \-0.1465691 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | RelationshipStatusSingle              | \-1.4568301 | 0.5396630 | \-2.699518 | 0.0073420 | \-2.5188779 | \-0.3947823 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | Fertilitylow:RelationshipStatusSingle |   2.0287775 | 0.7155526 |   2.835260 | 0.0048931 |   0.6205818 |   3.4369732 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | (Intercept)                           |   5.8375556 | 0.3230419 |  18.070582 | 0.0000000 |   5.2018144 |   6.4732968 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | Fertilitylow                          | \-0.6595047 | 0.4288936 | \-1.537688 | 0.1251895 | \-1.5035602 |   0.1845508 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | RelationshipStatusSingle              | \-0.9123056 | 0.5823721 | \-1.566534 | 0.1182885 | \-2.0584043 |   0.2337932 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | Fertilitylow:RelationshipStatusSingle |   1.9293490 | 0.7719840 |   2.499208 | 0.0129869 |   0.4100972 |   3.4486009 |
+|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7f8e5aa43a88\> | (Intercept)                           |   6.3749123 | 0.4024088 |  15.841881 | 0.0000000 |   5.5818823 |   7.1679422 |
+|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7f8e5aa43a88\> | Fertilitylow                          | \-1.1993860 | 0.5323368 | \-2.253059 | 0.0252328 | \-2.2484660 | \-0.1503059 |
 
 </div>
 
@@ -748,7 +747,7 @@ them in more detail in the vignette [`Extracting and Visualizing the
 results of a multiverse analysis`](visualizing-multiverse.html)
 
 ``` r
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary) ) %>%
   mutate( term = recode( term, 

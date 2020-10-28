@@ -66,10 +66,13 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
+      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+    </li>
+    <li>
+      <a href="../articles/hurricane.html">Are hurricanes with more female names deadlier --- an implementation using multiverse</a>
     </li>
     <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
@@ -90,13 +93,12 @@
 
       
 
-      </header><div class="row">
+      </header><script src="frequentist-multiverse-analysis_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>A multiverse analysis of the efficiency of physical visualizations</h1>
-                        <h4 class="author">Yvonne Jansen and Abhraneel Sarma</h4>
             
-            <h4 class="date">2020-08-21</h4>
+            <h4 class="date">2020-10-28</h4>
       
       
       <div class="hidden name"><code>frequentist-multiverse-analysis.Rmd</code></div>
@@ -218,15 +220,15 @@
 ##    .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##        &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ##  1         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  2         2 bootstrap log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  3         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  4         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  5         5 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  6         6 bootstrap log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  7         7 t based   untransformed  67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  8         8 bootstrap untransformed  67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  9         9 t based   log-transform… 89         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 10        10 bootstrap log-transform… 89         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  2         2 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  3         3 t based   log-transform… 89         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  4         4 t based   log-transform… 95%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  5         5 t based   log-transform… 99%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  6         6 t based   log-transform… 99.9%      &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  7         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  8         8 t based   untransformed  67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  9         9 t based   untransformed  89         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 10        10 t based   untransformed  95%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 14 more rows</code></pre>
 <p>We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options. First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">duration</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">data.userlogs.raw</span>$<span class="no">duration</span>))</pre></body></html></div>
@@ -266,11 +268,11 @@
 ##   .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##       &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ## 1         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 2         2 bootstrap log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 3         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 4         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 5         5 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 6         6 bootstrap log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 2         2 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 3         3 t based   log-transform… 89         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 4         4 t based   log-transform… 95%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 5         5 t based   log-transform… 99%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 6         6 t based   log-transform… 99.9%      &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 1 more variable: summary &lt;list&gt;</code></pre>
 <p>As we can see above, each row in the <code>summary</code> column consists of a <span class="math inline">\(4 \times 4\)</span>, data frame which we will need to unpack. We will use the  function to expand the different columns of the data frame into their own columns. Finally, we use the  function to unnest the rows of the data frame into their own row. Note that we have a <code>.universe</code> column which indexes each universe in our multiverse i.e. each unique analysis combination.</p>
 <p>Below we can see the result of this transformation. You can see that we have created four new columns (<code>modality</code>, <code>estimate</code>, <code>conf.low</code>, <code>conf.high</code>). In addition, we have four rows for each universe corresponding to the results for each of the four conditions in our experiment.</p>
@@ -284,8 +286,8 @@
 ## 2         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## 3         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## 4         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 5         2 bootstrap log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 6         2 bootstrap log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 5         2 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 6         2 t based   log-transform… 67         &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 4 more variables: modality &lt;chr&gt;, estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;,
 ## #   conf.high &lt;dbl&gt;</code></pre>
 </div>
@@ -304,12 +306,12 @@
 <pre><code>## # A tibble: 6 x 11
 ##   .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##       &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
-## 1         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 2         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 3         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 4         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 5         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 6         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 1         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 2         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 3         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 4         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 5        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 6        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 4 more variables: modality &lt;chr&gt;, estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;,
 ## #   conf.high &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df.results</span> <span class="kw">%&gt;%</span>
@@ -342,14 +344,14 @@
 <pre><code>## # A tibble: 96 x 12
 ##    .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##        &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
-##  1         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  2         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  3         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  4         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  5         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  6         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  7         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-##  8         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  1         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  2         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  3         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  4         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  5        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  6        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  7        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+##  8        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ##  9         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## 10         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 86 more rows, and 5 more variables: index &lt;int&gt;, modality &lt;chr&gt;,
@@ -378,14 +380,11 @@
 <div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">df.diffs</span></pre></body></html></div>
 <p>We then execute all the other analysis combinations (universes) in our multiverse.</p>
 <div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
-<pre><code>## Warning in norm.inter(t, adj.alpha): extreme order statistics used as endpoints
-
-## Warning in norm.inter(t, adj.alpha): extreme order statistics used as endpoints</code></pre>
 <div id="extracting-and-visualizing-the-results-from-the-multiverse" class="section level3">
 <h3 class="hasAnchor">
 <a href="#extracting-and-visualizing-the-results-from-the-multiverse" class="anchor"></a>Extracting and visualizing the results from the multiverse</h3>
 <p>We then use the workflow described in the previous section to extract results for each universe in the multiverse. We then use gganimate to plot the results.</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="no">df.results.diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">df.results.diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">df.diffs</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df.diffs</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">data_transform</span>), <span class="no">conf_level</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">ci_method</span>))
@@ -395,12 +394,12 @@
 <pre><code>## # A tibble: 6 x 11
 ##   .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##       &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
-## 1         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 2         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 3         3 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 4         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 5         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
-## 6         4 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 1         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 2         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 3         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 4        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 5        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
+## 6        19 bootstrap untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
 ## # … with 4 more variables: modality &lt;chr&gt;, estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;,
 ## #   conf.high &lt;dbl&gt;</code></pre>
 </div>
@@ -409,7 +408,7 @@
 <h2 class="hasAnchor">
 <a href="#results-2" class="anchor"></a>Results #2</h2>
 <p>A value lower than 1 (i.e., on the left side of the dark line) means the condition on the left is faster than the condition on the right. The confidence intervals are not corrected for multiplicity. The results from this study appear to be relatively robust and consistent across all the possible combinations that we have tried.</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df.results.diff</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">df.results.diff</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">modality</span>)) +
@@ -439,7 +438,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
+  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, Michael Moon, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">

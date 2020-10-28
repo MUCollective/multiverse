@@ -262,7 +262,7 @@ M$df %>%
 ```
 
 ```{r, eval = FALSE, include = FALSE}
-#Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `execute_default()` function and execute it:
+#Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `execute_universe()` function and execute it:
 
 universe_parameter_assignment <- list(
     menstrual_calculation = "mc_option",
@@ -272,7 +272,7 @@ universe_parameter_assignment <- list(
     fertile = "fer_option4"
   )
 
-M %>% execute_default( universe_parameter_assignment ) %>%
+M %>% execute_universe( universe_parameter_assignment ) %>%
   select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
   head()
 ```
@@ -444,7 +444,7 @@ execute_multiverse(M)
 
 ```{r}
 p <- expand(M) %>%
-  extract_variales(summary_FiscConsComp) %>%
+  extract_variables(summary_FiscConsComp) %>%
   unnest( cols = c(summary_FiscConsComp) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
@@ -465,7 +465,7 @@ animate(p, nframes = 210, fps = 2)
 ```{r}
 p <- expand(M) %>%
   extract_variables(summary_SocConsComp) %>%
-  unnest( cols = c(summary) ) %>%
+  unnest( cols = c(summary_SocConsComp) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"

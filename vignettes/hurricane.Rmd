@@ -131,7 +131,7 @@ broom::tidy(fit)
 ```
 
 
-```{multiverse label = default-m-3, inside = M}
+```{multiverse label = default-m-4, inside = M}
 pred <- predict(fit, se.fit = TRUE, type = "response")
 
 pred2expectation <- function(mu, sigma) {

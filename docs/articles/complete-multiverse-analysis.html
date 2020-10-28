@@ -66,10 +66,13 @@
       <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
+      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
     </li>
     <li>
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+    </li>
+    <li>
+      <a href="../articles/hurricane.html">Are hurricanes with more female names deadlier --- an implementation using multiverse</a>
     </li>
     <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
@@ -90,13 +93,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="complete-multiverse-analysis_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>A complete implementation of a multiverse analysis</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2020-08-21</h4>
+            <h4 class="date">2020-10-28</h4>
       
       
       <div class="hidden name"><code>complete-multiverse-analysis.Rmd</code></div>
@@ -412,11 +415,11 @@
 ##   .universe menstrual_calcu… relationship_st… cycle_length certainty fertile
 ##       &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;  
 ## 1         1 mc_option1       rs_option1       cl_option1   cer_opti… fer_op…
-## 2         2 mc_option2       rs_option1       cl_option1   cer_opti… fer_op…
-## 3         3 mc_option3       rs_option1       cl_option1   cer_opti… fer_op…
-## 4         4 mc_option1       rs_option2       cl_option1   cer_opti… fer_op…
-## 5         5 mc_option2       rs_option2       cl_option1   cer_opti… fer_op…
-## 6         6 mc_option3       rs_option2       cl_option1   cer_opti… fer_op…
+## 2         2 mc_option1       rs_option1       cl_option1   cer_opti… fer_op…
+## 3         3 mc_option1       rs_option1       cl_option1   cer_opti… fer_op…
+## 4         4 mc_option1       rs_option1       cl_option1   cer_opti… fer_op…
+## 5         5 mc_option1       rs_option1       cl_option1   cer_opti… fer_op…
+## 6         6 mc_option1       rs_option1       cl_option1   cer_opti… fer_op…
 ## # … with 3 more variables: .parameter_assignment &lt;list&gt;, .code &lt;list&gt;,
 ## #   .results &lt;list&gt;</code></pre>
 <p>In our multiverse we have identified 5 options for calculating <code>fertility</code>, 3 options for calculating <code>menstrual calculation</code> and <code>relationship status</code> each, 3 wyas of excluding participants based on their <code>cycle length</code> and 2 ways of excluding participants based on the self-reported <code>certainty</code> of their responses.</p>
@@ -488,7 +491,7 @@
         <span class="st">"fer_option2"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">6</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">17</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">27</span>, <span class="st">"low"</span>, <span class="fl">NA</span>)) ),
         <span class="st">"fer_option3"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">9</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">18</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="fl">NA</span>)) ),
         <span class="st">"fer_option4"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">8</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) ),
-        <span class="st">"fer_option45"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">8</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) )
+        <span class="st">"fer_option5"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">CycleDay</span> <span class="kw">&gt;=</span> <span class="fl">8</span> <span class="kw">&amp;</span> <span class="no">CycleDay</span> <span class="kw">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="st">"low"</span>) )
     )) <span class="kw">%&gt;%</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">RelationshipStatus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">relationship_status</span>,
         <span class="st">"rs_option1"</span> ~ <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">Relationship</span><span class="kw">==</span><span class="fl">1</span> <span class="kw">|</span> <span class="no">Relationship</span><span class="kw">==</span><span class="fl">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span>)),
@@ -499,6 +502,18 @@
 <p>After excluding the inconsistent choice combinations, <span class="math inline">\(270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210\)</span> choice combinations remain:</p>
 <div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>()</pre></body></html></div>
 <pre><code>## [1] 210</code></pre>
+<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>)$<span class="no">.code</span><span class="kw">[[</span><span class="fl">59</span>]]</pre></body></html></div>
+<pre><code>## $`1`
+## {
+##     df &lt;- data.raw.study2 %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - 
+##         StartDateofPeriodBeforeLast) %&gt;% dplyr::filter(TRUE) %&gt;% 
+##         dplyr::filter(Sure1 &gt; 6 | Sure2 &gt; 6) %&gt;% mutate(NextMenstrualOnset = StartDateofLastPeriod + 
+##         ComputedCycleLength) %&gt;% mutate(CycleDay = 28 - (NextMenstrualOnset - 
+##         DateTesting), CycleDay = ifelse(CycleDay &gt; 1 &amp; CycleDay &lt; 
+##         28, CycleDay, ifelse(CycleDay &lt; 1, 1, 28))) %&gt;% mutate(Fertility = factor(ifelse(CycleDay &gt;= 
+##         8 &amp; CycleDay &lt;= 17, "high", "low"))) %&gt;% mutate(RelationshipStatus = factor(ifelse(Relationship == 
+##         1, "Single", "Relationship")))
+## }</code></pre>
 <p>Now, we’ve created the complete multiverse that was presented as example #2 from Steegen et al.’s paper.</p>
 </div>
 </div>
@@ -510,25 +525,25 @@
 <h3 class="hasAnchor">
 <a href="#model-2-effect-of-fertility-and-relationship-status-on-religiosity" class="anchor"></a>Model #2: Effect of Fertility and Relationship status on Religiosity</h3>
 <p>The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.</p>
-<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">RelComp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>((<span class="no">Rel1</span> + <span class="no">Rel2</span> + <span class="no">Rel3</span>)/<span class="fl">3</span>, <span class="fl">2</span>))
 })</pre></body></html></div>
 <p>The authors perform an ANOVA to study the effect of <em>Fertility</em>, <em>Relationship</em> and their interaction term, on the composite Religiosity score. We fit the linear model using the call: <code><a href="https://rdrr.io/r/stats/lm.html">lm( RelComp ~ Fertility * RelationshipStatus, data = df )</a></code> inside our multiverse and save the result to a variable called <code>fit_RelComp</code>.</p>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">fit_RelComp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">RelComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span> )
 })</pre></body></html></div>
 <p>To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using <code><a href="https://broom.tidymodels.org/reference/reexports.html">broom::tidy</a></code>. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call <code><a href="../reference/execute.html">execute_multiverse()</a></code> to execute our analysis in each multiverse.</p>
-<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+<div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">summary_RelComp</span> <span class="kw">&lt;-</span> <span class="no">fit_RelComp</span> <span class="kw">%&gt;%</span>
     <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
 })
 
 <span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span>(<span class="no">M</span>)</pre></body></html></div>
 <p>Now that we have performed the analysis in each universe of the multiverse, we need to plot the data. To plot the data, we need to extract the relevant result data-frame from each universe into a single data-frame. The following code does this, by extracting the variable where the estimates of the model are stored, <code>summary_RelComp</code> and creating a single tidy data-frame that can be accessed easily.</p>
-<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">summary_RelComp</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary_RelComp</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>( <span class="fl">10</span> )</pre></body></html></div>
 <pre><code>## # A tibble: 10 x 16
 ##    .universe cycle_length certainty menstrual_calcu… fertile relationship_st…
@@ -537,20 +552,20 @@
 ##  2         1 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
 ##  3         1 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
 ##  4         1 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
-##  5         2 cl_option2   cer_opti… mc_option1       fer_op… rs_option1      
-##  6         2 cl_option2   cer_opti… mc_option1       fer_op… rs_option1      
-##  7         2 cl_option2   cer_opti… mc_option1       fer_op… rs_option1      
-##  8         2 cl_option2   cer_opti… mc_option1       fer_op… rs_option1      
-##  9         4 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
-## 10         4 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
+##  5         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
+##  6         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
+##  7         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
+##  8         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
+##  9         3 cl_option1   cer_opti… mc_option1       fer_op… rs_option3      
+## 10         3 cl_option1   cer_opti… mc_option1       fer_op… rs_option3      
 ## # … with 10 more variables: .parameter_assignment &lt;list&gt;, .code &lt;list&gt;,
 ## #   .results &lt;list&gt;, term &lt;chr&gt;, estimate &lt;dbl&gt;, std.error &lt;dbl&gt;,
 ## #   statistic &lt;dbl&gt;, p.value &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</code></pre>
 <p>We then take this data frame and plot the results as a confidence interval and point estimate using <code>ggplot2</code>. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use <code>gganimate</code> to animate through the results of each universe to quickly get an overview of the robustness of the results.</p>
 <p>Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette <a href="visualizing-multiverse.html"><code>Extracting and Visualizing the results of a multiverse analysis</code></a></p>
-<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_RelComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">summary_RelComp</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary_RelComp</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
@@ -563,13 +578,13 @@
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-21-1.gif"><!-- --></p>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-22-1.gif"><!-- --></p>
 </div>
 <div id="models-3---6" class="section level3">
 <h3 class="hasAnchor">
 <a href="#models-3---6" class="anchor"></a>Models #3 - 6</h3>
 <p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. Below we perform these analyses and visualize the results.</p>
-<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
+<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M</span>, {
   <span class="no">fit_FiscConsComp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>( <span class="no">FiscConsComp</span> ~ <span class="no">Fertility</span> * <span class="no">RelationshipStatus</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">df</span>)
   <span class="no">summary_FiscConsComp</span> <span class="kw">&lt;-</span> <span class="no">fit_FiscConsComp</span> <span class="kw">%&gt;%</span>
     <span class="kw pkg">broom</span><span class="kw ns">::</span><span class="fu"><a href="https://broom.tidymodels.org/reference/reexports.html">tidy</a></span>( <span class="kw">conf.int</span> <span class="kw">=</span> <span class="fl">TRUE</span> )
@@ -591,9 +606,9 @@
 <div id="model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="anchor"></a>Model #3: Effect of Fertility and Relationship status on Fiscal political attitudes</h4>
-<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_FiscConsComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">summary_FiscConsComp</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary_FiscConsComp</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
@@ -606,14 +621,14 @@
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-23-1.gif"><!-- --></p>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-24-1.gif"><!-- --></p>
 </div>
 <div id="model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="anchor"></a>Model #4: Effect of Fertility and Relationship status on Social political attitudes</h4>
-<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_SocConsComp"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb44"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">summary_SocConsComp</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary_SocConsComp</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
@@ -626,33 +641,14 @@
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-24-1.gif"><!-- --></p>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-25-1.gif"><!-- --></p>
 </div>
 <div id="model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="section level4">
 <h4 class="hasAnchor">
 <a href="#model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="anchor"></a>Model #5: Effect of Fertility and Relationship status on Voting preferences</h4>
-<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_Donate"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
-                 <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
-                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
-  ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
-  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
-
-<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-25-1.gif"><!-- --></p>
-</div>
-<div id="model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="section level4">
-<h4 class="hasAnchor">
-<a href="#model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="anchor"></a>Model #6: Effect of Fertility and Relationship status on Donation preferences</h4>
-<div class="sourceCode" id="cb44"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">summary</span> <span class="kw">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">.results</span>, <span class="st">"summary_Vote"</span> ) ) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary</span>) ) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb45"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">summary_Donate</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary_Donate</span>) ) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
                  <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
                  <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
@@ -665,6 +661,25 @@
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
 <p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-26-1.gif"><!-- --></p>
+</div>
+<div id="model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="section level4">
+<h4 class="hasAnchor">
+<a href="#model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="anchor"></a>Model #6: Effect of Fertility and Relationship status on Donation preferences</h4>
+<div class="sourceCode" id="cb46"><html><body><pre class="r"><span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span>(<span class="no">summary_Vote</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>( <span class="kw">cols</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">summary_Vote</span>) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="kw">term</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span>( <span class="no">term</span>,
+                 <span class="st">"RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single"</span>,
+                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="kw">=</span> <span class="st">"Single:Fertility_low"</span>
+  ) ) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>() +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>( <span class="kw">xintercept</span> <span class="kw">=</span> <span class="fl">0</span>,  <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'#979797'</span> ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">estimate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span>( <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">xmin</span> <span class="kw">=</span> <span class="no">conf.low</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="no">conf.high</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">term</span>), <span class="kw">height</span> <span class="kw">=</span> <span class="fl">0</span>) +
+  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span>( <span class="no">.universe</span> )
+
+<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span>(<span class="no">p</span>, <span class="kw">nframes</span> <span class="kw">=</span> <span class="fl">210</span>, <span class="kw">fps</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<p><img src="complete-multiverse-analysis_files/figure-html/unnamed-chunk-27-1.gif"><!-- --></p>
 </div>
 </div>
 </div>
@@ -681,7 +696,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
+  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, Michael Moon, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">
