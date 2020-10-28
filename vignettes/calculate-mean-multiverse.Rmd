@@ -1,23 +1,25 @@
 ---
 title: "The most basic multiverse example: calculating the mean"
-author: "Abhraneel Sarma"
+author: ""
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
-  %\usepackage[UTF-8]{inputenc}
+output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_chunk$set(echo = TRUE)
-opts_knit$set(output.dir="vignettes")
 library(dplyr)
 library(tidyr)
 library(purrr)
 library(ggplot2)
 library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ## Introduction: Conducting a multiverse analysis
@@ -48,7 +50,6 @@ We could also change the fraction of values that we want to trim. This can be co
 ## The most basic multiverse
 
 An overview of the steps involved in creating a multiverse analysis is shown below:
-
 
 ```{r echo = FALSE, out.width = '100%', fig.align = 'center'}
 knitr::include_graphics("multiverse.png")
@@ -103,7 +104,7 @@ However, for this to work, we would need to run this step within the multiverse,
 M = multiverse()
 ```
 
-The multiverse object contains five components (which we will subsequently refer to as slots): `code`, `parameters`, `conditions`, `current_parameter_assignment` and `multiverse_table`; all of them are initialised as empty (*NULL / empty list*). We will describe them in more detail later.
+The multiverse object contains five components (which we will subsequently refer to as slots): `code`, `parameters`, `conditions` and `expand`; all of them are initialised as empty (*NULL / empty list*). We will describe them in more detail later.
 
 ```{r}
 code(M)
@@ -119,10 +120,6 @@ parameters(M) #this is a list
 conditions(M) #this is empty
 ```
 
-
-```{r}
-default_parameter_assignment(M) #this is a list
-```
 
 Inside this new multiverse object, we will declare the code to calculate the mean using four different options. The `multiverse` object will store all possible combinations of analysis (in this case, the analysis is calculating the *mean*). 
 
@@ -157,17 +154,12 @@ The `parameter` slot will have a named list of parameters (in this case, the onl
 parameters(M)
 ```
 
-The `multiverse_table` slot contains a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter --- the number of rows corresponds to the number of different analysis paths (here, 4).
+The `expand` function creates a tibble where each column of the tibble will be a unqiue parameter. The table will contains every possible combination of options for each parameter --- the number of rows corresponds to the number of different analysis paths (here, 4). This table can be accessed using the `expand` function
 
 ```{r}
-multiverse_table(M)
+expand(M)
 ```
 
-The `default_parameter_assignment` slot will be initialised to the first option for each parameter (in this case, "trim_none").
-
-```{r}
-default_parameter_assignment(M)
-```
 
 ### Executing the different analysis paths in the multiverse
 
@@ -186,7 +178,7 @@ M %>%
 
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   unnest( mean = map(.results, "x.mean") ) %>%
   ggplot() +
   geom_col(aes(x = .universe, y = mean))
@@ -226,7 +218,7 @@ execute_multiverse(M)
 
 
 ```{r}
-multiverse_table(M) %>%
+expand(M) %>%
   unnest( mean = map(.results, "x.mean") )
 ```
 

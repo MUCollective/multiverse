@@ -1,0 +1,112 @@
+multiverse_engine <- function(options) {
+  .multiverse_name = options$inside
+  
+  if(is.null(options$inside)) stop("A multiverse object should be specified with", 
+                                   "a multiverse code block using the `inside` argument")
+  
+  if ( !(.multiverse_name %in% ls(envir = knit_global()))) {
+    stop(
+      "Multiverse object `", .multiverse_name, "` was not found.\n",
+      "You may need to execute `", .multiverse_name, " <- multiverse()` to create the multiverse\n",
+      "before executing a multiverse code block."
+    )
+  }
+  
+  .c = multiverse_block_code(options$inside, options$label, options$code)
+  
+  if(is.null(getOption("knitr.in.progress"))) {
+    .multiverse = get(.multiverse_name, envir = knit_global())
+    
+    if (!is.null(getOption("execute"))) {
+      if (getOption("execute") == "all") {
+        execute_multiverse(.multiverse)
+      } else if (getOption("execute") == "default") {
+        execute_universe(.multiverse)
+      }
+    }
+    multiverse_default_block_exec(.c, options)
+  } else {
+    multiverse_default_block_exec(options$code, options, TRUE)
+  }
+}
+
+multiverse_block_code <- function(.multiverse_name, .label, .code) {
+  .multiverse = get(.multiverse_name, envir = knit_global())
+  
+  if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
+    stop("Please provide a label to your multiverse code block")
+  }
+  
+  if (!is(.multiverse, "multiverse")) {
+    stop("Objects passed to inside should be a multiverse object")
+  }
+  
+  pasted <- paste(.code, collapse = "\n")
+  .expr <- parse(text = c("{", pasted, "}"), keep.source = FALSE)[[1]]
+  
+  add_and_parse_code(.multiverse, .expr, .label)
+  
+  .m_list = attr(.multiverse, "multiverse")$multiverse_diction$as_list()
+  
+  if ( is.list(parameters(.multiverse)) & length(parameters(.multiverse)) == 0 ) {
+    # executing everything in the default universe
+    # since there are no branches in the multiverse
+    .c = get_code_universe(.m_list = .m_list, .uni = 1, .level = length(.m_list))
+  } else {
+    idx = 1 #.m[['default_parameter_assignment']]
+    .c = get_code_universe(.m_list = .m_list, .uni = idx, .level = length(.m_list))
+  }
+  
+  deparse(.c[[.label]])
+}
+
+multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
+  # ugly hack to get around `:::` warnings (TODO: delete eventually)
+  `%:::%` = `:::`
+
+  if (knit) {
+    .multiverse = options$inside
+    execute_multiverse(.multiverse)
+    
+    # when knitting we are not performing any traditional evaluation
+    # hence we can not evaluate the code chunk using default evaluation
+    # changing this to TRUE would execute the default universe and show 
+    # the relevant output
+    # What we want is to create a `div` for each universe
+    options$eval = FALSE
+    options$class.source = "multiverse"
+
+    options$engine = "R"
+    options$comment = ""
+    options$dev = 'png'
+    
+    block_exec_R(options)
+  } else {
+    # when in interactive mode, execute the default analysis in the knitr global environment
+    
+    # first and last elements of `code` are "{" and "}" so we have to strip them.
+    # (otherwise only the last thing would be printed as the entire expression would
+    # only return one object)
+    code = .code[-c(1, length(.code))]
+    
+    # when not knitting (i.e. interactive mode) we just use evaluate()
+    # to evaluate the various pieces of code in the code chunk and return
+    # the output strings from each line of code.
+    outputs = evaluate::evaluate(
+      code, 
+      # must have new_device = FALSE otherwise plots don't seem to be written to
+      # the graphics device inside rmarkdown in RStudio
+      new_device = FALSE,
+      envir = knit_global()
+    )
+    
+    # only output character vectors and conditions (warnings, etc) values (not plots or
+    # source code) here, as everything else (e.g. graphics, messages) will have already
+    # been output during evaluate()
+    outputs[sapply(outputs, function(x) is.character(x) || is_condition(x))]
+  }
+}
+
+knitr::knit_engines$set(multiverse = multiverse_engine)
+
+

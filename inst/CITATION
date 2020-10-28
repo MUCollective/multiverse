@@ -1,0 +1,14 @@
+title <- sprintf("multiverse: Create Multiverse analysis in R (Version %s)", meta$Version)
+
+bibentry(
+    bibtype    = "misc",
+    title    = title,
+    author   = c(person("Abhraneel", "Sarma"), person("Matthew", "Kay")),
+    year     = "2020",
+    url      = "https://github.com/MUCollective/multiverse",
+    textVersion =
+  	paste("Sarma, Abhraneel & Kay, Matthew. (2020). multiverse: Create Multiverse analysis in R.",
+		"Available from https://github.com/MUCollective/multiverse."
+		),
+	mheader = "To cite 'multiverse' in publications use:"
+)

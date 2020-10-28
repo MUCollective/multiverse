@@ -3,9 +3,9 @@
 \name{accessors}
 \alias{accessors}
 \alias{$.multiverse}
-\alias{multiverse_table}
-\alias{multiverse_table.default}
-\alias{multiverse_table.multiverse}
+\alias{expand}
+\alias{expand.default}
+\alias{expand.multiverse}
 \alias{code}
 \alias{code.default}
 \alias{code.multiverse}
@@ -15,16 +15,16 @@
 \alias{conditions}
 \alias{conditions.default}
 \alias{conditions.multiverse}
-\alias{from_universe_i}
+\alias{extract_variable_from_universe}
 \title{Accessing contents of the multiverse object}
 \usage{
 \method{$}{multiverse}(multiverse, name)
 
-multiverse_table(multiverse)
+expand(multiverse)
 
-\method{multiverse_table}{default}(multiverse)
+\method{expand}{default}(multiverse)
 
-\method{multiverse_table}{multiverse}(multiverse)
+\method{expand}{multiverse}(multiverse)
 
 code(multiverse)
 
@@ -44,7 +44,7 @@ conditions(multiverse)
 
 \method{conditions}{multiverse}(multiverse)
 
-from_universe_i(multiverse, idx, name)
+extract_variable_from_universe(multiverse, idx, name)
 }
 \arguments{
 \item{multiverse}{Object of class multiverse}
@@ -56,5 +56,5 @@ from_universe_i(multiverse, idx, name)
 \description{
 A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
 Variables from the analysis that is being performed within the multiverse can be accessed using the `$`.
-Object variables such as the `code`, the `multiverse table`, the `parameters` and the `conditions` can be accessed using respective functions
+Object variables such as the `code`, the `expanded parameter options table`, the `parameters` and the `conditions` can be accessed using respective functions
 }

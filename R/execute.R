@@ -1,14 +1,21 @@
 #' Execute parts of, or the entire multiverse
 #'
 #' @description These are functions which allow the user to execute parts or whole of the multiverse.
-#' The user can choose to either execute the default analysis using the [execute_default], or a part or
-#' whole of the multiverse using the [execute_multiverse].
+#' The user can choose to either execute the default analysis using the \code{\link{execute_universe}}, or a part or
+#' whole of the multiverse using the \code{\link{execute_multiverse}}.
 #'
 #' @param multiverse The multiverse object
+#' 
+#' @param cores Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
+#' Defaults to NULL (running in a single core)
+#' 
+#' @param .universe Indicate which universe to execute, if the user wants to execute a specific combination
+#' of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.
 #'
-#' @details Each single analysis within the multiverse lives in a separate environment. We provide convenient functions to access
-#' the results for the  default analysis, as well as parts or whole of the multiverse. Each analysis can also be accessed from the
-#' multiverse table, under the results column.
+#' @details Each single analysis within the multiverse lives in a separate environment. 
+#' We provide convenient functions to access the results for the  default analysis, as well as 
+#' parts or whole of the multiverse. Each analysis can also be accessed from the multiverse table,
+#' under the results column.
 #'
 #' @examples
 #' \dontrun{
@@ -31,51 +38,75 @@
 #'   execute_multiverse()
 #' }
 #'
-#' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
-#'
+#' @importFrom parallel detectCores
+#' @importFrom parallel mcmapply
+#' @importFrom berryFunctions tryStack
+#' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse) {
-  stopifnot( is.multiverse(multiverse) )
-  .m_obj = attr(multiverse, "multiverse")
-
-  execute_all_in_multiverse(.m_obj)
+execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
+  m_obj <- attr(multiverse, "multiverse")
+  m_diction = attr(multiverse, "multiverse")$multiverse_diction
+  
+  .level = min(m_obj$unchanged_until, m_obj$exec_all_until)
+  .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
+  
+  .m_list <- m_diction$as_list()[.to_exec]
+  .res <- lapply(.m_list, exec_all, cores = cores)
+  m_obj$exec_all_until <- length(m_diction$as_list())
 }
 
-execute_all_in_multiverse <- function(m_obj) {
-  m_tbl = m_obj[['multiverse_table']]
-
-  for (i in 1:nrow(m_tbl)) {
-    eval( m_tbl$.code[[i]], envir = m_tbl[['.results']][[i]] )
-  }
+exec_all <- function(x, cores) {
+  .code_list = lapply(x, `[[`, "code")
+  .env_list = lapply(x, `[[`, "env")
+  
+  .res <- mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
+  
+  lapply(seq_along(.res), function(i, x) {
+    if (is(x[[i]], "try-error"))  {
+      warning("error in universe ", i, "\n")
+       cat(x[[i]])
+    }
+  }, x = .res)
 }
+
 
 #' @rdname execute
 #' @export
-execute_default <- function(multiverse) {
-  UseMethod("execute_default")
+execute_universe <- function(multiverse, .universe = 1) {
+  m_diction = attr(multiverse, "multiverse")$multiverse_diction
+  .level = attr(multiverse, "multiverse")$unchanged_until
+  
+  .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
+  .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
+  
+  .m_list <- m_diction$as_list()[.to_exec]
+  
+  .res <- mapply(exec_in_order, .m_list, .to_exec, MoreArgs = list(.universes = .order))
 }
 
-execute_default.multiverse <- function(multiverse) {
-  m_obj = attr(multiverse, "multiverse")
-  execute_default.Multiverse(m_obj)
+execute_code_from_universe <- function(.c, .env = globalenv()) {
+  # lapply(.c, eval, envir = .env)
+  tryStack(lapply(.c, eval, envir = .env), silent = TRUE)
 }
 
-execute_default.Multiverse <- function(multiverse) {
-  .param_assgn = multiverse[['default_parameter_assignment']]
-
-  if ( is.list(multiverse[['parameters']]) & length(multiverse[['parameters']]) == 0 ) {
-    env = multiverse[['multiverse_table']][['.results']][[1]]
-    .c = multiverse[['multiverse_table']][['.code']][[1]]
-
-    eval(.c, env)
-  } else {
-    stopifnot(is.numeric(.param_assgn) || is.null(.param_assgn))
-    .c = multiverse[['multiverse_table']][['.code']][[1]]
-    env = multiverse[['multiverse_table']][['.results']][[.param_assgn ]]
-    eval(.c, env)
+# for a universe, get the indices which need to be executed
+get_exec_order <- function(.m_diction, .uni, .level) {
+  if (.level >= 1){
+    .p <- .m_diction$get(.m_diction$keys()[[.level]])[[.uni]]$parent
+    c(get_exec_order(.m_diction, .p, .level - 1), .uni)
   }
 }
+
+exec_in_order <- function(.universe_list, .universes, .i) {
+  x <- .universe_list[[ .universes[[.i]] ]]
+  
+  .exec_res <- execute_code_from_universe(x$code, x$env)
+  if (is(.exec_res, "try-error"))  warning("error in default universe", "\n", .exec_res)
+  else if (is(.exec_res, "warning"))  warning("warning in default universe", "\n", .exec_res)
+}
+
+
 
 

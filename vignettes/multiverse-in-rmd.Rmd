@@ -1,0 +1,131 @@
+---
+title: "Using the multiverse in RMarkdown: Introduction to multiverse code chunks"
+author: ""
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r, setup, message=FALSE, warning=FALSE}
+library(knitr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(multiverse)
+```
+
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
+```
+
+
+
+## Introduction
+
+In this document we will describe the usage of the multiverse code block. The multiverse code block is an alternative to the R code block which will parse any code run in it directly in the multiverse, and reduces the need for auxillary functions such as \code(inside). In addition, the default analysis in the multiverse will be executed in the environment in which the multiverse has been declared, which would usually be the global environment. In that case the results of the default analysis can be inspected directly in an R code block, similar to what an user would do if they were running a single universe analysis.
+
+We demonstrate how the two methods are equivalent, and result in the same multiverse.
+
+In this example, we will use the data which compares different modalities for physical visualizations. See \link[A multiverse analysis of the efficiency of physical visualizations](frequentist-multiverse-analysis) for more details.
+
+```{r}
+data("userlogs")
+```
+
+As with any multiverse analysis, we first need to define the multiverse object. This step is the same for both methods. We will define two separate objects for illustrating the two different ways of adding code to the multiverse for analysis. In the multiverse analysis in this vignette, we will perform a log transformation on the duration variable of the dataset using both the `inside` function as well as the `multiverse code block`
+
+```{r}
+M_inside = multiverse()
+M_block = multiverse()
+```
+
+## Inside() and Multiverse analysis in R scripts
+
+The idea of the inside function is to allow us to write code to be executed within the multiverse and not directly in R, thus allowing us to make use of a flexible syntax for declaring the different possible analysis combinations within the multiverse. The inside function takes two arguments:
+
+1. the name of the multiverse object
+2. the expression (code) to be passed into the multiverse enclosed within a pair of curly braces, `{`
+
+The expression passed into the multiverse is not executed directly, allowing us to parse and expand the expression provided by the user has declared using our `branch` and `parameters`, into their corresponding analysis combinations.
+
+```{r}
+inside(M_inside, {
+    data_transform <- branch(data_transform,
+        "log-transformed" ~ log,
+        "untransformed" ~ identity
+      )
+    
+    duration <- do.call(data_transform, list(userlogs$duration))
+})
+```
+
+## Multiverse in RMarkdown
+
+Although the inside function is the only way to add code to the multiverse in an Rscript, RMarkdown notebooks allow us the opportunity to use different language engines (not just limited to R). This flexibility also provides an opportunity to write multiverse code directly into a code block, instead of using auxillary functions.
+
+The language associated with a code block is provided by the first argument: ` ```{r}` Here the first argument is `r` hence the code in the associated block will be executed in R. To convert a code block to execute in multiverse, change the first argument to `multiverse`. Thus the code block would be: ` ```{multiverse}`
+
+To execute a code block in multiverse, the user needs to provide two additional arguments: `label` and `inside`. 
+
+The label is a unique identifier for the code block, and each code block in the same document must have a different label. However, the label argument does not need to be explicitly specified (as is the case with an R code block). Therefore,  ` ```{multiverse, label=default-m-1 ...}`, ` ```{multiverse, default-m-1 ...}` and ` ```{multiverse default-m-1 ...}` are all equivalent.
+
+The inside argument takes in only multiverse objects, and is used to indicate the multiverse object which will the code inside the code block will be associated with. Thus declaring a multiverse code block would be: ` ```{multiverse, default-m-1, inside = M}`
+
+We provide the ability to declare multiverse code block as an *AddIn* in RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
+
+```{r echo = FALSE, out.width = '60%'}
+knitr::include_graphics("multiverse-addins.png")
+```
+
+Alternately, users can insert a multiverse We also allow users to create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document. This can be done through the following steps: 
+
+- Tools > AddIns > Browse AddIns… > Keyboard Shortcuts
+- Next, in the filter input field, type *multiverse*. You will see one result with "Insert multiverse code chunk" as the name. 
+- Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).
+- Click "Apply" and exit the dialog box
+
+### Multiverse code block
+
+The declaration of the chunk below is (this gets hidden when we knit the document): ` ```{multiverse default-m-1, inside = M_block}`
+
+
+```{multiverse default-m-1, inside = M_block}
+data_transform <- branch(data_transform,
+    "log-transformed" ~ log,
+    "untransformed" ~ identity
+  )
+
+duration <- do.call(data_transform, list(userlogs$duration))
+```
+
+
+The result of this code block will be identical to the result using `inside()`. We first compare whether the multiverse table is generated properly for both the multiverse objects.
+
+```{r}
+expand(M_inside)
+```
+
+```{r}
+expand(M_block)
+```
+
+As you can see above, both the methods yield the same multiverse table.
+Next, we inspect the `.code` column of the multiverse object. This column contains the code used to generate each analysis combination in the multiverse. The only differences here arise from how the expressions are stored. The multiverse code block creates a named list, whereas the inside function creates a unnamed list for each row of this column.
+
+Below is the output from the first multiverse object (`M_inside`), which uses the inside function:
+
+```{r, echo = FALSE}
+expand(M_inside)$.code
+```
+
+This is the output from the second multiverse object (`M_block`), which uses the multiverse code block:
+
+```{r, echo = FALSE}
+expand(M_block)$.code
+```
+

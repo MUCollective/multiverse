@@ -8,23 +8,29 @@
 
 <title>Survey to study the effect of fertility on religiosity and political attitudes — durante • multiverse</title>
 
-<!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<!-- jquery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumnens/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -32,15 +38,15 @@
 
 
 
-<meta property="og:title" content="Survey to study the effect of fertility on religiosity and political attitudes — durante" />
 
+<meta property="og:title" content="Survey to study the effect of fertility on religiosity and political attitudes — durante" />
 <meta property="og:description" content="A dataset containing the responses to the survey coduncted by Durante, Rae, and Griskevicius (2013)
 in their study, The
 fluctuating female vote: Politics, religion, and the ovulatory cycle.
 Durante et al. study effect of fertility on religiosity and political attitudes.
 Steegen, Tuerlinckx, Gelman, and Vanpaemel (2016) used this dataset in their analysis to illustrate how a
 multiverse analysis can highlight the robustness of the conclusions reached by the original author." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -57,7 +63,7 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -71,7 +77,7 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
       </span>
     </div>
 
@@ -94,6 +100,9 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+    </li>
+    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
@@ -109,12 +118,14 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
       <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
     </li>
     <li>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
+    </li>
+    <li>
       <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
     </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -136,21 +147,19 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
     </div>
 
     <div class="ref-description">
-    
     <p>A dataset containing the responses to the survey coduncted by Durante, Rae, and Griskevicius (2013)
-in their study, <a href='https://journals.sagepub.com/doi/pdf/10.1177/0956797612466416'><em>The
+in their study, <a href='https://doi.org/10.1177/0956797612466416'><em>The
 fluctuating female vote: Politics, religion, and the ovulatory cycle</em></a>.
 Durante et al. study effect of fertility on religiosity and political attitudes.
 Steegen, Tuerlinckx, Gelman, and Vanpaemel (2016) used this dataset in their analysis to illustrate how a
 multiverse analysis can highlight the robustness of the conclusions reached by the original author.</p>
-    
     </div>
 
-    <pre class="usage"><span class='no'>durante</span></pre>
-        
+
+
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A data frame with 502 rows and 26 variables:</p><dl class='dl-horizontal'>
+    <p>A data frame with 502 rows and 26 variables:</p><dl'>
   <dt>Abortion</dt><dd><p>"Abortion is a women’s [sic] right."</p></dd>
   <dt>DateTesting</dt><dd><p>Date of participant filling in the questionnaire.</p></dd>
   <dt>Donate</dt><dd><p>"For the next part of the study we will donate $1 to the presidential
@@ -199,7 +208,7 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
   <dt>WorkerID</dt><dd><p>ID of participant</p></dd>
 
 </dl>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>All questions were preceded by the prompt --- "Please indicate how much you agree
@@ -210,29 +219,31 @@ with the following statements"</p>
 <em>RichTax</em>, <em>TooMuchProfit</em>, <em>StandardLiving</em>, <em>FreeMarket</em>, <em>PrivSocialSec</em></p>
 <p>The following items were responses to social political attitudes items (on a scale of 1 - 7):
 <em>Abortion</em>, <em>Marriage</em>, <em>StemCell</em>, <em>Marijuana</em>, <em>RestrictAbortion</em></p>
-    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Kristina M Durante, Ashley Rae and Vladas Griskevicius. (2013).
+"The fluctuating female vote: Politics, religion, and the ovulatory cycle."
+*Psychological Science* 24(6), 1007-1016.</p>
+<p>Sara Steegen and Francis Tuerlinckx and Andrew Gelman and Wolf Vanpaemel. (2015).
+"Increasing transparency through a multiverse analysis."
+*Perspectives on Psychological Science* 11(5), 702-712.</p>
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      
-      <li><a href="#format">Format</a></li>
-
-      <li><a href="#details">Details</a></li>
-          </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
 
       <footer>
       <div class="copyright">
-  <p>Developed by Abhraneel Sarma, Matthew Kay.</p>
+  <p>Developed by <a href='http://abhsarma.github.io'>Abhraneel Sarma</a>, <a href='http://www.mjskay.com'>Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

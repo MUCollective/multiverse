@@ -1,7 +1,6 @@
 ---
 output: 
   github_document:
-    html_preview: false
     df_print: kable
 ---
 
@@ -14,25 +13,11 @@ knitr::opts_chunk$set(
 ```
 
 
-# Multidy: An R package for creating multiverse analysis
+# Multiverse: An R package for creating multiverse analysis
 
-<!-- badges: start -->
-[![Build status](https://travis-ci.com/MUCollective/multiverse.svg?branch=master)](https://travis-ci.com/MUCollective/multiverse)
-[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg)](https://codecov.io/gh/MUCollective/multiverse)
-<!-- badges: end -->
+The goal of multiverse is to allow users to create multiverse analyses in a concise and easily interpretable manner.
 
-The goal of multidy is to ...
-
-## Installation
-
-You can install the development version from [GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("MUCollective/multidy")
-```
-
-`multidy` is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.
+`multiverse` is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.
 
 Steegen et al. first put forth the concept of [multiverse analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637); Simonsohn et al. put forth a similar notion called the [Specification curve analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
 
@@ -51,12 +36,11 @@ The `multidy` documentation follows the tidyverse syntax
 
 ## Installation
 
-You can install the latest development version from
-GitHub with these R commands:
+You can install the latest development version from GitHub with these R commands:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("mucollective/multidy")
+devtools::install_github("mucollective/multiverse")
 ```
 
 ## Examples
@@ -238,7 +222,7 @@ parameters(M)
 3. `multiverse_table`, which is a tibble consisting of all possible combination of values for the multiverse
 
 ```{r, view-multiverse-table}
-multiverse_table(M)
+multiverse_table(M) %>% select(-.code)
 ```
 
 4. `current_parameter_assignment`, which is a list of one set of options for each parameter defined in the multiverse. It initialises to the first option for each parameter. This should be the default analysis.
@@ -301,8 +285,9 @@ code(M)
 
 The `multiverse_table` will contain all the possible combinations of the parameter options that have been identified.
 
-```{r, complete-cmultiverse-table}
+```{r, complete-multiverse-table}
 multiverse_table(M) %>%
+  select(-.code) %>%
   head()
 ```
 
@@ -464,6 +449,7 @@ Now that we have performed the analysis in each universe of the multiverse, we n
 
 ```{r, multiverse-model-1-summary}
 multiverse_table(M) %>%
+  select(-.code) %>%
   mutate( summary = map(.results, "summary_RelComp" ) ) %>%
   unnest( cols = c(summary) ) %>%
   head( 10 )
@@ -492,104 +478,5 @@ animate(p, nframes = 210, fps = 2)
 ```
 
 
-### Models #3 - 6
-The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. Below we perform these analyses and visualize the results.
-
-```{r, model-3to6}
-M$fit_FiscConsComp <- ~ lm( FiscConsComp ~ Fertility * RelationshipStatus, data = df)
-M$summary_FiscConsComp <- ~ fit_FiscConsComp %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$fit_SocConsComp <- ~ lm( SocConsComp ~ Fertility * RelationshipStatus, data = df)
-M$summary_SocConsComp <- ~ fit_SocConsComp %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$fit_Donate <- ~ glm( Donate ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
-M$summary_Donate <- ~ fit_Donate %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$fit_Vote <- ~ glm( Vote ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
-M$summary_Vote <- ~ fit_Vote %>% 
-  broom::tidy( conf.int = TRUE )
-
-execute_multiverse(M)
-```
-
-### Model #3: Effect of Fertility and Relationship status on Fiscal political attitudes
-
-```{r, model-3-vis}
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_FiscConsComp" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  filter( term != "(Intercept)" ) %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
-### Model #4: Effect of Fertility and Relationship status on Social political attitudes
-
-```{r, model-4-vis}
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  filter( term !=  "(Intercept)") %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
-### Model #5: Effect of Fertility and Relationship status on Voting preferences
-
-```{r, model-5-vis}
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_SocConsComp" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
-### Model #6: Effect of Fertility and Relationship status on Donation preferences
-
-```{r, model-6-vis}
-p <- multiverse_table(M) %>%
-  mutate( summary = map(.results, "summary_Donate" ) ) %>%
-  unnest( cols = c(summary) ) %>%
-  mutate( term = recode( term, 
-                 "RelationshipStatusSingle" = "Single",
-                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) %>%
-  ggplot() + 
-  geom_vline( xintercept = 0,  colour = '#979797' ) +
-  geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
-  transition_manual( .universe )
-
-animate(p, nframes = 210, fps = 2)
-```
-
+### Notes
+The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. These analyses can be found in the vignette [`A complete implementation of a multiverse analysis`](complete-multiverse-analysis.html)

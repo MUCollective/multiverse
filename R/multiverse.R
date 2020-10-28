@@ -1,5 +1,27 @@
 setClassUnion("listORnumeric", c("list", "numeric"))
 
+
+Multiverse <- R6Class("Multiverse",
+                      public = list(
+                        code = NULL,
+                        parameters = NULL,
+                        conditions = NULL,
+                        multiverse_diction = NULL,
+                        parameter_set = NULL,
+                        unchanged_until = NULL,
+                        exec_all_until = NULL,
+                        initialize= function() {
+                          self$code = NULL
+                          self$parameters = list()
+                          self$conditions = list()
+                          self$multiverse_diction = ordered_dict()
+                          self$parameter_set = c()
+                          self$unchanged_until = NA
+                          self$exec_all_until = 0
+                        }
+                      )
+)
+
 #' Create a new multiverse object
 #'
 #' Constructs a new multiverse object which enables conducting a multiverse analysis
@@ -39,20 +61,8 @@ setClassUnion("listORnumeric", c("list", "numeric"))
 #' @name multiverse
 #' @importFrom rlang env
 #' @importFrom R6 R6Class
-#'
-#' @export
-Multiverse <- R6Class("Multiverse",
-  public = list(
-    code = NULL,
-    parameters = list(),
-    conditions = list(),
-    default_parameter_assignment = NULL,
-    multiverse_table = data.frame(parameter_assignment = list())
-    #initialize = function() {}
-  )
-)
-
-
+#' @importFrom tibble tibble
+#' @importFrom collections ordered_dict
 #'
 #' @export
 multiverse <- function(..., class=character()) {

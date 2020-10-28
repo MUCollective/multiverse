@@ -4,7 +4,8 @@
 \name{durante}
 \alias{durante}
 \title{Survey to study the effect of fertility on religiosity and political attitudes}
-\format{A data frame with 502 rows and 26 variables:
+\format{
+A data frame with 502 rows and 26 variables:
 \describe{
   \item{Abortion}{"Abortion is a women’s [sic] right."}
   \item{DateTesting}{Date of participant filling in the questionnaire.}
@@ -52,13 +53,11 @@
   \item{Vote}{"Imagine walking into the voting booth today. Who would you vote for in the
   presidential election?” Mitt Romney (republican) – Barack Obama (democrat)"}
   \item{WorkerID}{ ID of participant }
-}}
-\usage{
-durante
+}
 }
 \description{
 A dataset containing the responses to the survey coduncted by Durante, Rae, and Griskevicius (2013)
-in their study, \href{https://journals.sagepub.com/doi/pdf/10.1177/0956797612466416}{\emph{The
+in their study, \href{https://doi.org/10.1177/0956797612466416}{\emph{The
 fluctuating female vote: Politics, religion, and the ovulatory cycle}}.
 Durante et al. study effect of fertility on religiosity and political attitudes.
 Steegen, Tuerlinckx, Gelman, and Vanpaemel (2016) used this dataset in their analysis to illustrate how a
@@ -76,5 +75,14 @@ The following items were responses to fiscal political attitudes items (on a sca
 
 The following items were responses to social political attitudes items (on a scale of 1 - 7):
 \emph{Abortion}, \emph{Marriage}, \emph{StemCell}, \emph{Marijuana}, \emph{RestrictAbortion}
+}
+\references{
+Kristina M Durante, Ashley Rae and Vladas Griskevicius. (2013).
+"The fluctuating female vote: Politics, religion, and the ovulatory cycle."
+*Psychological Science* 24(6), 1007-1016.
+
+Sara Steegen and Francis Tuerlinckx and Andrew Gelman and Wolf Vanpaemel. (2015).
+"Increasing transparency through a multiverse analysis."
+*Perspectives on Psychological Science* 11(5), 702-712.
 }
 \keyword{datasets}

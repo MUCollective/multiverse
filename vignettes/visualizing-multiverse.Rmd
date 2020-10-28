@@ -1,26 +1,16 @@
 ---
 title: "Extracting and Visualizing the results of a multiverse analysis"
-author: "Abhraneel Sarma"
+author: ""
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Visualizing the results of a multiverse analysis}
-  %\usepackage[UTF-8]{inputenc}
+output: html_document
 ---
 
 ## Introduction
 
 In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualize the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualizing them can be difficult. We will show how our package can be used to create the visualizations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998), as well as using other uncertainty visualization approaches.
 
-```{r, setup, include=FALSE}
+```{r, setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  output.dir="vignettes"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -31,6 +21,14 @@ library(cowplot)
 library(stringr)
 library(forcats)
 library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 ## Data and Analysis
@@ -58,41 +56,43 @@ A detailed description of this analysis can be found in [`A complete multiverse 
 ```{r, initialise-multiverse}
 M = multiverse()
 
-M$df <- ~ data.raw.study2  %>%
+inside(M, {
+  df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
     dplyr::filter( branch(cycle_length,
-            "cl_option1" ~ TRUE,
-            "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-            "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      "cl_option1" ~ TRUE,
+      "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+      "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
     )) %>%
     dplyr::filter( branch(certainty,
-            "cer_option1" ~ TRUE,
-            "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+      "cer_option1" ~ TRUE,
+      "cer_option2" ~ Sure1 > 6 | Sure2 > 6
     )) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
-            "mc_option3" ~ StartDateNext)
+      "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+      "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+      "mc_option3" ~ StartDateNext)
     )  %>%
     mutate(
       CycleDay = 28 - (NextMenstrualOnset - DateTesting),
       CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
     ) %>%
     mutate( Fertility = branch( fertile,
-            "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
-            "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
-            "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
-            "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
-            "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+      "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
+      "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
+      "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
+      "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+      "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
     )) %>%
     mutate(RelationshipStatus = branch(relationship_status,
-            "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
-            "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-            "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+      "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+      "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+      "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
     )
-
-M$df <- ~ df %>%
-  mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
+  
+  df <- df %>%
+    mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
+})
 ```
 
 ### Model #2: Effect of Fertility and Relationship status on Religiosity
@@ -101,15 +101,17 @@ Steegen et al. analyse the data using 6 models. All the models except the first 
 The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score (`RelComp`). We perform this analysis and extract the results from the multiverse into a tidy `data frame`.
 
 ```{r, linear-models}
-M$fit_RelComp <- ~ lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+inside(M, {
+  fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+  
+  fit_FiscConsComp <- lm( FiscConsComp ~ Fertility * RelationshipStatus, data = df)
+  
+  fit_SocConsComp <- lm( SocConsComp ~ Fertility * RelationshipStatus, data = df)
 
-M$fit_FiscConsComp <- ~ lm( FiscConsComp ~ Fertility * RelationshipStatus, data = df)
-
-M$fit_SocConsComp <- ~ lm( SocConsComp ~ Fertility * RelationshipStatus, data = df)
-
-M$fit_Donate <- ~ glm( Donate ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
-
-M$fit_Vote <- ~ glm( Vote ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
+  fit_Donate <- glm( Donate ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
+  
+  fit_Vote <- glm( Vote ~ Fertility * Relationship, data = df, family = binomial(link = "logit") )
+})
 ```
 
 In most analysis, you would then look at the results using the `summary` function. However, when performing a multiverse analysis, the summary would be executed in each universe of the multiverse, and would not be accessible outside each universe. However, there are ways to easily extract the results from each universe, as long as the results within each universe are as *tidy data*.
@@ -119,32 +121,37 @@ In most analysis, you would then look at the results using the `summary` functio
 ### Computing the results in each multiverse
 The `broom` package allows extracting the summary of most linear models using the `tidy()` function. The `tidy` method summarises information about the components of a model including the estimates, std. error, t-statistic, p-value for each coefficient and returns a tibble (a tidy data frame). Additional arguments can be passed to obtain the upper and lower 95% confidence limits, or to change the confidence level.
 
-We will execute this in the multiverse.
-
 ```{r, model-summaries}
-M$summary_RelComp <- ~ fit_RelComp %>% 
-  broom::tidy( conf.int = TRUE )
+inside(M, {
+  summary_RelComp <- fit_RelComp %>% 
+    broom::tidy( conf.int = TRUE )
+  
+  summary_FiscConsComp <- fit_FiscConsComp %>% 
+    broom::tidy( conf.int = TRUE )
+  
+  summary_SocConsComp <- fit_SocConsComp %>% 
+    broom::tidy( conf.int = TRUE )
+  
+  summary_Donate <- fit_Donate %>% 
+    broom::tidy( conf.int = TRUE )
+  
+  summary_Vote <- fit_Vote %>% 
+    broom::tidy( conf.int = TRUE )
+})
+```
 
-M$summary_FiscConsComp <- ~ fit_FiscConsComp %>% 
-  broom::tidy( conf.int = TRUE )
+Finally, we will execute all the generated analysis combinations in the multiverse, since so far we have only defined them.
 
-M$summary_SocConsComp <- ~ fit_SocConsComp %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$summary_Donate <- ~ fit_Donate %>% 
-  broom::tidy( conf.int = TRUE )
-
-M$summary_Vote <- ~ fit_Vote %>% 
-  broom::tidy( conf.int = TRUE )
-
+```{r, execute-multiverse}
 execute_multiverse(M)
 ```
 
 ### Extracting the results
 All the computed summaries (`summary_RelComp`, `summary_FiscConsComp`, `summary_SocConsComp`, `summary_Donate` and `summary_Vote`) are stored within `.results` column (a separate environment) in the multiverse table. We can extract these summaries as a tibble using and store it in a separate column, and then unnest this new column:
 
+
 ```{r, multiverse-results}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( summary = map(.results, "summary_RelComp") ) %>%
   unnest( summary )
 ```
@@ -157,7 +164,7 @@ We can then use various R packages to visualize the results. Below, we show some
 One way to visualize over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in [Increasing the Transparency of Research Papers with Explorable Multiverse Analyses](https://dl.acm.org/citation.cfm?id=3300295). This approach allows us to quickly see the robustness of a result --- if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.
 
 ```{r, message = FALSE, fig.width = 6, fig.height = 4}
-p <- multiverse_table(M) %>%
+p <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
   mutate( term = recode( term, 
@@ -180,7 +187,7 @@ Another approach would be to summarise the results. Steegen et al. which depicts
 Below we show how to re-create the visualization. 
 
 ```{r fig.width = 9, fig.height = 9}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( index = seq(1:nrow(.)) ) %>%
   mutate( 
     summary_RelComp = map(.results, "summary_RelComp" ),
@@ -203,7 +210,7 @@ multiverse_table(M) %>%
 Simonsohn et al. propose visualizing results from the multiverse as a `specification curve`, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.
 
 ```{r, fig.width = 12, fig.height = 6}
-data.spec_curve <- multiverse_table(M) %>%
+data.spec_curve <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
   filter( term == "Fertilitylow:RelationshipStatusSingle" ) %>%
@@ -238,14 +245,13 @@ p2 <- data.spec_curve %>%
 cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 2))
 ```
 
+```{r, echo = FALSE, eval = FALSE, fig.width = 9, fig.height = 5}
+## **Incomplete**
 
-
-**Incomplete**
-
-```{r, eval = FALSE, fig.width = 9, fig.height = 5}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate( index = seq(1:nrow(.)) ) %>%
-  unnest( map(.results, "summary_RelComp" ) ) %>%
+  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
+  unnest(summary) %>%
   filter( term == "Fertilitylow:RelationshipStatusSingle" ) %>%
   mutate(
     cycle_length = as.numeric(factor(cycle_length)),

@@ -19,6 +19,9 @@
 #'  
 #' @param ... Different options for completing a particular step in the analysis. Each option is
 #' declared as <option_name> ~ <option_calculation>. See examples for more details.
+#' 
+#' @param .options Declare a continuous value as the option of a parameter using a sequence (see examples for details), 
+#' and the expanded sequence will be included as options for that parameter in the multiverse. 
 #'  
 #' @examples 
 #' \dontrun{
@@ -47,7 +50,7 @@
 #'     )
 #' 
 #' # Since this is a multiverse analysis, this is only supported within a multiverse object. Hence:
-#' M = inside(M, {
+#' inside(M, {
 #'   df <- data.fertility  %>%
 #'     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
 #'     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
@@ -56,6 +59,16 @@
 #'                                    "mc_option3" ~ StartDateNext)
 #'     )
 #' })
+#' 
+#' # continuous option values for a parameter
+#' inside(M, {
+#'   branch(foo, "option1" ~ 1, .options = 1:10)
+#'   })
+#'   
+#' inside(M, {
+#'   branch(foo, "option1" ~ 1, .options = seq(0, 1, by = 0.1))
+#' })
 #' }
+#' 
 #' @name branch
 NULL

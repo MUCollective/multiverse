@@ -1,23 +1,25 @@
 ---
 title: "A discussion on branches in the multiverse"
-author: "Abhraneel Sarma"
+author: ""
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{A discussion on branches in the multiverse}
-  %\usepackage[UTF-8]{inputenc}
+output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
-opts_chunk$set(echo = TRUE)
-opts_knit$set(output.dir="vignettes")
 library(dplyr)
 library(tidyr)
 library(purrr)
 library(ggplot2)
 library(multiverse)
+```
+
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4
+)
 ```
 
 
@@ -40,71 +42,95 @@ In this document we describe different ways of declaring a **branch**, using dif
 
 ## Example 1: A simple branch
 
-Let's say that there is a variable `x` which can take any of three different values --- "low", "medium", "high".  We can perform the effect of encoding `x` as each of these values separately through separate branches. To do this, we first create a **multiverse object**, M and then declare `x` as three possible values within the multiverse using the `branch()` function.
-
+Let's say that there is a variable `x` which can take any of three different values --- "low", "medium", "high".  We can perform the effect of encoding `x` as each of these values separately through separate branches. To do this, we first create a **multiverse object**, M:
 
 ```{r}
 M = multiverse()
+```
 
-M$x <- ~ branch(a_parameter, "low", "medium", "high")
+Then declare `x` as three possible values within the multiverse using the `branch()` function.
 
-multiverse_table(M) %>%
+```{r}
+inside(M, {
+  x <- branch(a_parameter, "low", "medium", "high")
+})
+```
+
+Now, we can inspect the multiverse object to see if all the options were created. 
+
+```{r}
+expand(M) %>%
   select(.universe, everything())
 ```
 
-## Example 2: A branch within functions in a dplyr %>%
+## Example 2: A branch within functions in a "pipe": `%>%`
 
-Let's say that we have some data which indicates the amount of time spent by a user in four different conditions, 1, 2, 3 and 4.
+Let's say that we have some data which indicates the amount of time spent by a user in four different conditions which are indexed 1, 2, 3 and 4 (the `modality` column in the following dataset). We will first load the data and convert the column into factor from integer.
 
 ```{r}
 data("userlogs")
 data.userlogs.raw = userlogs %>%
   mutate( modality = factor(modality) ) %>%
-  arrange(modality) %>%
-  mutate(index = rep(seq(1:(nrow(.)/4)), 4))
+  arrange(modality)
 ```
 
+We then create the multiverse object for this analysis
+
+```{r}
+M = multiverse()
+```
 
 The data variable `duration` is approximately normally distributed, however, as is common with such data it has a long right-tail. Before using a regression model, we can choose to either log-transform the data, or assume that it is normally distribution and analyse it. We can perform both analysis in our multiverse by declaring two branches --- one where the variable is log-transformed and the other where it is not.
 
 ```{r}
-M = multiverse()
-
-M$df <- ~ data.userlogs.raw %>%
-      select(modality, duration) %>%
-      mutate( duration = branch( data_transform, 
-                       "none" ~ duration,
-                       "log" ~ log(duration)
-      ))
-
-multiverse_table(M)
+inside(M, {
+  df <- data.userlogs.raw %>%
+    select(modality, duration) %>%
+    mutate( duration = branch( data_transform, 
+        "none" ~ duration,
+        "log" ~ log(duration)
+    ))
+})
 ```
 
-The `multiverse_table` shows that there are two rows for each branch. If we look at the code column, we see that the variable `duration` is defined in two separate ways:
+
+The `expand` shows that there are two rows for the `data transform` branch which correspond to the two different reasonable alternatives for transforming time spent data.
 
 ```{r}
-multiverse_table(M)
+expand(M)
+```
+
+If we look at the code column, which is a list of expressions, we see that the variable `duration` is defined in two separate ways, one for each row of the multiverse table. In other words, for each alternate analysis path, one of these would get executed and that would be the how the `duration` variable is transformed for that analysis path.
+
+```{r}
+expand(M)$.code
 ```
 
 ## Example 3: A branch as a function
+
+```{r}
+M = multiverse()
+```
 
 Say we are not familiar with R's tidyverse packages and it's style of writing code. An alternate way of declaring a branch for transforming the `duration` variable in the analysis would be to use two separate functions for the transformation depending on which universe one is.
 
 ```{r}
 M = multiverse()
 
-M$duration <- ~ branch(data_trans,
-    "log-transformed" ~ log,
-    "untransformed" ~ identity
-  )(data.userlogs.raw$duration)
-
-execute_multiverse(M)
+inside(M, {
+  duration <- branch(data_trans,
+        "log-transformed" ~ log,
+        "untransformed" ~ identity
+    )(data.userlogs.raw$duration)
+})
 ```
+Then we execute the multiverse and inspect the results:
 
 ```{r}
-multiverse_table(M) %>%
-  unnest( transformed_duration = map(.results, "duration" ) ) %>%  
-  head()
+execute_multiverse(M)
+
+expand(M) %>%
+  mutate(transformed_duration = map(.results, "duration"))
 ```
 
 As you can see, this creates, in each universe within the multiverse, a vector named `duration` which is either untransformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire `branch(...)` gets replaced with either `log()` or `identity()` within a given universe.
@@ -112,25 +138,29 @@ As you can see, this creates, in each universe within the multiverse, a vector n
 A more readable pattern might be:
 
 ```{r}
-M.2 = multiverse()
+M = multiverse()
 
-M.2$duration_transform <- ~ branch(data_trans,
-    "log-transformed" ~ log,
-    "untransformed" ~ identity
-  )
-
-M.2$duration <- ~ duration_transform(data.userlogs.raw$duration)
-
-execute_multiverse(M.2)
+inside(M, {
+  duration_transform <- branch(data_trans,
+          "log-transformed" ~ log,
+          "untransformed" ~ identity
+      )
+  
+  duration <- duration_transform(data.userlogs.raw$duration)
+})
 ```
 
+
+Next, we execute and inspect the results. Again, this alternate calculation also leads to the same result.
 
 ```{r}
-multiverse_table(M.2) %>%
-  unnest( transformed_duration = map(.results, "duration" ) ) %>% 
+execute_multiverse(M)
+
+expand(M) %>%
+  mutate( transformed_duration = map(.results, "duration" ) ) %>% 
+  unnest(c(transformed_duration)) %>%
   head()
 ```
-
 
 ## Example 4: Parameters can be reused
 
@@ -143,11 +173,6 @@ samplemean <- function(x, d) {return(mean(x[d]))}
 
 M = multiverse()
 
-M$data_trans <- ~ branch(data_trans,
-    "log-transformed" ~ log,
-    "untransformed" ~ identity
-  )
-
 t_test_ci <- function(x, y) {
     broom::tidy(t.test(x, conf.level = y))
 }
@@ -158,31 +183,38 @@ bootstrapped_ci <- function(x, y) {
         rename(estimate = statistic)
 }
 
-M$fit <- ~ branch(bootstrap,
-              "t-dist" ~ t_test_ci,
-              "bca" ~ bootstrapped_ci
-          )
+inside(M, {
+  data_trans <- branch(data_trans,
+      "log-transformed" ~ log,
+      "untransformed" ~ identity
+    )
 
-M$ci <- ~ branch( ci, 0.5, 0.68, 0.95, 0.99 )
+  fit <- branch(bootstrap,
+        "t-dist" ~ t_test_ci,
+        "bca" ~ bootstrapped_ci
+      )
+  
+  ci <- branch( ci, 0.5, 0.68, 0.95, 0.99 )
+  
+  df <- data.userlogs.raw  %>%
+    mutate( duration = data_trans(duration) ) %>% 
+    mutate( modality.f = factor(modality) ) %>%
+    group_by(subject, modality.f, modalityname) %>% 
+    summarise( duration = mean(duration), .groups = "drop" ) %>%
+    group_by(modality.f) %>%
+    rename( value = duration ) %>%
+    summarise( data = list(value), .groups = "keep" )
+  
+  df <- df %>%
+    mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
+    select(-data) %>%
+    unnest( cols = c(fit) )
+})
 ```
 
 We then write the anaysis and use those variables to indicate branches in our analysis within the multiverse.
 
 ```{r}
-M$df <- ~ data.userlogs.raw  %>%
-  mutate( duration = data_trans(duration) ) %>% 
-  mutate( modality.f = factor(modality) ) %>%
-  group_by(subject, modality.f, modalityname) %>% 
-  summarise( duration = mean(duration) ) %>%
-  group_by(modality.f) %>%
-  rename( value = duration ) %>%
-  summarise( data = list(value) )
-
-M$df <- ~ df %>%
-  mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
-  select(-data) %>%
-  unnest( cols = c(fit) )
-
 execute_multiverse(M)
 ```
 
@@ -191,7 +223,7 @@ To see the results of using branches, we plot a part of this multiverse. We see 
 
 
 ```{r, fig.width = 8, fig.height = 8}
-multiverse_table(M) %>%
+expand(M) %>%
   mutate(df = map(.results, "df" ) ) %>%
   unnest( cols = c(df) )  %>%
   mutate( modality.f = recode( modality.f, 
@@ -217,20 +249,18 @@ multiverse_table(M) %>%
 ## Example 5: Declaring continuous variables in `branch`
 So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not oo high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.
 
-
-
 ```{r}
 M = multiverse()
 
 inside(M, {
   set.seed(branch(seed, .options = 1:25))
-  
+
   x1 <- rnorm(25)
   x2 <- rnorm(25)
   y <- x1 + x2 + runif(25)
-
+  
   m <- lm(y ~ x1+ x2)
-
+  
   intervals <- broom::tidy(m, conf.int = TRUE)
 })
 
@@ -240,8 +270,8 @@ execute_multiverse(M)
 
 We then plot the estimates from the multiverse to see if we obtain the correct results:
 
-```{r}
-multiverse_table(M) %>%
+```{r, fig.width = 8, fig.height = 8}
+expand(M) %>%
   mutate(df = map(.results, "intervals" ) ) %>%
   unnest( cols = c(df) ) %>%
   unnest(seed) %>%  # won't be necessary once issue #34 is fixed
@@ -252,8 +282,6 @@ multiverse_table(M) %>%
   labs(x = "Universe (i.e. the seed parameter)", y = "Model Parameter Values", title = "Estimates with 95% confidence intervals")
 ```
 
-
-
-
+**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
 
 
