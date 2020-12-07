@@ -1,5 +1,7 @@
 #' @importFrom knitr block_exec_R
 #' @importFrom knitr knit_global
+#' @importFrom utils head
+#' @importFrom utils tail
 #' 
 multiverse_engine <- function(options) {
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 

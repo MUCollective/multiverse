@@ -50,6 +50,8 @@ Multiverse <- R6Class("Multiverse",
 #'   option assignments for each parameter (`parameter_assignment` column), code for executing that particular
 #'   analysis (of type `expression`), and environments where each code will be executed.
 #' }
+#' 
+#' @param ... currently unused
 #'
 #' @examples
 #' \dontrun{
@@ -65,13 +67,13 @@ Multiverse <- R6Class("Multiverse",
 #' @importFrom collections ordered_dict
 #'
 #' @export
-multiverse <- function(..., class=character()) {
+multiverse <- function(...) {
   x <- env()
   attr(x, "multiverse_super_env") <- caller_env()
   attr(x, "multiverse") <- Multiverse$new()
   structure(x,
             ...,
-            class = c(class, "multiverse")
+            class = c("multiverse")
   )
 }
 

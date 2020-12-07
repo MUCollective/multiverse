@@ -6,13 +6,15 @@
 \alias{is.multiverse}
 \title{Create a new multiverse object}
 \usage{
-multiverse(..., class = character())
+multiverse(...)
 
 is_multiverse(x)
 
 is.multiverse(x)
 }
 \arguments{
+\item{...}{currently unused}
+
 \item{x}{An object}
 }
 \value{
