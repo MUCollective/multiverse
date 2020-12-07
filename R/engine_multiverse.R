@@ -1,3 +1,6 @@
+#' @importFrom knitr block_exec_R
+#' @importFrom knitr knit_global
+#' 
 multiverse_engine <- function(options) {
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 
                                    "a multiverse code block using the `inside` argument")
@@ -90,10 +93,15 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     options$engine = "R"
     options$comment = ""
     options$dev = 'png'
-    options$code = deparse(expand(.multiverse)[[".code"]][[1]][[options$label]])
+    options$code = map_chr(
+      tail(head(deparse(expand(.multiverse)[[".code"]][[1]][[options$label]]), -1), -1), 
+      ~ gsub(pattern = " ", replacement = "", x = .)
+    )
     
-    engine_output(options, code = .code, out = block_exec_R(options))
-    # block_exec_R(options)
+    options$multiverse_code = .code
+    
+    # engine_output(options, code = .code, out = block_exec_R(options))
+    block_exec_R(options)
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
