@@ -1,0 +1,61 @@
+---
+title: "Multiverse code block"
+author: "Abhraneel Sarma"
+output: 
+  html_document
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(purrr)
+library(furrr)
+devtools::load_all(".")
+```
+
+### `block_exec` problem in knitr
+
+I am creating a custom code chunk which rewrites the expressions that a user passes into the code block into valid R code, and then execute the analysis. Aside from the rewriting of the R expression that the user inputs, the goal is for the code chunk to work as a regular code chunk. However, the current knitr implementation prevents us from doing this because:
+
+1. The function `block_exec` which handles processing and execution of code is not exported. This leads to R CMD check problems when building my own package.
+I'd request you to export this function.
+
+2. Currently the `block_exec` function handles engines in this manner which prevents us from accessing the processing that is required for R code in RMarkdown.
+
+```
+block_exec = function(options) {
+  # when code is not R language
+  if (options$engine != 'R') {
+    ## code for processing non R declaration
+  }
+  
+  ## code for processing R declaration
+```
+
+Instead, creating two separate functions for this (say `block_exec_R` and `block_exec_`) and exporting both would allow 
+
+```{r init}
+M = multiverse()
+
+n = 10
+```
+
+
+- we can use \{.tabset\} to contain results from different universes in the multiverse
+- we can use a manual HTML created using pandoc for adding interactions etc. See this for reference: https://pandoc.org/MANUAL.html#templates
+- examples of JS for interacting with output of code chunk: https://bookdown.org/yihui/rmarkdown-cookbook/details-tag.html
+- Might need to create a widget for tangle.js: http://www.htmlwidgets.org/develop_intro.html#example-sigma.js
+
+
+```{multiverse default-m-1, inside = M}
+data("vis_correlation")
+
+set.seed(branch(seed, .options = 1:n))
+
+x = 5
+
+data.i = vis_correlation %>% sample_n(x)
+
+data.i
+```

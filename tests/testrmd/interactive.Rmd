@@ -2,7 +2,7 @@
 
 ```{r setup}
 library(tidyverse)
-#library(multiverse)
+# library(multiverse)
 devtools::load_all(".")
 ```
 
@@ -29,7 +29,6 @@ data.frame(x = 1:10) %>%
 
 ```{multiverse plots-errors-messages, inside = M_block, fig.width = 5, fig.height = 2}
 x = list()
-message("hi")
 
 data.frame(x = 1:10) %>%
   ggplot(aes(x = x, y = x)) +

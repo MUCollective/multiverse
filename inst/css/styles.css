@@ -1,3 +1,7 @@
 .multiverse {
 	background-color: #EDF2F5;
 }
+
+.hidden {
+  display: none;
+}

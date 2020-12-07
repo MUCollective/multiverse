@@ -39,22 +39,40 @@ custom_block_exec <- function(options) {
   # options$engine <- "R"
   if (options$engine == "R") {
     ('multiverse'%:::%'block_exec_R')(options)
-  } else if (options$engine == "multiverse") {
-    .m_block_params <- unlist(lapply(strsplit(gsub("[^A-Za-z0-9,=_-]+", "", options$params.src), ","), strsplit, split = "="), recursive = FALSE)
-    names <- lapply(.m_block_params, function(l) {
-      if (length(l) == 1) "label" # labels are not explicitly specified, so we can assume that this is the label name
-      else l[[1]]
-    })
+  } else if (options$engine != "R") {
+    # .m_block_params <- unlist(lapply(strsplit(gsub("[^A-Za-z0-9,=_-]+", "", options$params.src), ","), strsplit, split = "="), recursive = FALSE)
+    # names <- lapply(.m_block_params, function(l) {
+    #  if (length(l) == 1) "label" # labels are not explicitly specified, so we can assume that this is the label name
+    #    else l[[1]]
+    # })
     
-    alist <- lapply(.m_block_params, function(l) {
-      if (length(l) == 1) l[[1]] # labels are not explicitly specified
-      else l[[2]]
-    })
-    names(alist) <- names
+    # alist <- lapply(.m_block_params, function(l) {
+    #  if (length(l) == 1) l[[1]] # labels are not explicitly specified
+    #  else l[[2]]
+    # })
+    # names(alist) <- names
   
-    .code = options$code
-    .c = ('multiverse'%:::%'multiverse_block_code')(alist$inside, alist$label, options$code)
-    ('multiverse'%:::%'multiverse_default_block_exec')(.c, options, knit = TRUE)
+    # .code = options$code
+    # .c = ('multiverse'%:::%'multiverse_block_code')(alist$inside, alist$label, options$code)
+    # ('multiverse'%:::%'multiverse_default_block_exec')(.c, options, knit = TRUE)
+    
+    res.before = run_hooks(before = TRUE, options)
+    engine = get_engine(options$engine)
+    output = in_dir(input_dir(), engine(options))
+    
+    if (is.list(output)) output = unlist(output)
+    res.after = run_hooks(before = FALSE, options)
+    output = paste(c(res.before, output, res.after), collapse = '')
+    output = knit_hooks$get('chunk')(output, options)
+    if (options$cache) {
+      cache.exists = cache$exists(options$hash, options$cache.lazy)
+      if (options$cache.rebuild || !cache.exists) block_cache(options, output, switch(
+        options$engine,
+        'stan' = options$output.var, 'sql' = options$output.var, character(0)
+      ))
+    }
+    
+    return(if (options$include) output else '')
   }
 }
 

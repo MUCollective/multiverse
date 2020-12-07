@@ -1,21 +1,33 @@
 multiverse_engine <- function(options) {
-  .multiverse_name = options$inside
-  
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 
                                    "a multiverse code block using the `inside` argument")
   
-  if ( !(.multiverse_name %in% ls(envir = knit_global()))) {
-    stop(
-      "Multiverse object `", .multiverse_name, "` was not found.\n",
-      "You may need to execute `", .multiverse_name, " <- multiverse()` to create the multiverse\n",
-      "before executing a multiverse code block."
-    )
-  }
+  .multiverse_name = options$inside 
+  # in interactive user, `.multiverse_name` is a character: the name of the multiverse object
+  # in kniting, this this is not the name of the multiverse, but the multiverse object itself
   
-  .c = multiverse_block_code(options$inside, options$label, options$code)
+  if (is.character(.multiverse_name)) {
+    # check to see if a random character is not being declared
+    if ( !(.multiverse_name %in% ls(envir = knit_global()))) {
+      stop(
+        "Multiverse object `", .multiverse_name, "` was not found.\n",
+        "You may need to execute `", .multiverse_name, " <- multiverse()` to create the multiverse\n",
+        "before executing a multiverse code block."
+      )
+    }
+    
+    # get the multiverse object associated with the name
+    .multiverse = get(.multiverse_name, envir = knit_global())
+  } else if (is.multiverse(.multiverse_name)) {
+    .multiverse = .multiverse_name
+  } # maybe an error?
+  
+  .c = multiverse_block_code(.multiverse, options$label, options$code)
   
   if(is.null(getOption("knitr.in.progress"))) {
-    .multiverse = get(.multiverse_name, envir = knit_global())
+    # during kniting
+    # the multiverse object is being passed directly, so we don't need to retrieve it
+    # .multiverse = get(.multiverse_name)
     
     if (!is.null(getOption("execute"))) {
       if (getOption("execute") == "all") {
@@ -25,13 +37,15 @@ multiverse_engine <- function(options) {
       }
     }
     multiverse_default_block_exec(.c, options)
+    
   } else {
+    # during interactive execution
     multiverse_default_block_exec(options$code, options, TRUE)
   }
 }
 
-multiverse_block_code <- function(.multiverse_name, .label, .code) {
-  .multiverse = get(.multiverse_name, envir = knit_global())
+multiverse_block_code <- function(.multiverse, .label, .code) {
+  # .multiverse = get(.multiverse_name, envir = knit_global())
   
   if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
     stop("Please provide a label to your multiverse code block")
@@ -61,26 +75,25 @@ multiverse_block_code <- function(.multiverse_name, .label, .code) {
 }
 
 multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
-  # ugly hack to get around `:::` warnings (TODO: delete eventually)
-  `%:::%` = `:::`
-
   if (knit) {
     .multiverse = options$inside
-    execute_multiverse(.multiverse)
+    # execute_multiverse(.multiverse)
     
     # when knitting we are not performing any traditional evaluation
     # hence we can not evaluate the code chunk using default evaluation
     # changing this to TRUE would execute the default universe and show 
     # the relevant output
     # What we want is to create a `div` for each universe
-    options$eval = FALSE
-    options$class.source = "multiverse"
+    options$eval = TRUE
+    # options$class.source = "multiverse"
 
     options$engine = "R"
     options$comment = ""
     options$dev = 'png'
+    options$code = deparse(expand(.multiverse)[[".code"]][[1]][[options$label]])
     
-    block_exec_R(options)
+    engine_output(options, code = .code, out = block_exec_R(options))
+    # block_exec_R(options)
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
@@ -109,4 +122,29 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
 
 knitr::knit_engines$set(multiverse = multiverse_engine)
 
+
+## Alternate Implementation of `multiverse_default_block_exec` while knitting
+
+# options$eval = TRUE
+
+# options$engine = "R"
+# options$comment = ""
+# options$dev = 'png'
+
+# options$class.source = "multiverse"
+# options$class.output = c(options$label, "universe-1")
+
+# .c = options$code
+# .code_vec = expand(.multiverse)[[".code"]]
+# .code_default = .code_vec[[1]]
+# .code_multiverse = .code_vec[-1]
+
+# lapply( seq_along(.code_multiverse), function(i) {
+#  options$code <- .code_multiverse[[i]][[options$label]]
+#  options$class.output = c(options$label, paste("universe-", (i+1), sep=""), "hidden")
+#  block_exec_R(options)
+# })
+
+# options$code = deparse(.code_default[[options$label]])
+# engine_output(options, code = .c, out = block_exec_R(options))
 
