@@ -36,6 +36,8 @@ Imports:
     evaluate,
     rstudioapi,
     berryFunctions
+Remotes:
+    abhsarma/knitr
 Suggests:
     testthat (>= 2.1.0),
     lubridate,
