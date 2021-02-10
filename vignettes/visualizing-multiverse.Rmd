@@ -209,7 +209,7 @@ expand(M) %>%
 ### Specification curve
 Simonsohn et al. propose visualizing results from the multiverse as a `specification curve`, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.
 
-```{r, fig.width = 12, fig.height = 6}
+```{r, fig.width = 8, fig.height = 4}
 data.spec_curve <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%

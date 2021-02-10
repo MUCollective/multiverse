@@ -1,7 +1,8 @@
-#' @importFrom knitr block_exec_R
+#' @importFrom knitr eng_r
 #' @importFrom knitr knit_global
 #' @importFrom utils head
 #' @importFrom utils tail
+#' @importFrom formatR tidy_source
 #' 
 multiverse_engine <- function(options) {
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 
@@ -95,15 +96,29 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     options$engine = "R"
     options$comment = ""
     options$dev = 'png'
-    options$code = map_chr(
-      tail(head(deparse(expand(.multiverse)[[".code"]][[1]][[options$label]]), -1), -1), 
-      ~ gsub(pattern = " ", replacement = "", x = .)
-    )
     
-    options$multiverse_code = .code
+    options_list <- lapply(1:size(.multiverse), function(x) {
+      temp_options <- options
+      temp_options$code = tidy_source(text = map_chr(
+        tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1), 
+        ~ gsub(pattern = " ", replacement = "", x = .)
+      ))$text.tidy
+      
+      # assuming default is the first universe,
+      # conditional should be change to use the default universe argument
+      if (x == 1) { 
+        temp_options$class.source = paste0("multiverse universe-", x, " default")
+        temp_options$class.output = paste0("multiverse universe-", x, " default")
+      } else {
+        temp_options$class.source = paste0("multiverse universe-", x, "")
+        temp_options$class.output = paste0("multiverse universe-", x, "")
+      }
+      
+      temp_options
+    })
     
-    # engine_output(options, code = .code, out = block_exec_R(options))
-    block_exec_R(options)
+    unlist(lapply(options_list, eng_r))
+    # engine_output(options, code = .code, out = eng_r(options))
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
@@ -131,30 +146,4 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
 }
 
 knitr::knit_engines$set(multiverse = multiverse_engine)
-
-
-## Alternate Implementation of `multiverse_default_block_exec` while knitting
-
-# options$eval = TRUE
-
-# options$engine = "R"
-# options$comment = ""
-# options$dev = 'png'
-
-# options$class.source = "multiverse"
-# options$class.output = c(options$label, "universe-1")
-
-# .c = options$code
-# .code_vec = expand(.multiverse)[[".code"]]
-# .code_default = .code_vec[[1]]
-# .code_multiverse = .code_vec[-1]
-
-# lapply( seq_along(.code_multiverse), function(i) {
-#  options$code <- .code_multiverse[[i]][[options$label]]
-#  options$class.output = c(options$label, paste("universe-", (i+1), sep=""), "hidden")
-#  block_exec_R(options)
-# })
-
-# options$code = deparse(.code_default[[options$label]])
-# engine_output(options, code = .c, out = block_exec_R(options))
 

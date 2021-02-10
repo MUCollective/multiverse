@@ -6,6 +6,9 @@
 \alias{expand}
 \alias{expand.default}
 \alias{expand.multiverse}
+\alias{size}
+\alias{size.default}
+\alias{size.multiverse}
 \alias{code}
 \alias{code.default}
 \alias{code.multiverse}
@@ -25,6 +28,12 @@ expand(multiverse)
 \method{expand}{default}(multiverse)
 
 \method{expand}{multiverse}(multiverse)
+
+size(multiverse)
+
+\method{size}{default}(multiverse)
+
+\method{size}{multiverse}(multiverse)
 
 code(multiverse)
 
