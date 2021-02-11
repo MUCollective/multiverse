@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Using the multiverse in RMarkdown: Introduction to multiverse code chunks • multiverse</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumnens/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumen/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -98,7 +98,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using the multiverse in RMarkdown: Introduction to multiverse code chunks</h1>
             
-            <h4 class="date">2020-10-28</h4>
+            <h4 class="date">2021-02-11</h4>
       
       
       <div class="hidden name"><code>multiverse-in-rmd.Rmd</code></div>
@@ -107,22 +107,25 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">knitr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">multiverse</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">multiverse</span><span class="op">)</span></code></pre></div>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>In this document we will describe the usage of the multiverse code block. The multiverse code block is an alternative to the R code block which will parse any code run in it directly in the multiverse, and reduces the need for auxillary functions such as (inside). In addition, the default analysis in the multiverse will be executed in the environment in which the multiverse has been declared, which would usually be the global environment. In that case the results of the default analysis can be inspected directly in an R code block, similar to what an user would do if they were running a single universe analysis.</p>
 <p>We demonstrate how the two methods are equivalent, and result in the same multiverse.</p>
 <p>In this example, we will use the data which compares different modalities for physical visualizations. See (frequentist-multiverse-analysis) for more details.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"userlogs"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"userlogs"</span><span class="op">)</span></code></pre></div>
 <p>As with any multiverse analysis, we first need to define the multiverse object. This step is the same for both methods. We will define two separate objects for illustrating the two different ways of adding code to the multiverse for analysis. In the multiverse analysis in this vignette, we will perform a log transformation on the duration variable of the dataset using both the <code>inside</code> function as well as the <code>multiverse code block</code></p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">M_inside</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()
-<span class="no">M_block</span> <span class="kw">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">M_inside</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">M_block</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inside-and-multiverse-analysis-in-r-scripts" class="section level2">
 <h2 class="hasAnchor">
@@ -134,14 +137,15 @@
 </li>
 </ol>
 <p>The expression passed into the multiverse is not executed directly, allowing us to parse and expand the expression provided by the user has declared using our <code>branch</code> and <code>parameters</code>, into their corresponding analysis combinations.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/inside.html">inside</a></span>(<span class="no">M_inside</span>, {
-    <span class="no">data_transform</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">data_transform</span>,
-        <span class="st">"log-transformed"</span> ~ <span class="no">log</span>,
-        <span class="st">"untransformed"</span> ~ <span class="no">identity</span>
-      )
-
-    <span class="no">duration</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">userlogs</span>$<span class="no">duration</span>))
-})</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M_inside</span>, <span class="op">{</span>
+    <span class="va">data_transform</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">data_transform</span>,
+        <span class="st">"log-transformed"</span> <span class="op">~</span> <span class="va">log</span>,
+        <span class="st">"untransformed"</span> <span class="op">~</span> <span class="va">identity</span>
+      <span class="op">)</span>
+    
+    <span class="va">duration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">userlogs</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="multiverse-in-rmarkdown" class="section level2">
 <h2 class="hasAnchor">
@@ -164,20 +168,22 @@
 <h3 class="hasAnchor">
 <a href="#multiverse-code-block" class="anchor"></a>Multiverse code block</h3>
 <p>The declaration of the chunk below is (this gets hidden when we knit the document): <code>```{multiverse default-m-1, inside = M_block}</code></p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">data_transform</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/branch.html">branch</a></span>(<span class="no">data_transform</span>,
-    <span class="st">"log-transformed"</span> ~ <span class="no">log</span>,
-    <span class="st">"untransformed"</span> ~ <span class="no">identity</span>
-  )
-
-<span class="no">duration</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">userlogs</span>$<span class="no">duration</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data_transform</span> <span class="op">&lt;-</span> <span class="va">log</span>
+<span class="va">duration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">userlogs</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data_transform</span> <span class="op">&lt;-</span> <span class="va">identity</span>
+<span class="va">duration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">userlogs</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>The result of this code block will be identical to the result using <code><a href="../reference/inside.html">inside()</a></code>. We first compare whether the multiverse table is generated properly for both the multiverse objects.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M_inside</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M_inside</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 5
 ##   .universe data_transform  .parameter_assignment .code            .results
 ##       &lt;int&gt; &lt;chr&gt;           &lt;list&gt;                &lt;list&gt;           &lt;list&gt;  
 ## 1         1 log-transformed &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
 ## 2         2 untransformed   &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;</code></pre>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/accessors.html">expand</a></span>(<span class="no">M_block</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M_block</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 5
 ##   .universe data_transform  .parameter_assignment .code            .results
 ##       &lt;int&gt; &lt;chr&gt;           &lt;list&gt;                &lt;list&gt;           &lt;list&gt;  
@@ -233,7 +239,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

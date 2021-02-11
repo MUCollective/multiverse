@@ -2,18 +2,20 @@
 ^\.Rproj\.user$
 ^\.travis\.yml$
 ^codecov\.yml$
-^README.Rmd$
+^_pkgdown\.yml$
+^\.github$
+^pkgdown$
+^LICENSE$
+
+# excludes all top level Rmd files
+^.*\.Rmd$
+
+# excludes non-relevant directories
 ^README_files$
 ^docs$
 ^figure$
-^_pkgdown\.yml$
-^code-chunk.Rmd$
-^tree-structure.Rmd$
-^parallel-opt.Rmd$
-^data/hurricane-multiverse.rds$
-^data/all_judgements.csv$
-^data/vis_correlation_all_judgements.rda$
-^\.github$
-^pkgdown$
+
+# all non-relevant data files
+^data/*\.rds$
 ^data/.*\.csv$
-^LICENSE$
+^data/vis_correlation_all_judgements.rda$

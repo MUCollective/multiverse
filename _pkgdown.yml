@@ -3,7 +3,7 @@ url: http://mucollective.github.io/multiverse
 
 template:
   params:
-    bootswatch: lumnens
+    bootswatch: lumen
 
 authors:
   Abhraneel Sarma:
