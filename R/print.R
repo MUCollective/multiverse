@@ -8,7 +8,7 @@
 #' @name print
 #' 
 #' @param x An object of class multiverse
-#' @param ... further arguments passed to or from other methods
+#' @param ... further arguments passed to or from other methods. Currently ignored.
 #'
 #' @export
 print.multiverse <- function(x, ...) {

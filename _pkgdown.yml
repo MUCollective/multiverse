@@ -33,19 +33,29 @@ reference:
   - code
   - parameters
   - conditions
-  - default_parameter_assignment
   - expand
+  - print
+  - extract_variables
+  - mulitiverse_code_block
   
 - title: Executing the multiverse
   desc: Execute specific or the entire multiverse
   contents:
   - execute_universe
   - execute_multiverse
+  
+- title: Multiverse internals
+  desc: Internals functions for processing the multiverse
+  contents:
+  - parse_multiverse
+  - get_code
 
 - title: Datasets
   desc:  Datasets that have been used in previous and current examples of multiverse analysis
   contents:
   - durante
   - userlogs
+  - hurricane
   - vis_correlation
+  - vis_correlation2
 
