@@ -1,6 +1,6 @@
 ---
 title: "Declaring conditions in the multiverse"
-author: ""
+author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -26,7 +26,7 @@ opts_knit$set(
 ```
 
 ## The data
-We will be using the same data as the Vignette *A complete implementation of a multiverse analysis* (see vignette("complete-multiverse-analysis")).
+We will be using the same data as the Vignette [*A complete implementation of a multiverse analysis*](https://mucollective.github.io/multiverse/articles/complete-multiverse-analysis.html) (see `vignette("complete-multiverse-analysis")`).
 
 ```{r data}
 data("durante")
@@ -44,6 +44,9 @@ data.raw.study2 <- durante %>%
   )
 ```
 
+#### Note 
+In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
+
 ## Specifying conditions in the multiverse analysis
 In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
 For example, in our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`.
@@ -52,7 +55,7 @@ We should be able to express these conditions in the multiverse. We can do this 
   1. `%when%`: when declaring a branch, we can use this operator to specify the conditional $A | B$ as `A %when% B`. The conditional $A | B$ is also referred to as the connective $A \implies B$. This has the meaning "if A is true, then B is also true" and is an abbreviation for $\neg A | B$
   2. `branch_assert`: this function allows the user to specify any condition in the form of a logical operation
 
-#### The %when% operator
+#### The `%when%` operator
 There are two ways in which you can specify the `%when%` operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.
 
 ```{r, eval = FALSE}
@@ -75,13 +78,16 @@ df %>%
     )
 ```
 
+
+__Note__: In this example we will be using the `inside` syntax to enter code into the multiverse, instead of _multiverse code blocks_ to highlight the syntax of the conditional declaration as _multiverse code blocks_ shows the code for a universe, and hides the actual code declared by the user.
+
 We can write the complete analysis by specifying the condition with the %when% operator as:
 
 ```{r}
 M = multiverse()
 
 inside(M, {
-  df <- data.raw.study2  %>%
+  df.1 <- data.raw.study2  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
       dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
@@ -121,7 +127,7 @@ Using the `branch_assert()`, we can perform the exact same analysis:
 M = multiverse()
 
 inside(M, {
-    df <- data.raw.study2  %>%
+    df.2 <- data.raw.study2  %>%
         mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
         filter( branch(cycle_length,
             "cl_option1" ~ TRUE,

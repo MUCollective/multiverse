@@ -37,7 +37,7 @@ reference:
   - print
   - extract_variables
   - mulitiverse_code_block
-  
+
 - title: Executing the multiverse
   desc: Execute specific or the entire multiverse
   contents:

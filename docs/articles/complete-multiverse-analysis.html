@@ -54,16 +54,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+      <a href="../articles/basic-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
@@ -108,10 +108,14 @@
 
     
     
+<div id="multiverse-case-study-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#multiverse-case-study-1" class="anchor"></a>Multiverse case study #1</h2>
+<p>In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">Increasing Transparency Through a Multiverse Analysis</a>.</p>
+</div>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">Increasing Transparency Through a Multiverse Analysis</a>.</p>
 <p>Data analysis can involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable options to choose from. A multiverse analysis is a form of analysis which makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision).</p>
 <p>Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -219,9 +223,9 @@
 <p>However, there also exists other valid processing options: instead of calculating <code>NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength</code>, it can also be calculated as <code>StartDateofLastPeriod + ReportedCycleLength</code>. Such alternate processing options can exist for several decisions that a researcher makes in the data processing, analysis and presentation stages. This can thus result in a <em>multiverse of analysis</em>, with the one described above representing a single <em>universe</em>.</p>
 <p>Below, we describe how our package allows you to conduct a multiverse analysis with ease.</p>
 </div>
-<div id="defining-the-multiverse" class="section level2">
+<div id="multiverse-implementation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#defining-the-multiverse" class="anchor"></a>Defining the multiverse</h2>
+<a href="#multiverse-implementation" class="anchor"></a>Multiverse implementation</h2>
 <p><code>multiverse</code> provides flexible functions which can be used to perform a multiverse analysis.</p>
 <p>The first step is to define a <em>new multiverse</em>. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -264,6 +268,11 @@
     <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p><strong>Note</strong> that the <code>inside</code> function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a <code>multiverse code block</code> which can be used instead of the <code>r</code> code block to write code inside a multiverse object (see  for more details on using the multiverse with RMarkdown).</p>
+<div id="note" class="section level4">
+<h4 class="hasAnchor">
+<a href="#note" class="anchor"></a>Note</h4>
+<p>In this vignette, we make use of the  function which is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code chunks</em></a>, a custom engine designed to work with the multiverse package, to implement the multiverse analyses. <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code chunks</em></a> can be used instead of the <code>r</code> code block to write code inside a multiverse object (see  for more details on using the multiverse with RMarkdown).Please refer to the vignette (<code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details.</p>
+</div>
 <div id="the-multiverse-with-declared-code-and-branches" class="section level3">
 <h3 class="hasAnchor">
 <a href="#the-multiverse-with-declared-code-and-branches" class="anchor"></a>The multiverse, with declared code and branches</h3>

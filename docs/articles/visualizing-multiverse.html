@@ -54,16 +54,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+      <a href="../articles/basic-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
@@ -97,6 +97,7 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Extracting and Visualizing the results of a multiverse analysis</h1>
+                        <h4 class="author">Abhraneel Sarma</h4>
             
             <h4 class="date">2021-02-11</h4>
       
@@ -143,6 +144,7 @@
     SocConsComp <span class="op">=</span> <span class="va">Marriage</span> <span class="op">+</span> <span class="va">RestrictAbortion</span> <span class="op">+</span> <span class="va">Abortion</span> <span class="op">+</span> <span class="va">StemCell</span> <span class="op">+</span> <span class="va">Marijuana</span>
   <span class="op">)</span></code></pre></div>
 <p>A detailed description of this analysis can be found in <a href="complete-multiverse-analysis.html"><code>A complete multiverse analysis</code></a>. We will use the results from this analysis to create the visualizations.</p>
+<p><strong>Note</strong> that the <code>inside</code> function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a <code>multiverse code block</code> which can be used instead of the <code>r</code> code block to write code inside a multiverse object (see  for more details on using the multiverse with RMarkdown).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span>
 

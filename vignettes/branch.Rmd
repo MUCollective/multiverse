@@ -1,6 +1,6 @@
 ---
 title: "A discussion on branches in the multiverse"
-author: ""
+author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -40,6 +40,9 @@ An important aspect of this package is to make declaring such **branches** in th
 
 In this document we describe different ways of declaring a **branch**, using different syntactical styles that are popular with R users, including base R syntax and tidyverse syntax.
 
+#### Note 
+In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
+
 ## Example 1: A simple branch
 
 Let's say that there is a variable `x` which can take any of three different values --- "low", "medium", "high".  We can perform the effect of encoding `x` as each of these values separately through separate branches. To do this, we first create a **multiverse object**, M:
@@ -50,11 +53,15 @@ M = multiverse()
 
 Then declare `x` as three possible values within the multiverse using the `branch()` function.
 
-```{r}
-inside(M, {
-  x <- branch(a_parameter, "low", "medium", "high")
-})
+```{multiverse h-1, inside = M, echo = FALSE}
+x <- branch(a_parameter, "low", "medium", "high")
 ```
+
+````
+```{multiverse default-m-1, inside = M}`r ''`
+x <- branch(a_parameter, "low", "medium", "high")
+```
+````
 
 Now, we can inspect the multiverse object to see if all the options were created. 
 
@@ -82,17 +89,25 @@ M = multiverse()
 
 The data variable `duration` is approximately normally distributed, however, as is common with such data it has a long right-tail. Before using a regression model, we can choose to either log-transform the data, or assume that it is normally distribution and analyse it. We can perform both analysis in our multiverse by declaring two branches --- one where the variable is log-transformed and the other where it is not.
 
-```{r}
-inside(M, {
-  df <- data.userlogs.raw %>%
+```{multiverse h-2, inside = M, echo = FALSE}
+df <- data.userlogs.raw %>%
     select(modality, duration) %>%
     mutate( duration = branch( data_transform, 
         "none" ~ duration,
         "log" ~ log(duration)
     ))
-})
 ```
 
+````
+```{multiverse default-m-2, inside = M}`r ''`
+df <- data.userlogs.raw %>%
+    select(modality, duration) %>%
+    mutate( duration = branch( data_transform, 
+        "none" ~ duration,
+        "log" ~ log(duration)
+    ))
+```
+````
 
 The `expand` shows that there are two rows for the `data transform` branch which correspond to the two different reasonable alternatives for transforming time spent data.
 
@@ -114,16 +129,23 @@ M = multiverse()
 
 Say we are not familiar with R's tidyverse packages and it's style of writing code. An alternate way of declaring a branch for transforming the `duration` variable in the analysis would be to use two separate functions for the transformation depending on which universe one is.
 
-```{r}
-M = multiverse()
-
-inside(M, {
-  duration <- branch(data_trans,
+```{multiverse h-3, inside = M, echo = FALSE}
+duration <- branch(data_trans,
         "log-transformed" ~ log,
         "untransformed" ~ identity
     )(data.userlogs.raw$duration)
-})
 ```
+
+
+````
+```{multiverse default-m-3, inside = M}`r ''`
+duration <- branch(data_trans,
+        "log-transformed" ~ log,
+        "untransformed" ~ identity
+    )(data.userlogs.raw$duration)
+```
+````
+
 Then we execute the multiverse and inspect the results:
 
 ```{r}
@@ -137,19 +159,27 @@ As you can see, this creates, in each universe within the multiverse, a vector n
 
 A more readable pattern might be:
 
-```{r}
 M = multiverse()
 
-inside(M, {
-  duration_transform <- branch(data_trans,
-          "log-transformed" ~ log,
-          "untransformed" ~ identity
-      )
-  
-  duration <- duration_transform(data.userlogs.raw$duration)
-})
+```{multiverse h-4, inside = M, echo = FALSE}
+duration_transform <- branch(data_trans,
+    "log-transformed" ~ log,
+    "untransformed" ~ identity
+  )
+
+duration <- duration_transform(data.userlogs.raw$duration)
 ```
 
+````
+```{multiverse default-m-4, inside = M}`r ''`
+duration_transform <- branch(data_trans,
+    "log-transformed" ~ log,
+    "untransformed" ~ identity
+  )
+
+duration <- duration_transform(data.userlogs.raw$duration)
+```
+````
 
 Next, we execute and inspect the results. Again, this alternate calculation also leads to the same result.
 
@@ -182,9 +212,10 @@ bootstrapped_ci <- function(x, y) {
         broom::tidy( conf.int = TRUE, conf.method = "bca", conf.level =  y) %>%
         rename(estimate = statistic)
 }
+```
 
-inside(M, {
-  data_trans <- branch(data_trans,
+```{multiverse h-5, inside = M, echo = FALSE}
+data_trans <- branch(data_trans,
       "log-transformed" ~ log,
       "untransformed" ~ identity
     )
@@ -209,8 +240,37 @@ inside(M, {
     mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
     select(-data) %>%
     unnest( cols = c(fit) )
-})
 ```
+
+````
+```{multiverse default-m-5, inside = M}`r ''`
+data_trans <- branch(data_trans,
+      "log-transformed" ~ log,
+      "untransformed" ~ identity
+    )
+
+  fit <- branch(bootstrap,
+        "t-dist" ~ t_test_ci,
+        "bca" ~ bootstrapped_ci
+      )
+  
+  ci <- branch( ci, 0.5, 0.68, 0.95, 0.99 )
+  
+  df <- data.userlogs.raw  %>%
+    mutate( duration = data_trans(duration) ) %>% 
+    mutate( modality.f = factor(modality) ) %>%
+    group_by(subject, modality.f, modalityname) %>% 
+    summarise( duration = mean(duration), .groups = "drop" ) %>%
+    group_by(modality.f) %>%
+    rename( value = duration ) %>%
+    summarise( data = list(value), .groups = "keep" )
+  
+  df <- df %>%
+    mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
+    select(-data) %>%
+    unnest( cols = c(fit) )
+```
+````
 
 We then write the anaysis and use those variables to indicate branches in our analysis within the multiverse.
 
@@ -251,19 +311,39 @@ So far we have only looked at examples where we declare parameters within a bran
 
 ```{r}
 M = multiverse()
+```
 
-inside(M, {
-  set.seed(branch(seed, .options = 1:25))
 
-  x1 <- rnorm(25)
-  x2 <- rnorm(25)
-  y <- x1 + x2 + runif(25)
-  
-  m <- lm(y ~ x1+ x2)
-  
-  intervals <- broom::tidy(m, conf.int = TRUE)
-})
+```{multiverse h-6, inside = M, echo = FALSE}
+set.seed(branch(seed, .options = 1:25))
 
+x1 <- rnorm(25)
+x2 <- rnorm(25)
+y <- x1 + x2 + runif(25)
+
+m <- lm(y ~ x1+ x2)
+
+intervals <- broom::tidy(m, conf.int = TRUE)
+```
+
+
+
+````
+```{multiverse default-m-6, inside = M}`r ''`
+set.seed(branch(seed, .options = 1:25))
+
+x1 <- rnorm(25)
+x2 <- rnorm(25)
+y <- x1 + x2 + runif(25)
+
+m <- lm(y ~ x1+ x2)
+
+intervals <- broom::tidy(m, conf.int = TRUE)
+```
+````
+
+
+```{r}
 execute_multiverse(M)
 ```
 

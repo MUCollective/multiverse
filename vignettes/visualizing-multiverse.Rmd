@@ -1,6 +1,6 @@
 ---
 title: "Extracting and Visualizing the results of a multiverse analysis"
-author: ""
+author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -52,6 +52,8 @@ data.raw.study2 <- durante %>%
 ```
 
 A detailed description of this analysis can be found in [`A complete multiverse analysis`](complete-multiverse-analysis.html). We will use the results from this analysis to create the visualizations.
+
+**Note** that the `inside` function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a `multiverse code block` which can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown).
 
 ```{r, initialise-multiverse}
 M = multiverse()

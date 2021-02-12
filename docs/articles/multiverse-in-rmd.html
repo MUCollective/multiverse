@@ -54,16 +54,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+      <a href="../articles/basic-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
@@ -97,6 +97,7 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using the multiverse in RMarkdown: Introduction to multiverse code chunks</h1>
+                        <h4 class="author">Abhraneel Sarma</h4>
             
             <h4 class="date">2021-02-11</h4>
       
@@ -168,21 +169,23 @@
 <h3 class="hasAnchor">
 <a href="#multiverse-code-block" class="anchor"></a>Multiverse code block</h3>
 <p>The declaration of the chunk below is (this gets hidden when we knit the document): <code>```{multiverse default-m-1, inside = M_block}</code></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data_transform</span> <span class="op">&lt;-</span> <span class="va">log</span>
-<span class="va">duration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">userlogs</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data_transform</span> <span class="op">&lt;-</span> <span class="va">identity</span>
-<span class="va">duration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">data_transform</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">userlogs</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>```{multiverse default-m-1, inside = M_block}
+data_transform &lt;- branch(data_transform,
+    "log-transformed" ~ log,
+    "untransformed" ~ identity
+  )
+
+duration &lt;- do.call(data_transform, list(userlogs$duration))
+```</code></pre>
 <p>The result of this code block will be identical to the result using <code><a href="../reference/inside.html">inside()</a></code>. We first compare whether the multiverse table is generated properly for both the multiverse objects.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M_inside</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 5
 ##   .universe data_transform  .parameter_assignment .code            .results
 ##       &lt;int&gt; &lt;chr&gt;           &lt;list&gt;                &lt;list&gt;           &lt;list&gt;  
 ## 1         1 log-transformed &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
 ## 2         2 untransformed   &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;</code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M_block</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 5
 ##   .universe data_transform  .parameter_assignment .code            .results

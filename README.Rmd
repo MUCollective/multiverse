@@ -137,7 +137,7 @@ However, there also exists other valid processing options: instead of calculatin
 
 Below, we describe how our package allows you to conduct a multiverse analysis with ease.
 
-## Defining the multiverse
+## Multiverse specification
 
 `multiverse` provides flexible functions which can be used to perform a multiverse analysis.
 
@@ -172,7 +172,17 @@ NextMenstrualOnset = branch(menstrual_calculation,
 )
 ```
 
-The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Thus, we need to declare this data processing step inside the multiverse. We do this by using the `inside()` function. The `inside()` function takes in two arguments:
+### Two ways to building a multiverse
+
+The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Thus, we need to declare this data processing step inside the multiverse. In the `multiverse` package we support this declaration in two ways:
+
+- using the `inside()` function. The inside function is more suited for a script-style implementation.
+- using *multiverse code chunks*, which is more consistent with the interactive programming interface of RStudio. 
+
+**Note** that the `inside` function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a `multiverse code block` which can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown). 
+
+#### `inside()`
+The `inside()` function takes in two arguments:
 1. the multiverse object, M; and
 2. the code for the analysis (including branches). Note that if you are passing multiple expressions, they should be enclosed within `{}`.
 
@@ -196,7 +206,11 @@ inside(M, {
 })
 ```
 
-Alternative to the `inside` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
+#### Multiverse code chunks
+
+Alternati to the `inside` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
+
+(see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown)
 
 ```{r alternate_add_to_multiverse, eval = FALSE}
 M$df <- ~ data.raw.study2  %>%

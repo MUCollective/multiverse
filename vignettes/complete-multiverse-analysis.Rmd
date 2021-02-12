@@ -9,9 +9,11 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-## Introduction
+## Multiverse case study #1
 
 In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
+
+## Introduction
 
 Data analysis can involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable options to choose from. A multiverse analysis is a form of analysis which makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). 
 
@@ -104,7 +106,7 @@ However, there also exists other valid processing options: instead of calculatin
 
 Below, we describe how our package allows you to conduct a multiverse analysis with ease.
 
-## Defining the multiverse
+## Multiverse implementation
 
 `multiverse` provides flexible functions which can be used to perform a multiverse analysis.
 
@@ -164,6 +166,9 @@ inside(M, {
 ```
 
 **Note** that the `inside` function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a `multiverse code block` which can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown). 
+
+#### Note 
+In this vignette, we make use of the  \code{inside} function which is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown).Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
 
 ### The multiverse, with declared code and branches
 Once you add the code to the multiverse, it automatically parses the code to identify the `parameters` and the corresponding `options` that have been defined for each parameter.
