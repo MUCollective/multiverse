@@ -909,7 +909,7 @@
 <code class="sourceCode R"><span class="va">one_universe</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Relationship</span>, y <span class="op">=</span> <span class="va">Rel1</span> <span class="op">+</span> <span class="va">Rel2</span> <span class="op">+</span> <span class="va">Rel3</span>, color <span class="op">=</span> <span class="va">Fertility</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">stat_summary</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span>, fun.data <span class="op">=</span> <span class="st">"mean_se"</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/universe-summary-1.png" style="display: block; margin: auto;"></p>
+<p><img src="articles/figures/universe-summary-1.png" style="display: block; margin: auto;"></p>
 <p>However, there also exists other valid processing options: instead of calculating <code>NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength</code>, it can also be calculated as <code>StartDateofLastPeriod + ReportedCycleLength</code>. Such alternate processing options can exist for several decisions that a researcher makes in the data processing, analysis and presentation stages. This can thus result in a <em>multiverse of analysis</em>, with the one described above representing a single <em>universe</em>.</p>
 <p>Below, we describe how our package allows you to conduct a multiverse analysis with ease.</p>
 </div>
@@ -2107,7 +2107,7 @@
   <span class="fu">transition_manual</span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
 
 <span class="fu">animate</span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/model-1-vis-1.gif"><!-- --></p>
+<p><img src="articles/figures/model-1-vis-1.gif"><!-- --></p>
 </div>
 <div id="notes" class="section level3">
 <h3 class="hasAnchor">
