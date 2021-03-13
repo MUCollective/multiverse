@@ -52,11 +52,15 @@ execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   .level = min(m_obj$unchanged_until, m_obj$exec_all_until)
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
-  .m_list <- m_diction$as_list()[.to_exec]
-  .res <- lapply(.m_list, exec_all, cores = cores)
+  .m_list <- m_diction$as_list()[.to_exec] # list of unexecuted (vertical) steps in the multiverse
+  .res <- lapply(.m_list, exec_all, cores = cores) # we execute each step in sequence from top to bottom
+  
   m_obj$exec_all_until <- length(m_diction$as_list())
 }
 
+# executes all the options resulting from decisions declared within a single code 
+# block in parallel. We do not need to communicate with other universes at this step
+# making it suitable for parallelisation.
 exec_all <- function(x, cores) {
   .code_list = lapply(x, `[[`, "code")
   .env_list = lapply(x, `[[`, "env")

@@ -4,7 +4,11 @@ author:
   - Abhraneel Sarma, Northwestern University
   - Alex Kale, University of Washington
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Are hurricanes with more female names deadlier --- an implementation using multiverse}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}

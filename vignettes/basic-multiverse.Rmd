@@ -2,7 +2,11 @@
 title: "The most basic multiverse example: calculating the mean"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{The most basic multiverse example: calculating the mean}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, message=FALSE, warning=FALSE}

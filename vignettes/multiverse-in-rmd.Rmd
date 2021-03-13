@@ -1,8 +1,12 @@
 ---
-title: "Using the multiverse in RMarkdown: Introduction to multiverse code chunks"
+title: 'Using the multiverse in RMarkdown: Introduction to multiverse code chunks'
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Using the multiverse in RMarkdown: Introduction to multiverse code chunks}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r, setup, message=FALSE, warning=FALSE}
@@ -139,4 +143,22 @@ This is the output from the second multiverse object (`M_block`), which uses the
 ```{r, echo = FALSE}
 expand(M_block)$.code
 ```
+
+
+## Notes on using multiverse code blocks
+
+### In Rstudio using RMarkdown
+During interactive use with RStudio, *multiverse code blocks* will work very similarly to a R code block. It will only execute the default analysis (i.e. the analysis path obtained by combining the first option of each parameter) in the global environment. Any output that is generated will have the formatting that output of R code blocks do.
+
+### Knitting to HTML using knitr
+When a document is knit, currently all analysis paths are executed but the document only shows the analysis path corresponding to the default analysis. We are currently developing interactive features which will allow the author to implement interactivity into the rendered HTML document; this will also allow readers to interact with the analysis and investigate the robustness of the implemented analysis themselves.
+
+### Knitting to HTML using knitr
+Currently we do not support knitting of RMarkdown documents with multiverse code blocks to PDF documents.
+
+
+
+
+
+
 

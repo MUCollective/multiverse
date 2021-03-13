@@ -2,7 +2,11 @@
 title: "Extracting and Visualizing the results of a multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ## Introduction

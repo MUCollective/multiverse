@@ -165,10 +165,8 @@ inside(M, {
 })
 ```
 
-**Note** that the `inside` function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a `multiverse code block` which can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown). 
-
 #### Note 
-In this vignette, we make use of the  \code{inside} function which is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown).Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
+In this vignette, we make use of the  \code{inside} function which is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) can be used instead of the `r` code block to write code inside a multiverse object. See \link{multiverse-in-rmd} or refer to the vignette (`vignette("multiverse-in-rmd")`) for more details on using the multiverse with RMarkdown.
 
 ### The multiverse, with declared code and branches
 Once you add the code to the multiverse, it automatically parses the code to identify the `parameters` and the corresponding `options` that have been defined for each parameter.

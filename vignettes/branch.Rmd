@@ -2,7 +2,11 @@
 title: "A discussion on branches in the multiverse"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{A discussion on branches in the multiverse}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, message=FALSE, warning=FALSE}
