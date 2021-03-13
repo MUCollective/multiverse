@@ -1,9 +1,14 @@
 *~
 .Rhistory
 .RData
-.Rproj*
+.Rproj
 .DS_Store
 .Rproj.user
-^data/hurricane-multiverse.rds$
-^data/all_judgements.csv$
-^data/vis_correlation_all_judgements.rda$
+
+# excludes all top level Rmd files
+/*.Rmd
+
+# ignore all nonstandard data types
+data/*.rds
+data/*.csv
+data/vis_correlation_all_judgements.rda$

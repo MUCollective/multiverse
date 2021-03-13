@@ -1,4 +1,11 @@
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions)
+[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://codecov.io/gh/MUCollective/multiverse)
+
+<!-- badges: end -->
+
 # Multiverse: An R package for creating multiverse analysis
 
 The goal of multiverse is to allow users to create multiverse analyses
@@ -174,7 +181,9 @@ one_universe %>%
   stat_summary(position = position_dodge(width = .1), fun.data = "mean_se")
 ```
 
-<img src="README_files/universe-summary-1.png" style="display: block; margin: auto;" />
+![results from a single analysis: point estimates and 95% confidence
+intervals of the coefficients of the predictors relationship and
+single](man/figures/universe-summary-1.png)
 
 However, there also exists other valid processing options: instead of
 calculating `NextMenstrualOnset = StartDateofLastPeriod +
@@ -188,7 +197,7 @@ a single *universe*.
 Below, we describe how our package allows you to conduct a multiverse
 analysis with ease.
 
-## Defining the multiverse
+## Multiverse specification
 
 `multiverse` provides flexible functions which can be used to perform a
 multiverse analysis.
@@ -236,14 +245,32 @@ NextMenstrualOnset = branch(menstrual_calculation,
 )
 ```
 
+### Two ways to building a multiverse
+
 The `branch()` function indicates that, *in our multiverse*,
 NextMenstrualOnset can take either of the three options (here,
 `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Thus, we need to
-declare this data processing step inside the multiverse. We do this by
-using the `inside()` function. The `inside()` function takes in two
-arguments: 1. the multiverse object, M; and 2. the code for the analysis
-(including branches). Note that if you are passing multiple expressions,
-they should be enclosed within `{}`.
+declare this data processing step inside the multiverse. In the
+`multiverse` package we support this declaration in two ways:
+
+  - using the `inside()` function. The inside function is more suited
+    for a script-style implementation.
+  - using *multiverse code chunks*, which is more consistent with the
+    interactive programming interface of RStudio.
+
+**Note** that the `inside` function is more suited for a script-style
+implementation. Keeping consistency with the interactive programming
+interface of RStudio, we also offer the user a `multiverse code block`
+which can be used instead of the `r` code block to write code inside a
+multiverse object (see  for more details on using the multiverse with
+RMarkdown).
+
+#### `inside()`
+
+The `inside()` function takes in two arguments: 1. the multiverse
+object, M; and 2. the code for the analysis (including branches). Note
+that if you are passing multiple expressions, they should be enclosed
+within `{}`.
 
 ``` r
 # here we just create the variable `df` in the multiverse
@@ -265,11 +292,41 @@ inside(M, {
 })
 ```
 
-Alternative to the `inside` function, we can use the more concise `<-`
-operator to define the multiverse. However, any expression on the
-right-hand-side of the `<-` operator needs to be preceded by the `~`
-(tilde) which converts the expression to a formula. Thus, the syntax
-looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
+#### Multiverse code blocks
+
+Alternatively,we can use the [*multiverse code
+blocks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html)
+instead of the regular `r` code block to write code inside a multiverse
+object (see  for more details on using the multiverse with RMarkdown).
+This allows you to write more concise code and is more consistent with
+the interactive programming interface of RStudio. A *multiverse code
+block* is a custom engine designed to work with the multiverse package,
+to implement the multiverse analyses. Below we show how the same code
+from above can be implemented using the *multiverse code block*
+
+    ```{multiverse default-m-1, inside = M}
+    # here we just create the variable `df` in the multiverse
+    inside(M, df <- data.raw.study2)
+    
+    # here, we perform two `mutate` operations in the multiverse.
+    # although they could have been chained, this illustrates 
+    # how multiple variables can be declared together using the `{}`
+    inside(M, {
+      df <- df %>%
+        mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
+      
+      df <- df %>%
+        mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+          "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+          "mc_option3" ~ StartDateNext)
+        )
+    })
+    ```
+
+In the rest of this vignette, we will use `inside()` to specify the
+multiverse. Please refer to the vignette
+(`vignette("multiverse-in-rmd")`) for more details.
 
 ``` r
 M$df <- ~ data.raw.study2  %>%
@@ -322,9 +379,9 @@ expand(M) %>% select(-.code)
 
 | .universe | menstrual\_calculation | .parameter\_assignment | .results                        |
 | --------: | :--------------------- | :--------------------- | :------------------------------ |
-|         1 | mc\_option1            | mc\_option1            | \<environment: 0x7f8e594aa478\> |
-|         2 | mc\_option2            | mc\_option2            | \<environment: 0x7f8e594d3c50\> |
-|         3 | mc\_option3            | mc\_option3            | \<environment: 0x7f8e594feef8\> |
+|         1 | mc\_option1            | mc\_option1            | \<environment: 0x7f901421e5d8\> |
+|         2 | mc\_option2            | mc\_option2            | \<environment: 0x7f901423e680\> |
+|         3 | mc\_option3            | mc\_option3            | \<environment: 0x7f9014259148\> |
 
 </div>
 
@@ -484,12 +541,12 @@ expand(M) %>%
 
 | .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                        |
 | --------: | :--------------------- | :------------------- | :------------ | :----------- | :----------- | :------------------------------------------------------------------- | :------------------------------ |
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7f8e5a050590\> |
-|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7f8e5a1ac818\> |
-|         3 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option3 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option3 | \<environment: 0x7f8e5a2267a8\> |
-|         4 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option4 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option4 | \<environment: 0x7f8e5a2c3260\> |
-|         5 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option5 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option5 | \<environment: 0x7f8e5a358e00\> |
-|         6 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option2 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option2, fer\_option1 | \<environment: 0x7f8e5a3c9bc8\> |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7f90116eb4f0\> |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7f9014b776a0\> |
+|         3 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option3 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option3 | \<environment: 0x7f9014beb010\> |
+|         4 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option4 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option4 | \<environment: 0x7f9014c79010\> |
+|         5 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option5 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option5 | \<environment: 0x7f9014cf60e8\> |
+|         6 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option2 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option2, fer\_option1 | \<environment: 0x7f9014d7b3c8\> |
 
 </div>
 
@@ -722,16 +779,16 @@ expand(M) %>%
 
 | .universe | cycle\_length | certainty    | menstrual\_calculation | fertile      | relationship\_status | .parameter\_assignment                                              | .results                        | term                                  |    estimate | std.error |  statistic |   p.value |    conf.low |   conf.high |
 | --------: | :------------ | :----------- | :--------------------- | :----------- | :------------------- | :------------------------------------------------------------------ | :------------------------------ | :------------------------------------ | ----------: | --------: | ---------: | --------: | ----------: | ----------: |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | (Intercept)                           |   6.3749123 | 0.4044011 |  15.763834 | 0.0000000 |   5.5790575 |   7.1707671 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | Fertilitylow                          | \-1.1993860 | 0.5349724 | \-2.241958 | 0.0257021 | \-2.2522029 | \-0.1465691 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | RelationshipStatusSingle              | \-1.4568301 | 0.5396630 | \-2.699518 | 0.0073420 | \-2.5188779 | \-0.3947823 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f8e5a9c1468\> | Fertilitylow:RelationshipStatusSingle |   2.0287775 | 0.7155526 |   2.835260 | 0.0048931 |   0.6205818 |   3.4369732 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | (Intercept)                           |   5.8375556 | 0.3230419 |  18.070582 | 0.0000000 |   5.2018144 |   6.4732968 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | Fertilitylow                          | \-0.6595047 | 0.4288936 | \-1.537688 | 0.1251895 | \-1.5035602 |   0.1845508 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | RelationshipStatusSingle              | \-0.9123056 | 0.5823721 | \-1.566534 | 0.1182885 | \-2.0584043 |   0.2337932 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f8e5a9fe400\> | Fertilitylow:RelationshipStatusSingle |   1.9293490 | 0.7719840 |   2.499208 | 0.0129869 |   0.4100972 |   3.4486009 |
-|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7f8e5aa43a88\> | (Intercept)                           |   6.3749123 | 0.4024088 |  15.841881 | 0.0000000 |   5.5818823 |   7.1679422 |
-|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7f8e5aa43a88\> | Fertilitylow                          | \-1.1993860 | 0.5323368 | \-2.253059 | 0.0252328 | \-2.2484660 | \-0.1503059 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f9017353b28\> | (Intercept)                           |   6.3749123 | 0.4044011 |  15.763834 | 0.0000000 |   5.5790575 |   7.1707671 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f9017353b28\> | Fertilitylow                          | \-1.1993860 | 0.5349724 | \-2.241958 | 0.0257021 | \-2.2522029 | \-0.1465691 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f9017353b28\> | RelationshipStatusSingle              | \-1.4568301 | 0.5396630 | \-2.699518 | 0.0073420 | \-2.5188779 | \-0.3947823 |
+|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7f9017353b28\> | Fertilitylow:RelationshipStatusSingle |   2.0287775 | 0.7155526 |   2.835260 | 0.0048931 |   0.6205818 |   3.4369732 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f901739a938\> | (Intercept)                           |   5.8375556 | 0.3230419 |  18.070582 | 0.0000000 |   5.2018144 |   6.4732968 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f901739a938\> | Fertilitylow                          | \-0.6595047 | 0.4288936 | \-1.537688 | 0.1251895 | \-1.5035602 |   0.1845508 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f901739a938\> | RelationshipStatusSingle              | \-0.9123056 | 0.5823721 | \-1.566534 | 0.1182885 | \-2.0584043 |   0.2337932 |
+|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7f901739a938\> | Fertilitylow:RelationshipStatusSingle |   1.9293490 | 0.7719840 |   2.499208 | 0.0129869 |   0.4100972 |   3.4486009 |
+|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7f900daa0100\> | (Intercept)                           |   6.3749123 | 0.4024088 |  15.841881 | 0.0000000 |   5.5818823 |   7.1679422 |
+|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7f900daa0100\> | Fertilitylow                          | \-1.1993860 | 0.5323368 | \-2.253059 | 0.0252328 | \-2.2484660 | \-0.1503059 |
 
 </div>
 
@@ -764,7 +821,9 @@ p <- expand(M) %>%
 animate(p, nframes = 210, fps = 2)
 ```
 
-![](README_files/model-1-vis-1.gif)<!-- -->
+![results from a multiverse analysis: point estimates and 95% confidence
+intervals of the coefficients of the predictors fertility, single and
+their interaction term](man/figures/model-1-vis-1.gif)
 
 ### Notes
 

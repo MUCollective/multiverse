@@ -34,3 +34,45 @@
 #' *IEEE transactions on visualization and computer graphics* 20.12: 1943-1952.
 NULL
 
+
+#' Participants responses in the study by Harrison et al., "Ranking Visualizations of correlation according to Weber's law"
+#'
+#' A dataset containing each individual responses of the participants.
+#' In this study, participants were asked to make multiple judgements about the correlation in multiple blocks.
+#' This dataset contains each judgement by each participant. 
+#'
+#' @format A data frame with 275,976 rows and 11 variables:
+#' \describe{
+#'   \item{rbase}{The coefficiant of correlation using which the stimuli was generated}
+#'   \item{rv}{The actual coefficiant of correlationshown to participant}
+#'   \item{approach}{Above or Below.  indicating that the reference value of r 
+#'   was compared to values of r above it in the staircase procedure;
+#'   or from below, indicated it was compared to values of r below it}
+#'   \item{correctChoice}{L or R. What was the correct choice}
+#'   \item{currentChoice}{L or R. What was the choice selected by participant}
+#'   \item{gotItRight}{TRUE or FALSE. Whether the participant was correct or incorrect}
+#'   \item{jnd}{Just Noticeable Difference value for the trial}
+#'   \item{index}{Trial number within a block for each participant}
+#'   \item{participant}{Participant identifier}
+#'   \item{vis}{Type of visualization used}
+#'   \item{rdirection}{The direction of the slope of the line (positive or negative)}
+#' }
+#' 
+#' @name vis_correlation2
+#' @docType data
+#' @keywords datasets
+#' 
+#' @references
+#' Pierre Dragicevic, Yvonne Jansen, Abhraneel Sarma, Matthew Kay and Fanny Chevalier. (2019).
+#' "Increasing the transparency of research papers with explorable multiverse analyses."
+#' *Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems* pp. 1-15.
+#' 
+#' Kay, Matthew, and Jeffrey Heer. (2016).
+#' "Beyond Weber's law: A second look at ranking visualizations of correlation."
+#' *IEEE transactions on visualization and computer graphics* 22.1: 469-478.
+#'
+#' Lane Harrison, Fumeng Yang, Steven Franconeri, and Remco Chang. (2014).
+#' "Ranking visualizations of correlation using Weber's law."
+#' *IEEE transactions on visualization and computer graphics* 20.12: 1943-1952.
+NULL
+

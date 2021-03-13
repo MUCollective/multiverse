@@ -1,0 +1,37 @@
+h1 {
+	/*font-size: 12px;*/
+	font-size: 32px;
+  	font-weight: bold;
+}
+
+.contents h4 {
+	padding-top: 48px !important; 
+}
+
+#pkgdown-sidebar {
+	font-size: 1em;
+	color: #bbb;
+	display: inline;
+	padding-right: 0.5em;
+}
+
+body {
+	font-size: 16px;
+}
+
+div.sourceCode {
+	margin: 1em 0em 1.5em 0em;
+}
+
+#pkgdown-sidebar div {
+	margin-bottom: 2em;
+}
+
+#pkgdown-sidebar .list-unstyled li {
+	color: #333333;
+	margin-bottom: 1em;
+}
+
+a {
+	color: #2196f3;
+}

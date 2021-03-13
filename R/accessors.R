@@ -83,6 +83,29 @@ expand.multiverse <- function(multiverse) {
                     ), .universe, everything())
 }
 
+
+#' @rdname accessors
+#' @export
+size <- function(multiverse) {
+  UseMethod("size")
+}
+
+#' @rdname accessors
+#' @export
+size.default <- function(multiverse) {
+  stop(
+    "Objects of type ", deparse(class(multiverse)), " do not have method `size`. \n",
+    "Please use objects of type `multiverse."
+  )
+}
+
+#' @rdname accessors
+#' @export
+size.multiverse <- function(multiverse) {
+  nrow(expand(multiverse))
+}
+
+
 #' @rdname accessors
 #' @export
 code <- function(multiverse) {

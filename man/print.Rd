@@ -10,7 +10,7 @@
 \arguments{
 \item{x}{An object of class multiverse}
 
-\item{...}{further arguments passed to or from other methods}
+\item{...}{further arguments passed to or from other methods. Currently ignored.}
 }
 \description{
 prints objects of class multiverse. Provides a quick overview of the multiverse by 

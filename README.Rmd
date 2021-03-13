@@ -12,9 +12,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=master)
+<!-- badges: start -->
 
+[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions)
+[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://codecov.io/gh/MUCollective/multiverse)
 
+<!-- badges: end -->
 
 # Multiverse: An R package for creating multiverse analysis
 
@@ -129,17 +132,19 @@ one_universe %>%
   head(10)
 ```
 
-```{r, universe-summary, fig.align = 'center'}
+```{r, universe-summary, fig.align = 'center', eval = FALSE}
 one_universe %>%
   ggplot(aes(x = Relationship, y = Rel1 + Rel2 + Rel3, color = Fertility)) +
   stat_summary(position = position_dodge(width = .1), fun.data = "mean_se")
 ```
 
+![results from a single analysis: point estimates and 95% confidence intervals of the coefficients of the predictors relationship and single](man/figures/universe-summary-1.png)
+
 However, there also exists other valid processing options: instead of calculating `NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength`, it can also be calculated as `StartDateofLastPeriod + ReportedCycleLength`. Such alternate processing options can exist for several decisions that a researcher makes in the data processing, analysis and presentation stages. This can thus result in a *multiverse of analysis*, with the one described above representing a single *universe*. 
 
 Below, we describe how our package allows you to conduct a multiverse analysis with ease.
 
-## Defining the multiverse
+## Multiverse specification
 
 `multiverse` provides flexible functions which can be used to perform a multiverse analysis.
 
@@ -174,7 +179,17 @@ NextMenstrualOnset = branch(menstrual_calculation,
 )
 ```
 
-The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Thus, we need to declare this data processing step inside the multiverse. We do this by using the `inside()` function. The `inside()` function takes in two arguments:
+### Two ways to building a multiverse
+
+The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Thus, we need to declare this data processing step inside the multiverse. In the `multiverse` package we support this declaration in two ways:
+
+- using the `inside()` function. The inside function is more suited for a script-style implementation.
+- using *multiverse code chunks*, which is more consistent with the interactive programming interface of RStudio. 
+
+**Note** that the `inside` function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a `multiverse code block` which can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown). 
+
+#### `inside()`
+The `inside()` function takes in two arguments:
 1. the multiverse object, M; and
 2. the code for the analysis (including branches). Note that if you are passing multiple expressions, they should be enclosed within `{}`.
 
@@ -198,7 +213,33 @@ inside(M, {
 })
 ```
 
-Alternative to the `inside` function, we can use the more concise `<-` operator to define the multiverse. However, any expression on the right-hand-side of the `<-` operator needs to be preceded by the `~` (tilde) which converts the expression to a formula. Thus, the syntax looks like: `<multiverse_object>$<variable_name> <- ~ <expression>`
+#### Multiverse code blocks
+
+Alternatively,we can use the [*multiverse code blocks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) instead of the regular `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown). This allows you to write more concise code and is more consistent with the interactive programming interface of RStudio. A *multiverse code block* is a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Below we show how the same code from above can be implemented using the *multiverse code block*
+
+````
+```{multiverse default-m-1, inside = M}`r ''`
+# here we just create the variable `df` in the multiverse
+inside(M, df <- data.raw.study2)
+
+# here, we perform two `mutate` operations in the multiverse.
+# although they could have been chained, this illustrates 
+# how multiple variables can be declared together using the `{}`
+inside(M, {
+  df <- df %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
+  
+  df <- df %>%
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+      "mc_option3" ~ StartDateNext)
+    )
+})
+```
+````
+
+In the rest of this vignette, we will use `inside()` to specify the multiverse. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
 
 ```{r alternate_add_to_multiverse, eval = FALSE}
 M$df <- ~ data.raw.study2  %>%
@@ -468,7 +509,7 @@ We then take this data frame and plot the results as a confidence interval and p
 
 Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette [`Extracting and Visualizing the results of a multiverse analysis`](visualizing-multiverse.html)
 
-```{r, model-1-vis, message = FALSE}
+```{r, model-1-vis, message = FALSE, eval = FALSE}
 p <- expand(M) %>%
   mutate( summary = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary) ) %>%
@@ -485,6 +526,8 @@ p <- expand(M) %>%
 
 animate(p, nframes = 210, fps = 2)
 ```
+
+![results from a multiverse analysis: point estimates and 95% confidence intervals of the coefficients of the predictors fertility, single and their interaction term](man/figures/model-1-vis-1.gif)
 
 
 ### Notes

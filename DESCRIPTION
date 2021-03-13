@@ -1,6 +1,6 @@
 Package: multiverse
-Version: 0.3.0.1
-Date: 2020-06-21
+Version: 0.3.1.1
+Date: 2021-02-15
 Title: Explorable Multiverse Data Analysis and Reports in R
 Authors@R: c(
 		person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
@@ -11,7 +11,7 @@ Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
 Description: Create Explorable Multiverse Analysis in R. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are.
 License: GPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.1.0.9000
+RoxygenNote: 7.1.1
 Depends:
     R (>= 3.5.0),
     knitr
@@ -36,6 +36,8 @@ Imports:
     evaluate,
     rstudioapi,
     berryFunctions
+Remotes:
+    yihui/knitr
 Suggests:
     testthat (>= 2.1.0),
     lubridate,
@@ -51,3 +53,5 @@ Suggests:
     png
 Language: en-US
 VignetteBuilder: knitr
+BugReports: https://github.com/MUCollective/multiverse/issues/new
+URL: https://mucollective.github.io/multiverse/, https://github.com/mucollective/multiverse/

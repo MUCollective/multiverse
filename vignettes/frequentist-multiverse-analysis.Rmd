@@ -1,8 +1,15 @@
 ---
 title: "A multiverse analysis of the efficiency of physical visualizations"
-author: ""
+author: 
+  - Pierre Dragicevic, Inria
+  - Yvonne Jansen, CNRS & Sorbonne Universite
+  - Abhraneel Sarma, Northwestern University
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{A multiverse analysis of the efficiency of physical visualizations}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, message=FALSE, warning=FALSE}
@@ -25,13 +32,18 @@ opts_knit$set(
 )
 ```
 
+## Multiverse case study #2
+
+In this vignette, we will recreate the multiverse analysis, [Frequentist](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
+
 ## Introduction
 
-In this vignette, we will recreate the multiverse analysis, [Frequentist](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. The re-analysis is of a study which shows that moving 3D data visualizations to the physical world can improve users' efficiency at information retrieval tasks.
+The original study investigated the effects of moving 3D data visualizations to the physical world and found that it can improve users' efficiency at information retrieval tasks. The original study consisted of two experiments. Dragicevic et al. only re-analyze the second experiment, whose goal was to better understand why physical visualizations appear to be superior.
+
 
 ## The data
 
-The original study consisted of two experiments. Dragicevic et al. only re-analyze the second experiment, whose goal was to better understand why physical visualizations appear to be superior. The experiment involved an “enhanced” version of the on-screen 3D chart and an “impoverished” version of the physical 3D chart. The enhanced on-screen chart was rotated using a 3D-tracked tangible prop instead of a mouse. The impoverished physical chart consisted of the same physical object but participants were instructed not to use their fingers for marking. There were 4 conditions:
+The experiment involved an “enhanced” version of the on-screen 3D chart and an “impoverished” version of the physical 3D chart. The enhanced on-screen chart was rotated using a 3D-tracked tangible prop instead of a mouse. The impoverished physical chart consisted of the same physical object but participants were instructed not to use their fingers for marking. There were 4 conditions:
 
 * physical touch: physical 3D bar charts where touch was explicitly encouraged in the instructions.
 * physical no touch: same charts as above except subjects were told not to use their fingers to mark points of interest (labels and bars).
@@ -95,9 +107,10 @@ M = multiverse()
 
 Now we define the parameters we want to consider in the multiverse: confidence interval method (`ci_method`) and data transformation method (`data_transform`). We also define a parameter for confidence level, as the choice of a 95% confidence level is arbitrary and we can choose to instead present our results with alternate confidence levels. Here we vary between: 50%, 75%, 89%, 85%, 99%, 99.9%. Thus our multiverse consists of: 2 $\times$ 2 $\times$ 7 different analysis combinations.
 
-We will use the multiverse code block to enter code into the multiverse. See the {\link{multiverse-code-block} for more details.
+#### Note 
+In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
 
-```{multiverse default-m-1, inside = M}
+```{multiverse default-m-1, inside = M, echo = FALSE}
 ci_method <- branch(ci_method,
     "t based"   ~ "tCI",
     "bootstrap" ~ "bootstrappedCI"
@@ -119,6 +132,29 @@ conf_level <-  branch(conf_level,
 ```
 
 
+````
+```{multiverse default-m-1, inside = M}`r ''`
+ci_method <- branch(ci_method,
+    "t based"   ~ "tCI",
+    "bootstrap" ~ "bootstrappedCI"
+)
+
+data_transform <- branch(data_transform,
+    "log-transformed" ~ log,
+    "untransformed" ~ identity
+)
+
+conf_level <-  branch(conf_level,
+    "50%" ~ 0.5,
+    "67" ~ 0.67,
+    "89" ~ 0.89,
+    "95%" ~ 0.95,
+    "99%" ~ 0.99,
+    "99.9%" ~ 0.999
+)
+```
+````
+
 We now look at the multiverse table and see that it has created all the possible combinations:
 
 ```{r}
@@ -128,13 +164,19 @@ expand(M)
 We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options.
 First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.
 
-```{multiverse default-m-2, inside = M}
+```{multiverse default-m-2, inside = M, echo = FALSE}
 duration <- do.call(data_transform, list(data.userlogs.raw$duration))
 ```
 
+````
+```{multiverse default-m-2, inside = M}`r ''`
+duration <- do.call(data_transform, list(data.userlogs.raw$duration))
+```
+````
+
 Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a `data.frame`. We strongly recommend sotring the results that you would wish to extract from the multiverse in a `data.frame` as that would make it much easier for analysing and visualising the results.
 
-```{multiverse default-m-3, inside = M}
+```{multiverse default-m-3, inside = M, echo = FALSE, message = FALSE, warning = FALSE}
 modality <- data.userlogs.raw$modalityname
 
 ci.physical_notouch <- do.call(ci_method, list(duration[modality == 'physical-notouch'], conf_level))
@@ -152,6 +194,28 @@ ci.virtual_mouse <- setNames(as.list(c("virtual_mouse", ci.virtual_mouse)), c("m
 df <- rbind.data.frame(ci.physical_notouch, ci.physical_touch, ci.virtual_prop, ci.virtual_mouse, make.row.names = FALSE, stringsAsFactors = FALSE)
 df <- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
 ```
+
+
+````
+```{multiverse default-m-3, inside = M}`r ''`
+modality <- data.userlogs.raw$modalityname
+
+ci.physical_notouch <- do.call(ci_method, list(duration[modality == 'physical-notouch'], conf_level))
+ci.physical_notouch <- setNames(as.list(c("physical_notouch", ci.physical_notouch)), c("modality", "estimate", "conf.low", "conf.high"))
+
+ci.physical_touch <- do.call(ci_method, list(duration[modality == 'physical-touch'], conf_level))
+ci.physical_touch <- setNames(as.list(c("physical_touch", ci.physical_touch)), c("modality", "estimate", "conf.low", "conf.high"))
+
+ci.virtual_prop <- do.call(ci_method, list(duration[modality == 'virtual-prop'], conf_level))
+ci.virtual_prop <- setNames(as.list(c("virtual_prop", ci.virtual_prop)), c("modality", "estimate", "conf.low", "conf.high"))
+
+ci.virtual_mouse <- do.call(ci_method, list(duration[modality == 'virtual-mouse'], conf_level))
+ci.virtual_mouse <- setNames(as.list(c("virtual_mouse", ci.virtual_mouse)), c("modality", "estimate", "conf.low", "conf.high"))
+
+df <- rbind.data.frame(ci.physical_notouch, ci.physical_touch, ci.virtual_prop, ci.virtual_mouse, make.row.names = FALSE, stringsAsFactors = FALSE)
+df <- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
+```
+````
 
 Since the multiverse only executes the default analysis, we then run the following command to run all the analysis that we have defined in the multiverse.
 
@@ -232,7 +296,7 @@ expand(M) %>%
 
 Next, we compute the pairwise ratios between mean completion times to examine the within-subject differences.
 
-```{multiverse default-m-4, inside = M}
+```{multiverse default-m-4, inside = M, echo = FALSE}
 diff.touch_notouch <- duration[modality == 'physical-notouch'] - duration[modality == 'physical-touch']
 `physical_touch - physical_notouch` <- do.call(ci_method, list(diff.touch_notouch, conf_level))
 `physical_touch - physical_notouch` <- setNames(as.list(c("physical_touch - physical_notouch", `physical_touch - physical_notouch`)), c("modality", "estimate", "conf.low", "conf.high"))
@@ -249,9 +313,35 @@ df.diffs <- rbind.data.frame(`physical_touch - physical_notouch`, `physical_noto
 df.diffs <- transform(df.diffs, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
 ```
 
+````
+```{multiverse default-m-4, inside = M}`r ''`
+diff.touch_notouch <- duration[modality == 'physical-notouch'] - duration[modality == 'physical-touch']
+`physical_touch - physical_notouch` <- do.call(ci_method, list(diff.touch_notouch, conf_level))
+`physical_touch - physical_notouch` <- setNames(as.list(c("physical_touch - physical_notouch", `physical_touch - physical_notouch`)), c("modality", "estimate", "conf.low", "conf.high"))
+
+diff.notouch_prop <- duration[modality == 'physical-notouch'] - duration[modality == 'virtual-prop']
+`physical_notouch - virtual_prop` <- do.call(ci_method, list(diff.notouch_prop, conf_level))
+`physical_notouch - virtual_prop` <- setNames(as.list(c("physical_notouch - virtual_prop", `physical_notouch - virtual_prop`)), c("modality", "estimate", "conf.low", "conf.high"))
+
+diff.propr_mouse <- duration[modality == 'virtual-prop'] - duration[modality == 'virtual-mouse']
+`virtual_prop - virtual_mouse` <- do.call(ci_method, list(diff.propr_mouse, conf_level))
+`virtual_prop - virtual_mouse` <- setNames(as.list(c("virtual_prop - virtual_mouse", `virtual_prop - virtual_mouse`)), c("modality", "estimate", "conf.low", "conf.high"))
+
+df.diffs <- rbind.data.frame(`physical_touch - physical_notouch`, `physical_notouch - virtual_prop`, `virtual_prop - virtual_mouse`, make.row.names = FALSE, stringsAsFactors = FALSE)
+df.diffs <- transform(df.diffs, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
+```
+````
+
 We can output the data frame that we have created inside the multiverse code block, as we would for a data frame in R. This would output the result in the default universe (\code{\link{default_parameter_assignment}}) of the multiverse. We can see that this data frame, as intended, has computed the mean differences and 95% confidence intervals between the conditions we care about.
 
-```{multiverse default-m-5, inside = M}
+
+````
+```{multiverse default-m-5, inside = M}`r ''`
+df.diffs
+```
+````
+
+```{r}
 df.diffs
 ```
 

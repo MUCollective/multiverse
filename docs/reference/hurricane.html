@@ -12,7 +12,7 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumnens/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumen/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
@@ -38,6 +38,8 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
 <meta property="og:title" content="Survey to study the effect of fertility on religiosity and political attitudes — hurricane" />
 <meta property="og:description" content="A dataset for the study coduncted by Jung et al. (2014)
@@ -73,7 +75,7 @@ in their study, Female hurricanes are deadlier than male hurricanes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.1</span>
       </span>
     </div>
 
@@ -81,7 +83,7 @@ in their study, Female hurricanes are deadlier than male hurricanes." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -96,16 +98,16 @@ in their study, Female hurricanes are deadlier than male hurricanes." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Conditions.html">Declaring conditions in the multiverse</a>
+      <a href="../articles/basic-multiverse.html">The most basic multiverse example: calculating the mean</a>
     </li>
     <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
+      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
-      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
+      <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
       <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
@@ -126,7 +128,12 @@ in their study, Female hurricanes are deadlier than male hurricanes." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/MUCollective/multiverse/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -141,7 +148,7 @@ in their study, Female hurricanes are deadlier than male hurricanes." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Survey to study the effect of fertility on religiosity and political attitudes</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/MUCollective/multiverse/blob/master/R/hurricane.R'><code>R/hurricane.R</code></a></small>
     <div class="hidden name"><code>hurricane.Rd</code></div>
     </div>
 
@@ -154,7 +161,7 @@ in their study, <a href='https://doi/10.1073/pnas.1402786111'><em>Female hurrica
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A data frame with 502 rows and 26 variables:</p><dl'>
+    <p>A data frame with 502 rows and 26 variables:</p><dl>
   <dt>Year</dt><dd><p>Year in which the hurricane occured</p></dd>
   <dt>Name</dt><dd><p>Name given to the hurricane</p></dd>
   <dt>MasFem</dt><dd><p>A score of how Masculine or Feminine a hurricane is, 
@@ -207,7 +214,7 @@ Boba: Authoring and Visualizing Multiverse Analyzes.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

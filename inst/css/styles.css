@@ -1,3 +1,11 @@
-.multiverse {
+.r.multiverse {
 	background-color: #EDF2F5;
+}
+
+:not(.r).multiverse {
+  background-color: #FFFFFF;
+}
+
+:not(.default).multiverse {
+  display: none;
 }
