@@ -1,5 +1,5 @@
 ---
-title: "Are hurricanes with more female names deadlier --- an implementation using multiverse"
+title: "Example multiverse implementation: Female hurricanes are deadlier than male hurricanes"
 author: 
   - Abhraneel Sarma, Northwestern University
   - Alex Kale, University of Washington
@@ -7,7 +7,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Are hurricanes with more female names deadlier --- an implementation using multiverse}
+  %\VignetteIndexEntry{Example multiverse implementation: Female hurricanes are deadlier than male hurricanes}
   %\usepackage[UTF-8]{inputenc}
 ---
 

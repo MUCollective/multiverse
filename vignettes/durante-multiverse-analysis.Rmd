@@ -1,11 +1,11 @@
 ---
-title: "A complete implementation of a multiverse analysis"
+title: "Example multiverse implementation: Effect of fertility on religiosity and political attitudes"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{A complete implementation of a multiverse analysis}
+  %\VignetteIndexEntry{Example multiverse implementation: Effect of fertility on religiosity and political attitudes}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -40,7 +40,7 @@ opts_knit$set(
 ```
 
 ## The data
-The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
+The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.* in [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416), which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
 
 ```{r data}
 data("durante")
@@ -202,7 +202,7 @@ M$df
 
 
 ### A multiverse with all possible combinations specified 
-Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. We'll also try the more concise `<-` assignment operator now.
+Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. 
 
 ```{r}
 inside(M, {

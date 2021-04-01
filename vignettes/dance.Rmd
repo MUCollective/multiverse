@@ -1,5 +1,5 @@
 ---
-title: "Adding inferential treatments to plots using Resampling and Animations using multiverse"
+title: "Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse"
 author: 
   - Pierre Dragicevic, Inria
   - Abhraneel Sarma, Northwestern University
@@ -7,7 +7,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse}
+  %\VignetteIndexEntry{Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -165,6 +165,10 @@ df.corr_fitted %>%
 ## Implementation in multiverse
 
 A multiverse implementation in this case might involve resampling to generate alternative dataset using a the common non-paramteric boostrapping approach, as shown by Dragicevic in [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/). This technique enables providing ``inferential information to arbitrary statistical plots based on resampling'' as in many cases "the bootstrap distribution provides a good approximation of the sampling distribution".
+
+
+#### Note 
+In this vignette, we make use of the  \code{inside} function which is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) can be used instead of the `r` code block to write code inside a multiverse object. See \link{multiverse-in-rmd} or refer to the vignette (`vignette("multiverse-in-rmd")`) for more details on using the multiverse with RMarkdown.
 
 Our multiverse implementation begins with first generating alternate datasets using bootstrapping, within a multiverse object:
 

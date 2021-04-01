@@ -1,5 +1,5 @@
 ---
-title: "A multiverse analysis of the efficiency of physical visualizations"
+title: "Example multiverse implementation: Re-evaluating the efficiency of physical visualizations"
 author: 
   - Pierre Dragicevic, Inria
   - Yvonne Jansen, CNRS & Sorbonne Universite
@@ -8,7 +8,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{A multiverse analysis of the efficiency of physical visualizations}
+  %\VignetteIndexEntry{Example multiverse implementation: Re-evaluating the efficiency of physical visualizations}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -34,7 +34,7 @@ opts_knit$set(
 
 ## Multiverse case study #2
 
-In this vignette, we will recreate the multiverse analysis, [Frequentist](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
+In this vignette, we will recreate the multiverse analysis, [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
 
 ## Introduction
 
