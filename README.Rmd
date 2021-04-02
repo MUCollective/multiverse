@@ -51,15 +51,15 @@ devtools::install_github("mucollective/multiverse")
 
 For details on how to quickly get started with this package, please refer to this document as well as the following vignettes:
 
-- How alternate analysis paths can be declared in `multiverse` using [branch](mucollective.github.io/multiverse/articles/)
-- How conditions can be declared in `multiverse` using [conditions](mucollective.github.io/multiverse/articles/); conditions can be used to state when two steps in a multiverse are incompatible with one another.
-- How `multiverse` can be used in different environments: [using `multiverse` in RScripts and RMarkdown](mucollective.github.io/multiverse/articles/)
-- How multiverse results can be extracted and visualised: [visualising multiverse results](mucollective.github.io/multiverse/articles/)
+- How alternate analysis paths can be declared in `multiverse` using [branch](articles/branch.html)
+- How conditions can be declared in `multiverse` using [conditions](articles/conditions.html); conditions can be used to state when two steps in a multiverse are incompatible with one another.
+- How `multiverse` can be used in different environments: [using `multiverse` in RScripts and RMarkdown](articles/multiverse-in-rmd.html)
+- How multiverse results can be extracted and visualised: [visualising multiverse results](articles/visualizing-multiverse.html)
 
 We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used:
 
-- Steegen et al.'s [https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637] original multiverse analysis of the paper [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can also be found **below**.
-- Simonsohn et al.'s [http://dx.doi.org/10.2139/ssrn.2694998] specification curve analysis of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
+- Steegen et al.'s [original multiverse analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) of the paper [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can also be found **below**.
+- Simonsohn et al.'s [specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
 - Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
 - Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
 
