@@ -76,7 +76,7 @@
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
     </li>
   </ul>
 </li>
@@ -98,13 +98,13 @@
 
       
 
-      </header><script src="Conditions_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="conditions_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Declaring conditions in the multiverse</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-04-01</h4>
+            <h4 class="date">2021-04-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/conditions.Rmd"><code>vignettes/conditions.Rmd</code></a></small>
       <div class="hidden name"><code>conditions.Rmd</code></div>
@@ -258,6 +258,11 @@ df &lt;- df_durante  %&gt;%
 ## 5         5 cl_option2   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
 ## 6         6 cl_option3   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
 ## 7         7 cl_option3   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;</code></pre>
+</div>
+</div>
+<div id="implementing-conditions-in-a-complete-analysis" class="section level2">
+<h2 class="hasAnchor">
+<a href="#implementing-conditions-in-a-complete-analysis" class="anchor"></a>Implementing conditions in a complete analysis</h2>
 <p>Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let’s update the example from <a href="mucollective.github.io/multiverse/">home page</a> by including these conditions:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -300,7 +305,6 @@ df &lt;- df_durante  %&gt;%
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 210</code></pre>
 <p>Now, we’ve created the complete multiverse that was presented as example #2 from Steegen et al.’s paper.</p>
-</div>
 </div>
   </div>
 
