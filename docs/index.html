@@ -55,25 +55,22 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/basic-multiverse.html">The most basic multiverse example: calculating the mean</a>
-    </li>
-    <li>
       <a href="articles/branch.html">A discussion on branches in the multiverse</a>
-    </li>
-    <li>
-      <a href="articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
       <a href="articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
-      <a href="articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
+      <a href="articles/dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
     </li>
     <li>
-      <a href="articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+      <a href="articles/durante-multiverse-analysis.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
     </li>
     <li>
-      <a href="articles/hurricane.html">Are hurricanes with more female names deadlier --- an implementation using multiverse</a>
+      <a href="articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    </li>
+    <li>
+      <a href="articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
       <a href="articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
@@ -109,17 +106,16 @@
 <div id="multiverse-an-r-package-for-creating-multiverse-analysis" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#multiverse-an-r-package-for-creating-multiverse-analysis" class="anchor"></a>Multiverse: An R package for creating multiverse analysis</h1></div>
-<p>The goal of multiverse is to allow users to create multiverse analyses in a concise and easily interpretable manner.</p>
-<p><code>multiverse</code> is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations.</p>
+<p><code>multiverse</code> is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations. However, declaring several alternative analysis paths can be tricky, often requiring custom control flows such as nested for-loops and multiple if-else statements. The <strong>goal</strong> of <code>multiverse</code> is to allow users to create multiverse analyses in a concise and easily interpretable manner.</p>
 <p>Steegen et al. first put forth the concept of <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">multiverse analysis</a>; Simonsohn et al. put forth a similar notion called the <a href="https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&amp;context=marketing_papers">Specification curve analysis</a>.</p>
-<p><code>multiverse</code> attempts to make it easy to declare alternate analysis paths by declaring <strong>analysis parameters</strong> at different levels of analysis:</p>
+<p>In a <code>multiverse</code> analysis, alternate analysis paths can arise from having points in the analysis where an analyst has to make a decision of choosing between two or more reasonable steps. We refer to these decision points as <strong>parameters</strong>, and they could be:</p>
 <ul>
 <li><p><strong>Data substitution parameters</strong> offer to switch between different raw datasets, either collected or simulated.</p></li>
-<li><p><strong>Data processing parameters</strong> offer to process the same raw data in different ways before it is analyzed.</p></li>
-<li><p><strong>Modeling parameters</strong> offer different ways of analyzing the same processed data</p></li>
+<li><p><strong>Data processing parameters</strong> offer to process the same raw data in different ways before it is analysed.</p></li>
+<li><p><strong>Modeling parameters</strong> offer different ways of analysing the same processed data</p></li>
 <li><p><strong>Presentation parameters</strong> offer different ways of presenting analysis outcomes</p></li>
 </ul>
-<p>The <code>multiverse</code> documentation follows the tidyverse syntax</p>
+<p>The <code>multiverse</code> documentation predominantly follows the tidyverse syntax</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -128,9 +124,31 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"mucollective/multiverse"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="examples" class="section level2">
+<div id="overview" class="section level2">
 <h2 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h2>
+<a href="#overview" class="anchor"></a>Overview</h2>
+<p>For details on how to quickly get started with this package, please refer to this document as well as the following vignettes:</p>
+<ul>
+<li>How alternate analysis paths can be declared in <code>multiverse</code> using <a href="mucollective.github.io/multiverse/articles/">branch</a>
+</li>
+<li>How conditions can be declared in <code>multiverse</code> using <a href="mucollective.github.io/multiverse/articles/">conditions</a>; conditions can be used to state when two steps in a multiverse are incompatible with one another.</li>
+<li>How <code>multiverse</code> can be used in different environments: <a href="mucollective.github.io/multiverse/articles/">using <code>multiverse</code> in RScripts and RMarkdown</a>
+</li>
+<li>How multiverse results can be extracted and visualised: <a href="mucollective.github.io/multiverse/articles/">visualising multiverse results</a>
+</li>
+</ul>
+<p>We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used:</p>
+<ul>
+<li>Steegen et al.’s <br><span class="math display"> &lt; <em>h</em><em>t</em><em>t</em><em>p</em><em>s</em> : //<em>j</em><em>o</em><em>u</em><em>r</em><em>n</em><em>a</em><em>l</em><em>s</em>.<em>s</em><em>a</em><em>g</em><em>e</em><em>p</em><em>u</em><em>b</em>.<em>c</em><em>o</em><em>m</em>/<em>d</em><em>o</em><em>i</em>/<em>p</em><em>d</em><em>f</em>/10.1177/1745691616658637&gt;</span><br> original multiverse analysis of the paper <a href="https://doi.org/10.1177/0956797612466416">The fluctuating female vote: Politics, religion, and the ovulatory cycle</a>; can also be found <strong>below</strong>.</li>
+<li>Simonsohn et al.’s <br><span class="math display"> &lt; <em>h</em><em>t</em><em>t</em><em>p</em> : //<em>d</em><em>x</em>.<em>d</em><em>o</em><em>i</em>.<em>o</em><em>r</em><em>g</em>/10.2139/<em>s</em><em>s</em><em>r</em><em>n</em>.2694998&gt;</span><br> specification curve analysis of the paper <a href="https://doi.org/10.1073/pnas.1402786111">Female hurricanes are deadlier than male hurricanes</a>
+</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/dance/">Adding Inferential Information to plots using Resampling and Animations</a> (from <a href="https://hal.inria.fr/hal-01976951/document">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/frequentist/">Re-evaluating the efficiency of Physical Visualisations</a> (from <a href="https://hal.inria.fr/hal-01976951/document">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+</ul>
+</div>
+<div id="example-analysis" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example-analysis" class="anchor"></a>Example analysis</h2>
 <p>In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">Increasing Transparency Through a Multiverse Analysis</a>.</p>
 <p>Data analysis can involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable options to choose from. A multiverse analysis is a form of analysis which makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision).</p>
 <p>Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis.</p>
@@ -138,24 +156,14 @@
 <div id="the-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-data" class="anchor"></a>The data</h2>
-<p>The first step is to read the raw data from the file and store it as a tibble. We will be following the <em><em>tidy data</em></em> format here. The data is stored in two text files, and we can use <code>readr</code> to read the files into R. In this example, we will use the data collected by <em>Durante et al.</em>, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in <code>data.raw.study2</code>).</p>
+<p>The first step is to read the raw data from the file and store it as a tibble. We will be following the <em><em>tidy data</em></em> format here. The data is provided with the package and can be loaded using the <code>data("durante)</code> command. In this example, we will use the data collected by <em>Durante et al.</em>, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in <code>df_durante</code>).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"durante"</span><span class="op">)</span>
 
-<span class="va">data.raw.study2</span> <span class="op">&lt;-</span> <span class="va">durante</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>
-    Abortion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">Abortion</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,
-    StemCell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">StemCell</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,
-    Marijuana <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">Marijuana</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,
-    RichTax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">RichTax</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,
-    StLiving <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">StLiving</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,
-    Profit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">Profit</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,
-    FiscConsComp <span class="op">=</span> <span class="va">FreeMarket</span> <span class="op">+</span> <span class="va">PrivSocialSec</span> <span class="op">+</span> <span class="va">RichTax</span> <span class="op">+</span> <span class="va">StLiving</span> <span class="op">+</span> <span class="va">Profit</span>,
-    SocConsComp <span class="op">=</span> <span class="va">Marriage</span> <span class="op">+</span> <span class="va">RestrictAbortion</span> <span class="op">+</span> <span class="va">Abortion</span> <span class="op">+</span> <span class="va">StemCell</span> <span class="op">+</span> <span class="va">Marijuana</span>
-  <span class="op">)</span></code></pre></div>
+<span class="va">df_durante</span> <span class="op">&lt;-</span> <span class="va">durante</span></code></pre></div>
 <p>The data look like this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data.raw.study2</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">df_durante</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></code></pre></div>
 <div class="kable-table">
 <table class="table">
@@ -169,23 +177,21 @@
 <col width="3%">
 <col width="6%">
 <col width="3%">
-<col width="3%">
+<col width="4%">
 <col width="2%">
 <col width="3%">
 <col width="2%">
 <col width="5%">
-<col width="1%">
-<col width="1%">
-<col width="4%">
-<col width="7%">
+<col width="2%">
+<col width="2%">
+<col width="5%">
+<col width="8%">
 <col width="1%">
 <col width="2%">
 <col width="4%">
 <col width="8%">
-<col width="10%">
+<col width="11%">
 <col width="5%">
-<col width="4%">
-<col width="4%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">WorkerID</th>
@@ -212,8 +218,6 @@
 <th align="left">StartDateofLastPeriod</th>
 <th align="left">StartDateofPeriodBeforeLast</th>
 <th align="left">StartDateNext</th>
-<th align="right">FiscConsComp</th>
-<th align="right">SocConsComp</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -221,15 +225,15 @@
 <td align="right">8</td>
 <td align="right">8</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">2</td>
 <td align="right">7</td>
-<td align="right">1</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">2</td>
 <td align="right">4</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">6</td>
 <td align="right">3</td>
 <td align="right">9</td>
 <td align="right">9</td>
@@ -241,22 +245,20 @@
 <td align="left">2012-05-18</td>
 <td align="left">2012-04-18</td>
 <td align="left">2012-06-15</td>
-<td align="right">12</td>
-<td align="right">27</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="right">8</td>
 <td align="right">7</td>
 <td align="right">7</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
 <td align="right">4</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">6</td>
 <td align="right">9</td>
@@ -269,23 +271,21 @@
 <td align="left">2012-04-29</td>
 <td align="left">2012-03-31</td>
 <td align="left">2012-05-30</td>
-<td align="right">21</td>
-<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="right">6</td>
 <td align="right">6</td>
 <td align="right">2</td>
-<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
 <td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">7</td>
@@ -297,23 +297,21 @@
 <td align="left">2012-05-04</td>
 <td align="left">2012-04-07</td>
 <td align="left">2012-05-31</td>
-<td align="right">18</td>
-<td align="right">13</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
 <td align="right">7</td>
 <td align="right">8</td>
 <td align="right">6</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">5</td>
+<td align="right">6</td>
 <td align="right">2</td>
-<td align="right">2</td>
+<td align="right">5</td>
 <td align="right">3</td>
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">9</td>
 <td align="right">9</td>
@@ -325,23 +323,21 @@
 <td align="left">2012-04-27</td>
 <td align="left">2012-03-22</td>
 <td align="left">2012-06-05</td>
-<td align="right">15</td>
-<td align="right">13</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="right">9</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">4</td>
+<td align="right">7</td>
 <td align="right">1</td>
 <td align="right">4</td>
+<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">6</td>
-<td align="right">3</td>
-<td align="right">6</td>
-<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">4</td>
@@ -353,23 +349,21 @@
 <td align="left">2012-04-19</td>
 <td align="left">2012-03-09</td>
 <td align="left">2012-05-25</td>
-<td align="right">24</td>
-<td align="right">11</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="right">9</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">2</td>
+<td align="right">1</td>
 <td align="right">7</td>
 <td align="right">6</td>
-<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">3</td>
+<td align="right">5</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">8</td>
@@ -381,23 +375,21 @@
 <td align="left">2012-04-21</td>
 <td align="left">2012-03-20</td>
 <td align="left">2012-05-22</td>
-<td align="right">19</td>
-<td align="right">29</td>
 </tr>
 <tr class="odd">
 <td align="right">7</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">5</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">7</td>
 <td align="right">3</td>
-<td align="right">5</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
 <td align="right">9</td>
 <td align="right">9</td>
@@ -409,23 +401,21 @@
 <td align="left">2012-05-03</td>
 <td align="left">2012-04-05</td>
 <td align="left">2012-05-31</td>
-<td align="right">14</td>
-<td align="right">16</td>
 </tr>
 <tr class="even">
 <td align="right">8</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
+<td align="right">7</td>
 <td align="right">1</td>
+<td align="right">6</td>
 <td align="right">1</td>
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">5</td>
 <td align="right">3</td>
-<td align="right">3</td>
-<td align="right">5</td>
 <td align="right">2</td>
 <td align="right">8</td>
 <td align="right">7</td>
@@ -437,23 +427,21 @@
 <td align="left">2012-05-03</td>
 <td align="left">2012-04-09</td>
 <td align="left">2012-06-01</td>
-<td align="right">18</td>
-<td align="right">6</td>
 </tr>
 <tr class="odd">
 <td align="right">9</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="right">7</td>
-<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">1</td>
+<td align="right">7</td>
 <td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">7</td>
 <td align="right">1</td>
 <td align="right">7</td>
 <td align="right">5</td>
@@ -465,22 +453,20 @@
 <td align="left">2012-05-01</td>
 <td align="left">2012-03-20</td>
 <td align="left">2012-06-14</td>
-<td align="right">5</td>
-<td align="right">10</td>
 </tr>
 <tr class="even">
 <td align="right">10</td>
 <td align="right">6</td>
 <td align="right">6</td>
 <td align="right">6</td>
-<td align="right">3</td>
 <td align="right">5</td>
-<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">1</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
-<td align="right">3</td>
-<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">4</td>
 <td align="right">6</td>
@@ -493,8 +479,6 @@
 <td align="left">2012-05-10</td>
 <td align="left">2012-04-10</td>
 <td align="left">2012-06-12</td>
-<td align="right">18</td>
-<td align="right">15</td>
 </tr>
 </tbody>
 </table>
@@ -504,9 +488,9 @@
 <div id="a-single-data-set-analysis-one-possible-analysis-among-many" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-single-data-set-analysis-one-possible-analysis-among-many" class="anchor"></a>A single data set analysis: one possible analysis among many</h2>
-<p>The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study.</p>
+<p>The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study, where the original authors of the study compute, for each participant in their study, the typical duration of their menstrual cycle (<code>ComputedCycleNext</code>), the likely date of the next onset of their menstrual cycle (<code>NextMenstrualOnset</code>), the day of the cycle that they were in when taking the questionnaire (<code>CycleDay</code>); they also codify participants’ relationship status into a binary value (<code>Relationship</code>), and remove data which they believe might have been not captured accurately such as if the calculation of the length of menstrual cycle is either too short or too long (<code>ComputedCycleLength &gt; 25 &amp; ComputedCycleLength &lt; 35</code>), or if the participants were quite unsure of their responses (<code>Sure1 &lt;= 5 &amp; Sure2 &lt;= 5</code>).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">one_universe</span> <span class="op">=</span> <span class="va">data.raw.study2</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">one_universe</span> <span class="op">=</span> <span class="va">df_durante</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> NextMenstrualOnset <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span>
@@ -514,7 +498,7 @@
     CycleDay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;</span> <span class="fl">28</span>, <span class="va">CycleDay</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&lt;</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">28</span><span class="op">)</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span>
-    Relationship <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Relationship</span><span class="op">==</span><span class="fl">2</span>, <span class="st">"Single"</span>, <span class="st">"Relationship"</span><span class="op">)</span><span class="op">)</span>
+    RelationshipStatus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Relationship</span><span class="op">==</span><span class="fl">2</span>, <span class="st">"Single"</span>, <span class="st">"Relationship"</span><span class="op">)</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span> <span class="va">ComputedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ComputedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span> <span class="va">Sure1</span> <span class="op">&gt;</span> <span class="fl">6</span> <span class="op">|</span> <span class="va">Sure2</span> <span class="op">&gt;</span> <span class="fl">6</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -553,14 +537,13 @@
 <col width="6%">
 <col width="8%">
 <col width="4%">
-<col width="3%">
-<col width="3%">
 <col width="6%">
 <col width="2%">
+<col width="5%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">NextMenstrualOnset</th>
-<th align="left">Relationship</th>
+<th align="right">Relationship</th>
 <th align="right">Sure1</th>
 <th align="right">Sure2</th>
 <th align="left">Fertility</th>
@@ -585,15 +568,14 @@
 <th align="left">StartDateofLastPeriod</th>
 <th align="left">StartDateofPeriodBeforeLast</th>
 <th align="left">StartDateNext</th>
-<th align="right">FiscConsComp</th>
-<th align="right">SocConsComp</th>
 <th align="left">ComputedCycleLength</th>
 <th align="right">CycleDay</th>
+<th align="left">RelationshipStatus</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">2012-06-17</td>
-<td align="left">Relationship</td>
+<td align="right">4</td>
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="left">medium</td>
@@ -601,15 +583,15 @@
 <td align="right">8</td>
 <td align="right">8</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">2</td>
 <td align="right">7</td>
-<td align="right">1</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">2</td>
 <td align="right">4</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">6</td>
 <td align="right">3</td>
 <td align="right">28</td>
 <td align="right">1</td>
@@ -618,14 +600,13 @@
 <td align="left">2012-05-18</td>
 <td align="left">2012-04-18</td>
 <td align="left">2012-06-15</td>
-<td align="right">12</td>
-<td align="right">27</td>
 <td align="left">30 days</td>
 <td align="right">2</td>
+<td align="left">Relationship</td>
 </tr>
 <tr class="even">
 <td align="left">2012-05-28</td>
-<td align="left">Relationship</td>
+<td align="right">3</td>
 <td align="right">9</td>
 <td align="right">7</td>
 <td align="left">low</td>
@@ -633,14 +614,14 @@
 <td align="right">8</td>
 <td align="right">7</td>
 <td align="right">7</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
 <td align="right">4</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">6</td>
 <td align="right">28</td>
@@ -650,14 +631,13 @@
 <td align="left">2012-04-29</td>
 <td align="left">2012-03-31</td>
 <td align="left">2012-05-30</td>
-<td align="right">21</td>
-<td align="right">9</td>
 <td align="left">29 days</td>
 <td align="right">22</td>
+<td align="left">Relationship</td>
 </tr>
 <tr class="odd">
 <td align="left">2012-05-31</td>
-<td align="left">Relationship</td>
+<td align="right">3</td>
 <td align="right">8</td>
 <td align="right">7</td>
 <td align="left">low</td>
@@ -665,15 +645,15 @@
 <td align="right">6</td>
 <td align="right">6</td>
 <td align="right">2</td>
-<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
 <td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">5</td>
 <td align="right">27</td>
 <td align="right">1</td>
@@ -682,14 +662,13 @@
 <td align="left">2012-05-04</td>
 <td align="left">2012-04-07</td>
 <td align="left">2012-05-31</td>
-<td align="right">18</td>
-<td align="right">13</td>
 <td align="left">27 days</td>
 <td align="right">18</td>
+<td align="left">Relationship</td>
 </tr>
 <tr class="even">
 <td align="left">2012-05-23</td>
-<td align="left">Single</td>
+<td align="right">2</td>
 <td align="right">8</td>
 <td align="right">8</td>
 <td align="left">medium</td>
@@ -697,15 +676,15 @@
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="right">9</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">2</td>
+<td align="right">1</td>
 <td align="right">7</td>
 <td align="right">6</td>
-<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">3</td>
+<td align="right">5</td>
 <td align="right">5</td>
 <td align="right">30</td>
 <td align="right">0</td>
@@ -714,14 +693,13 @@
 <td align="left">2012-04-21</td>
 <td align="left">2012-03-20</td>
 <td align="left">2012-05-22</td>
-<td align="right">19</td>
-<td align="right">29</td>
 <td align="left">32 days</td>
 <td align="right">27</td>
+<td align="left">Single</td>
 </tr>
 <tr class="odd">
 <td align="left">2012-05-31</td>
-<td align="left">Relationship</td>
+<td align="right">4</td>
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="left">low</td>
@@ -729,15 +707,15 @@
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">5</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">7</td>
 <td align="right">3</td>
-<td align="right">5</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
 <td align="right">28</td>
 <td align="right">1</td>
@@ -746,14 +724,13 @@
 <td align="left">2012-05-03</td>
 <td align="left">2012-04-05</td>
 <td align="left">2012-05-31</td>
-<td align="right">14</td>
-<td align="right">16</td>
 <td align="left">28 days</td>
 <td align="right">19</td>
+<td align="left">Relationship</td>
 </tr>
 <tr class="even">
 <td align="left">2012-06-15</td>
-<td align="left">Single</td>
+<td align="right">1</td>
 <td align="right">8</td>
 <td align="right">8</td>
 <td align="left">medium</td>
@@ -761,15 +738,15 @@
 <td align="right">2</td>
 <td align="right">5</td>
 <td align="right">8</td>
+<td align="right">7</td>
 <td align="right">1</td>
+<td align="right">7</td>
 <td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">5</td>
 <td align="right">30</td>
 <td align="right">1</td>
@@ -778,14 +755,13 @@
 <td align="left">2012-05-18</td>
 <td align="left">2012-04-20</td>
 <td align="left">2012-06-17</td>
-<td align="right">14</td>
-<td align="right">5</td>
 <td align="left">28 days</td>
 <td align="right">6</td>
+<td align="left">Single</td>
 </tr>
 <tr class="odd">
 <td align="left">2012-06-08</td>
-<td align="left">Relationship</td>
+<td align="right">4</td>
 <td align="right">9</td>
 <td align="right">8</td>
 <td align="left">high</td>
@@ -793,15 +769,15 @@
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="right">7</td>
+<td align="right">7</td>
 <td align="right">1</td>
+<td align="right">7</td>
 <td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">30</td>
 <td align="right">1</td>
@@ -810,14 +786,13 @@
 <td align="left">2012-05-08</td>
 <td align="left">2012-04-07</td>
 <td align="left">2012-06-06</td>
-<td align="right">15</td>
-<td align="right">7</td>
 <td align="left">31 days</td>
 <td align="right">11</td>
+<td align="left">Relationship</td>
 </tr>
 <tr class="even">
 <td align="left">2012-06-14</td>
-<td align="left">Relationship</td>
+<td align="right">4</td>
 <td align="right">9</td>
 <td align="right">8</td>
 <td align="left">medium</td>
@@ -825,15 +800,15 @@
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="right">9</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">6</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">1</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
-<td align="right">3</td>
-<td align="right">3</td>
-<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">3</td>
 <td align="right">30</td>
 <td align="right">0</td>
@@ -842,14 +817,13 @@
 <td align="left">2012-05-14</td>
 <td align="left">2012-04-13</td>
 <td align="left">NA</td>
-<td align="right">16</td>
-<td align="right">13</td>
 <td align="left">31 days</td>
 <td align="right">5</td>
+<td align="left">Relationship</td>
 </tr>
 <tr class="odd">
 <td align="left">2012-06-10</td>
-<td align="left">Relationship</td>
+<td align="right">4</td>
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="left">high</td>
@@ -857,15 +831,15 @@
 <td align="right">6</td>
 <td align="right">4</td>
 <td align="right">5</td>
-<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">6</td>
 <td align="right">6</td>
 <td align="right">2</td>
-<td align="right">2</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">6</td>
 <td align="right">4</td>
 <td align="right">28</td>
 <td align="right">0</td>
@@ -874,14 +848,13 @@
 <td align="left">2012-05-09</td>
 <td align="left">2012-04-07</td>
 <td align="left">2012-06-09</td>
-<td align="right">14</td>
-<td align="right">14</td>
 <td align="left">32 days</td>
 <td align="right">8</td>
+<td align="left">Relationship</td>
 </tr>
 <tr class="even">
 <td align="left">2012-06-18</td>
-<td align="left">Single</td>
+<td align="right">1</td>
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="left">medium</td>
@@ -891,12 +864,12 @@
 <td align="right">9</td>
 <td align="right">4</td>
 <td align="right">6</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">4</td>
 <td align="right">4</td>
-<td align="right">3</td>
-<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">2</td>
 <td align="right">4</td>
 <td align="right">4</td>
 <td align="right">25</td>
@@ -906,10 +879,9 @@
 <td align="left">2012-05-18</td>
 <td align="left">2012-04-17</td>
 <td align="left">2012-06-19</td>
-<td align="right">21</td>
-<td align="right">21</td>
 <td align="left">31 days</td>
 <td align="right">28</td>
+<td align="left">Single</td>
 </tr>
 </tbody>
 </table>
@@ -920,19 +892,19 @@
   <span class="fu">stat_summary</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span>, fun.data <span class="op">=</span> <span class="st">"mean_se"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/universe-summary-1.png" alt="results from a single analysis: point estimates and 95% confidence intervals of the coefficients of the predictors relationship and single"></p>
 <p>However, there also exists other valid processing options: instead of calculating <code>NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength</code>, it can also be calculated as <code>StartDateofLastPeriod + ReportedCycleLength</code>. Such alternate processing options can exist for several decisions that a researcher makes in the data processing, analysis and presentation stages. This can thus result in a <em>multiverse of analysis</em>, with the one described above representing a single <em>universe</em>.</p>
-<p>Below, we describe how our package allows you to conduct a multiverse analysis with ease.</p>
+<p>How would one declare such different anlternate ways of calculation easily and efficiently? Below, we describe how our package allows you to make such declarations with ease.</p>
 </div>
 <div id="multiverse-specification" class="section level2">
 <h2 class="hasAnchor">
 <a href="#multiverse-specification" class="anchor"></a>Multiverse specification</h2>
-<p><code>multiverse</code> provides flexible functions which can be used to perform a multiverse analysis.</p>
+<p><code>multiverse</code> provides flexible functions which can be used to easily multiplex over alternative analysis steps, and perform a multiverse analysis.</p>
 <p>The first step is to define a <em>new multiverse</em>. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>The next step is to define our possible analyses inside the multiverse. The <code>multiverse</code> package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above).</p>
+<p>The next step is to define our possible alternate analysis paths inside the multiverse. The <code>multiverse</code> package includes functions that aim to make it easy to multiplex over these alternative analysis steps and write multiverse analyses. We do this by enabling analysts to declare code using syntax which is as close to that of a single universe analysis as possible.</p>
 <p>Consider these first few lines from the transformation code in the single analysis above:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">data.raw.study2</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df_durante</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span>ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span><span class="op">)</span></code></pre></div>
 <p>But <code>NextMenstrualOnset</code> could be calculated in at least two other reasonable ways:</p>
@@ -940,30 +912,53 @@
 <li><code>NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength</code></li>
 <li><code>NextMenstrualOnset = StartDateNext</code></li>
 </ul>
-<p>To create a multiverse that includes these three possible processing options, we can use the <code><a href="reference/branch.html">branch()</a></code> function. The <code><a href="reference/branch.html">branch()</a></code> function defines a <em>parameter</em> (here <code>menstrual_calculation</code>) and the different <em>options</em> that the parameter can take (here, <code>"mc_option1"</code>, <code>"mc_option2"</code>, <code>"mc_option3"</code>). Each option corresponds to a different chunk of code that would be executed in a different universe.</p>
+<p>To create a multiverse that includes these three possible processing options, we can use the <code><a href="reference/branch.html">branch()</a></code> function. The <code><a href="reference/branch.html">branch()</a></code> function ### change here ###</p>
+<p>defines a <em>parameter</em> (here <code>menstrual_calculation</code>) and the different <em>options</em> that the parameter can take (here, <code>"mc_option1"</code>, <code>"mc_option2"</code>, <code>"mc_option3"</code>). Each option corresponds to a different chunk of code that would be executed in a different universe.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">NextMenstrualOnset</span> <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>, 
   <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,
   <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,
   <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span>
 <span class="op">)</span></code></pre></div>
+<p>More details on the <code><a href="reference/branch.html">branch()</a></code> function can be found in the corresponding <a href="mucollective.github.io/multiverse/articles/branch.html">vignette</a></p>
 <div id="two-ways-to-building-a-multiverse" class="section level3">
 <h3 class="hasAnchor">
 <a href="#two-ways-to-building-a-multiverse" class="anchor"></a>Two ways to building a multiverse</h3>
-<p>The <code><a href="reference/branch.html">branch()</a></code> function indicates that, <em>in our multiverse</em>, NextMenstrualOnset can take either of the three options (here, <code>"mc_option1"</code>, <code>"mc_option2"</code>, <code>"mc_option3"</code>). Thus, we need to declare this data processing step inside the multiverse. In the <code>multiverse</code> package we support this declaration in two ways:</p>
+<p>The <code><a href="reference/branch.html">branch()</a></code> function indicates that, <em>in our multiverse</em>, NextMenstrualOnset can take either of the three options (here, <code>"mc_option1"</code>, <code>"mc_option2"</code>, <code>"mc_option3"</code>). However, this is <em>clearly</em> not R syntax. To get around these limitations, we declare this code “inside the multiverse”, which is another way of saying that the code is declared, processed and executed in a special environment. In the <code>multiverse</code> package, we support this declaration in two ways:</p>
 <ul>
-<li>using the <code><a href="reference/inside.html">inside()</a></code> function. The inside function is more suited for a script-style implementation.</li>
-<li>using <em>multiverse code chunks</em>, which is more consistent with the interactive programming interface of RStudio.</li>
+<li>using <em>multiverse code chunks</em>, which allow users to declare multiverse code in a dedicated code chunk, and is more consistent with the interactive programming interface of RStudio.</li>
+<li>using the <code><a href="reference/inside.html">inside()</a></code> function. The inside function which allows users to declare multiverse code in RScripts or regular R code blocks, and is more suited for a script-style implementation.</li>
 </ul>
 <p><strong>Note</strong> that the <code>inside</code> function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a <code>multiverse code block</code> which can be used instead of the <code>r</code> code block to write code inside a multiverse object (see for more details on using the multiverse with RMarkdown).</p>
+<div id="multiverse-code-blocks" class="section level4">
+<h4 class="hasAnchor">
+<a href="#multiverse-code-blocks" class="anchor"></a>Multiverse code blocks</h4>
+<p>We can use the <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code blocks</em></a> instead of the regular <code>r</code> code block to write code inside a multiverse object (see for more details on using the multiverse with RMarkdown). This allows you to write more concise code and is more consistent with the interactive programming interface of RStudio. A <em>multiverse code block</em> is a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Below we show how the same code from above can be implemented using the <em>multiverse code block</em></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="st">```</span><span class="dt">{multiverse default-m-1, inside = M}</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="dt"># here we just create the variable </span><span class="st">`</span>df<span class="st">`</span><span class="dt"> in the multiverse</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="dt">df &lt;- df_durante</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="dt"># here, we perform two </span><span class="st">`</span>mutate<span class="st">`</span><span class="dt"> operations in the multiverse.</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="dt"># although they could have been chained, this illustrates </span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="dt"># how multiple variables can be declared together using the </span><span class="st">`</span>{}<span class="st">`</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="dt">df &lt;- df_durante %&gt;%</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="dt">  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %&gt;%</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="dt">  mutate( NextMenstrualOnset = branch(menstrual_calculation, </span></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="dt">    "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="dt">    "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="dt">    "mc_option3" ~ StartDateNext)</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="dt">  )</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="st">```</span></span></code></pre></div>
+</div>
 <div id="inside" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inside" class="anchor"></a><code>inside()</code>
 </h4>
-<p>The <code><a href="reference/inside.html">inside()</a></code> function takes in two arguments: 1. the multiverse object, M; and 2. the code for the analysis (including branches). Note that if you are passing multiple expressions, they should be enclosed within <code>{}</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>Alternatively, we can use regular <code>r</code> code blocks instead of the regular to write code inside a multiverse object The <code><a href="reference/inside.html">inside()</a></code> function takes in two arguments: 1. the multiverse object, M; and 2. the code for the analysis (including branches). Note that if you are passing multiple expressions, they should be enclosed within <code>{}</code>.</p>
+<p>Note that <code>this</code>inside()` is primarily designed for script style programming.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># here we just create the variable `df` in the multiverse</span>
-<span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">data.raw.study2</span><span class="op">)</span>
+<span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df_durante</span><span class="op">)</span>
 
 <span class="co"># here, we perform two `mutate` operations in the multiverse.</span>
 <span class="co"># although they could have been chained, this illustrates </span>
@@ -979,39 +974,8 @@
       <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span>
     <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="multiverse-code-blocks" class="section level4">
-<h4 class="hasAnchor">
-<a href="#multiverse-code-blocks" class="anchor"></a>Multiverse code blocks</h4>
-<p>Alternatively,we can use the <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code blocks</em></a> instead of the regular <code>r</code> code block to write code inside a multiverse object (see for more details on using the multiverse with RMarkdown). This allows you to write more concise code and is more consistent with the interactive programming interface of RStudio. A <em>multiverse code block</em> is a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Below we show how the same code from above can be implemented using the <em>multiverse code block</em></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="st">```</span><span class="dt">{multiverse default-m-1, inside = M}</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="dt"># here we just create the variable </span><span class="st">`</span>df<span class="st">`</span><span class="dt"> in the multiverse</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="dt">inside(M, df &lt;- data.raw.study2)</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="dt"># here, we perform two </span><span class="st">`</span>mutate<span class="st">`</span><span class="dt"> operations in the multiverse.</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="dt"># although they could have been chained, this illustrates </span></span>
-<span id="cb11-7"><a href="#cb11-7"></a><span class="dt"># how multiple variables can be declared together using the </span><span class="st">`</span>{}<span class="st">`</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="dt">inside(M, {</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="dt">  df &lt;- df %&gt;%</span></span>
-<span id="cb11-10"><a href="#cb11-10"></a><span class="dt">    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )</span></span>
-<span id="cb11-11"><a href="#cb11-11"></a><span class="dt">  </span></span>
-<span id="cb11-12"><a href="#cb11-12"></a><span class="dt">  df &lt;- df %&gt;%</span></span>
-<span id="cb11-13"><a href="#cb11-13"></a><span class="dt">    mutate( NextMenstrualOnset = branch(menstrual_calculation, </span></span>
-<span id="cb11-14"><a href="#cb11-14"></a><span class="dt">      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,</span></span>
-<span id="cb11-15"><a href="#cb11-15"></a><span class="dt">      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,</span></span>
-<span id="cb11-16"><a href="#cb11-16"></a><span class="dt">      "mc_option3" ~ StartDateNext)</span></span>
-<span id="cb11-17"><a href="#cb11-17"></a><span class="dt">    )</span></span>
-<span id="cb11-18"><a href="#cb11-18"></a><span class="dt">})</span></span>
-<span id="cb11-19"><a href="#cb11-19"></a><span class="st">```</span></span></code></pre></div>
-<p>In the rest of this vignette, we will use <code><a href="reference/inside.html">inside()</a></code> to specify the multiverse. Please refer to the vignette (<code><a href="articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">M</span><span class="op">$</span><span class="va">df</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">data.raw.study2</span>  <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>, 
-      <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,
-      <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,
-      <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span>
-    <span class="op">)</span></code></pre></div>
+<p>In the rest of this vignette, we will use <strong>multiverse code blocks</strong> to specify the multiverse. Please refer to the vignette (<code><a href="articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details.</p>
+<p>More details on the <strong>declaring multiverse analyses in RScripts and RMarkdown</strong> can be found in the corresponding <a href="mucollective.github.io/multiverse/articles/multiverse-in-rmd.html">vignette</a></p>
 </div>
 </div>
 </div>
@@ -1024,7 +988,7 @@
 <li>
 <code>parameters</code>, which is a list of parameters</li>
 </ol>
-<!-- end list --><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<!-- end list --><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">parameters</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
 <span class="co">#&gt; $menstrual_calculation</span>
 <span class="co">#&gt; $menstrual_calculation[[1]]</span>
@@ -1041,7 +1005,7 @@
 <li>
 <code>expand</code>, which is a tibble consisting of all possible combination of values for the multiverse</li>
 </ol>
-<!-- end list --><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<!-- end list --><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">.code</span><span class="op">)</span></code></pre></div>
 <div class="kable-table">
 <table class="table">
@@ -1056,19 +1020,19 @@
 <td align="right">1</td>
 <td align="left">mc_option1</td>
 <td align="left">mc_option1</td>
-<td align="left">&lt;environment: 0x7f901421e5d8&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb2e6bb0&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">mc_option2</td>
 <td align="left">mc_option2</td>
-<td align="left">&lt;environment: 0x7f901423e680&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb309ad8&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="left">mc_option3</td>
 <td align="left">mc_option3</td>
-<td align="left">&lt;environment: 0x7f9014259148&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb328e18&gt;</td>
 </tr>
 </tbody>
 </table>
@@ -1077,18 +1041,13 @@
 <li>
 <code>code</code>, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.</li>
 </ol>
-<!-- end list --><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<!-- end list --><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">code</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
-<span class="co">#&gt; $`1`</span>
+<span class="co">#&gt; $`default-m-1`</span>
 <span class="co">#&gt; {</span>
-<span class="co">#&gt;     df &lt;- data.raw.study2</span>
-<span class="co">#&gt; }</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $`2`</span>
-<span class="co">#&gt; {</span>
+<span class="co">#&gt;     df &lt;- df_durante</span>
 <span class="co">#&gt;     df &lt;- df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - </span>
-<span class="co">#&gt;         StartDateofPeriodBeforeLast)</span>
-<span class="co">#&gt;     df &lt;- df %&gt;% mutate(NextMenstrualOnset = branch(menstrual_calculation, </span>
+<span class="co">#&gt;         StartDateofPeriodBeforeLast) %&gt;% mutate(NextMenstrualOnset = branch(menstrual_calculation, </span>
 <span class="co">#&gt;         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, </span>
 <span class="co">#&gt;         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, </span>
 <span class="co">#&gt;         "mc_option3" ~ StartDateNext))</span>
@@ -1097,8 +1056,8 @@
 <div id="running-a-single-analysis-from-the-multiverse" class="section level2">
 <h2 class="hasAnchor">
 <a href="#running-a-single-analysis-from-the-multiverse" class="anchor"></a>Running a single analysis from the multiverse</h2>
-<p>At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable <code>df</code>. We can see the result of this analysis in the appropriate row (universe) of the multiverse table.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<p>At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable <code>df</code>. We can see the result of the default analysis in th multiverse by accessing the data frame from the multiverse object as shown:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span><span class="op">$</span><span class="va">df</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="kable-table">
 <table class="table">
@@ -1123,12 +1082,10 @@
 <col width="6%">
 <col width="1%">
 <col width="2%">
-<col width="3%">
+<col width="4%">
 <col width="7%">
 <col width="9%">
 <col width="4%">
-<col width="4%">
-<col width="3%">
 <col width="6%">
 <col width="6%">
 </colgroup>
@@ -1157,8 +1114,6 @@
 <th align="left">StartDateofLastPeriod</th>
 <th align="left">StartDateofPeriodBeforeLast</th>
 <th align="left">StartDateNext</th>
-<th align="right">FiscConsComp</th>
-<th align="right">SocConsComp</th>
 <th align="left">ComputedCycleLength</th>
 <th align="left">NextMenstrualOnset</th>
 </tr></thead>
@@ -1168,15 +1123,15 @@
 <td align="right">8</td>
 <td align="right">8</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">2</td>
 <td align="right">7</td>
-<td align="right">1</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">2</td>
 <td align="right">4</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">6</td>
 <td align="right">3</td>
 <td align="right">9</td>
 <td align="right">9</td>
@@ -1188,24 +1143,22 @@
 <td align="left">2012-05-18</td>
 <td align="left">2012-04-18</td>
 <td align="left">2012-06-15</td>
-<td align="right">12</td>
-<td align="right">27</td>
 <td align="left">30 days</td>
-<td align="left">2012-06-17</td>
+<td align="left">2012-06-15</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="right">8</td>
 <td align="right">7</td>
 <td align="right">7</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
 <td align="right">4</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">6</td>
 <td align="right">9</td>
@@ -1218,25 +1171,23 @@
 <td align="left">2012-04-29</td>
 <td align="left">2012-03-31</td>
 <td align="left">2012-05-30</td>
-<td align="right">21</td>
-<td align="right">9</td>
 <td align="left">29 days</td>
-<td align="left">2012-05-28</td>
+<td align="left">2012-05-30</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="right">6</td>
 <td align="right">6</td>
 <td align="right">2</td>
-<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
 <td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">7</td>
@@ -1248,8 +1199,6 @@
 <td align="left">2012-05-04</td>
 <td align="left">2012-04-07</td>
 <td align="left">2012-05-31</td>
-<td align="right">18</td>
-<td align="right">13</td>
 <td align="left">27 days</td>
 <td align="left">2012-05-31</td>
 </tr>
@@ -1258,15 +1207,15 @@
 <td align="right">7</td>
 <td align="right">8</td>
 <td align="right">6</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">5</td>
+<td align="right">6</td>
 <td align="right">2</td>
-<td align="right">2</td>
+<td align="right">5</td>
 <td align="right">3</td>
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">9</td>
 <td align="right">9</td>
@@ -1278,25 +1227,23 @@
 <td align="left">2012-04-27</td>
 <td align="left">2012-03-22</td>
 <td align="left">2012-06-05</td>
-<td align="right">15</td>
-<td align="right">13</td>
 <td align="left">36 days</td>
-<td align="left">2012-06-02</td>
+<td align="left">2012-06-05</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="right">9</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">4</td>
+<td align="right">7</td>
 <td align="right">1</td>
 <td align="right">4</td>
+<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">6</td>
-<td align="right">3</td>
-<td align="right">6</td>
-<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">4</td>
@@ -1308,25 +1255,23 @@
 <td align="left">2012-04-19</td>
 <td align="left">2012-03-09</td>
 <td align="left">2012-05-25</td>
-<td align="right">24</td>
-<td align="right">11</td>
 <td align="left">41 days</td>
-<td align="left">2012-05-30</td>
+<td align="left">2012-05-25</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
 <td align="right">9</td>
 <td align="right">9</td>
 <td align="right">9</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">2</td>
+<td align="right">1</td>
 <td align="right">7</td>
 <td align="right">6</td>
-<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">3</td>
+<td align="right">5</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">8</td>
@@ -1338,10 +1283,8 @@
 <td align="left">2012-04-21</td>
 <td align="left">2012-03-20</td>
 <td align="left">2012-05-22</td>
-<td align="right">19</td>
-<td align="right">29</td>
 <td align="left">32 days</td>
-<td align="left">2012-05-23</td>
+<td align="left">2012-05-22</td>
 </tr>
 </tbody>
 </table>
@@ -1350,57 +1293,52 @@
 <div id="a-multiverse-with-all-possible-combinations-specified" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-multiverse-with-all-possible-combinations-specified" class="anchor"></a>A multiverse with all possible combinations specified</h2>
-<p>Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining <code>Relationship</code> and <code>Fertility</code>, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above. We’ll also try the more concise <code><a href="https://rdrr.io/r/base/assignOps.html">&lt;-</a></code> assignment operator now.</p>
+<p>Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. According to Steegen et al., these include defining <code>Relationship</code> and <code>Fertility</code>, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="st">```</span><span class="dt">{multiverse default-m-2 inside = M}</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="dt">df &lt;- df %&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="dt">    mutate(Relationship = branch( relationship_status, </span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="dt">      "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="dt">      "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="dt">      "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="dt">    ) %&gt;%</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="dt">    mutate(</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a><span class="dt">      CycleDay = 28 - (NextMenstrualOnset - DateTesting),</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="dt">      CycleDay = ifelse(CycleDay &gt; 1 &amp; CycleDay &lt; 28, CycleDay, ifelse(CycleDay &lt; 1, 1, 28))</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="dt">    ) %&gt;%</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a><span class="dt">    filter( branch(cycle_length, </span></span>
+<span id="cb16-13"><a href="#cb16-13"></a><span class="dt">      "cl_option1" ~ TRUE,</span></span>
+<span id="cb16-14"><a href="#cb16-14"></a><span class="dt">      "cl_option2" ~ ComputedCycleLength &gt; 25 &amp; ComputedCycleLength &lt; 35,</span></span>
+<span id="cb16-15"><a href="#cb16-15"></a><span class="dt">      "cl_option3" ~ ReportedCycleLength &gt; 25 &amp; ReportedCycleLength &lt; 35</span></span>
+<span id="cb16-16"><a href="#cb16-16"></a><span class="dt">    )) %&gt;%</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a><span class="dt">    filter( branch(certainty,</span></span>
+<span id="cb16-18"><a href="#cb16-18"></a><span class="dt">        "cer_option1" ~ TRUE,</span></span>
+<span id="cb16-19"><a href="#cb16-19"></a><span class="dt">        "cer_option2" ~ Sure1 &gt; 6 | Sure2 &gt; 6</span></span>
+<span id="cb16-20"><a href="#cb16-20"></a><span class="dt">    )) %&gt;%</span></span>
+<span id="cb16-21"><a href="#cb16-21"></a><span class="dt">    mutate( Fertility = branch( fertile,</span></span>
+<span id="cb16-22"><a href="#cb16-22"></a><span class="dt">        "fer_option1" ~ factor( ifelse(CycleDay &gt;= 7 &amp; CycleDay &lt;= 14, "high", ifelse(CycleDay &gt;= 17 &amp; CycleDay &lt;= 25, "low", "medium")) ),</span></span>
+<span id="cb16-23"><a href="#cb16-23"></a><span class="dt">        "fer_option2" ~ factor( ifelse(CycleDay &gt;= 6 &amp; CycleDay &lt;= 14, "high", ifelse(CycleDay &gt;= 17 &amp; CycleDay &lt;= 27, "low", "medium")) ),</span></span>
+<span id="cb16-24"><a href="#cb16-24"></a><span class="dt">        "fer_option3" ~ factor( ifelse(CycleDay &gt;= 9 &amp; CycleDay &lt;= 17, "high", ifelse(CycleDay &gt;= 18 &amp; CycleDay &lt;= 25, "low", "medium")) ),</span></span>
+<span id="cb16-25"><a href="#cb16-25"></a><span class="dt">        "fer_option4" ~ factor( ifelse(CycleDay &gt;= 8 &amp; CycleDay &lt;= 14, "high", "low") ),</span></span>
+<span id="cb16-26"><a href="#cb16-26"></a><span class="dt">        "fer_option5" ~ factor( ifelse(CycleDay &gt;= 8 &amp; CycleDay &lt;= 17, "high", "low") )</span></span>
+<span id="cb16-27"><a href="#cb16-27"></a><span class="dt">    ))</span></span>
+<span id="cb16-28"><a href="#cb16-28"></a><span class="dt">})</span></span>
+<span id="cb16-29"><a href="#cb16-29"></a><span class="st">```</span></span></code></pre></div>
+<p>Since the multiverse object has already been created and the one parameter has already been defined, this will simply add to the previous code:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>Relationship <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span> <span class="va">relationship_status</span>, 
-      <span class="st">"rs_option1"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Relationship</span><span class="op">==</span><span class="fl">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span><span class="op">)</span><span class="op">)</span>,
-      <span class="st">"rs_option2"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span><span class="op">)</span><span class="op">)</span>,
-      <span class="st">"rs_option3"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">3</span> <span class="op">|</span> <span class="va">Relationship</span><span class="op">==</span><span class="fl">4</span>, <span class="st">'Relationship'</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>
-    <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>
-      CycleDay <span class="op">=</span> <span class="fl">28</span> <span class="op">-</span> <span class="op">(</span><span class="va">NextMenstrualOnset</span> <span class="op">-</span> <span class="va">DateTesting</span><span class="op">)</span>,
-      CycleDay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;</span> <span class="fl">28</span>, <span class="va">CycleDay</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&lt;</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">28</span><span class="op">)</span><span class="op">)</span>
-    <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">cycle_length</span>, 
-      <span class="st">"cl_option1"</span> <span class="op">~</span> <span class="cn">TRUE</span>,
-      <span class="st">"cl_option2"</span> <span class="op">~</span> <span class="va">ComputedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ComputedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span>,
-      <span class="st">"cl_option3"</span> <span class="op">~</span> <span class="va">ReportedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ReportedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span>
-    <span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">certainty</span>,
-        <span class="st">"cer_option1"</span> <span class="op">~</span> <span class="cn">TRUE</span>,
-        <span class="st">"cer_option2"</span> <span class="op">~</span> <span class="va">Sure1</span> <span class="op">&gt;</span> <span class="fl">6</span> <span class="op">|</span> <span class="va">Sure2</span> <span class="op">&gt;</span> <span class="fl">6</span>
-    <span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span> Fertility <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span> <span class="va">fertile</span>,
-        <span class="st">"fer_option1"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">7</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">17</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="st">"medium"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>,
-        <span class="st">"fer_option2"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">6</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">17</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">27</span>, <span class="st">"low"</span>, <span class="st">"medium"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>,
-        <span class="st">"fer_option3"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">9</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">18</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="st">"medium"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>,
-        <span class="st">"fer_option4"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">8</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="st">"low"</span><span class="op">)</span> <span class="op">)</span>,
-        <span class="st">"fer_option5"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">8</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="st">"low"</span><span class="op">)</span> <span class="op">)</span>
-    <span class="op">)</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
-<p>Since the multiverse object has already been created and the one parameter has already been defined, the inside function will add to the previous code.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">code</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
-<span class="co">#&gt; $`1`</span>
+<span class="co">#&gt; $`default-m-1`</span>
 <span class="co">#&gt; {</span>
-<span class="co">#&gt;     df &lt;- data.raw.study2</span>
-<span class="co">#&gt; }</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $`2`</span>
-<span class="co">#&gt; {</span>
+<span class="co">#&gt;     df &lt;- df_durante</span>
 <span class="co">#&gt;     df &lt;- df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - </span>
-<span class="co">#&gt;         StartDateofPeriodBeforeLast)</span>
-<span class="co">#&gt;     df &lt;- df %&gt;% mutate(NextMenstrualOnset = branch(menstrual_calculation, </span>
+<span class="co">#&gt;         StartDateofPeriodBeforeLast) %&gt;% mutate(NextMenstrualOnset = branch(menstrual_calculation, </span>
 <span class="co">#&gt;         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, </span>
 <span class="co">#&gt;         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, </span>
 <span class="co">#&gt;         "mc_option3" ~ StartDateNext))</span>
 <span class="co">#&gt; }</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; $`3`</span>
+<span class="co">#&gt; $`default-m-2`</span>
 <span class="co">#&gt; {</span>
-<span class="co">#&gt;     df &lt;- df %&gt;% mutate(Relationship = branch(relationship_status, </span>
+<span class="co">#&gt;     df &lt;- df %&gt;% mutate(RelationshipStatus = branch(relationship_status, </span>
 <span class="co">#&gt;         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == </span>
 <span class="co">#&gt;             2, "Single", "Relationship")), "rs_option2" ~ factor(ifelse(Relationship == </span>
 <span class="co">#&gt;             1, "Single", "Relationship")), "rs_option3" ~ factor(ifelse(Relationship == </span>
@@ -1426,7 +1364,7 @@
 <span class="co">#&gt;                 "low"))))</span>
 <span class="co">#&gt; }</span></code></pre></div>
 <p>The <code>expand</code> function will contain all the possible combinations of the parameter options that have been identified.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">.code</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -1461,7 +1399,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f90116eb4f0&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb0114e8&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
@@ -1471,7 +1409,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option2</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
-<td align="left">&lt;environment: 0x7f9014b776a0&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb1b4550&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
@@ -1481,7 +1419,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option3</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option3</td>
-<td align="left">&lt;environment: 0x7f9014beb010&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb270e50&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
@@ -1491,7 +1429,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option4</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option4</td>
-<td align="left">&lt;environment: 0x7f9014c79010&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb2f8a60&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
@@ -1501,7 +1439,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option5</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option5</td>
-<td align="left">&lt;environment: 0x7f9014cf60e8&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb3780f8&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
@@ -1511,18 +1449,18 @@
 <td align="left">cer_option2</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option2, fer_option1</td>
-<td align="left">&lt;environment: 0x7f9014d7b3c8&gt;</td>
+<td align="left">&lt;environment: 0x7fc7eb40b2e8&gt;</td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>In our multiverse we have identified 5 options for calculating <code>fertility</code>, 3 options for calculating <code>menstrual calculation</code> and <code>relationship status</code> each, 3 wyas of excluding participants based on their <code>cycle length</code> and 2 ways of excluding participants based on the self-reported <code>certainty</code> of their responses.</p>
 <p>This results in $ 5 3 3 3 2 = 270$ possible combinations.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; [1] 270</span></code></pre></div>
 <p>We can then inspect the default analysis the default single universe analysis from this multiverse:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span><span class="op">$</span><span class="va">df</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="kable-table">
@@ -1552,9 +1490,8 @@
 <col width="6%">
 <col width="8%">
 <col width="4%">
-<col width="3%">
-<col width="3%">
 <col width="6%">
+<col width="5%">
 <col width="5%">
 <col width="2%">
 <col width="2%">
@@ -1576,7 +1513,7 @@
 <th align="right">PrivSocialSec</th>
 <th align="right">Sure1</th>
 <th align="right">Sure2</th>
-<th align="left">Relationship</th>
+<th align="right">Relationship</th>
 <th align="right">ReportedCycleLength</th>
 <th align="right">Vote</th>
 <th align="right">Donate</th>
@@ -1584,10 +1521,9 @@
 <th align="left">StartDateofLastPeriod</th>
 <th align="left">StartDateofPeriodBeforeLast</th>
 <th align="left">StartDateNext</th>
-<th align="right">FiscConsComp</th>
-<th align="right">SocConsComp</th>
 <th align="left">ComputedCycleLength</th>
 <th align="left">NextMenstrualOnset</th>
+<th align="left">RelationshipStatus</th>
 <th align="right">CycleDay</th>
 <th align="left">Fertility</th>
 </tr></thead>
@@ -1597,19 +1533,19 @@
 <td align="right">8</td>
 <td align="right">8</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">2</td>
 <td align="right">7</td>
-<td align="right">1</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">2</td>
 <td align="right">4</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">6</td>
 <td align="right">3</td>
 <td align="right">9</td>
 <td align="right">9</td>
-<td align="left">Relationship</td>
+<td align="right">4</td>
 <td align="right">28</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1617,31 +1553,30 @@
 <td align="left">2012-05-18</td>
 <td align="left">2012-04-18</td>
 <td align="left">2012-06-15</td>
-<td align="right">12</td>
-<td align="right">27</td>
 <td align="left">30 days</td>
-<td align="left">2012-06-17</td>
-<td align="right">2</td>
-<td align="left">medium</td>
+<td align="left">2012-06-15</td>
+<td align="left">Relationship</td>
+<td align="right">4</td>
+<td align="left">low</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="right">8</td>
 <td align="right">7</td>
 <td align="right">7</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
 <td align="right">4</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">4</td>
 <td align="right">6</td>
 <td align="right">9</td>
 <td align="right">7</td>
-<td align="left">Relationship</td>
+<td align="right">3</td>
 <td align="right">28</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1649,11 +1584,10 @@
 <td align="left">2012-04-29</td>
 <td align="left">2012-03-31</td>
 <td align="left">2012-05-30</td>
-<td align="right">21</td>
-<td align="right">9</td>
 <td align="left">29 days</td>
-<td align="left">2012-05-28</td>
-<td align="right">22</td>
+<td align="left">2012-05-30</td>
+<td align="left">Relationship</td>
+<td align="right">20</td>
 <td align="left">low</td>
 </tr>
 <tr class="odd">
@@ -1661,19 +1595,19 @@
 <td align="right">6</td>
 <td align="right">6</td>
 <td align="right">2</td>
-<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">1</td>
-<td align="right">2</td>
+<td align="right">6</td>
 <td align="right">4</td>
-<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
 <td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">7</td>
-<td align="left">Relationship</td>
+<td align="right">3</td>
 <td align="right">27</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1681,95 +1615,30 @@
 <td align="left">2012-05-04</td>
 <td align="left">2012-04-07</td>
 <td align="left">2012-05-31</td>
-<td align="right">18</td>
-<td align="right">13</td>
 <td align="left">27 days</td>
 <td align="left">2012-05-31</td>
+<td align="left">Relationship</td>
 <td align="right">18</td>
 <td align="left">low</td>
 </tr>
 <tr class="even">
-<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">1</td>
 <td align="right">7</td>
-<td align="right">8</td>
 <td align="right">6</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="right">3</td>
-<td align="right">4</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="left">Relationship</td>
-<td align="right">37</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="left">2012-05-21</td>
-<td align="left">2012-04-27</td>
-<td align="left">2012-03-22</td>
-<td align="left">2012-06-05</td>
-<td align="right">15</td>
-<td align="right">13</td>
-<td align="left">36 days</td>
-<td align="left">2012-06-02</td>
-<td align="right">16</td>
-<td align="left">medium</td>
-</tr>
-<tr class="odd">
-<td align="right">5</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">6</td>
-<td align="right">3</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">3</td>
-<td align="right">5</td>
-<td align="right">4</td>
-<td align="left">Relationship</td>
-<td align="right">38</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="left">2012-05-22</td>
-<td align="left">2012-04-19</td>
-<td align="left">2012-03-09</td>
-<td align="left">2012-05-25</td>
-<td align="right">24</td>
-<td align="right">11</td>
-<td align="left">41 days</td>
-<td align="left">2012-05-30</td>
-<td align="right">20</td>
-<td align="left">low</td>
-</tr>
-<tr class="even">
-<td align="right">6</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">7</td>
 <td align="right">7</td>
 <td align="right">2</td>
-<td align="right">7</td>
-<td align="right">6</td>
-<td align="right">3</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">3</td>
+<td align="right">5</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">8</td>
-<td align="left">Single</td>
+<td align="right">2</td>
 <td align="right">30</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1777,12 +1646,73 @@
 <td align="left">2012-04-21</td>
 <td align="left">2012-03-20</td>
 <td align="left">2012-05-22</td>
-<td align="right">19</td>
-<td align="right">29</td>
 <td align="left">32 days</td>
-<td align="left">2012-05-23</td>
-<td align="right">27</td>
-<td align="left">medium</td>
+<td align="left">2012-05-22</td>
+<td align="left">NA</td>
+<td align="right">28</td>
+<td align="left">low</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">4</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">4</td>
+<td align="right">28</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">2012-05-22</td>
+<td align="left">2012-05-03</td>
+<td align="left">2012-04-05</td>
+<td align="left">2012-05-31</td>
+<td align="left">28 days</td>
+<td align="left">2012-05-31</td>
+<td align="left">Relationship</td>
+<td align="right">19</td>
+<td align="left">low</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">8</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right">1</td>
+<td align="right">30</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">2012-05-24</td>
+<td align="left">2012-05-18</td>
+<td align="left">2012-04-20</td>
+<td align="left">2012-06-17</td>
+<td align="left">28 days</td>
+<td align="left">2012-06-17</td>
+<td align="left">Single</td>
+<td align="right">4</td>
+<td align="left">low</td>
 </tr>
 </tbody>
 </table>
@@ -1791,117 +1721,35 @@
 <div id="specifying-conditions-in-the-multiverse-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#specifying-conditions-in-the-multiverse-analysis" class="anchor"></a>Specifying conditions in the multiverse analysis</h2>
-<p>In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. For example, in our example, we are excluding participants based on their <em>cycle length</em>. This can be done in two ways: we can use the values of the variable,<code>ComputedCycleLength</code> or <code>ReportedCycleLength</code>. If we are using <code>ComputedCycleLength</code> to exclude participants, this means that we should not calculate the variable <code>NextMenstrualOnset</code> (date for the onset of the next menstrual cycle) using the <code>ReportedCycleLength</code> value. Similarly, if we are using <code>ReportedCycleLength</code> to exclude participants it is inconsistent to calculate <code>NextMenstrualOnset</code> using <code>ComputedCycleLength</code>.</p>
-<p>We should be able to express these conditions in the multiverse. We can do this in two ways: 1. <code>%when%</code>: when declaring a branch, we can use this operator to specify the conditional <span class="math inline"><em>A</em>|<em>B</em></span> as <code>A %when% B</code>. The conditional <span class="math inline"><em>A</em>|<em>B</em></span> is also referred to as the connective <span class="math inline"><em>A</em> ⟹ <em>B</em></span>. This has the meaning “if A is true, then B is also true” and is an abbreviation for <span class="math inline">¬<em>A</em>|<em>B</em></span> 2. <code>branch_assert</code>: this function allows the user to specify any condition in the form of a logical operation</p>
-<div id="the-when-operator" class="section level4">
-<h4 class="hasAnchor">
-<a href="#the-when-operator" class="anchor"></a>The %when% operator</h4>
-<p>There are two ways in which you can specify the <code>%when%</code> operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R">  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">data.raw.study2</span>  <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,
-            <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="op">(</span><span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span>,
-            <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="op">(</span><span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span>,
-            <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span>
-    <span class="op">)</span></code></pre></div>
-<p>The other is to specify it at the head of the branch, right after the option name:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span>  <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,
-            <span class="st">"mc_option1"</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,
-            <span class="st">"mc_option2"</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span> <span class="op">~</span> <span class="op">(</span><span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span><span class="op">)</span>,
-            <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span>
-    <span class="op">)</span></code></pre></div>
-</div>
-<div id="the-branch_assert-function" class="section level4">
-<h4 class="hasAnchor">
-<a href="#the-branch_assert-function" class="anchor"></a>The <code>branch_assert()</code> function</h4>
-<p>Within the branch assert function, the user can specify any logical operation.</p>
-<p>For eg: the above logical operations can be specified as: <code>branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3")</code> or <code>branch_assert(!(menstrual_calculation == "mc_option1" | cycle_length == "cl_option3"))</code></p>
-<p>Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the <code>branch_assert()</code> function in our example as:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span>  <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,
-            <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,
-            <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,
-            <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span>
-    <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">!</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">==</span> <span class="st">"mc_option1"</span> <span class="op">&amp;</span> <span class="va">cycle_length</span> <span class="op">==</span> <span class="st">"cl_option3"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">!</span><span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">==</span> <span class="st">"mc_option2"</span> <span class="op">&amp;</span> <span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let’s update our example by including these cnditions:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">data.raw.study2</span>  <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span>  <span class="op">%&gt;%</span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">cycle_length</span>,
-            <span class="st">"cl_option1"</span> <span class="op">~</span> <span class="cn">TRUE</span>,
-            <span class="st">"cl_option2"</span> <span class="op">~</span> <span class="va">ComputedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ComputedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span>,
-            <span class="st">"cl_option3"</span> <span class="op">~</span> <span class="va">ReportedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ReportedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span>
-    <span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">certainty</span>,
-            <span class="st">"cer_option1"</span> <span class="op">~</span> <span class="cn">TRUE</span>,
-            <span class="st">"cer_option2"</span> <span class="op">~</span> <span class="va">Sure1</span> <span class="op">&gt;</span> <span class="fl">6</span> <span class="op">|</span> <span class="va">Sure2</span> <span class="op">&gt;</span> <span class="fl">6</span>
-    <span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,
-            <span class="st">"mc_option1"</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,
-            <span class="st">"mc_option2"</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,
-            <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span>
-    <span class="op">)</span>  <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>
-      CycleDay <span class="op">=</span> <span class="fl">28</span> <span class="op">-</span> <span class="op">(</span><span class="va">NextMenstrualOnset</span> <span class="op">-</span> <span class="va">DateTesting</span><span class="op">)</span>,
-      CycleDay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;</span> <span class="fl">28</span>, <span class="va">CycleDay</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&lt;</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">28</span><span class="op">)</span><span class="op">)</span>
-    <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span> Fertility <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span> <span class="va">fertile</span>,
-            <span class="st">"fer_option1"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">7</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">17</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>,
-            <span class="st">"fer_option2"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">6</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">17</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">27</span>, <span class="st">"low"</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>,
-            <span class="st">"fer_option3"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">9</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">18</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">25</span>, <span class="st">"low"</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>,
-            <span class="st">"fer_option4"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">8</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">14</span>, <span class="st">"high"</span>, <span class="st">"low"</span><span class="op">)</span> <span class="op">)</span>,
-            <span class="st">"fer_option45"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">CycleDay</span> <span class="op">&gt;=</span> <span class="fl">8</span> <span class="op">&amp;</span> <span class="va">CycleDay</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="st">"high"</span>, <span class="st">"low"</span><span class="op">)</span> <span class="op">)</span>
-    <span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>RelationshipStatus <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">relationship_status</span>,
-            <span class="st">"rs_option1"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Relationship</span><span class="op">==</span><span class="fl">2</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span><span class="op">)</span><span class="op">)</span>,
-            <span class="st">"rs_option2"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="st">'Relationship'</span><span class="op">)</span><span class="op">)</span>,
-            <span class="st">"rs_option3"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">1</span>, <span class="st">'Single'</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Relationship</span><span class="op">==</span><span class="fl">3</span> <span class="op">|</span> <span class="va">Relationship</span><span class="op">==</span><span class="fl">4</span>, <span class="st">'Relationship'</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>
-    <span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
-<p>After excluding the inconsistent choice combinations, <span class="math inline">270 − 2 × (5 × 1 × 3 × 1 × 2) = 210</span> choice combinations remain:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] 210</span></code></pre></div>
-<p>Now, we’ve created the complete multiverse that was presented as example #2 from Steegen et al.’s paper.</p>
-</div>
+<p>In our example, we are excluding participants based on their <em>cycle length</em>. This can be done in two ways: we can use the values of the variable,<code>ComputedCycleLength</code> or <code>ReportedCycleLength</code>. If we are using <code>ComputedCycleLength</code> to exclude participants, this means that we should not calculate the variable <code>NextMenstrualOnset</code> (date for the onset of the next menstrual cycle) using the <code>ReportedCycleLength</code> value. Similarly, if we are using <code>ReportedCycleLength</code> to exclude participants it is inconsistent to calculate <code>NextMenstrualOnset</code> using <code>ComputedCycleLength</code>. In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously.</p>
+<p>We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on <code>conditions</code>, in the corresponding <a href="mucollective.github.io/multiverse/articles/conditions.html">vignette</a>.</p>
 </div>
 <div id="modeling" class="section level2">
 <h2 class="hasAnchor">
 <a href="#modeling" class="anchor"></a>Modeling</h2>
-<p>Steegen et al. create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we’ve using so far.</p>
+<p>Steegen et al. define a multiverse which only considers the various data processing parameters, which we have defiend above. To analyse the data, they create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we’ve using so far.</p>
 <div id="model-2-effect-of-fertility-and-relationship-status-on-religiosity" class="section level3">
 <h3 class="hasAnchor">
 <a href="#model-2-effect-of-fertility-and-relationship-status-on-religiosity" class="anchor"></a>Model #2: Effect of Fertility and Relationship status on Religiosity</h3>
 <p>The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span> RelComp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="op">(</span><span class="va">Rel1</span> <span class="op">+</span> <span class="va">Rel2</span> <span class="op">+</span> <span class="va">Rel3</span><span class="op">)</span><span class="op">/</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="st">```</span><span class="dt">{multiverse default-m-4, inside = M}</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="dt">df &lt;- df %&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="dt">  mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="st">```</span></span></code></pre></div>
 <p>The authors perform an ANOVA to study the effect of <em>Fertility</em>, <em>Relationship</em> and their interaction term, on the composite Religiosity score. We fit the linear model using the call: <code><a href="https://rdrr.io/r/stats/lm.html">lm( RelComp ~ Fertility * RelationshipStatus, data = df )</a></code> inside our multiverse and save the result to a variable called <code>fit_RelComp</code>.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">fit_RelComp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span> <span class="va">RelComp</span> <span class="op">~</span> <span class="va">Fertility</span> <span class="op">*</span> <span class="va">RelationshipStatus</span>, data <span class="op">=</span> <span class="va">df</span> <span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
-<p>To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy</a></code>. Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call <code><a href="reference/execute.html">execute_multiverse()</a></code> to execute our analysis in each multiverse.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">summary_RelComp</span> <span class="op">&lt;-</span> <span class="va">fit_RelComp</span> <span class="op">%&gt;%</span> 
-    <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span> conf.int <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-
-<span class="fu"><a href="reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="st">```</span><span class="dt">{multiverse default-m-5, inside = M, echo = FALSE}</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="dt">fit_RelComp &lt;- lm( RelComp ~ Fertility * RelationshipStatus, data = df )</span></span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="st">```</span></span></code></pre></div>
+<p>To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy</a></code>.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="st">```</span><span class="dt">{multiverse default-m-6, inside = M}</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="dt">summary_RelComp &lt;- fit_RelComp %&gt;% </span></span>
+<span id="cb23-3"><a href="#cb23-3"></a><span class="dt">    broom::tidy( conf.int = TRUE )</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="st">```</span></span></code></pre></div>
+<p>Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call <code><a href="reference/execute.html">execute_multiverse()</a></code> to execute our analysis in each multiverse.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
 <p>Now that we have performed the analysis in each universe of the multiverse, we need to plot the data. To plot the data, we need to extract the relevant result data-frame from each universe into a single data-frame. The following code does this, by extracting the variable where the estimates of the model are stored, <code>summary_RelComp</code> and creating a single tidy data-frame that can be accessed easily.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">.code</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> summary <span class="op">=</span> <span class="fu">map</span><span class="op">(</span><span class="va">.results</span>, <span class="st">"summary_RelComp"</span> <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -1911,11 +1759,11 @@
 <table class="table">
 <colgroup>
 <col width="3%">
-<col width="4%">
-<col width="4%">
 <col width="7%">
+<col width="6%">
 <col width="4%">
-<col width="7%">
+<col width="4%">
+<col width="4%">
 <col width="23%">
 <col width="10%">
 <col width="13%">
@@ -1928,11 +1776,11 @@
 </colgroup>
 <thead><tr class="header">
 <th align="right">.universe</th>
+<th align="left">menstrual_calculation</th>
+<th align="left">relationship_status</th>
 <th align="left">cycle_length</th>
 <th align="left">certainty</th>
-<th align="left">menstrual_calculation</th>
 <th align="left">fertile</th>
-<th align="left">relationship_status</th>
 <th align="left">.parameter_assignment</th>
 <th align="left">.results</th>
 <th align="left">term</th>
@@ -1946,180 +1794,180 @@
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
-<td align="left">&lt;environment: 0x7f9017353b28&gt;</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
+<td align="left">&lt;environment: 0x7fc7eefb81b8&gt;</td>
 <td align="left">(Intercept)</td>
 <td align="right">6.3749123</td>
-<td align="right">0.4044011</td>
-<td align="right">15.763834</td>
+<td align="right">0.4015673</td>
+<td align="right">15.8750795</td>
 <td align="right">0.0000000</td>
-<td align="right">5.5790575</td>
-<td align="right">7.1707671</td>
+<td align="right">5.5859219</td>
+<td align="right">7.1639027</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
-<td align="left">rs_option1</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
-<td align="left">&lt;environment: 0x7f9017353b28&gt;</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
+<td align="left">&lt;environment: 0x7fc7eefb81b8&gt;</td>
 <td align="left">Fertilitylow</td>
 <td align="right">-1.1993860</td>
-<td align="right">0.5349724</td>
-<td align="right">-2.241958</td>
-<td align="right">0.0257021</td>
-<td align="right">-2.2522029</td>
-<td align="right">-0.1465691</td>
+<td align="right">0.5312236</td>
+<td align="right">-2.2577801</td>
+<td align="right">0.0243951</td>
+<td align="right">-2.2431222</td>
+<td align="right">-0.1556497</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
 <td align="left">fer_option1</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
+<td align="left">&lt;environment: 0x7fc7eefb81b8&gt;</td>
+<td align="left">Fertilitymedium</td>
+<td align="right">-0.2931038</td>
+<td align="right">0.5089591</td>
+<td align="right">-0.5758887</td>
+<td align="right">0.5649527</td>
+<td align="right">-1.2930952</td>
+<td align="right">0.7068877</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">mc_option1</td>
 <td align="left">rs_option1</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
-<td align="left">&lt;environment: 0x7f9017353b28&gt;</td>
+<td align="left">cl_option1</td>
+<td align="left">cer_option1</td>
+<td align="left">fer_option1</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
+<td align="left">&lt;environment: 0x7fc7eefb81b8&gt;</td>
 <td align="left">RelationshipStatusSingle</td>
 <td align="right">-1.4568301</td>
-<td align="right">0.5396630</td>
-<td align="right">-2.699518</td>
-<td align="right">0.0073420</td>
-<td align="right">-2.5188779</td>
-<td align="right">-0.3947823</td>
+<td align="right">0.5358812</td>
+<td align="right">-2.7185689</td>
+<td align="right">0.0067871</td>
+<td align="right">-2.5097176</td>
+<td align="right">-0.4039426</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
+<td align="left">cl_option1</td>
+<td align="left">cer_option1</td>
+<td align="left">fer_option1</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
+<td align="left">&lt;environment: 0x7fc7eefb81b8&gt;</td>
+<td align="left">Fertilitylow:RelationshipStatusSingle</td>
+<td align="right">2.0287775</td>
+<td align="right">0.7105383</td>
+<td align="right">2.8552683</td>
+<td align="right">0.0044810</td>
+<td align="right">0.6327276</td>
+<td align="right">3.4248273</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="left">cl_option1</td>
-<td align="left">cer_option1</td>
 <td align="left">mc_option1</td>
-<td align="left">fer_option1</td>
 <td align="left">rs_option1</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option1</td>
-<td align="left">&lt;environment: 0x7f9017353b28&gt;</td>
-<td align="left">Fertilitylow:RelationshipStatusSingle</td>
-<td align="right">2.0287775</td>
-<td align="right">0.7155526</td>
-<td align="right">2.835260</td>
-<td align="right">0.0048931</td>
-<td align="right">0.6205818</td>
-<td align="right">3.4369732</td>
+<td align="left">cl_option1</td>
+<td align="left">cer_option1</td>
+<td align="left">fer_option1</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
+<td align="left">&lt;environment: 0x7fc7eefb81b8&gt;</td>
+<td align="left">Fertilitymedium:RelationshipStatusSingle</td>
+<td align="right">1.0066406</td>
+<td align="right">0.6873797</td>
+<td align="right">1.4644608</td>
+<td align="right">0.1437042</td>
+<td align="right">-0.3439077</td>
+<td align="right">2.3571890</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">rs_option2</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
-<td align="left">&lt;environment: 0x7f901739a938&gt;</td>
+<td align="left">fer_option2</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
+<td align="left">&lt;environment: 0x7fc7eeda2c70&gt;</td>
 <td align="left">(Intercept)</td>
-<td align="right">5.8375556</td>
-<td align="right">0.3230419</td>
-<td align="right">18.070582</td>
+<td align="right">6.3953846</td>
+<td align="right">0.3741693</td>
+<td align="right">17.0922227</td>
 <td align="right">0.0000000</td>
-<td align="right">5.2018144</td>
-<td align="right">6.4732968</td>
+<td align="right">5.6602251</td>
+<td align="right">7.1305441</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">rs_option2</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
-<td align="left">&lt;environment: 0x7f901739a938&gt;</td>
+<td align="left">fer_option2</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
+<td align="left">&lt;environment: 0x7fc7eeda2c70&gt;</td>
 <td align="left">Fertilitylow</td>
-<td align="right">-0.6595047</td>
-<td align="right">0.4288936</td>
-<td align="right">-1.537688</td>
-<td align="right">0.1251895</td>
-<td align="right">-1.5035602</td>
-<td align="right">0.1845508</td>
+<td align="right">-1.1692735</td>
+<td align="right">0.4910353</td>
+<td align="right">-2.3812412</td>
+<td align="right">0.0176323</td>
+<td align="right">-2.1340487</td>
+<td align="right">-0.2044983</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
+<td align="left">mc_option1</td>
+<td align="left">rs_option1</td>
 <td align="left">cl_option1</td>
 <td align="left">cer_option1</td>
+<td align="left">fer_option2</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
+<td align="left">&lt;environment: 0x7fc7eeda2c70&gt;</td>
+<td align="left">Fertilitymedium</td>
+<td align="right">-0.2516346</td>
+<td align="right">0.5161336</td>
+<td align="right">-0.4875377</td>
+<td align="right">0.6260936</td>
+<td align="right">-1.2657225</td>
+<td align="right">0.7624533</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
 <td align="left">mc_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">rs_option2</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
-<td align="left">&lt;environment: 0x7f901739a938&gt;</td>
+<td align="left">rs_option1</td>
+<td align="left">cl_option1</td>
+<td align="left">cer_option1</td>
+<td align="left">fer_option2</td>
+<td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
+<td align="left">&lt;environment: 0x7fc7eeda2c70&gt;</td>
 <td align="left">RelationshipStatusSingle</td>
-<td align="right">-0.9123056</td>
-<td align="right">0.5823721</td>
-<td align="right">-1.566534</td>
-<td align="right">0.1182885</td>
-<td align="right">-2.0584043</td>
-<td align="right">0.2337932</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="left">cl_option1</td>
-<td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">rs_option2</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option2</td>
-<td align="left">&lt;environment: 0x7f901739a938&gt;</td>
-<td align="left">Fertilitylow:RelationshipStatusSingle</td>
-<td align="right">1.9293490</td>
-<td align="right">0.7719840</td>
-<td align="right">2.499208</td>
-<td align="right">0.0129869</td>
-<td align="right">0.4100972</td>
-<td align="right">3.4486009</td>
-</tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="left">cl_option1</td>
-<td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">rs_option3</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option3</td>
-<td align="left">&lt;environment: 0x7f900daa0100&gt;</td>
-<td align="left">(Intercept)</td>
-<td align="right">6.3749123</td>
-<td align="right">0.4024088</td>
-<td align="right">15.841881</td>
-<td align="right">0.0000000</td>
-<td align="right">5.5818823</td>
-<td align="right">7.1679422</td>
-</tr>
-<tr class="even">
-<td align="right">3</td>
-<td align="left">cl_option1</td>
-<td align="left">cer_option1</td>
-<td align="left">mc_option1</td>
-<td align="left">fer_option1</td>
-<td align="left">rs_option3</td>
-<td align="left">cl_option1 , cer_option1, mc_option1 , fer_option1, rs_option3</td>
-<td align="left">&lt;environment: 0x7f900daa0100&gt;</td>
-<td align="left">Fertilitylow</td>
-<td align="right">-1.1993860</td>
-<td align="right">0.5323368</td>
-<td align="right">-2.253059</td>
-<td align="right">0.0252328</td>
-<td align="right">-2.2484660</td>
-<td align="right">-0.1503059</td>
+<td align="right">-1.6535869</td>
+<td align="right">0.4921908</td>
+<td align="right">-3.3596461</td>
+<td align="right">0.0008408</td>
+<td align="right">-2.6206324</td>
+<td align="right">-0.6865414</td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>We then take this data frame and plot the results as a confidence interval and point estimate using <code>ggplot2</code>. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use <code>gganimate</code> to animate through the results of each universe to quickly get an overview of the robustness of the results.</p>
 <p>Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette <a href="visualizing-multiverse.html"><code>Extracting and Visualizing the results of a multiverse analysis</code></a></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span> summary <span class="op">=</span> <span class="fu">map</span><span class="op">(</span><span class="va">.results</span>, <span class="st">"summary_RelComp"</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">unnest</span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -2137,11 +1985,18 @@
 <span class="fu">animate</span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/model-1-vis-1.gif" alt="results from a multiverse analysis: point estimates and 95% confidence intervals of the coefficients of the predictors fertility, single and their interaction term"></p>
 </div>
-<div id="notes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#notes" class="anchor"></a>Notes</h3>
-<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. These analyses can be found in the vignette <a href="complete-multiverse-analysis.html"><code>A complete implementation of a multiverse analysis</code></a></p>
 </div>
+<div id="conclusion" class="section level2">
+<h2 class="hasAnchor">
+<a href="#conclusion" class="anchor"></a>Conclusion</h2>
+<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. These analyses can be found in the vignette <a href="complete-multiverse-analysis.html"><code>A complete implementation of a multiverse analysis</code></a></p>
+<p>In addition, we also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:</p>
+<ul>
+<li>Simonsohn et al.’s <br><span class="math display"> &lt; <em>h</em><em>t</em><em>t</em><em>p</em> : //<em>d</em><em>x</em>.<em>d</em><em>o</em><em>i</em>.<em>o</em><em>r</em><em>g</em>/10.2139/<em>s</em><em>s</em><em>r</em><em>n</em>.2694998&gt;</span><br> specification curve analysis of the paper <a href="https://doi.org/10.1073/pnas.1402786111">Female hurricanes are deadlier than male hurricanes</a>
+</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/dance/">Adding Inferential Information to plots using Resampling and Animations</a> (from <a href="https://hal.inria.fr/hal-01976951/document">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/frequentist/">Re-evaluating the efficiency of Physical Visualisations</a> (from <a href="https://hal.inria.fr/hal-01976951/document">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+</ul>
 </div>
 </div>
 

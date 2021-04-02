@@ -35,7 +35,7 @@ We will be using the same data as the Vignette [*A complete implementation of a 
 ```{r data}
 data("durante")
 
-data.raw.study2 <- durante %>%
+df_durante <- durante %>%
   mutate(
     Abortion = abs(7 - Abortion) + 1,
     StemCell = abs(7 - StemCell) + 1,
@@ -48,12 +48,8 @@ data.raw.study2 <- durante %>%
   )
 ```
 
-#### Note 
-In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
-
 ## Specifying conditions in the multiverse analysis
-In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
-For example, in our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`.
+In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. For example, in our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`.
 
 We should be able to express these conditions in the multiverse. We can do this in two ways:
   1. `%when%`: when declaring a branch, we can use this operator to specify the conditional $A | B$ as `A %when% B`. The conditional $A | B$ is also referred to as the connective $A \implies B$. This has the meaning "if A is true, then B is also true" and is an abbreviation for $\neg A | B$
@@ -91,7 +87,7 @@ We can write the complete analysis by specifying the condition with the %when% o
 M = multiverse()
 
 inside(M, {
-  df.1 <- data.raw.study2  %>%
+  df.1 <- df_durante  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
       dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
@@ -105,6 +101,44 @@ inside(M, {
       )
 })
 ```
+
+In `multiverse code chunks` conditionals can be declared in pretty much the same way:
+
+
+```{multiverse default-m-1, inside = M, echo = FALSE}
+df <- df_durante  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+      dplyr::filter( branch(cycle_length,
+          "cl_option1" ~ TRUE,
+          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      )) %>%
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
+          "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+          "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+          "mc_option3" ~ StartDateNext)
+      )
+```
+
+
+````
+```{multiverse default-m-1, inside = M}`r ''`
+df <- df_durante  %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+      dplyr::filter( branch(cycle_length,
+          "cl_option1" ~ TRUE,
+          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+      )) %>%
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
+          "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+          "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+          "mc_option3" ~ StartDateNext)
+      )
+```
+````
+
+**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
 
 As the condition implies, the parameter `menstrual_calcaultion` (which is for calclating the variable `NextMenstrualCalculation`) cannot take the value of "mc_option1" when we filter `cycle_length` using "cl_option3". Similarly, `menstrual_calcaultion` cannot take the value of "mc_option2" when we filter `cycle_length` using "cl_option2". In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.
 
@@ -131,7 +165,7 @@ Using the `branch_assert()`, we can perform the exact same analysis:
 M = multiverse()
 
 inside(M, {
-    df.2 <- data.raw.study2  %>%
+    df.2 <- df_durante  %>%
         mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
         filter( branch(cycle_length,
             "cl_option1" ~ TRUE,
@@ -148,12 +182,99 @@ inside(M, {
 })
 ```
 
-As we can see, this results in the same multiverse where universes indexed 3 and 5 are not compatible.
+As we can see, this results in the same multiverse, where universes indexed 3 and 5 are not compatible.
 
 ```{r}
 expand(M)
 ```
 
-**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
+Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update the example from [home page](mucollective.github.io/multiverse/) by including these conditions:
+
+```{r, when-eg-2}
+M = multiverse()
+```
+
+
+```{multiverse default-m-2, inside = M, echo = FALSE}
+df <- df_durante  %>%
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+  dplyr::filter( branch(cycle_length,
+          "cl_option1" ~ TRUE,
+          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+  )) %>%
+  dplyr::filter( branch(certainty,
+          "cer_option1" ~ TRUE,
+          "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+  )) %>%
+  mutate(NextMenstrualOnset = branch(menstrual_calculation,
+          "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+          "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+          "mc_option3" ~ StartDateNext)
+  )  %>%
+  mutate(
+    CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+    CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+  ) %>%
+  mutate( Fertility = branch( fertile,
+          "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
+          "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
+          "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
+          "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+          "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+  )) %>%
+  mutate(RelationshipStatus = branch(relationship_status,
+          "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+          "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+          "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+  )
+```
+
+
+
+````
+```{multiverse default-m-2, inside = M, echo = FALSE}`r ''`
+df <- df_durante  %>%
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+  dplyr::filter( branch(cycle_length,
+          "cl_option1" ~ TRUE,
+          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+  )) %>%
+  dplyr::filter( branch(certainty,
+          "cer_option1" ~ TRUE,
+          "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+  )) %>%
+  mutate(NextMenstrualOnset = branch(menstrual_calculation,
+          "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+          "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+          "mc_option3" ~ StartDateNext)
+  )  %>%
+  mutate(
+    CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+    CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+  ) %>%
+  mutate( Fertility = branch( fertile,
+          "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
+          "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
+          "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
+          "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+          "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+  )) %>%
+  mutate(RelationshipStatus = branch(relationship_status,
+          "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+          "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+          "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+  )
+```
+````
+
+After excluding the inconsistent choice combinations, $270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210$ choice combinations remain:
+
+```{r, df-conditions-assert}
+expand(M) %>% nrow()
+```
+
+Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
 
 

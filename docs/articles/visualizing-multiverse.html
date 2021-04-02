@@ -55,25 +55,22 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/basic-multiverse.html">The most basic multiverse example: calculating the mean</a>
-    </li>
-    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
-    </li>
-    <li>
-      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
       <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
+      <a href="../articles/dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
     </li>
     <li>
-      <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+      <a href="../articles/durante-multiverse-analysis.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
     </li>
     <li>
-      <a href="../articles/hurricane.html">Are hurricanes with more female names deadlier --- an implementation using multiverse</a>
+      <a href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    </li>
+    <li>
+      <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
@@ -107,7 +104,7 @@
       <h1 data-toc-skip>Extracting and Visualizing the results of a multiverse analysis</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-02-13</h4>
+            <h4 class="date">2021-04-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/visualizing-multiverse.Rmd"><code>vignettes/visualizing-multiverse.Rmd</code></a></small>
       <div class="hidden name"><code>visualizing-multiverse.Rmd</code></div>
@@ -250,18 +247,18 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> summary <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"summary_RelComp"</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> <span class="va">summary</span> <span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 840 x 16
-##    .universe cycle_length certainty menstrual_calcu… fertile relationship_st…
-##        &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;           
-##  1         1 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
-##  2         1 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
-##  3         1 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
-##  4         1 cl_option1   cer_opti… mc_option1       fer_op… rs_option1      
-##  5         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
-##  6         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
-##  7         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
-##  8         2 cl_option1   cer_opti… mc_option1       fer_op… rs_option2      
-##  9         3 cl_option1   cer_opti… mc_option1       fer_op… rs_option3      
-## 10         3 cl_option1   cer_opti… mc_option1       fer_op… rs_option3      
+##    .universe cycle_length certainty  menstrual_calcula… fertile relationship_st…
+##        &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;              &lt;chr&gt;   &lt;chr&gt;           
+##  1         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
+##  2         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
+##  3         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
+##  4         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
+##  5         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
+##  6         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
+##  7         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
+##  8         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
+##  9         3 cl_option1   cer_optio… mc_option1         fer_op… rs_option3      
+## 10         3 cl_option1   cer_optio… mc_option1         fer_op… rs_option3      
 ## # … with 830 more rows, and 10 more variables: .parameter_assignment &lt;list&gt;,
 ## #   .code &lt;list&gt;, .results &lt;list&gt;, term &lt;chr&gt;, estimate &lt;dbl&gt;, std.error &lt;dbl&gt;,
 ## #   statistic &lt;dbl&gt;, p.value &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</code></pre>

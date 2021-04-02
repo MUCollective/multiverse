@@ -13,9 +13,11 @@ statistical analysis, also called a multiverse analysis. In a multiverse
 analysis, researchers identify sets of defensible analysis choices
 (e.g., different ways of excluding outliers, different data
 transformations), implement them all, and then report the outcomes of
-all analyses resulting from all possible choice combinations. The
-**goal** of `multiverse` is to allow users to create multiverse analyses
-in a concise and easily interpretable manner.
+all analyses resulting from all possible choice combinations. However,
+declaring several alternative analysis paths can be tricky, often
+requiring custom control flows such as nested for-loops and multiple
+if-else statements. The **goal** of `multiverse` is to allow users to
+create multiverse analyses in a concise and easily interpretable manner.
 
 Steegen et al. first put forth the concept of [multiverse
 analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637);
@@ -23,23 +25,25 @@ Simonsohn et al. put forth a similar notion called the [Specification
 curve
 analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
 
-`multiverse` attempts to make it easy to declare alternate analysis
-paths by declaring **analysis parameters** at different levels of
-analysis:
+In a `multiverse` analysis, alternate analysis paths can arise from
+having points in the analysis where an analyst has to make a decision of
+choosing between two or more reasonable steps. We refer to these
+decision points as **parameters**, and they could be:
 
   - **Data substitution parameters** offer to switch between different
     raw datasets, either collected or simulated.
 
   - **Data processing parameters** offer to process the same raw data in
-    different ways before it is analyzed.
+    different ways before it is analysed.
 
-  - **Modeling parameters** offer different ways of analyzing the same
+  - **Modeling parameters** offer different ways of analysing the same
     processed data
 
   - **Presentation parameters** offer different ways of presenting
     analysis outcomes
 
-The `multiverse` documentation follows the tidyverse syntax
+The `multiverse` documentation predominantly follows the tidyverse
+syntax
 
 ## Installation
 
@@ -68,8 +72,8 @@ refer to this document as well as the following vignettes:
   - How multiverse results can be extracted and visualised: [visualising
     multiverse results](mucollective.github.io/multiverse/articles/)
 
-We also implement a series of other end-to-end multiverse
-implementations using this package to demonstrate how it might be used:
+We also implement a series of end-to-end multiverse implementations
+using this package to demonstrate how it might be used:
 
   - Steegen et al.’s
     \[<https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637>\]
@@ -94,7 +98,7 @@ implementations using this package to demonstrate how it might be used:
     explorable multiverse
     analyses](https://hal.inria.fr/hal-01976951/document) )
 
-## Examples
+## Example analysis
 
 In this document, we outline an initial approach to conducting a
 multiverse analysis in R. We will show how our package can be used to
@@ -117,11 +121,11 @@ then extend it to a multiverse analysis.
 
 The first step is to read the raw data from the file and store it as a
 tibble. We will be following the *_tidy data_* format here. The data is
-stored in two text files, and we can use `readr` to read the files into
-R. In this example, we will use the data collected by *Durante et al.*,
-which investigated the effect of fertility on religiosity and political
-attitudes. We will focus on their second study (which we store in
-`data.raw.study2`).
+provided with the package and can be loaded using the `data("durante)`
+command. In this example, we will use the data collected by *Durante et
+al.*, which investigated the effect of fertility on religiosity and
+political attitudes. We will focus on their second study (which we store
+in `df_durante`).
 
 ``` r
 data("durante")
@@ -164,7 +168,17 @@ The data collected needs to be processed before it can be modeled.
 Preparing the data set for analysis can involve several steps and
 decisions regarding how to encode the different raw values. The
 following is one example of data processing that can be performed for
-this study.
+this study, where the original authors of the study compute, for each
+participant in their study, the typical duration of their menstrual
+cycle (`ComputedCycleNext`), the likely date of the next onset of their
+menstrual cycle (`NextMenstrualOnset`), the day of the cycle that they
+were in when taking the questionnaire (`CycleDay`); they also codify
+participants’ relationship status into a binary value (`Relationship`),
+and remove data which they believe might have been not captured
+accurately such as if the calculation of the length of menstrual cycle
+is either too short or too long (`ComputedCycleLength > 25 &
+ComputedCycleLength < 35`), or if the participants were quite unsure of
+their responses (`Sure1 <= 5 & Sure2 <= 5`).
 
 ``` r
 one_universe = df_durante %>%
@@ -175,7 +189,7 @@ one_universe = df_durante %>%
     CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
   ) %>%
   mutate(
-    Relationship = factor(ifelse(Relationship==1 | Relationship==2, "Single", "Relationship"))
+    RelationshipStatus = factor(ifelse(Relationship==1 | Relationship==2, "Single", "Relationship"))
   ) %>%
   filter( ComputedCycleLength > 25 & ComputedCycleLength < 35) %>%
   filter( Sure1 > 6 | Sure2 > 6 ) %>%
@@ -192,18 +206,18 @@ one_universe %>%
 
 <div class="kable-table">
 
-| NextMenstrualOnset | Relationship | Sure1 | Sure2 | Fertility | WorkerID | Rel1 | Rel2 | Rel3 | Abortion | Marriage | StemCell | RestrictAbortion | Marijuana | FreeMarket | RichTax | StLiving | Profit | PrivSocialSec | ReportedCycleLength | Vote | Donate | DateTesting | StartDateofLastPeriod | StartDateofPeriodBeforeLast | StartDateNext | ComputedCycleLength | CycleDay |
-| :----------------- | :----------- | ----: | ----: | :-------- | -------: | ---: | ---: | ---: | -------: | -------: | -------: | ---------------: | --------: | ---------: | ------: | -------: | -----: | ------------: | ------------------: | ---: | -----: | :---------- | :-------------------- | :-------------------------- | :------------ | :------------------ | -------: |
-| 2012-06-17         | Relationship |     9 |     9 | medium    |        1 |    8 |    8 |    7 |        2 |        7 |        7 |                7 |         2 |          4 |       7 |        6 |      6 |             3 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-18            | 2012-04-18                  | 2012-06-15    | 30 days             |        2 |
-| 2012-05-28         | Relationship |     9 |     7 | low       |        2 |    8 |    7 |    7 |        7 |        2 |        5 |                1 |         6 |          4 |       4 |        5 |      4 |             6 |                  28 |    1 |      1 | 2012-05-22  | 2012-04-29            | 2012-03-31                  | 2012-05-30    | 29 days             |       22 |
-| 2012-05-31         | Relationship |     8 |     7 | low       |        3 |    6 |    6 |    2 |        3 |        1 |        6 |                4 |         7 |          2 |       5 |        5 |      3 |             5 |                  27 |    1 |      1 | 2012-05-21  | 2012-05-04            | 2012-04-07                  | 2012-05-31    | 27 days             |       18 |
-| 2012-05-23         | Single       |     8 |     8 | medium    |        6 |    9 |    9 |    9 |        1 |        7 |        6 |                7 |         2 |          3 |       5 |        3 |      5 |             5 |                  30 |    0 |      0 | 2012-05-22  | 2012-04-21            | 2012-03-20                  | 2012-05-22    | 32 days             |       27 |
-| 2012-05-31         | Relationship |     9 |     9 | low       |        7 |    5 |    8 |    5 |        5 |        4 |        5 |                5 |         7 |          5 |       7 |        3 |      7 |             2 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-03            | 2012-04-05                  | 2012-05-31    | 28 days             |       19 |
-| 2012-06-15         | Single       |     8 |     8 | medium    |       11 |    2 |    5 |    8 |        7 |        1 |        7 |                1 |         7 |          2 |       7 |        5 |      5 |             5 |                  30 |    1 |      1 | 2012-05-24  | 2012-05-18            | 2012-04-20                  | 2012-06-17    | 28 days             |        6 |
-| 2012-06-08         | Relationship |     9 |     8 | high      |       12 |    7 |    7 |    7 |        7 |        1 |        7 |                1 |         5 |          4 |       7 |        5 |      5 |             4 |                  30 |    1 |      1 | 2012-05-22  | 2012-05-08            | 2012-04-07                  | 2012-06-06    | 31 days             |       11 |
-| 2012-06-14         | Relationship |     9 |     8 | medium    |       13 |    9 |    9 |    9 |        7 |        6 |        6 |                1 |         5 |          4 |       5 |        5 |      5 |             3 |                  30 |    0 |      0 | 2012-05-22  | 2012-05-14            | 2012-04-13                  | NA            | 31 days             |        5 |
-| 2012-06-10         | Relationship |     9 |     9 | high      |       17 |    6 |    4 |    5 |        6 |        6 |        6 |                2 |         6 |          4 |       7 |        5 |      6 |             4 |                  28 |    0 |      0 | 2012-05-21  | 2012-05-09            | 2012-04-07                  | 2012-06-09    | 32 days             |        8 |
-| 2012-06-18         | Single       |     9 |     9 | medium    |       18 |    9 |    9 |    9 |        4 |        6 |        5 |                4 |         4 |          4 |       5 |        2 |      4 |             4 |                  25 |    0 |      0 | 2012-05-22  | 2012-05-18            | 2012-04-17                  | 2012-06-19    | 31 days             |       28 |
+| NextMenstrualOnset | Relationship | Sure1 | Sure2 | Fertility | WorkerID | Rel1 | Rel2 | Rel3 | Abortion | Marriage | StemCell | RestrictAbortion | Marijuana | FreeMarket | RichTax | StLiving | Profit | PrivSocialSec | ReportedCycleLength | Vote | Donate | DateTesting | StartDateofLastPeriod | StartDateofPeriodBeforeLast | StartDateNext | ComputedCycleLength | CycleDay | RelationshipStatus |
+| :----------------- | -----------: | ----: | ----: | :-------- | -------: | ---: | ---: | ---: | -------: | -------: | -------: | ---------------: | --------: | ---------: | ------: | -------: | -----: | ------------: | ------------------: | ---: | -----: | :---------- | :-------------------- | :-------------------------- | :------------ | :------------------ | -------: | :----------------- |
+| 2012-06-17         |            4 |     9 |     9 | medium    |        1 |    8 |    8 |    7 |        2 |        7 |        7 |                7 |         2 |          4 |       7 |        6 |      6 |             3 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-18            | 2012-04-18                  | 2012-06-15    | 30 days             |        2 | Relationship       |
+| 2012-05-28         |            3 |     9 |     7 | low       |        2 |    8 |    7 |    7 |        7 |        2 |        5 |                1 |         6 |          4 |       4 |        5 |      4 |             6 |                  28 |    1 |      1 | 2012-05-22  | 2012-04-29            | 2012-03-31                  | 2012-05-30    | 29 days             |       22 | Relationship       |
+| 2012-05-31         |            3 |     8 |     7 | low       |        3 |    6 |    6 |    2 |        3 |        1 |        6 |                4 |         7 |          2 |       5 |        5 |      3 |             5 |                  27 |    1 |      1 | 2012-05-21  | 2012-05-04            | 2012-04-07                  | 2012-05-31    | 27 days             |       18 | Relationship       |
+| 2012-05-23         |            2 |     8 |     8 | medium    |        6 |    9 |    9 |    9 |        1 |        7 |        6 |                7 |         2 |          3 |       5 |        3 |      5 |             5 |                  30 |    0 |      0 | 2012-05-22  | 2012-04-21            | 2012-03-20                  | 2012-05-22    | 32 days             |       27 | Single             |
+| 2012-05-31         |            4 |     9 |     9 | low       |        7 |    5 |    8 |    5 |        5 |        4 |        5 |                5 |         7 |          5 |       7 |        3 |      7 |             2 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-03            | 2012-04-05                  | 2012-05-31    | 28 days             |       19 | Relationship       |
+| 2012-06-15         |            1 |     8 |     8 | medium    |       11 |    2 |    5 |    8 |        7 |        1 |        7 |                1 |         7 |          2 |       7 |        5 |      5 |             5 |                  30 |    1 |      1 | 2012-05-24  | 2012-05-18            | 2012-04-20                  | 2012-06-17    | 28 days             |        6 | Single             |
+| 2012-06-08         |            4 |     9 |     8 | high      |       12 |    7 |    7 |    7 |        7 |        1 |        7 |                1 |         5 |          4 |       7 |        5 |      5 |             4 |                  30 |    1 |      1 | 2012-05-22  | 2012-05-08            | 2012-04-07                  | 2012-06-06    | 31 days             |       11 | Relationship       |
+| 2012-06-14         |            4 |     9 |     8 | medium    |       13 |    9 |    9 |    9 |        7 |        6 |        6 |                1 |         5 |          4 |       5 |        5 |      5 |             3 |                  30 |    0 |      0 | 2012-05-22  | 2012-05-14            | 2012-04-13                  | NA            | 31 days             |        5 | Relationship       |
+| 2012-06-10         |            4 |     9 |     9 | high      |       17 |    6 |    4 |    5 |        6 |        6 |        6 |                2 |         6 |          4 |       7 |        5 |      6 |             4 |                  28 |    0 |      0 | 2012-05-21  | 2012-05-09            | 2012-04-07                  | 2012-06-09    | 32 days             |        8 | Relationship       |
+| 2012-06-18         |            1 |     9 |     9 | medium    |       18 |    9 |    9 |    9 |        4 |        6 |        5 |                4 |         4 |          4 |       5 |        2 |      4 |             4 |                  25 |    0 |      0 | 2012-05-22  | 2012-05-18            | 2012-04-17                  | 2012-06-19    | 31 days             |       28 | Single             |
 
 </div>
 
@@ -232,8 +246,9 @@ make such declarations with ease.
 
 ## Multiverse specification
 
-`multiverse` provides flexible functions which can be used to perform a
-multiverse analysis.
+`multiverse` provides flexible functions which can be used to easily
+multiplex over alternative analysis steps, and perform a multiverse
+analysis.
 
 The first step is to define a *new multiverse*. We will use the
 multiverse object to create a set of universes, each representing a
@@ -245,9 +260,10 @@ M <- multiverse()
 
 The next step is to define our possible alternate analysis paths inside
 the multiverse. The `multiverse` package includes functions that aim to
-make it easy to write multiverse analyses in as close a way to a single
-universe analysis as possible (as seen in the single analysis shown
-above).
+make it easy to multiplex over these alternative analysis steps and
+write multiverse analyses. We do this by enabling analysts to declare
+code using syntax which is as close to that of a single universe
+analysis as possible.
 
 Consider these first few lines from the transformation code in the
 single analysis above:
@@ -266,6 +282,8 @@ reasonable ways:
 
 To create a multiverse that includes these three possible processing
 options, we can use the `branch()` function. The `branch()` function
+\#\#\# change here \#\#\#
+
 defines a *parameter* (here `menstrual_calculation`) and the different
 *options* that the parameter can take (here, `"mc_option1"`,
 `"mc_option2"`, `"mc_option3"`). Each option corresponds to a different
@@ -291,9 +309,9 @@ NextMenstrualOnset can take either of the three options (here,
 *clearly* not R syntax. To get around these limitations, we declare this
 code “inside the multiverse”, which is another way of saying that the
 code is declared, processed and executed in a special environment. In
-the `multiverse` package we support this declaration in two ways:
+the `multiverse` package, we support this declaration in two ways:
 
-  - using *multiverse code chunks*, which allows users to declare
+  - using *multiverse code chunks*, which allow users to declare
     multiverse code in a dedicated code chunk, and is more consistent
     with the interactive programming interface of RStudio.
   - using the `inside()` function. The inside function which allows
@@ -366,7 +384,7 @@ inside(M, {
 })
 ```
 
-In the rest of this vignette, we will use \*\*multiverse code blocks to
+In the rest of this vignette, we will use **multiverse code blocks** to
 specify the multiverse. Please refer to the vignette
 (`vignette("multiverse-in-rmd")`) for more details.
 
@@ -415,9 +433,9 @@ expand(M) %>% select(-.code)
 
 | .universe | menstrual\_calculation | .parameter\_assignment | .results                        |
 | --------: | :--------------------- | :--------------------- | :------------------------------ |
-|         1 | mc\_option1            | mc\_option1            | \<environment: 0x7fd19adbe4a8\> |
-|         2 | mc\_option2            | mc\_option2            | \<environment: 0x7fd19ade2d30\> |
-|         3 | mc\_option3            | mc\_option3            | \<environment: 0x7fd19ae034b0\> |
+|         1 | mc\_option1            | mc\_option1            | \<environment: 0x7fc7eb2e6bb0\> |
+|         2 | mc\_option2            | mc\_option2            | \<environment: 0x7fc7eb309ad8\> |
+|         3 | mc\_option3            | mc\_option3            | \<environment: 0x7fc7eb328e18\> |
 
 </div>
 
@@ -473,40 +491,47 @@ M$df %>% head()
 
 Besides calculating the onset of the next menstruation cycle, there are
 other variables which have multiple valid and reasonable processing
-options. These include defining `Relationship` and `Fertility`, and
-exclusion criteria based on the values for cycle length and certainty of
-responses. The next code chunk illustrates how this can be added to the
-multiverse object defined above.
+options. According to Steegen et al., these include defining
+`Relationship` and `Fertility`, and exclusion criteria based on the
+values for cycle length and certainty of responses. The next code chunk
+illustrates how this can be added to the multiverse object defined
+above.
 
-`{multiverse default-m-2 inside = M} df <- df %>% mutate(Relationship =
-branch( relationship_status, "rs_option1" ~
-factor(ifelse(Relationship==1 | Relationship==2, 'Single',
-'Relationship')), "rs_option2" ~ factor(ifelse(Relationship==1,
-'Single', 'Relationship')), "rs_option3" ~
-factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 |
-Relationship==4, 'Relationship', NA))) ) ) %>% mutate( CycleDay = 28 -
-(NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay > 1 &
-CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28)) ) %>% filter(
-branch(cycle_length, "cl_option1" ~ TRUE, "cl_option2" ~
-ComputedCycleLength > 25 & ComputedCycleLength < 35, "cl_option3" ~
-ReportedCycleLength > 25 & ReportedCycleLength < 35 )) %>% filter(
-branch(certainty, "cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 |
-Sure2 > 6 )) %>% mutate( Fertility = branch( fertile, "fer_option1" ~
-factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay
->= 17 & CycleDay <= 25, "low", "medium")) ), "fer_option2" ~ factor(
-ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 &
-CycleDay <= 27, "low", "medium")) ), "fer_option3" ~ factor(
-ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 &
-CycleDay <= 25, "low", "medium")) ), "fer_option4" ~ factor(
-ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ), "fer_option5" ~
-factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") ) )) })`
+    ```{multiverse default-m-2 inside = M}
+    df <- df %>%
+        mutate(Relationship = branch( relationship_status, 
+          "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+          "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+          "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+        ) %>%
+        mutate(
+          CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+          CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+        ) %>%
+        filter( branch(cycle_length, 
+          "cl_option1" ~ TRUE,
+          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+        )) %>%
+        filter( branch(certainty,
+            "cer_option1" ~ TRUE,
+            "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+        )) %>%
+        mutate( Fertility = branch( fertile,
+            "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ),
+            "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", "medium")) ),
+            "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
+            "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+            "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+        ))
+    })
+    ```
 
-```` 
+Since the multiverse object has already been created and the one
+parameter has already been defined, this will simply add to the previous
+code:
 
-Since the multiverse object has already been created and the one parameter has already been defined, this will simply add to the previous code:
-
-
-```r
+``` r
 code(M)
 #> $`default-m-1`
 #> {
@@ -520,7 +545,7 @@ code(M)
 #> 
 #> $`default-m-2`
 #> {
-#>     df <- df %>% mutate(Relationship = branch(relationship_status, 
+#>     df <- df %>% mutate(RelationshipStatus = branch(relationship_status, 
 #>         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == 
 #>             2, "Single", "Relationship")), "rs_option2" ~ factor(ifelse(Relationship == 
 #>             1, "Single", "Relationship")), "rs_option3" ~ factor(ifelse(Relationship == 
@@ -547,10 +572,10 @@ code(M)
 #> }
 ```
 
-The `expand` function will contain all the possible combinations of the parameter options that have been identified.
+The `expand` function will contain all the possible combinations of the
+parameter options that have been identified.
 
-
-```r
+``` r
 expand(M) %>%
   select(-.code) %>%
   head()
@@ -558,193 +583,105 @@ expand(M) %>%
 
 <div class="kable-table">
 
-| .universe|menstrual_calculation |relationship_status |cycle_length |certainty   |fertile     |.parameter_assignment                                           |.results                      |
-|---------:|:---------------------|:-------------------|:------------|:-----------|:-----------|:---------------------------------------------------------------|:-----------------------------|
-|         1|mc_option1            |rs_option1          |cl_option1   |cer_option1 |fer_option1 |mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1 |<environment: 0x7fd19a98fb78> |
-|         2|mc_option1            |rs_option1          |cl_option1   |cer_option1 |fer_option2 |mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2 |<environment: 0x7fd19ab25df8> |
-|         3|mc_option1            |rs_option1          |cl_option1   |cer_option1 |fer_option3 |mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option3 |<environment: 0x7fd19acd9850> |
-|         4|mc_option1            |rs_option1          |cl_option1   |cer_option1 |fer_option4 |mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option4 |<environment: 0x7fd19adac978> |
-|         5|mc_option1            |rs_option1          |cl_option1   |cer_option1 |fer_option5 |mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option5 |<environment: 0x7fd19ae25f68> |
-|         6|mc_option1            |rs_option1          |cl_option1   |cer_option2 |fer_option1 |mc_option1 , rs_option1 , cl_option1 , cer_option2, fer_option1 |<environment: 0x7fd19ae9df30> |
+| .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                        |
+| --------: | :--------------------- | :------------------- | :------------ | :----------- | :----------- | :------------------------------------------------------------------- | :------------------------------ |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7fc7eb0114e8\> |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7fc7eb1b4550\> |
+|         3 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option3 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option3 | \<environment: 0x7fc7eb270e50\> |
+|         4 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option4 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option4 | \<environment: 0x7fc7eb2f8a60\> |
+|         5 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option5 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option5 | \<environment: 0x7fc7eb3780f8\> |
+|         6 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option2 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option2, fer\_option1 | \<environment: 0x7fc7eb40b2e8\> |
 
 </div>
 
-In our multiverse we have identified 5 options for calculating `fertility`, 3 options for calculating `menstrual calculation` and `relationship status` each, 3 wyas of excluding participants based on their `cycle length` and 2 ways of excluding participants based on the self-reported `certainty` of their responses.
+In our multiverse we have identified 5 options for calculating
+`fertility`, 3 options for calculating `menstrual calculation` and
+`relationship status` each, 3 wyas of excluding participants based on
+their `cycle length` and 2 ways of excluding participants based on the
+self-reported `certainty` of their responses.
 
-This results in $ 5 \times 3 \times 3 \times 3 \times 2 = 270$ possible combinations.
+This results in $ 5 3 3 3 2 = 270$ possible combinations.
 
-
-```r
+``` r
 expand(M) %>% nrow()
 #> [1] 270
 ```
 
-We can then inspect the default analysis the default single universe analysis from this multiverse:
+We can then inspect the default analysis the default single universe
+analysis from this multiverse:
 
-
-```r
+``` r
 M$df %>%
   head()
 ```
 
 <div class="kable-table">
 
-| WorkerID| Rel1| Rel2| Rel3| Abortion| Marriage| StemCell| RestrictAbortion| Marijuana| FreeMarket| RichTax| StLiving| Profit| PrivSocialSec| Sure1| Sure2|Relationship | ReportedCycleLength| Vote| Donate|DateTesting |StartDateofLastPeriod |StartDateofPeriodBeforeLast |StartDateNext |ComputedCycleLength |NextMenstrualOnset | CycleDay|Fertility |
-|--------:|----:|----:|----:|--------:|--------:|--------:|----------------:|---------:|----------:|-------:|--------:|------:|-------------:|-----:|-----:|:------------|-------------------:|----:|------:|:-----------|:---------------------|:---------------------------|:-------------|:-------------------|:------------------|--------:|:---------|
-|        1|    8|    8|    7|        2|        7|        7|                7|         2|          4|       7|        6|      6|             3|     9|     9|NA           |                  28|    1|      1|2012-05-22  |2012-05-18            |2012-04-18                  |2012-06-15    |30 days             |2012-06-15         |        4|low       |
-|        2|    8|    7|    7|        7|        2|        5|                1|         6|          4|       4|        5|      4|             6|     9|     7|NA           |                  28|    1|      1|2012-05-22  |2012-04-29            |2012-03-31                  |2012-05-30    |29 days             |2012-05-30         |       20|low       |
-|        3|    6|    6|    2|        3|        1|        6|                4|         7|          2|       5|        5|      3|             5|     8|     7|NA           |                  27|    1|      1|2012-05-21  |2012-05-04            |2012-04-07                  |2012-05-31    |27 days             |2012-05-31         |       18|low       |
-|        6|    9|    9|    9|        1|        7|        6|                7|         2|          3|       5|        3|      5|             5|     8|     8|NA           |                  30|    0|      0|2012-05-22  |2012-04-21            |2012-03-20                  |2012-05-22    |32 days             |2012-05-22         |       28|low       |
-|        7|    5|    8|    5|        5|        4|        5|                5|         7|          5|       7|        3|      7|             2|     9|     9|NA           |                  28|    1|      1|2012-05-22  |2012-05-03            |2012-04-05                  |2012-05-31    |28 days             |2012-05-31         |       19|low       |
-|       11|    2|    5|    8|        7|        1|        7|                1|         7|          2|       7|        5|      5|             5|     8|     8|NA           |                  30|    1|      1|2012-05-24  |2012-05-18            |2012-04-20                  |2012-06-17    |28 days             |2012-06-17         |        4|low       |
+| WorkerID | Rel1 | Rel2 | Rel3 | Abortion | Marriage | StemCell | RestrictAbortion | Marijuana | FreeMarket | RichTax | StLiving | Profit | PrivSocialSec | Sure1 | Sure2 | Relationship | ReportedCycleLength | Vote | Donate | DateTesting | StartDateofLastPeriod | StartDateofPeriodBeforeLast | StartDateNext | ComputedCycleLength | NextMenstrualOnset | RelationshipStatus | CycleDay | Fertility |
+| -------: | ---: | ---: | ---: | -------: | -------: | -------: | ---------------: | --------: | ---------: | ------: | -------: | -----: | ------------: | ----: | ----: | -----------: | ------------------: | ---: | -----: | :---------- | :-------------------- | :-------------------------- | :------------ | :------------------ | :----------------- | :----------------- | -------: | :-------- |
+|        1 |    8 |    8 |    7 |        2 |        7 |        7 |                7 |         2 |          4 |       7 |        6 |      6 |             3 |     9 |     9 |            4 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-18            | 2012-04-18                  | 2012-06-15    | 30 days             | 2012-06-15         | Relationship       |        4 | low       |
+|        2 |    8 |    7 |    7 |        7 |        2 |        5 |                1 |         6 |          4 |       4 |        5 |      4 |             6 |     9 |     7 |            3 |                  28 |    1 |      1 | 2012-05-22  | 2012-04-29            | 2012-03-31                  | 2012-05-30    | 29 days             | 2012-05-30         | Relationship       |       20 | low       |
+|        3 |    6 |    6 |    2 |        3 |        1 |        6 |                4 |         7 |          2 |       5 |        5 |      3 |             5 |     8 |     7 |            3 |                  27 |    1 |      1 | 2012-05-21  | 2012-05-04            | 2012-04-07                  | 2012-05-31    | 27 days             | 2012-05-31         | Relationship       |       18 | low       |
+|        6 |    9 |    9 |    9 |        1 |        7 |        6 |                7 |         2 |          3 |       5 |        3 |      5 |             5 |     8 |     8 |            2 |                  30 |    0 |      0 | 2012-05-22  | 2012-04-21            | 2012-03-20                  | 2012-05-22    | 32 days             | 2012-05-22         | NA                 |       28 | low       |
+|        7 |    5 |    8 |    5 |        5 |        4 |        5 |                5 |         7 |          5 |       7 |        3 |      7 |             2 |     9 |     9 |            4 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-03            | 2012-04-05                  | 2012-05-31    | 28 days             | 2012-05-31         | Relationship       |       19 | low       |
+|       11 |    2 |    5 |    8 |        7 |        1 |        7 |                1 |         7 |          2 |       7 |        5 |      5 |             5 |     8 |     8 |            1 |                  30 |    1 |      1 | 2012-05-24  | 2012-05-18            | 2012-04-20                  | 2012-06-17    | 28 days             | 2012-06-17         | Single             |        4 | low       |
 
 </div>
 
-
-
-
 ## Specifying conditions in the multiverse analysis
 
-In our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`. In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
+In our example, we are excluding participants based on their *cycle
+length*. This can be done in two ways: we can use the values of the
+variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using
+`ComputedCycleLength` to exclude participants, this means that we should
+not calculate the variable `NextMenstrualOnset` (date for the onset of
+the next menstrual cycle) using the `ReportedCycleLength` value.
+Similarly, if we are using `ReportedCycleLength` to exclude participants
+it is inconsistent to calculate `NextMenstrualOnset` using
+`ComputedCycleLength`. In a multiverse analysis, it may occur that the
+value of one variable might depend on the value of another variable
+defined previously.
 
-We should be able to express these conditions in the multiverse. We can do this in two ways:
-1. `%when%`: when declaring a branch, we can use this operator to specify the conditional $A | B$ as `A %when% B`. The conditional $A | B$ is also referred to as the connective $A \implies B$. This has the meaning "if A is true, then B is also true" and is an abbreviation for $\neg A | B$
-2. `branch_assert`: this function allows the user to specify any condition in the form of a logical operation
-
-#### The %when% operator
-There are two ways in which you can specify the `%when%` operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.
-
-
-```r
-df <- df_durante  %>%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-  mutate(NextMenstrualOnset = branch(menstrual_calculation,
-          "mc_option1" ~ (StartDateofLastPeriod + ComputedCycleLength) %when% (cycle_length != "cl_option3"),
-          "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
-          "mc_option3" ~ StartDateNext)
-  )
-```
-
-The other is to specify it at the head of the branch, right after the option name:
-
-
-```r
-df <- df  %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" %when% (cycle_length != "cl_option2") ~ (StartDateofLastPeriod + ReportedCycleLength),
-            "mc_option3" ~ StartDateNext)
-    )
-```
-
-#### The `branch_assert()` function
-Within the branch assert function, the user can specify any logical operation. 
-
-For eg: the above logical operations can be specified as: `branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3")` or `branch_assert(!(menstrual_calculation == "mc_option1" | cycle_length == "cl_option3"))`
-
-Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
-
-
-```r
-df <- df  %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-            "mc_option3" ~ StartDateNext)
-    ) %>%
-    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3")) %>%
-    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2"))
-```
-
-Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:
-
-
-```r
-M = multiverse()
-```
-
-
-
-
-
-````
-
-`{multiverse default-m-3, inside = M, echo = FALSE} df <- df_durante %>%
-mutate( ComputedCycleLength = StartDateofLastPeriod -
-StartDateofPeriodBeforeLast ) %>% dplyr::filter( branch(cycle_length,
-"cl_option1" ~ TRUE, "cl_option2" ~ ComputedCycleLength > 25 &
-ComputedCycleLength < 35, "cl_option3" ~ ReportedCycleLength > 25 &
-ReportedCycleLength < 35 )) %>% dplyr::filter( branch(certainty,
-"cer_option1" ~ TRUE, "cer_option2" ~ Sure1 > 6 | Sure2 > 6 )) %>%
-mutate(NextMenstrualOnset = branch(menstrual_calculation, "mc_option1"
-%when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod +
-ComputedCycleLength, "mc_option2" %when% (cycle_length != "cl_option2")
-~ StartDateofLastPeriod + ReportedCycleLength, "mc_option3" ~
-StartDateNext) ) %>% mutate( CycleDay = 28 - (NextMenstrualOnset -
-DateTesting), CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay,
-ifelse(CycleDay < 1, 1, 28)) ) %>% mutate( Fertility = branch( fertile,
-"fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high",
-ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ), "fer_option2" ~
-factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay
->= 17 & CycleDay <= 27, "low", NA)) ), "fer_option3" ~ factor(
-ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 &
-CycleDay <= 25, "low", NA)) ), "fer_option4" ~ factor( ifelse(CycleDay
->= 8 & CycleDay <= 14, "high", "low") ), "fer_option45" ~ factor(
-ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") ) )) %>%
-mutate(RelationshipStatus = branch(relationship_status, "rs_option1" ~
-factor(ifelse(Relationship==1 | Relationship==2, 'Single',
-'Relationship')), "rs_option2" ~ factor(ifelse(Relationship==1,
-'Single', 'Relationship')), "rs_option3" ~
-factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 |
-Relationship==4, 'Relationship', NA))) ) )`
-
-```` 
-
-After excluding the inconsistent choice combinations, $270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210$ choice combinations remain:
-
-
-```r
-expand(M) %>% nrow()
-#> [1] 210
-```
-
-Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
-
-More details on the `conditions` can be found in the corresponding [vignette](mucollective.github.io/multiverse/articles/conditions.html)
+We should be able to express these conditions in the multiverse. We show
+how this can be done, as well as other details on `conditions`, in the
+corresponding
+[vignette](mucollective.github.io/multiverse/articles/conditions.html).
 
 ## Modeling
-Steegen et al. create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we've using so far.
 
-### Model #2: Effect of Fertility and Relationship status on Religiosity
-The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.
+Steegen et al. define a multiverse which only considers the various data
+processing parameters, which we have defiend above. To analyse the data,
+they create 6 models. The first model uses data from example \#1. The
+other five models use the data from example \#2, which we’ve using so
+far.
 
+### Model \#2: Effect of Fertility and Relationship status on Religiosity
 
+The authors compute a composite score of Religiosity by calculating the
+average of the three Religiosity items.
 
-````
+    ```{multiverse default-m-4, inside = M}
+    df <- df %>%
+      mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
+    ```
 
-`{multiverse default-m-4, inside = M} df <- df %>% mutate( RelComp =
-round((Rel1 + Rel2 + Rel3)/3, 2))`
+The authors perform an ANOVA to study the effect of *Fertility*,
+*Relationship* and their interaction term, on the composite Religiosity
+score. We fit the linear model using the call: `lm( RelComp ~ Fertility
+* RelationshipStatus, data = df )` inside our multiverse and save the
+result to a variable called `fit_RelComp`.
 
-``` 
+    ```{multiverse default-m-5, inside = M, echo = FALSE}
+    fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+    ```
 
-The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`.
+To extract the results from the analysis, we first create a tidy
+data-frame of the results of the model, using `broom::tidy`.
 
-
-```
-
-`{multiverse default-m-8, inside = M, echo = FALSE} fit_RelComp <- lm(
-RelComp ~ Fertility * RelationshipStatus, data = df )`
-
-``` 
-
-To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using `broom::tidy`. 
-
-
-
-```
-
-`{multiverse default-m-10, inside = M} summary_RelComp <- fit_RelComp
-%>% broom::tidy( conf.int = TRUE )` \`\`\`\`
+    ```{multiverse default-m-6, inside = M}
+    summary_RelComp <- fit_RelComp %>% 
+        broom::tidy( conf.int = TRUE )
+    ```
 
 Recall that declaring a variable in the multiverse only executes it in
 the default universe, and hence we need to call `execute_multiverse()`
@@ -771,18 +708,18 @@ expand(M) %>%
 
 <div class="kable-table">
 
-| .universe | cycle\_length | certainty    | menstrual\_calculation | fertile      | relationship\_status | .parameter\_assignment                                              | .results                        | term                                  |    estimate | std.error |  statistic |   p.value |    conf.low |   conf.high |
-| --------: | :------------ | :----------- | :--------------------- | :----------- | :------------------- | :------------------------------------------------------------------ | :------------------------------ | :------------------------------------ | ----------: | --------: | ---------: | --------: | ----------: | ----------: |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7fd19801b430\> | (Intercept)                           |   6.3749123 | 0.4044011 |  15.763834 | 0.0000000 |   5.5790575 |   7.1707671 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7fd19801b430\> | Fertilitylow                          | \-1.1993860 | 0.5349724 | \-2.241958 | 0.0257021 | \-2.2522029 | \-0.1465691 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7fd19801b430\> | RelationshipStatusSingle              | \-1.4568301 | 0.5396630 | \-2.699518 | 0.0073420 | \-2.5188779 | \-0.3947823 |
-|         1 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option1          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option1 | \<environment: 0x7fd19801b430\> | Fertilitylow:RelationshipStatusSingle |   2.0287775 | 0.7155526 |   2.835260 | 0.0048931 |   0.6205818 |   3.4369732 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7fd197bdc718\> | (Intercept)                           |   5.8375556 | 0.3230419 |  18.070582 | 0.0000000 |   5.2018144 |   6.4732968 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7fd197bdc718\> | Fertilitylow                          | \-0.6595047 | 0.4288936 | \-1.537688 | 0.1251895 | \-1.5035602 |   0.1845508 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7fd197bdc718\> | RelationshipStatusSingle              | \-0.9123056 | 0.5823721 | \-1.566534 | 0.1182885 | \-2.0584043 |   0.2337932 |
-|         2 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option2          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option2 | \<environment: 0x7fd197bdc718\> | Fertilitylow:RelationshipStatusSingle |   1.9293490 | 0.7719840 |   2.499208 | 0.0129869 |   0.4100972 |   3.4486009 |
-|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7fd197af63c0\> | (Intercept)                           |   6.3749123 | 0.4024088 |  15.841881 | 0.0000000 |   5.5818823 |   7.1679422 |
-|         3 | cl\_option1   | cer\_option1 | mc\_option1            | fer\_option1 | rs\_option3          | cl\_option1 , cer\_option1, mc\_option1 , fer\_option1, rs\_option3 | \<environment: 0x7fd197af63c0\> | Fertilitylow                          | \-1.1993860 | 0.5323368 | \-2.253059 | 0.0252328 | \-2.2484660 | \-0.1503059 |
+| .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                        | term                                     |    estimate | std.error |   statistic |   p.value |    conf.low |   conf.high |
+| --------: | :--------------------- | :------------------- | :------------ | :----------- | :----------- | :------------------------------------------------------------------- | :------------------------------ | :--------------------------------------- | ----------: | --------: | ----------: | --------: | ----------: | ----------: |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7fc7eefb81b8\> | (Intercept)                              |   6.3749123 | 0.4015673 |  15.8750795 | 0.0000000 |   5.5859219 |   7.1639027 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7fc7eefb81b8\> | Fertilitylow                             | \-1.1993860 | 0.5312236 | \-2.2577801 | 0.0243951 | \-2.2431222 | \-0.1556497 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7fc7eefb81b8\> | Fertilitymedium                          | \-0.2931038 | 0.5089591 | \-0.5758887 | 0.5649527 | \-1.2930952 |   0.7068877 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7fc7eefb81b8\> | RelationshipStatusSingle                 | \-1.4568301 | 0.5358812 | \-2.7185689 | 0.0067871 | \-2.5097176 | \-0.4039426 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7fc7eefb81b8\> | Fertilitylow:RelationshipStatusSingle    |   2.0287775 | 0.7105383 |   2.8552683 | 0.0044810 |   0.6327276 |   3.4248273 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | \<environment: 0x7fc7eefb81b8\> | Fertilitymedium:RelationshipStatusSingle |   1.0066406 | 0.6873797 |   1.4644608 | 0.1437042 | \-0.3439077 |   2.3571890 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7fc7eeda2c70\> | (Intercept)                              |   6.3953846 | 0.3741693 |  17.0922227 | 0.0000000 |   5.6602251 |   7.1305441 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7fc7eeda2c70\> | Fertilitylow                             | \-1.1692735 | 0.4910353 | \-2.3812412 | 0.0176323 | \-2.1340487 | \-0.2044983 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7fc7eeda2c70\> | Fertilitymedium                          | \-0.2516346 | 0.5161336 | \-0.4875377 | 0.6260936 | \-1.2657225 |   0.7624533 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | \<environment: 0x7fc7eeda2c70\> | RelationshipStatusSingle                 | \-1.6535869 | 0.4921908 | \-3.3596461 | 0.0008408 | \-2.6206324 | \-0.6865414 |
 
 </div>
 

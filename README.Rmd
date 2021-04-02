@@ -21,21 +21,21 @@ knitr::opts_chunk$set(
 
 # Multiverse: An R package for creating multiverse analysis
 
-`multiverse` is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations. The **goal** of `multiverse` is to allow users to create multiverse analyses in a concise and easily interpretable manner.
+`multiverse` is an R package that allows users to specify multiverse of statistical analysis, also called a multiverse analysis. In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations. However, declaring several alternative analysis paths can be tricky, often requiring custom control flows such as nested for-loops and multiple if-else statements. The **goal** of `multiverse` is to allow users to create multiverse analyses in a concise and easily interpretable manner.
 
 Steegen et al. first put forth the concept of [multiverse analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637); Simonsohn et al. put forth a similar notion called the [Specification curve analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
 
-`multiverse` attempts to make it easy to declare alternate analysis paths by declaring **analysis parameters** at different levels of analysis:
+In a `multiverse` analysis, alternate analysis paths can arise from having points in the analysis where an analyst has to make a decision of choosing between two or more reasonable steps. We refer to these decision points as **parameters**, and they could be:
 
   - **Data substitution parameters** offer to switch between different raw datasets, either collected or simulated.
 
-  - **Data processing parameters** offer to process the same raw data in different ways before it is analyzed.
+  - **Data processing parameters** offer to process the same raw data in different ways before it is analysed.
 
-  - **Modeling parameters** offer different ways of analyzing the same processed data
+  - **Modeling parameters** offer different ways of analysing the same processed data
 
   - **Presentation parameters** offer different ways of presenting analysis outcomes
 
-The `multiverse` documentation follows the tidyverse syntax
+The `multiverse` documentation predominantly follows the tidyverse syntax
 
 
 ## Installation
@@ -56,14 +56,14 @@ For details on how to quickly get started with this package, please refer to thi
 - How `multiverse` can be used in different environments: [using `multiverse` in RScripts and RMarkdown](mucollective.github.io/multiverse/articles/)
 - How multiverse results can be extracted and visualised: [visualising multiverse results](mucollective.github.io/multiverse/articles/)
 
-We also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:
+We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used:
 
 - Steegen et al.'s [https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637] original multiverse analysis of the paper [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can also be found **below**.
 - Simonsohn et al.'s [http://dx.doi.org/10.2139/ssrn.2694998] specification curve analysis of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
 - Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
 - Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
 
-## Examples
+## Example analysis
 
 In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
 
@@ -91,7 +91,7 @@ library(multiverse)
 
 
 ## The data
-The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
+The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is provided with the package and can be loaded using the `data("durante)` command. In this example, we will use the data collected by *Durante et al.*, which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `df_durante`).
 
 ```{r data}
 data("durante")
@@ -110,7 +110,7 @@ The original paper looked at the relationship between fertility, relationship st
 
 ## A single data set analysis: one possible analysis among many
 
-The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study. 
+The data collected needs to be processed before it can be modeled. Preparing the data set for analysis can involve several steps and decisions regarding how to encode the different raw values. The following is one example of data processing that can be performed for this study, where the original authors of the study compute, for each participant in their study, the typical duration of their menstrual cycle (`ComputedCycleNext`), the likely date of the next onset of their menstrual cycle (`NextMenstrualOnset`), the day of the cycle that they were in when taking the questionnaire (`CycleDay`); they also codify participants' relationship status into a binary value (`Relationship`), and remove data which they believe might have been not captured accurately such as if the calculation of the length of menstrual cycle is either too short or too long (`ComputedCycleLength > 25 & ComputedCycleLength < 35`), or if the participants were quite unsure of their responses (`Sure1 <= 5 & Sure2 <= 5`). 
 
 ```{r, single_analysis}
 one_universe = df_durante %>%
@@ -121,7 +121,7 @@ one_universe = df_durante %>%
     CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
   ) %>%
   mutate(
-    Relationship = factor(ifelse(Relationship==1 | Relationship==2, "Single", "Relationship"))
+    RelationshipStatus = factor(ifelse(Relationship==1 | Relationship==2, "Single", "Relationship"))
   ) %>%
   filter( ComputedCycleLength > 25 & ComputedCycleLength < 35) %>%
   filter( Sure1 > 6 | Sure2 > 6 ) %>%
@@ -150,7 +150,7 @@ How would one declare such different anlternate ways of calculation easily and e
 
 ## Multiverse specification
 
-`multiverse` provides flexible functions which can be used to perform a multiverse analysis.
+`multiverse` provides flexible functions which can be used to easily multiplex over alternative analysis steps, and perform a multiverse analysis.
 
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
@@ -158,7 +158,7 @@ The first step is to define a *new multiverse*. We will use the multiverse objec
 M <- multiverse()
 ```
 
-The next step is to define our possible alternate analysis paths inside the multiverse. The `multiverse` package includes functions that aim to make it easy to write multiverse analyses in as close a way to a single universe analysis as possible (as seen in the single analysis shown above). 
+The next step is to define our possible alternate analysis paths inside the multiverse. The `multiverse` package includes functions that aim to make it easy to multiplex over these alternative analysis steps and write multiverse analyses. We do this by enabling analysts to declare code using syntax which is as close to that of a single universe analysis as possible. 
 
 Consider these first few lines from the transformation code in the single analysis above:
 
@@ -173,7 +173,9 @@ But `NextMenstrualOnset` could be calculated in at least two other reasonable wa
 * `NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength`
 * `NextMenstrualOnset = StartDateNext`
 
-To create a multiverse that includes these three possible processing options, we can use the `branch()` function. The `branch()` function defines a *parameter* (here `menstrual_calculation`) and the different *options* that the parameter can take (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Each option corresponds to a different chunk of code that would be executed in a different universe.
+To create a multiverse that includes these three possible processing options, we can use the `branch()` function. The `branch()` function ### change here ###
+
+defines a *parameter* (here `menstrual_calculation`) and the different *options* that the parameter can take (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Each option corresponds to a different chunk of code that would be executed in a different universe.
 
 ```{r parameter_options, eval = FALSE}
 NextMenstrualOnset = branch(menstrual_calculation, 
@@ -187,9 +189,9 @@ More details on the `branch()` function can be found in the corresponding [vigne
 
 ### Two ways to building a multiverse
 
-The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). However, this is *clearly* not R syntax. To get around these limitations, we declare this code "inside the multiverse", which is another way of saying that the code is declared, processed and executed in a special environment. In the `multiverse` package we support this declaration in two ways:
+The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset can take either of the three options (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). However, this is *clearly* not R syntax. To get around these limitations, we declare this code "inside the multiverse", which is another way of saying that the code is declared, processed and executed in a special environment. In the `multiverse` package, we support this declaration in two ways:
 
-- using *multiverse code chunks*, which allows users to declare multiverse code in a dedicated code chunk, and is more consistent with the interactive programming interface of RStudio. 
+- using *multiverse code chunks*, which allow users to declare multiverse code in a dedicated code chunk, and is more consistent with the interactive programming interface of RStudio. 
 - using the `inside()` function. The inside function which allows users to declare multiverse code in RScripts or regular R code blocks, and is more suited for a script-style implementation.
 
 **Note** that the `inside` function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a `multiverse code block` which can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown). 
@@ -263,7 +265,7 @@ inside(M, {
 })
 ```
 
-In the rest of this vignette, we will use **multiverse code blocks to specify the multiverse. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
+In the rest of this vignette, we will use **multiverse code blocks** to specify the multiverse. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
 
 More details on the **declaring multiverse analyses in RScripts and RMarkdown** can be found in the corresponding [vignette](mucollective.github.io/multiverse/articles/multiverse-in-rmd.html)
 
@@ -301,11 +303,11 @@ M$df %>% head()
 
 ## A multiverse with all possible combinations specified 
 
-Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. These include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above.
+Besides calculating the onset of the next menstruation cycle, there are other variables which have multiple valid and reasonable processing options. According to Steegen et al., these include defining `Relationship` and `Fertility`, and exclusion criteria based on the values for cycle length and certainty of responses. The next code chunk illustrates how this can be added to the multiverse object defined above.
 
 ```{multiverse default-m-2, inside = M, echo = FALSE}
 df <- df %>%
-    mutate(Relationship = branch( relationship_status, 
+    mutate(RelationshipStatus = branch( relationship_status, 
       "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
       "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
       "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
@@ -333,6 +335,7 @@ df <- df %>%
 ```
 
 
+````
 ```{multiverse default-m-2 inside = M}`r ''`
 df <- df %>%
     mutate(Relationship = branch( relationship_status, 
@@ -414,145 +417,10 @@ M %>% execute_universe( universe_parameter_assignment ) %>%
 
 In our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`. In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
 
-We should be able to express these conditions in the multiverse. We can do this in two ways:
-1. `%when%`: when declaring a branch, we can use this operator to specify the conditional $A | B$ as `A %when% B`. The conditional $A | B$ is also referred to as the connective $A \implies B$. This has the meaning "if A is true, then B is also true" and is an abbreviation for $\neg A | B$
-2. `branch_assert`: this function allows the user to specify any condition in the form of a logical operation
-
-#### The %when% operator
-There are two ways in which you can specify the `%when%` operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.
-
-```{r, when-operator, eval = FALSE}
-df <- df_durante  %>%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
-  mutate(NextMenstrualOnset = branch(menstrual_calculation,
-          "mc_option1" ~ (StartDateofLastPeriod + ComputedCycleLength) %when% (cycle_length != "cl_option3"),
-          "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
-          "mc_option3" ~ StartDateNext)
-  )
-```
-
-The other is to specify it at the head of the branch, right after the option name:
-
-```{r, when-operator-alt, eval = FALSE}
-df <- df  %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" %when% (cycle_length != "cl_option2") ~ (StartDateofLastPeriod + ReportedCycleLength),
-            "mc_option3" ~ StartDateNext)
-    )
-```
-
-#### The `branch_assert()` function
-Within the branch assert function, the user can specify any logical operation. 
-
-For eg: the above logical operations can be specified as: `branch_assert(menstrual_calculation != "mc_option1" | cycle_length != "cl_option3")` or `branch_assert(!(menstrual_calculation == "mc_option1" | cycle_length == "cl_option3"))`
-
-Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
-
-```{r, branch_assert, eval = FALSE}
-df <- df  %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-            "mc_option3" ~ StartDateNext)
-    ) %>%
-    branch_assert( ! (menstrual_calculation == "mc_option1" & cycle_length == "cl_option3")) %>%
-    branch_assert( !(menstrual_calculation == "mc_option2" & cycle_length != "cl_option2"))
-```
-
-Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update our example by including these cnditions:
-
-```{r, when-eg-2}
-M = multiverse()
-```
-
-
-```{multiverse default-m-3, inside = M, echo = FALSE}
-df <- df_durante  %>%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
-  dplyr::filter( branch(cycle_length,
-          "cl_option1" ~ TRUE,
-          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-  )) %>%
-  dplyr::filter( branch(certainty,
-          "cer_option1" ~ TRUE,
-          "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-  )) %>%
-  mutate(NextMenstrualOnset = branch(menstrual_calculation,
-          "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-          "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
-          "mc_option3" ~ StartDateNext)
-  )  %>%
-  mutate(
-    CycleDay = 28 - (NextMenstrualOnset - DateTesting),
-    CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-  ) %>%
-  mutate( Fertility = branch( fertile,
-          "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
-          "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
-          "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
-          "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
-          "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
-  )) %>%
-  mutate(RelationshipStatus = branch(relationship_status,
-          "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
-          "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-          "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-  )
-```
-
-
-
-````
-```{multiverse default-m-3, inside = M, echo = FALSE}`r ''`
-df <- df_durante  %>%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
-  dplyr::filter( branch(cycle_length,
-          "cl_option1" ~ TRUE,
-          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-  )) %>%
-  dplyr::filter( branch(certainty,
-          "cer_option1" ~ TRUE,
-          "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-  )) %>%
-  mutate(NextMenstrualOnset = branch(menstrual_calculation,
-          "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-          "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
-          "mc_option3" ~ StartDateNext)
-  )  %>%
-  mutate(
-    CycleDay = 28 - (NextMenstrualOnset - DateTesting),
-    CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-  ) %>%
-  mutate( Fertility = branch( fertile,
-          "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
-          "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
-          "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
-          "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
-          "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
-  )) %>%
-  mutate(RelationshipStatus = branch(relationship_status,
-          "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
-          "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
-          "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-  )
-```
-````
-
-After excluding the inconsistent choice combinations, $270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210$ choice combinations remain:
-
-```{r, df-conditions-assert}
-expand(M) %>% nrow()
-```
-
-Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
-
-More details on the `conditions` can be found in the corresponding [vignette](mucollective.github.io/multiverse/articles/conditions.html)
+We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on  `conditions`, in the corresponding [vignette](mucollective.github.io/multiverse/articles/conditions.html).
 
 ## Modeling
-Steegen et al. create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we've using so far.
+Steegen et al. define a multiverse which only considers the various data processing parameters, which we have defiend above. To analyse the data, they create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we've using so far.
 
 ### Model #2: Effect of Fertility and Relationship status on Religiosity
 The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.
@@ -572,26 +440,26 @@ df <- df %>%
 
 The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`.
 
-```{multiverse default-m-8, inside = M, echo = FALSE}
+```{multiverse default-m-5, inside = M, echo = FALSE}
 fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
 ```
 
 ````
-```{multiverse default-m-8, inside = M, echo = FALSE}`r ''`
+```{multiverse default-m-5, inside = M, echo = FALSE}`r ''`
 fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
 ```
 ````
 
 To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using `broom::tidy`. 
 
-```{multiverse default-m-10, inside = M, echo = FALSE}
+```{multiverse default-m-6, inside = M, echo = FALSE}
 summary_RelComp <- fit_RelComp %>% 
     broom::tidy( conf.int = TRUE )
 ```
 
 
 ````
-```{multiverse default-m-10, inside = M}`r ''`
+```{multiverse default-m-6, inside = M}`r ''`
 summary_RelComp <- fit_RelComp %>% 
     broom::tidy( conf.int = TRUE )
 ```
@@ -599,6 +467,7 @@ summary_RelComp <- fit_RelComp %>%
 
 
 Recall that declaring a variable in the multiverse only executes it in the default universe, and hence we need to call `execute_multiverse()` to execute our analysis in each multiverse.
+
 
 ```{r, execute-multiverse}
 execute_multiverse(M)
