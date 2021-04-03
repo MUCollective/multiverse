@@ -417,7 +417,7 @@ M %>% execute_universe( universe_parameter_assignment ) %>%
 
 In our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`. In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
 
-We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on  `conditions`, in the corresponding [vignette](mucollective.github.io/multiverse/articles/conditions.html).
+We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on  `conditions`, in the corresponding [vignette](articles/conditions.html).
 
 ## Modeling
 Steegen et al. define a multiverse which only considers the various data processing parameters, which we have defiend above. To analyse the data, they create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we've using so far.
@@ -513,8 +513,7 @@ The authors also perform a number of other analysis using the same independent v
 
 In addition, we also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:
 
-- Simonsohn et al.'s [http://dx.doi.org/10.2139/ssrn.2694998] specification curve analysis of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
+- Simonsohn et al.'s [specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
 - Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
-- Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) ) 
-
+- Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
 

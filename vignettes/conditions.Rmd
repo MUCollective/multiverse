@@ -188,6 +188,9 @@ As we can see, this results in the same multiverse, where universes indexed 3 an
 expand(M)
 ```
 
+
+## Implementing conditions in a complete analysis
+
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update the example from [home page](mucollective.github.io/multiverse/) by including these conditions:
 
 ```{r, when-eg-2}
