@@ -199,7 +199,7 @@ The `branch()` function indicates that, *in our multiverse*, NextMenstrualOnset 
 
 #### Multiverse code blocks
 
-We can use the [*multiverse code blocks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) instead of the regular `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown). This allows you to write more concise code and is more consistent with the interactive programming interface of RStudio. A *multiverse code block* is a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Below we show how the same code from above can be implemented using the *multiverse code block*
+We can use the [*multiverse code blocks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) instead of the regular `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse code blocks with RMarkdown). This allows you to write more concise code and is more consistent with the interactive programming interface of RStudio. A *multiverse code block* is a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Below we show how the same code from above can be implemented using the *multiverse code block*
 
 ```{multiverse default-m-1, inside = M, echo = FALSE}
 # here we just create the variable `df` in the multiverse
@@ -235,6 +235,21 @@ df <- df_durante %>%
   )
 ```
 ````
+
+We provide the ability to declare multiverse code block as an *AddIn* in RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
+
+```{r echo = FALSE, out.width = '90%'}
+knitr::include_graphics("vignettes/multiverse-addins.png")
+```
+
+Alternately, users can insert a multiverse We also allow users to create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document. This can be done through the following steps: 
+
+- Tools > AddIns > Browse AddIns… > Keyboard Shortcuts
+- Next, in the filter input field, type *multiverse*. You will see one result with "Insert multiverse code chunk" as the name. 
+- Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).
+- Click "Apply" and exit the dialog box
+
+Please refer to \link{multiverse-in-rmd} for more details on using the multiverse code blocks with RMarkdown.
 
 
 #### `inside()`

@@ -12,6 +12,7 @@ bibentry(
                  person("Matthew", "Kay")),
     year     = "2021",
     url      = "https://github.com/MUCollective/multiverse",
+    journal  = {"OSF Preprints"},
     textVersion =
   	paste("Sarma, A., Kale, A., Moon, M., Taback, N., Chevalier, F., Hullman, J., & Kay, M. (2021, April 11). multiverse: Multiplexing Alternative Data Analyses in R Notebooks. https://doi.org/10.31219/osf.io/yfbwm",
 		"Available from https://github.com/MUCollective/multiverse."
