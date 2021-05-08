@@ -4,7 +4,11 @@ author:
   - Abhraneel Sarma, Northwestern University
   - Alex Kale, University of Washington
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Example multiverse implementation: Female hurricanes are deadlier than male hurricanes}
@@ -21,10 +25,19 @@ library(tidybayes)
 library(multiverse)
 ```
 
+```{r, chunk-setup, include=FALSE}
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
+)
+```
+
 
 ## Multiverse case study #4
 
-In this document we re-implement the specification curve analysis by Simonsohn et al. [http://dx.doi.org/10.2139/ssrn.2694998] using the Multiverse library.
+In this document we re-implement the specification curve analysis by Simonsohn et al. [http://dx.doi.org/10.2139/ssrn.2694998] using the Multiverse library. \doi
 
 
 ## Introduction
@@ -61,7 +74,7 @@ hurricane_data <- hurricane %>%
 ## Original analysis
 We then illustrate an implementation of the original analysis by Jung et al. [https://doi.org/10.1073/pnas.1402786111]. The original analysis used a negative binomial model, which is suitable for overdispersed count data. Due to some issues with model fit with the `MASS::glm.nb` function (see Note 3: https://github.com/uwdata/boba/tree/master/example/hurricane), we instead use the simpler poisson regression model which will ensure that none of the models fail while fitting.
 
-In the original analysis, Jung et al. exclude two hurricanes which caused the highest number of deaths (Katrina and Audrey) as outliers. They transform the variable useed the interactions between the 11-point femininity rating and both damages and zpressure respectively, as seen below:
+In the original analysis, Jung et al. exclude two hurricanes which caused the highest number of deaths (Katrina and Audrey) as outliers. They transform the variable used the interactions between the 11-point femininity rating and both damages and zpressure respectively, as seen below:
 
 ```{r}
 df <- hurricane_data %>%
@@ -80,7 +93,7 @@ M <- multiverse()
 
 ### Excluding outliers
 
-In their implementation, Simonsohn et al. describe a principled method of excluding outliers based on extreme observations of death and damages. The consider it reasinable to exclude up two most extreme hurricanes in terms of death, and upto three most extreme hurricanes in terms of damages. This space of decisions is implemented using `multiverse` as follows:
+In their implementation, Simonsohn et al. describe a principled method of excluding outliers based on extreme observations of death and damages. The consider it reasonable to exclude up two most extreme hurricanes in terms of death, and upto three most extreme hurricanes in terms of damages. This space of decisions is implemented using `multiverse` as follows:
 
 #### Note 
 In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
@@ -203,7 +216,7 @@ broom::tidy(fit)
 ```
 ````
 
-Once we have implemented the analyis model in our multiverse, the corresponding step will be applied to each analysis path. To interpret the results, we first estimate a prediction interval corresponding to each analysis path. 
+Once we have implemented the analysis model in our multiverse, the corresponding step will be applied to each analysis path. To interpret the results, we first estimate a prediction interval corresponding to each analysis path. 
 
 ```{multiverse label = default-m-4, inside = M, echo = FALSE}
 pred <- predict(fit, se.fit = TRUE, type = "response")

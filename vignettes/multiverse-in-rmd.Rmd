@@ -2,7 +2,9 @@
 title: 'Using the multiverse in RMarkdown: Introduction to multiverse code chunks'
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Using the multiverse in RMarkdown: Introduction to multiverse code chunks}
@@ -30,7 +32,7 @@ opts_knit$set(
 
 ## Introduction
 
-In this document we will describe the usage of the multiverse code block. The multiverse code block is an alternative to the R code block which will parse any code run in it directly in the multiverse, and reduces the need for auxillary functions such as \code(inside). In addition, the default analysis in the multiverse will be executed in the environment in which the multiverse has been declared, which would usually be the global environment. In that case the results of the default analysis can be inspected directly in an R code block, similar to what an user would do if they were running a single universe analysis.
+In this document we will describe the usage of the multiverse code block. The multiverse code block is an alternative to the R code block which will parse any code run in it directly in the multiverse, and reduces the need for auxiliary functions such as \code(inside). In addition, the default analysis in the multiverse will be executed in the environment in which the multiverse has been declared, which would usually be the global environment. In that case the results of the default analysis can be inspected directly in an R code block, similar to what an user would do if they were running a single universe analysis.
 
 We demonstrate how the two methods are equivalent, and result in the same multiverse.
 
@@ -69,7 +71,7 @@ inside(M_inside, {
 
 ## Multiverse in RMarkdown
 
-Although the inside function is the only way to add code to the multiverse in an Rscript, RMarkdown notebooks allow us the opportunity to use different language engines (not just limited to R). This flexibility also provides an opportunity to write multiverse code directly into a code block, instead of using auxillary functions.
+Although the inside function is the only way to add code to the multiverse in an RScript, RMarkdown notebooks allow us the opportunity to use different language engines (not just limited to R). This flexibility also provides an opportunity to write multiverse code directly into a code block, instead of using auxillary functions.
 
 The language associated with a code block is provided by the first argument: ` ```{r}` Here the first argument is `r` hence the code in the associated block will be executed in R. To convert a code block to execute in multiverse, change the first argument to `multiverse`. Thus the code block would be: ` ```{multiverse}`
 
@@ -147,7 +149,7 @@ expand(M_block)$.code
 
 ## Notes on using multiverse code blocks
 
-### In Rstudio using RMarkdown
+### In RStudio using RMarkdown
 During interactive use with RStudio, *multiverse code blocks* will work very similarly to a R code block. It will only execute the default analysis (i.e. the analysis path obtained by combining the first option of each parameter) in the global environment. Any output that is generated will have the formatting that output of R code blocks do.
 
 ### Knitting to HTML using knitr

@@ -2,7 +2,11 @@
 title: "Example multiverse implementation: Effect of fertility on religiosity and political attitudes"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Example multiverse implementation: Effect of fertility on religiosity and political attitudes}
@@ -19,8 +23,16 @@ Data analysis can involve several decisions involving two or more options. In mo
 
 Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis. 
 
+```{r, chunk-setup, include=FALSE}
+knitr::opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
+)
+```
+
 ```{r setup, message=FALSE, warning=FALSE}
-library(knitr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -31,16 +43,9 @@ library(cowplot)
 library(multiverse)
 ```
 
-```{r, chunk-setup, include=FALSE}
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4
-)
-```
-
 ## The data
 The first step is to read the raw data from the file and store it as a tibble. We will be following the *_tidy data_* format here. The data is stored in two text files, and we can use `readr` to read the files into R. In this example, we will use the data collected by *Durante et al.* in [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416), which investigated the effect of fertility on religiosity and political attitudes. We will focus on their second study (which we store in `data.raw.study2`).
+
 
 ```{r data}
 data("durante")
@@ -120,7 +125,7 @@ The next step is to define our possible analyses inside the multiverse. The `mul
 
 Consider these first few lines from the transformation code in the single analysis above:
 
-```{r eval=FALSE}
+```{asis}
 df <- data.raw.study2 %>%
   mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) %>%
   mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength)
@@ -133,7 +138,7 @@ But `NextMenstrualOnset` could be calculated in at least two other reasonable wa
 
 To create a multiverse that includes these three possible processing options, we can use the `branch()` function. The `branch()` function defines a *parameter* (here `menstrual_calculation`) and the different *options* that the parameter can take (here, `"mc_option1"`, `"mc_option2"`, `"mc_option3"`). Each option corresponds to a different chunk of code that would be executed in a different universe.
 
-```{r parameter_options, eval = FALSE}
+```{asis}
 NextMenstrualOnset = branch(menstrual_calculation, 
   "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
   "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -264,22 +269,6 @@ M$df %>%
   head()
 ```
 
-```{r, eval = FALSE, include = FALSE}
-#Or, we could get the code for a different single universe analysis by providing a list of parameter assignments (options which each parameter should take) to the `execute_universe()` function and execute it:
-
-universe_parameter_assignment <- list(
-    menstrual_calculation = "mc_option",
-    relationship_status = "rs_option3",
-    cycle_length = "cl_option2",
-    certainty = "cer_option1",
-    fertile = "fer_option4"
-  )
-
-M %>% execute_universe( universe_parameter_assignment ) %>%
-  select(ComputedCycleLength, NextMenstrualOnset, CycleDay, Relationship, Fertility, everything()) %>%
-  head()
-```
-
 
 ### Specifying conditions in the multiverse analysis
 In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
@@ -287,7 +276,7 @@ For example, in our example, depending on how we filter participants based on *c
 
 We can express these conditionals in the multiverse (See vignette("Conditions") for more details). Below, we use the %when% operator:
 
-```{r, eval = FALSE}
+```{asis}
 df <- data.raw.study2  %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
@@ -397,7 +386,7 @@ expand(M) %>%
 
 We then take this data frame and plot the results as a confidence interval and point estimate using `ggplot2`. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use `gganimate` to animate through the results of each universe to quickly get an overview of the robustness of the results.
 
-Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette [`Extracting and Visualizing the results of a multiverse analysis`](visualizing-multiverse.html)
+Note: we discuss extracting results from the multiverse and visualising them in more detail in `vignette(visualising-multiverse)`
 
 ```{r, message = FALSE}
 p <- expand(M) %>%
@@ -412,6 +401,7 @@ p <- expand(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  theme_minimal() +
   transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
@@ -419,7 +409,7 @@ animate(p, nframes = 210, fps = 2)
 
 
 ### Models #3 - 6
-The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. Below we perform these analyses and visualize the results.
+The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. Below we perform these analyses and visualise the results.
 
 ```{r}
 inside(M, {
@@ -458,6 +448,7 @@ p <- expand(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  theme_minimal() +
   transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
@@ -478,6 +469,7 @@ p <- expand(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  theme_minimal() +
   transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
@@ -497,6 +489,7 @@ p <- expand(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  theme_minimal() +
   transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
@@ -516,6 +509,7 @@ p <- expand(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  theme_minimal() +
   transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)

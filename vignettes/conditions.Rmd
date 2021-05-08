@@ -2,7 +2,9 @@
 title: "Declaring conditions in the multiverse"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Declaring conditions in the multiverse}
@@ -30,7 +32,7 @@ opts_knit$set(
 ```
 
 ## The data
-We will be using the same data as the Vignette [*A complete implementation of a multiverse analysis*](https://mucollective.github.io/multiverse/articles/complete-multiverse-analysis.html) (see `vignette("complete-multiverse-analysis")`).
+We will be using the same data as the vignette: *A complete implementation of a multiverse analysis* (see `vignette("complete-multiverse-analysis")`).
 
 ```{r data}
 data("durante")
@@ -138,9 +140,9 @@ df <- df_durante  %>%
 ```
 ````
 
-**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
+**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multiverse. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
 
-As the condition implies, the parameter `menstrual_calcaultion` (which is for calclating the variable `NextMenstrualCalculation`) cannot take the value of "mc_option1" when we filter `cycle_length` using "cl_option3". Similarly, `menstrual_calcaultion` cannot take the value of "mc_option2" when we filter `cycle_length` using "cl_option2". In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.
+As the condition implies, the parameter `menstrual_calcaultion` (which is for calculating the variable `NextMenstrualCalculation`) cannot take the value of "mc_option1" when we filter `cycle_length` using "cl_option3". Similarly, `menstrual_calcaultion` cannot take the value of "mc_option2" when we filter `cycle_length` using "cl_option2". In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.
 
 ```{r}
 expand(M)
@@ -191,7 +193,7 @@ expand(M)
 
 ## Implementing conditions in a complete analysis
 
-Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update the example from [home page](mucollective.github.io/multiverse/) by including these conditions:
+Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update the example from [home page](https://mucollective.github.io/multiverse/) by including these conditions:
 
 ```{r, when-eg-2}
 M = multiverse()

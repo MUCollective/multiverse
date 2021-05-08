@@ -1,17 +1,21 @@
 ---
-title: "Extracting and Visualizing the results of a multiverse analysis"
+title: "Extracting and Visualising the results of a multiverse analysis"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Extracting and Visualizing the results of a multiverse analysis}
+  %\VignetteIndexEntry{Extracting and Visualising the results of a multiverse analysis}
   %\usepackage[UTF-8]{inputenc}
 ---
 
 ## Introduction
 
-In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualize the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualizing them can be difficult. We will show how our package can be used to create the visualizations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998), as well as using other uncertainty visualization approaches.
+In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualise the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualising them can be difficult. We will show how our package can be used to create the visualisations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998), as well as using other uncertainty visualisation approaches.
 
 ```{r, setup, message=FALSE, warning=FALSE}
 library(knitr)
@@ -31,7 +35,8 @@ library(multiverse)
 opts_knit$set(
   echo = TRUE,
   fig.width = 6, 
-  fig.height = 4
+  fig.height = 4,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
 )
 ```
 
@@ -55,7 +60,7 @@ data.raw.study2 <- durante %>%
   )
 ```
 
-A detailed description of this analysis can be found in [`A complete multiverse analysis`](complete-multiverse-analysis.html). We will use the results from this analysis to create the visualizations.
+A detailed description of this analysis can be found in `vignette(durante-multiverse-analysis)`. We will use the results from this analysis to create the visualisations.
 
 **Note** that the `inside` function is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user a `multiverse code block` which can be used instead of the `r` code block to write code inside a multiverse object (see \link{multiverse-in-rmd} for more details on using the multiverse with RMarkdown).
 
@@ -102,7 +107,7 @@ inside(M, {
 ```
 
 ### Model #2: Effect of Fertility and Relationship status on Religiosity
-Steegen et al. analyse the data using 6 models. All the models except the first use this dataset. For the visualizations, we will focus on the effect of Fertility and Relationship status on Religiosity.
+Steegen et al. analyse the data using 6 models. All the models except the first use this dataset. For the visualisations, we will focus on the effect of Fertility and Relationship status on Religiosity.
 
 The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score (`RelComp`). We perform this analysis and extract the results from the multiverse into a tidy `data frame`.
 
@@ -162,12 +167,12 @@ expand(M) %>%
   unnest( summary )
 ```
 
-We can then use various R packages to visualize the results. Below, we show some standard visualizations.
+We can then use various R packages to visualise the results. Below, we show some standard visualisations.
 
-## Visualizations
+## Visualisations
 
 ### Animating the coefficients of the model from each multiverse
-One way to visualize over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in [Increasing the Transparency of Research Papers with Explorable Multiverse Analyses](https://dl.acm.org/citation.cfm?id=3300295). This approach allows us to quickly see the robustness of a result --- if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.
+One way to visualise over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in [Increasing the Transparency of Research Papers with Explorable Multiverse Analyses](https://dl.acm.org/doi/10.1145/3290605.3300295). This approach allows us to quickly see the robustness of a result --- if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.
 
 ```{r, message = FALSE, fig.width = 6, fig.height = 4}
 p <- expand(M) %>%
@@ -190,7 +195,7 @@ animate(p, nframes = 210, fps = 2)
 ### Histogram of p-values of the Fertility × Relationship status interaction
 Another approach would be to summarise the results. Steegen et al. which depicts a histogram of p values of the Fertility × Relationship status interaction on religiosity for the multiverse of 210 data sets in Study 2 (`summary_RelComp`), on fiscal and social political attitudes for the multiverse of 210 data sets in Study 2 (`summary_FiscConsComp` and `summary_SocConsComp`), and on voting and donation preferences for the multiverse of 210 data sets in Study 2 (`summary_Donate` and `summary_Vote`). The dashed line indicates p = 0.05.
 
-Below we show how to re-create the visualization. 
+Below we show how to re-create the visualisation. 
 
 ```{r fig.width = 9, fig.height = 9}
 expand(M) %>%
@@ -213,9 +218,9 @@ expand(M) %>%
 ```
 
 ### Specification curve
-Simonsohn et al. propose visualizing results from the multiverse as a `specification curve`, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.
+Simonsohn et al. propose visualising results from the multiverse as a `specification curve`, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.
 
-```{r, fig.width = 8, fig.height = 4}
+```{r, fig.width = 8, fig.height = 8, eval = FALSE}
 data.spec_curve <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
@@ -248,31 +253,9 @@ p2 <- data.spec_curve %>%
   geom_point( aes(.universe, estimate, color = (p.value < 0.05)), size = 0.25) +
   labs(x = "", y = "coefficient of\ninteraction term:\nfertility x relationship")
   
-cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 2))
+cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 3))
 ```
 
-```{r, echo = FALSE, eval = FALSE, fig.width = 9, fig.height = 5}
-## **Incomplete**
 
-expand(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
-  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
-  unnest(summary) %>%
-  filter( term == "Fertilitylow:RelationshipStatusSingle" ) %>%
-  mutate(
-    cycle_length = as.numeric(factor(cycle_length)),
-    certainty = as.numeric(factor(certainty)),
-    menstrual_calculation = as.numeric(factor(menstrual_calculation)),
-    fertile = as.numeric(factor(fertile)),
-    relationship_status = as.numeric(factor(relationship_status)),
-    significance = ifelse(p.value < 0.05, "p < 0.05", "p >= 0.05")
-  ) %>%
-  ggplot(aes(x = interaction(cycle_length, certainty, menstrual_calculation), 
-        y = interaction(fertile, relationship_status))) +
-  geom_raster( aes(fill = significance) ) +
-  geom_text( aes(label = round(p.value, 2)), size = 3 ) +
-  labs(
-    x = expression(atop("combinations of different options for", ~italic("cycle length, certainty and menstrual calc."~"parameters"))),
-    y = expression(atop("combinations of different options for", ~italic("fertility and relationship"~"parameters")))
-  )
-```
+![Specification curve visualisation](../man/figures/spec-curve-steegen-analysis.png)
+
