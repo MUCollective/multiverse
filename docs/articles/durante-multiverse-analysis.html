@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -76,9 +76,12 @@
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -104,7 +107,7 @@
       <h1 data-toc-skip>Example multiverse implementation: Effect of fertility on religiosity and political attitudes</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-04-22</h4>
+            <h4 class="date">2021-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/durante-multiverse-analysis.Rmd"><code>vignettes/durante-multiverse-analysis.Rmd</code></a></small>
       <div class="hidden name"><code>durante-multiverse-analysis.Rmd</code></div>
@@ -602,7 +605,7 @@
 ## #   .results &lt;list&gt;, term &lt;chr&gt;, estimate &lt;dbl&gt;, std.error &lt;dbl&gt;,
 ## #   statistic &lt;dbl&gt;, p.value &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</code></pre>
 <p>We then take this data frame and plot the results as a confidence interval and point estimate using <code>ggplot2</code>. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use <code>gganimate</code> to animate through the results of each universe to quickly get an overview of the robustness of the results.</p>
-<p>Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette <a href="visualizing-multiverse.html"><code>Extracting and Visualizing the results of a multiverse analysis</code></a></p>
+<p>Note: we discuss extracting results from the multiverse and visualising them in more detail in <code>vignette(visualising-multiverse)</code></p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">summary_RelComp</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -616,6 +619,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
@@ -624,7 +628,7 @@
 <div id="models-3---6" class="section level3">
 <h3 class="hasAnchor">
 <a href="#models-3---6" class="anchor"></a>Models #3 - 6</h3>
-<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. Below we perform these analyses and visualize the results.</p>
+<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. Below we perform these analyses and visualise the results.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
   <span class="va">fit_FiscConsComp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span> <span class="va">FiscConsComp</span> <span class="op">~</span> <span class="va">Fertility</span> <span class="op">*</span> <span class="va">RelationshipStatus</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span>
@@ -661,6 +665,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
@@ -682,6 +687,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
@@ -702,6 +708,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
@@ -722,6 +729,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>

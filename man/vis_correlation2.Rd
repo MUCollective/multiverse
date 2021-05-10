@@ -7,8 +7,8 @@
 \format{
 A data frame with 275,976 rows and 11 variables:
 \describe{
-  \item{rbase}{The coefficiant of correlation using which the stimuli was generated}
-  \item{rv}{The actual coefficiant of correlationshown to participant}
+  \item{rbase}{The coefficient of correlation using which the stimuli was generated}
+  \item{rv}{The actual coefficiant of correlation shown to participant}
   \item{approach}{Above or Below.  indicating that the reference value of r 
   was compared to values of r above it in the staircase procedure;
   or from below, indicated it was compared to values of r below it}

@@ -1,12 +1,12 @@
 #' Survey to study the effect of fertility on religiosity and political attitudes
 #'
-#' A dataset for the study coduncted by Jung et al. (2014)
-#' in their study, \href{https://doi/10.1073/pnas.1402786111}{\emph{Female hurricanes are deadlier than male hurricanes}}.
+#' A dataset for the study conducted by Jung et al. (2014)
+#' in their study, \doi{10.1073/pnas.1402786111}{\emph{Female hurricanes are deadlier than male hurricanes}}.
 #' 
 #'
 #' @format A data frame with 502 rows and 26 variables:
 #' \describe{
-#'   \item{Year}{Year in which the hurricane occured}
+#'   \item{Year}{Year in which the hurricane occurred}
 #'   \item{Name}{Name given to the hurricane}
 #'   \item{MasFem}{A score of how Masculine or Feminine a hurricane is, 
 #'   on a scale of 1 - 11  where 1 is the most masculine and 11 is the most 

@@ -23,15 +23,6 @@ Data analysis can involve several decisions involving two or more options. In mo
 
 Below, we illustrate an example of a single analysis for a dataset. And then extend it to a multiverse analysis. 
 
-```{r, chunk-setup, include=FALSE}
-knitr::opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
-)
-```
-
 ```{r setup, message=FALSE, warning=FALSE}
 library(dplyr)
 library(tidyr)
@@ -41,6 +32,21 @@ library(broom)
 library(gganimate)
 library(cowplot)
 library(multiverse)
+```
+
+
+```{r, include=FALSE}
+M = multiverse()
+```
+
+
+```{r, chunk-setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
+)
 ```
 
 ## The data
@@ -117,7 +123,7 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
-```{r}
+```{r, eval = FALSE}
 M <- multiverse()
 ```
 

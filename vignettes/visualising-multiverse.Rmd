@@ -17,8 +17,8 @@ vignette: >
 
 In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualise the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualising them can be difficult. We will show how our package can be used to create the visualisations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998), as well as using other uncertainty visualisation approaches.
 
+
 ```{r, setup, message=FALSE, warning=FALSE}
-library(knitr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -31,14 +31,20 @@ library(forcats)
 library(multiverse)
 ```
 
+```{r, include=FALSE}
+M = multiverse()
+```
+
+
 ```{r, chunk-setup, include=FALSE}
-opts_knit$set(
+knitr::opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
   fig.height = 4,
   eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
 )
 ```
+
 
 ## Data and Analysis
 
@@ -220,7 +226,7 @@ expand(M) %>%
 ### Specification curve
 Simonsohn et al. propose visualising results from the multiverse as a `specification curve`, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.
 
-```{r, fig.width = 8, fig.height = 8, eval = FALSE}
+```{r, fig.width = 8, fig.height = 8}
 data.spec_curve <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
@@ -257,5 +263,8 @@ cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = 
 ```
 
 
-![Specification curve visualisation](../man/figures/spec-curve-steegen-analysis.png)
+```{r include = FALSE}
+# ![Specification curve visualisation](../man/figures/spec-curve-steegen-analysis.png)
+```
+
 

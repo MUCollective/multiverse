@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -76,9 +76,12 @@
       <a href="articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -129,13 +132,10 @@
 <a href="#overview" class="anchor"></a>Overview</h2>
 <p>For details on how to quickly get started with this package, please refer to this document as well as the following vignettes:</p>
 <ul>
-<li>How alternate analysis paths can be declared in <code>multiverse</code> using <a href="articles/branch.html">branch</a>
-</li>
-<li>How conditions can be declared in <code>multiverse</code> using <a href="articles/conditions.html">conditions</a>; conditions can be used to state when two steps in a multiverse are incompatible with one another.</li>
-<li>How <code>multiverse</code> can be used in different environments: <a href="articles/multiverse-in-rmd.html">using <code>multiverse</code> in RScripts and RMarkdown</a>
-</li>
-<li>How multiverse results can be extracted and visualised: <a href="articles/visualizing-multiverse.html">visualising multiverse results</a>
-</li>
+<li>How alternate analysis paths can be declared in <code>multiverse</code> using branch. See <code><a href="articles/branch.html">vignette("branch")</a></code>.</li>
+<li>How conditions can be declared in <code>multiverse</code> using conditions; conditions can be used to state when two steps in a multiverse are incompatible with one another. See <code><a href="articles/conditions.html">vignette("conditions")</a></code>.</li>
+<li>How <code>multiverse</code> can be used in different environments such as in RScripts and RMarkdown. . See <code><a href="articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>.</li>
+<li>How multiverse results can be extracted and visualised. . See <code><a href="articles/visualising-multiverse.html">vignette("visualising-multiverse")</a></code>.</li>
 </ul>
 <p>We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used:</p>
 <ul>
@@ -483,7 +483,7 @@
 </tbody>
 </table>
 </div>
-<p>The original paper looked at the relationship between fertility, relationship status, and religiousity. But there are many reasonable ways to have defined each of these three variables from this dataset, so it is a good candidate for multiverse analysis.</p>
+<p>The original paper looked at the relationship between fertility, relationship status, and religiosity. But there are many reasonable ways to have defined each of these three variables from this dataset, so it is a good candidate for multiverse analysis.</p>
 </div>
 <div id="a-single-data-set-analysis-one-possible-analysis-among-many" class="section level2">
 <h2 class="hasAnchor">
@@ -892,7 +892,7 @@
   <span class="fu">stat_summary</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span>, fun.data <span class="op">=</span> <span class="st">"mean_se"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/universe-summary-1.png" alt="results from a single analysis: point estimates and 95% confidence intervals of the coefficients of the predictors relationship and single"></p>
 <p>However, there also exists other valid processing options: instead of calculating <code>NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength</code>, it can also be calculated as <code>StartDateofLastPeriod + ReportedCycleLength</code>. Such alternate processing options can exist for several decisions that a researcher makes in the data processing, analysis and presentation stages. This can thus result in a <em>multiverse of analysis</em>, with the one described above representing a single <em>universe</em>.</p>
-<p>How would one declare such different anlternate ways of calculation easily and efficiently? Below, we describe how our package allows you to make such declarations with ease.</p>
+<p>How would one declare such different alternate ways of calculation easily and efficiently? Below, we describe how our package allows you to make such declarations with ease.</p>
 </div>
 <div id="multiverse-specification" class="section level2">
 <h2 class="hasAnchor">
@@ -920,7 +920,7 @@
   <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,
   <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span>
 <span class="op">)</span></code></pre></div>
-<p>More details on the <code><a href="reference/branch.html">branch()</a></code> function can be found in the corresponding <a href="mucollective.github.io/multiverse/articles/branch.html">vignette</a></p>
+<p>More details on the <code><a href="reference/branch.html">branch()</a></code> function can be found in the corresponding <code>vignette(branch)</code>.</p>
 <div id="two-ways-to-building-a-multiverse" class="section level3">
 <h3 class="hasAnchor">
 <a href="#two-ways-to-building-a-multiverse" class="anchor"></a>Two ways to building a multiverse</h3>
@@ -949,11 +949,11 @@
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="at">    "mc_option3" ~ StartDateNext)</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="at">  )</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
-<p>We provide the ability to declare multiverse code block as an <em>AddIn</em> in RStudio. Users can click on <em>AddIns</em> toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.</p>
+<p>We provide the ability to declare multiverse code block as an <em>Addin</em> in RStudio. Users can click on <em>Addins</em> toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.</p>
 <p><img src="articles/multiverse-addins.png" width="90%"></p>
 <p>Alternately, users can insert a multiverse We also allow users to create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document. This can be done through the following steps:</p>
 <ul>
-<li>Tools &gt; AddIns &gt; Browse AddIns… &gt; Keyboard Shortcuts</li>
+<li>Tools &gt; Addins &gt; Browse Addins… &gt; Keyboard Shortcuts</li>
 <li>Next, in the filter input field, type <em>multiverse</em>. You will see one result with “Insert multiverse code chunk” as the name.</li>
 <li>Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).</li>
 <li>Click “Apply” and exit the dialog box</li>
@@ -984,8 +984,7 @@
       <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span>
     <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
-<p>In the rest of this vignette, we will use <strong>multiverse code blocks</strong> to specify the multiverse. Please refer to the vignette (<code><a href="articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details.</p>
-<p>More details on the <strong>declaring multiverse analyses in RScripts and RMarkdown</strong> can be found in the corresponding <a href="mucollective.github.io/multiverse/articles/multiverse-in-rmd.html">vignette</a></p>
+<p>In the rest of this vignette, we will use <strong>multiverse code blocks</strong> to specify the multiverse. Please refer to the vignette (<code><a href="articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details on <strong>declaring multiverse analyses in RScripts and RMarkdown</strong></p>
 </div>
 </div>
 </div>
@@ -1030,26 +1029,26 @@
 <td align="right">1</td>
 <td align="left">mc_option1</td>
 <td align="left">mc_option1</td>
-<td align="left">&lt;environment: 0x7f8e34628f38&gt;</td>
+<td align="left">&lt;environment: 0x7fec1a3ee438&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">mc_option2</td>
 <td align="left">mc_option2</td>
-<td align="left">&lt;environment: 0x7f8e3465c050&gt;</td>
+<td align="left">&lt;environment: 0x7fec1a411bb0&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="left">mc_option3</td>
 <td align="left">mc_option3</td>
-<td align="left">&lt;environment: 0x7f8e3467c6a8&gt;</td>
+<td align="left">&lt;environment: 0x7fec1a42d4b0&gt;</td>
 </tr>
 </tbody>
 </table>
 </div>
 <ol>
 <li>
-<code>code</code>, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.</li>
+<code>code</code>, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrite this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.</li>
 </ol>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/accessors.html">code</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
@@ -1066,7 +1065,7 @@
 <div id="running-a-single-analysis-from-the-multiverse" class="section level2">
 <h2 class="hasAnchor">
 <a href="#running-a-single-analysis-from-the-multiverse" class="anchor"></a>Running a single analysis from the multiverse</h2>
-<p>At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable <code>df</code>. We can see the result of the default analysis in th multiverse by accessing the data frame from the multiverse object as shown:</p>
+<p>At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable <code>df</code>. We can see the result of the default analysis in the multiverse by accessing the data frame from the multiverse object as shown:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span><span class="op">$</span><span class="va">df</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="kable-table">
@@ -1409,7 +1408,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e341c3c80&gt;</td>
+<td align="left">&lt;environment: 0x7fec1a91ba18&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
@@ -1419,7 +1418,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option2</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
-<td align="left">&lt;environment: 0x7f8e3423a2e8&gt;</td>
+<td align="left">&lt;environment: 0x7fec1a99b9e0&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
@@ -1429,7 +1428,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option3</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option3</td>
-<td align="left">&lt;environment: 0x7f8e342c7078&gt;</td>
+<td align="left">&lt;environment: 0x7fec1aa65f90&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
@@ -1439,7 +1438,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option4</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option4</td>
-<td align="left">&lt;environment: 0x7f8e343d0358&gt;</td>
+<td align="left">&lt;environment: 0x7fec1aafbf20&gt;</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
@@ -1449,7 +1448,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option5</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option5</td>
-<td align="left">&lt;environment: 0x7f8e3446d5f0&gt;</td>
+<td align="left">&lt;environment: 0x7fec189c4e20&gt;</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
@@ -1459,7 +1458,7 @@
 <td align="left">cer_option2</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option2, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e3300b708&gt;</td>
+<td align="left">&lt;environment: 0x7fec18a569f8&gt;</td>
 </tr>
 </tbody>
 </table>
@@ -1732,12 +1731,12 @@
 <h2 class="hasAnchor">
 <a href="#specifying-conditions-in-the-multiverse-analysis" class="anchor"></a>Specifying conditions in the multiverse analysis</h2>
 <p>In our example, we are excluding participants based on their <em>cycle length</em>. This can be done in two ways: we can use the values of the variable,<code>ComputedCycleLength</code> or <code>ReportedCycleLength</code>. If we are using <code>ComputedCycleLength</code> to exclude participants, this means that we should not calculate the variable <code>NextMenstrualOnset</code> (date for the onset of the next menstrual cycle) using the <code>ReportedCycleLength</code> value. Similarly, if we are using <code>ReportedCycleLength</code> to exclude participants it is inconsistent to calculate <code>NextMenstrualOnset</code> using <code>ComputedCycleLength</code>. In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously.</p>
-<p>We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on <code>conditions</code>, in the corresponding <a href="articles/conditions.html">vignette</a>.</p>
+<p>We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on <code>conditions</code>, in the corresponding <code>vignette(conditions)</code>.</p>
 </div>
 <div id="modeling" class="section level2">
 <h2 class="hasAnchor">
 <a href="#modeling" class="anchor"></a>Modeling</h2>
-<p>Steegen et al. define a multiverse which only considers the various data processing parameters, which we have defiend above. To analyse the data, they create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we’ve using so far.</p>
+<p>Steegen et al. define a multiverse which only considers the various data processing parameters, which we have defined above. To analyse the data, they create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we’ve using so far.</p>
 <div id="model-2-effect-of-fertility-and-relationship-status-on-religiosity" class="section level3">
 <h3 class="hasAnchor">
 <a href="#model-2-effect-of-fertility-and-relationship-status-on-religiosity" class="anchor"></a>Model #2: Effect of Fertility and Relationship status on Religiosity</h3>
@@ -1810,7 +1809,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e2e1d4c40&gt;</td>
+<td align="left">&lt;environment: 0x7febffe4d190&gt;</td>
 <td align="left">(Intercept)</td>
 <td align="right">6.3749123</td>
 <td align="right">0.4015673</td>
@@ -1827,7 +1826,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e2e1d4c40&gt;</td>
+<td align="left">&lt;environment: 0x7febffe4d190&gt;</td>
 <td align="left">Fertilitylow</td>
 <td align="right">-1.1993860</td>
 <td align="right">0.5312236</td>
@@ -1844,7 +1843,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e2e1d4c40&gt;</td>
+<td align="left">&lt;environment: 0x7febffe4d190&gt;</td>
 <td align="left">Fertilitymedium</td>
 <td align="right">-0.2931038</td>
 <td align="right">0.5089591</td>
@@ -1861,7 +1860,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e2e1d4c40&gt;</td>
+<td align="left">&lt;environment: 0x7febffe4d190&gt;</td>
 <td align="left">RelationshipStatusSingle</td>
 <td align="right">-1.4568301</td>
 <td align="right">0.5358812</td>
@@ -1878,7 +1877,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e2e1d4c40&gt;</td>
+<td align="left">&lt;environment: 0x7febffe4d190&gt;</td>
 <td align="left">Fertilitylow:RelationshipStatusSingle</td>
 <td align="right">2.0287775</td>
 <td align="right">0.7105383</td>
@@ -1895,7 +1894,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option1</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option1</td>
-<td align="left">&lt;environment: 0x7f8e2e1d4c40&gt;</td>
+<td align="left">&lt;environment: 0x7febffe4d190&gt;</td>
 <td align="left">Fertilitymedium:RelationshipStatusSingle</td>
 <td align="right">1.0066406</td>
 <td align="right">0.6873797</td>
@@ -1912,7 +1911,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option2</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
-<td align="left">&lt;environment: 0x7f8e3b033720&gt;</td>
+<td align="left">&lt;environment: 0x7febffa383c8&gt;</td>
 <td align="left">(Intercept)</td>
 <td align="right">6.3953846</td>
 <td align="right">0.3741693</td>
@@ -1929,7 +1928,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option2</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
-<td align="left">&lt;environment: 0x7f8e3b033720&gt;</td>
+<td align="left">&lt;environment: 0x7febffa383c8&gt;</td>
 <td align="left">Fertilitylow</td>
 <td align="right">-1.1692735</td>
 <td align="right">0.4910353</td>
@@ -1946,7 +1945,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option2</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
-<td align="left">&lt;environment: 0x7f8e3b033720&gt;</td>
+<td align="left">&lt;environment: 0x7febffa383c8&gt;</td>
 <td align="left">Fertilitymedium</td>
 <td align="right">-0.2516346</td>
 <td align="right">0.5161336</td>
@@ -1963,7 +1962,7 @@
 <td align="left">cer_option1</td>
 <td align="left">fer_option2</td>
 <td align="left">mc_option1 , rs_option1 , cl_option1 , cer_option1, fer_option2</td>
-<td align="left">&lt;environment: 0x7f8e3b033720&gt;</td>
+<td align="left">&lt;environment: 0x7febffa383c8&gt;</td>
 <td align="left">RelationshipStatusSingle</td>
 <td align="right">-1.6535869</td>
 <td align="right">0.4921908</td>
@@ -1999,7 +1998,7 @@
 <div id="conclusion" class="section level2">
 <h2 class="hasAnchor">
 <a href="#conclusion" class="anchor"></a>Conclusion</h2>
-<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. These analyses can be found in the vignette <a href="complete-multiverse-analysis.html"><code>A complete implementation of a multiverse analysis</code></a></p>
+<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. These analyses can be found in <code>vignette (complete-multiverse-analysis)</code></p>
 <p>In addition, we also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:</p>
 <ul>
 <li>Simonsohn et al.’s <a href="http://dx.doi.org/10.2139/ssrn.2694998">specification curve analysis</a> of the paper <a href="https://doi.org/10.1073/pnas.1402786111">Female hurricanes are deadlier than male hurricanes</a>

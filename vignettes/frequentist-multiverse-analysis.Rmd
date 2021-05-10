@@ -16,8 +16,8 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
+
 ```{r setup, message=FALSE, warning=FALSE}
-library(knitr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -28,8 +28,14 @@ library(multiverse)
 library(boot)
 ```
 
-```{r, chunk-setup, include=FALSE}
-opts_knit$set(
+
+```{r, include=FALSE}
+M = multiverse()
+```
+
+
+```{r, chunk-setup, include=FALSE, eval=FALSE}
+knitr::opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
   fig.height = 4,
@@ -105,7 +111,7 @@ tCI <- function(observations, conf.level) {
 
 Next we initialise the multiverse object within which this analysis will take place.
 
-```{r}
+```{r, eval = FALSE}
 M = multiverse()
 ```
 
@@ -168,6 +174,7 @@ expand(M)
 
 We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options.
 First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.
+
 
 ```{multiverse default-m-2, inside = M, echo = FALSE}
 duration <- do.call(data_transform, list(data.userlogs.raw$duration))

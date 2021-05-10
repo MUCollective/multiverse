@@ -75,7 +75,7 @@ in a tidy format." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -119,9 +119,12 @@ in a tidy format." />
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -192,7 +195,7 @@ then each such variable will be extracted in its own list column. If the user wa
 then they a column of type data frame (or tibble) would be created (which is a special instance of a list column).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='co'># \dontrun{</span>
 <span class='co'>#' M &lt;- multiverse()</span>
 <span class='fu'><a href='inside.html'>inside</a></span><span class='op'>(</span><span class='va'>M</span>, <span class='op'>{</span>
   <span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span>, <span class='fl'>50</span>, <span class='fl'>20</span><span class='op'>)</span>
@@ -205,16 +208,16 @@ then they a column of type data frame (or tibble) would be created (which is a s
     <span class='st'>"trim_10pc"</span> <span class='op'>~</span> <span class='fl'>0.05</span>
   <span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in add_and_parse_code(multiverse, .code, .label): object 'M' not found</span></div><div class='input'>
 <span class='co'># Extracts the relevant variable from the multiverse</span>
 <span class='va'>M</span> <span class='op'>%&gt;%</span>
   <span class='fu'>extract_variables</span><span class='op'>(</span><span class='va'>x.mean</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in M %&gt;% extract_variables(x.mean): could not find function "%&gt;%"</span></div><div class='input'>
 <span class='co'># if you want to filter the multiverse before extracting variables from it</span>
 <span class='co'># you ca first create the table and manipulate it before extracting variables</span>
 <span class='fu'><a href='accessors.html'>expand</a></span><span class='op'>(</span><span class='va'>M</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>extract_variables</span><span class='op'>(</span><span class='va'>x.mean</span><span class='op'>)</span>
-<span class='op'>}</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in expand(M) %&gt;% extract_variables(x.mean): could not find function "%&gt;%"</span></div><div class='input'><span class='co'># }</span>
 
 </div></pre>
   </div>

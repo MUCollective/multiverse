@@ -10,7 +10,7 @@ multiverse_engine <- function(options) {
   
   .multiverse_name = options$inside 
   
-  # in interactive user, `.multiverse_name` is a character: the name of the multiverse object
+  # in interactive use, `.multiverse_name` is a character: the name of the multiverse object
   # in kniting, this this is not the name of the multiverse, but the multiverse object itself
   # so during kniting, we don't need to retrieve it
   if (is.character(.multiverse_name)) {
@@ -32,6 +32,7 @@ multiverse_engine <- function(options) {
   .c = multiverse_block_code(.multiverse, options$label, options$code)
   
   if(is.null(getOption("knitr.in.progress"))) {
+    # during interactive execution
     if (!is.null(getOption("execute"))) {
       if (getOption("execute") == "all") {
         execute_multiverse(.multiverse)
@@ -40,9 +41,8 @@ multiverse_engine <- function(options) {
       }
     }
     multiverse_default_block_exec(.c, options)
-    
   } else {
-    # during interactive execution
+    # during knitting
     multiverse_default_block_exec(options$code, options, TRUE)
   }
 }
@@ -78,7 +78,7 @@ multiverse_block_code <- function(.multiverse, .label, .code) {
 }
 
 multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
-  if (knit) {
+  if (knit && options$eval) {
     .multiverse = options$inside
     # execute_multiverse(.multiverse)
     
@@ -87,7 +87,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # changing this to TRUE would execute the default universe and show 
     # the relevant output
     # What we want is to create a `div` for each universe
-    options$eval = TRUE
+    # options$eval = TRUE
     # options$class.source = "multiverse"
 
     options$engine = "R"

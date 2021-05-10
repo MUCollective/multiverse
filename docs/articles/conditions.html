@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -76,9 +76,12 @@
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -104,7 +107,7 @@
       <h1 data-toc-skip>Declaring conditions in the multiverse</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-04-22</h4>
+            <h4 class="date">2021-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/conditions.Rmd"><code>vignettes/conditions.Rmd</code></a></small>
       <div class="hidden name"><code>conditions.Rmd</code></div>
@@ -126,7 +129,7 @@
 <div id="the-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-data" class="anchor"></a>The data</h2>
-<p>We will be using the same data as the Vignette <a href="https://mucollective.github.io/multiverse/articles/complete-multiverse-analysis.html"><em>A complete implementation of a multiverse analysis</em></a> (see <code>vignette("complete-multiverse-analysis")</code>).</p>
+<p>We will be using the same data as the vignette: <em>A complete implementation of a multiverse analysis</em> (see <code>vignette("complete-multiverse-analysis")</code>).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"durante"</span><span class="op">)</span>
 
@@ -200,8 +203,8 @@ df &lt;- df_durante  %&gt;%
           "mc_option3" ~ StartDateNext)
       )
 ```</code></pre>
-<p><strong>Note</strong>: in this vignette we used the script-oriented <code><a href="../reference/inside.html">inside()</a></code> function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the <code>multiverse-code-block</code> for more interactive programming. To implement this using a <code>multiverse-code-block</code>, we can simply place the code passed into the inside function (the second argument) inside a code block of type <code>multiverse</code>, provide it with the appropriate labels and multiverse object, and execute it. See (multiverse-in-rmd) and (branch) for more details and examples.</p>
-<p>As the condition implies, the parameter <code>menstrual_calcaultion</code> (which is for calclating the variable <code>NextMenstrualCalculation</code>) cannot take the value of “mc_option1” when we filter <code>cycle_length</code> using “cl_option3”. Similarly, <code>menstrual_calcaultion</code> cannot take the value of “mc_option2” when we filter <code>cycle_length</code> using “cl_option2”. In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.</p>
+<p><strong>Note</strong>: in this vignette we used the script-oriented <code><a href="../reference/inside.html">inside()</a></code> function for implementing the multiverse. However, we can implement the exact same mulitverse in RMarkdown using the <code>multiverse-code-block</code> for more interactive programming. To implement this using a <code>multiverse-code-block</code>, we can simply place the code passed into the inside function (the second argument) inside a code block of type <code>multiverse</code>, provide it with the appropriate labels and multiverse object, and execute it. See (multiverse-in-rmd) and (branch) for more details and examples.</p>
+<p>As the condition implies, the parameter <code>menstrual_calcaultion</code> (which is for calculating the variable <code>NextMenstrualCalculation</code>) cannot take the value of “mc_option1” when we filter <code>cycle_length</code> using “cl_option3”. Similarly, <code>menstrual_calcaultion</code> cannot take the value of “mc_option2” when we filter <code>cycle_length</code> using “cl_option2”. In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 7 x 6
@@ -263,7 +266,7 @@ df &lt;- df_durante  %&gt;%
 <div id="implementing-conditions-in-a-complete-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#implementing-conditions-in-a-complete-analysis" class="anchor"></a>Implementing conditions in a complete analysis</h2>
-<p>Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let’s update the example from <a href="mucollective.github.io/multiverse/">home page</a> by including these conditions:</p>
+<p>Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let’s update the example from <a href="https://mucollective.github.io/multiverse/">home page</a> by including these conditions:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>```{multiverse default-m-2, inside = M, echo = FALSE}

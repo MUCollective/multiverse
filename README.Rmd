@@ -51,10 +51,10 @@ devtools::install_github("mucollective/multiverse")
 
 For details on how to quickly get started with this package, please refer to this document as well as the following vignettes:
 
-- How alternate analysis paths can be declared in `multiverse` using [branch](articles/branch.html)
-- How conditions can be declared in `multiverse` using [conditions](articles/conditions.html); conditions can be used to state when two steps in a multiverse are incompatible with one another.
-- How `multiverse` can be used in different environments: [using `multiverse` in RScripts and RMarkdown](articles/multiverse-in-rmd.html)
-- How multiverse results can be extracted and visualised: [visualising multiverse results](articles/visualizing-multiverse.html)
+- How alternate analysis paths can be declared in `multiverse` using branch. See `vignette("branch")`.
+- How conditions can be declared in `multiverse` using conditions; conditions can be used to state when two steps in a multiverse are incompatible with one another. See `vignette("conditions")`.
+- How `multiverse` can be used in different environments such as in RScripts and RMarkdown. . See `vignette("multiverse-in-rmd")`.
+- How multiverse results can be extracted and visualised. . See `vignette("visualising-multiverse")`.
 
 We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used:
 
@@ -106,7 +106,7 @@ df_durante %>%
   head(10)
 ```
 
-The original paper looked at the relationship between fertility, relationship status, and religiousity. But there are many reasonable ways to have defined each of these three variables from this dataset, so it is a good candidate for multiverse analysis.
+The original paper looked at the relationship between fertility, relationship status, and religiosity. But there are many reasonable ways to have defined each of these three variables from this dataset, so it is a good candidate for multiverse analysis.
 
 ## A single data set analysis: one possible analysis among many
 
@@ -146,7 +146,7 @@ one_universe %>%
 
 However, there also exists other valid processing options: instead of calculating `NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength`, it can also be calculated as `StartDateofLastPeriod + ReportedCycleLength`. Such alternate processing options can exist for several decisions that a researcher makes in the data processing, analysis and presentation stages. This can thus result in a *multiverse of analysis*, with the one described above representing a single *universe*. 
 
-How would one declare such different anlternate ways of calculation easily and efficiently? Below, we describe how our package allows you to make such declarations with ease.
+How would one declare such different alternate ways of calculation easily and efficiently? Below, we describe how our package allows you to make such declarations with ease.
 
 ## Multiverse specification
 
@@ -185,7 +185,7 @@ NextMenstrualOnset = branch(menstrual_calculation,
 )
 ```
 
-More details on the `branch()` function can be found in the corresponding [vignette](mucollective.github.io/multiverse/articles/branch.html)
+More details on the `branch()` function can be found in the corresponding `vignette(branch)`.
 
 ### Two ways to building a multiverse
 
@@ -236,7 +236,7 @@ df <- df_durante %>%
 ```
 ````
 
-We provide the ability to declare multiverse code block as an *AddIn* in RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
+We provide the ability to declare multiverse code block as an *Addin* in RStudio. Users can click on *Addins* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
 
 ```{r echo = FALSE, out.width = '90%'}
 knitr::include_graphics("vignettes/multiverse-addins.png")
@@ -244,7 +244,7 @@ knitr::include_graphics("vignettes/multiverse-addins.png")
 
 Alternately, users can insert a multiverse We also allow users to create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document. This can be done through the following steps: 
 
-- Tools > AddIns > Browse AddIns… > Keyboard Shortcuts
+- Tools > Addins > Browse Addins… > Keyboard Shortcuts
 - Next, in the filter input field, type *multiverse*. You will see one result with "Insert multiverse code chunk" as the name. 
 - Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).
 - Click "Apply" and exit the dialog box
@@ -280,9 +280,7 @@ inside(M, {
 })
 ```
 
-In the rest of this vignette, we will use **multiverse code blocks** to specify the multiverse. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details.
-
-More details on the **declaring multiverse analyses in RScripts and RMarkdown** can be found in the corresponding [vignette](mucollective.github.io/multiverse/articles/multiverse-in-rmd.html)
+In the rest of this vignette, we will use **multiverse code blocks** to specify the multiverse. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details on **declaring multiverse analyses in RScripts and RMarkdown**
 
 ## The multiverse, with declared code and branches
 Once you add the code to the multiverse, it automatically parses the code to identify the `parameters` and the corresponding `options` that have been defined for each parameter.
@@ -302,7 +300,7 @@ parameters(M)
 expand(M) %>% select(-.code)
 ```
 
-4. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrte this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
+4. `code`, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrite this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.
 
 ```{r, view-code}
 code(M)
@@ -310,7 +308,7 @@ code(M)
 
 ## Running a single analysis from the multiverse
 
-At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable `df`. We can see the result of the default analysis in th multiverse by accessing the data frame from the multiverse object as shown:
+At this point, we have defined three possible processing options (three universes) in our multiverse. Keeping consistency with the interactive programming interface of RStudio, we also execute the default analysis in each step. In the previous step, we stored the results in the variable `df`. We can see the result of the default analysis in the multiverse by accessing the data frame from the multiverse object as shown:
 
 ```{r, generate_code}
 M$df %>% head()
@@ -432,10 +430,10 @@ M %>% execute_universe( universe_parameter_assignment ) %>%
 
 In our example, we are excluding participants based on their *cycle length*. This can be done in two ways: we can use the values of the variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using `ComputedCycleLength` to exclude participants, this means that we should not calculate the variable `NextMenstrualOnset` (date for the onset of the next menstrual cycle) using the `ReportedCycleLength` value. Similarly, if we are using `ReportedCycleLength` to exclude participants it is inconsistent to calculate `NextMenstrualOnset` using `ComputedCycleLength`. In a multiverse analysis, it may occur that the value of one variable might depend on the value of another variable defined previously. 
 
-We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on  `conditions`, in the corresponding [vignette](articles/conditions.html).
+We should be able to express these conditions in the multiverse. We show how this can be done, as well as other details on  `conditions`, in the corresponding `vignette(conditions)`.
 
 ## Modeling
-Steegen et al. define a multiverse which only considers the various data processing parameters, which we have defiend above. To analyse the data, they create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we've using so far.
+Steegen et al. define a multiverse which only considers the various data processing parameters, which we have defined above. To analyse the data, they create 6 models. The first model uses data from example #1. The other five models use the data from example #2, which we've using so far.
 
 ### Model #2: Effect of Fertility and Relationship status on Religiosity
 The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.
@@ -500,7 +498,7 @@ expand(M) %>%
 
 We then take this data frame and plot the results as a confidence interval and point estimate using `ggplot2`. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use `gganimate` to animate through the results of each universe to quickly get an overview of the robustness of the results.
 
-Note: we discuss extracting results from the multiverse and visualizing them in more detail in the vignette [`Extracting and Visualizing the results of a multiverse analysis`](visualizing-multiverse.html)
+Note: we discuss extracting results from the multiverse and visualizing them in more detail in `vignette(visualising-multiverse)`
 
 ```{r, model-1-vis, message = FALSE, eval = FALSE}
 p <- expand(M) %>%
@@ -524,7 +522,7 @@ animate(p, nframes = 210, fps = 2)
 
 
 ## Conclusion
-The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. These analyses can be found in the vignette [`A complete implementation of a multiverse analysis`](complete-multiverse-analysis.html)
+The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. These analyses can be found in `vignette(complete-multiverse-analysis)`
 
 In addition, we also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:
 

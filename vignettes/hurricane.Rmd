@@ -15,8 +15,8 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(modelr)
 library(tidyr)
@@ -25,12 +25,17 @@ library(tidybayes)
 library(multiverse)
 ```
 
+
+```{r, include=FALSE}
+M = multiverse()
+```
+
 ```{r, chunk-setup, include=FALSE}
-opts_knit$set(
+knitr::opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
   fig.height = 4,
-  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
+  eval = FALSE #if (isTRUE(exists("params"))) params$EVAL else FALSE
 )
 ```
 
@@ -87,7 +92,7 @@ fit <- glm(death ~ masfem * dam + masfem * zpressure, data = df, family = "poiss
 
 To implement a multiverse analysis, we first need to create the multiverse object:
 
-```{r}
+```{r, eval = FALSE}
 M <- multiverse()
 ```
 

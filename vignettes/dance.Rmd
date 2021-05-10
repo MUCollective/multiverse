@@ -27,13 +27,14 @@ library(gganimate)
 library(multiverse)
 ```
 
-```{r}
-Sys.getenv("NOT_CRAN")
+
+```{r, include=FALSE}
+M = multiverse()
 ```
 
 
 ```{r, chunk-setup, include=FALSE}
-opts_knit$set(
+opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
   fig.height = 4,

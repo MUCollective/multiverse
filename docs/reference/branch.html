@@ -75,7 +75,7 @@ in the analysis." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -119,9 +119,12 @@ in the analysis." />
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -179,7 +182,7 @@ and the expanded sequence will be included as options for that parameter in the 
 
     <p>For every step in the analysis, there may be more than one analysis option. We use `branch()`
 to declare these different analysis options. Each branch is characterised by a parameter. The first
-argument passed into the branch is the paramter.</p>
+argument passed into the branch is the parameter.</p>
 <p>All the other arguments passed into branch are the different analysis options corresponding to 
 that parameter (that particular step in the analysis process). Naturally, at least two or more 
 options should be declared. Thus, the branch function will provide a warning
@@ -187,22 +190,22 @@ if the total number arguments passed is less than three.</p>
 <p>The `branch()` function does not support nested branches. Thus, we cannot declare a branch within a branch.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='co'># \dontrun{</span>
 <span class='co'># declaring multiple options for a data processing step (calculating a new variable) </span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>fertility</span><span class='op'>)</span>
-<span class='va'>data.fertility</span> <span class='op'>&lt;-</span> <span class='va'>fertility</span>
-
+</div><div class='output co'>#&gt; <span class='warning'>Warning: data set ‘fertility’ not found</span></div><div class='input'><span class='va'>data.fertility</span> <span class='op'>&lt;-</span> <span class='va'>fertility</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'fertility' not found</span></div><div class='input'>
 <span class='va'>data.fertility</span>  <span class='op'>%&gt;%</span>
     <span class='fu'>mutate</span><span class='op'>(</span> ComputedCycleLength <span class='op'>=</span> <span class='va'>StartDateofLastPeriod</span> <span class='op'>-</span> <span class='va'>StartDateofPeriodBeforeLast</span> <span class='op'>)</span> <span class='op'>%&gt;%</span>
     <span class='fu'>mutate</span><span class='op'>(</span> NextMenstrualOnset <span class='op'>=</span> <span class='va'>StartDateNext</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in data.fertility %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod -     StartDateofPeriodBeforeLast) %&gt;% mutate(NextMenstrualOnset = StartDateNext): could not find function "%&gt;%"</span></div><div class='input'>
 <span class='co'># if the variable `NextMenstrualOnset` can be calculated in more than one way</span>
 <span class='co'># we can use branch to declare all the different analysis options as:</span>
 <span class='fu'>branch</span><span class='op'>(</span><span class='va'>menstrual_calculation</span>, 
           <span class='st'>"mc_option1"</span> <span class='op'>~</span> <span class='va'>StartDateofLastPeriod</span> <span class='op'>+</span> <span class='va'>ComputedCycleLength</span>,
           <span class='st'>"mc_option2"</span> <span class='op'>~</span> <span class='va'>StartDateofLastPeriod</span> <span class='op'>+</span> <span class='va'>ReportedCycleLength</span>,
           <span class='st'>"mc_option3"</span> <span class='op'>~</span> <span class='va'>StartDateNext</span><span class='op'>)</span>
-          
+</div><div class='output co'>#&gt; <span class='error'>Error in branch(menstrual_calculation, "mc_option1" ~ StartDateofLastPeriod +     ComputedCycleLength, "mc_option2" ~ StartDateofLastPeriod +     ReportedCycleLength, "mc_option3" ~ StartDateNext): could not find function "branch"</span></div><div class='input'>          
 <span class='co'># this will replace the current analysis within the current syntax.</span>
 <span class='va'>data.fertility</span>  <span class='op'>%&gt;%</span>
     <span class='fu'>mutate</span><span class='op'>(</span> ComputedCycleLength <span class='op'>=</span> <span class='va'>StartDateofLastPeriod</span> <span class='op'>-</span> <span class='va'>StartDateofPeriodBeforeLast</span> <span class='op'>)</span> <span class='op'>%&gt;%</span>
@@ -211,7 +214,7 @@ if the total number arguments passed is less than three.</p>
                                    <span class='st'>"mc_option2"</span> <span class='op'>~</span> <span class='va'>StartDateofLastPeriod</span> <span class='op'>+</span> <span class='va'>ReportedCycleLength</span>,
                                    <span class='st'>"mc_option3"</span> <span class='op'>~</span> <span class='va'>StartDateNext</span><span class='op'>)</span>
     <span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in data.fertility %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod -     StartDateofPeriodBeforeLast) %&gt;% mutate(NextMenstrualOnset = branch(menstrual_calculation,     "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,     "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,     "mc_option3" ~ StartDateNext)): could not find function "%&gt;%"</span></div><div class='input'>
 <span class='co'># Since this is a multiverse analysis, this is only supported within a multiverse object. Hence:</span>
 <span class='fu'><a href='inside.html'>inside</a></span><span class='op'>(</span><span class='va'>M</span>, <span class='op'>{</span>
   <span class='va'>df</span> <span class='op'>&lt;-</span> <span class='va'>data.fertility</span>  <span class='op'>%&gt;%</span>
@@ -222,16 +225,16 @@ if the total number arguments passed is less than three.</p>
                                    <span class='st'>"mc_option3"</span> <span class='op'>~</span> <span class='va'>StartDateNext</span><span class='op'>)</span>
     <span class='op'>)</span>
 <span class='op'>}</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='error'>Error in add_and_parse_code(multiverse, .code, .label): object 'M' not found</span></div><div class='input'>
 <span class='co'># continuous option values for a parameter</span>
 <span class='fu'><a href='inside.html'>inside</a></span><span class='op'>(</span><span class='va'>M</span>, <span class='op'>{</span>
   <span class='fu'>branch</span><span class='op'>(</span><span class='va'>foo</span>, <span class='st'>"option1"</span> <span class='op'>~</span> <span class='fl'>1</span>, .options <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
-  
+</div><div class='output co'>#&gt; <span class='error'>Error in add_and_parse_code(multiverse, .code, .label): object 'M' not found</span></div><div class='input'>  
 <span class='fu'><a href='inside.html'>inside</a></span><span class='op'>(</span><span class='va'>M</span>, <span class='op'>{</span>
   <span class='fu'>branch</span><span class='op'>(</span><span class='va'>foo</span>, <span class='st'>"option1"</span> <span class='op'>~</span> <span class='fl'>1</span>, .options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span>, by <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span><span class='op'>)</span>
-<span class='op'>}</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in add_and_parse_code(multiverse, .code, .label): object 'M' not found</span></div><div class='input'><span class='co'># }</span>
 
 </div></pre>
   </div>

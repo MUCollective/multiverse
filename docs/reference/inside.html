@@ -75,7 +75,7 @@ a wrapper around the function" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -119,9 +119,12 @@ a wrapper around the function" />
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -199,7 +202,7 @@ from where `inside()` is called, and hence not have access to variables which mi
 within the function from where `inside()` is called.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='co'># \dontrun{</span>
 <span class='va'>M.1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='multiverse.html'>multiverse</a></span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='co'># using `inside` to declare multiverse code</span>
@@ -219,14 +222,14 @@ within the function from where `inside()` is called.</p>
 
 <span class='co'># using the assignment operator to declare multiverse code</span>
 <span class='va'>M</span><span class='op'>$</span><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span>, <span class='fl'>50</span>, <span class='fl'>20</span><span class='op'>)</span>
-<span class='va'>M</span><span class='op'>$</span><span class='va'>x.mean</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>data</span>, trim <span class='op'>=</span> <span class='fu'><a href='branch.html'>branch</a></span><span class='op'>(</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in M$data &lt;- rnorm(100, 50, 20): object 'M' not found</span></div><div class='input'><span class='va'>M</span><span class='op'>$</span><span class='va'>x.mean</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>data</span>, trim <span class='op'>=</span> <span class='fu'><a href='branch.html'>branch</a></span><span class='op'>(</span>
     <span class='va'>trim_values</span>,
     <span class='st'>"trim_none"</span> <span class='op'>~</span> <span class='fl'>0</span>,
     <span class='st'>"trim_1pc"</span> <span class='op'>~</span> <span class='fl'>0.05</span>,
     <span class='st'>"trim_5pc"</span> <span class='op'>~</span> <span class='fl'>0.025</span>,
     <span class='st'>"trim_10pc"</span> <span class='op'>~</span> <span class='fl'>0.05</span>
   <span class='op'>)</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='warning'>Warning: argument is not numeric or logical: returning NA</span></div><div class='output co'>#&gt; <span class='error'>Error in M$x.mean &lt;- mean(data, trim = branch(trim_values, "trim_none" ~     0, "trim_1pc" ~ 0.05, "trim_5pc" ~ 0.025, "trim_10pc" ~ 0.05)): object 'M' not found</span></div><div class='input'>
 <span class='co'># declaring multiple options for a data processing step (calculating a new variable)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>durante</span><span class='op'>)</span>
 <span class='va'>df</span> <span class='op'>&lt;-</span> <span class='va'>durante</span>
@@ -240,8 +243,11 @@ within the function from where `inside()` is called.</p>
                                    <span class='st'>"mc_option3"</span> <span class='op'>~</span> <span class='va'>StartDateNext</span>
   <span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span><span class='op'>)</span>
-
-<span class='op'>}</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: error in default universe</span>
+#&gt; <span class='warning'>Error in df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) %&gt;%  : </span>
+#&gt; <span class='warning'>  could not find function "%&gt;%"</span>
+#&gt; <span class='warning'>tryCatchOne -&gt; tryCatchList -&gt; withCallingHandlers -&gt; saveRDS -&gt; do.call - do.call -&gt;  -&gt;  -&gt; pkgdown::build_site -&gt; build_site_local -&gt; build_reference -&gt; purrr::map -&gt; .f -&gt; withCallingHandlers -&gt; data_reference_topic -&gt; run_examples -&gt; highlight_examples -&gt; downlit::evaluate_and_highlight -&gt; evaluate::evaluate -&gt; evaluate_call -&gt; timing_fn -&gt; handle -&gt; try - f, silent = TRUE) -&gt; withCallingHandlers -&gt; withVisible -&gt; eval -&gt; eval -&gt; inside -&gt; execute_universe -&gt; mapply -&gt;  -&gt; execute_code_from_universe -&gt; tryStack -&gt; lapply -&gt; FUN -&gt; FUN -&gt; df %&gt;% mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) %&gt;% </span></div><div class='input'>
+<span class='co'># }</span>
 
 </div></pre>
   </div>

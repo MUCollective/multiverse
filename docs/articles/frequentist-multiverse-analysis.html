@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -76,9 +76,12 @@
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -106,7 +109,7 @@
                         <h4 class="author">Yvonne Jansen, CNRS &amp; Sorbonne Universite</h4>
                         <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
             
-            <h4 class="date">2021-04-22</h4>
+            <h4 class="date">2021-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/frequentist-multiverse-analysis.Rmd"><code>vignettes/frequentist-multiverse-analysis.Rmd</code></a></small>
       <div class="hidden name"><code>frequentist-multiverse-analysis.Rmd</code></div>
@@ -184,7 +187,7 @@
 <a href="#analysis-1-mean-and-confidence-intervals-for-each-condition" class="anchor"></a>Analysis #1: Mean and Confidence Intervals for each condition</h2>
 <p>In this vignette, we are primarily concerned with the variables: <code>duration</code> and <code>modality</code>, as the focus of this analysis is on task completion times.</p>
 <p>The first (default) analysis is a one-sided t-test to estimate the means and 95% confidence intervals of the log-transformed task completion time (duration). Since, task completion times are strictly positive, and may have a long tail, this decision makes sense. However, it may be reasonable to use the untransformed data as well. On the other hand, it is also reasonable to use a bootstrap test instead of a t-test.</p>
-<p>This results in four possible analysis combinations, two each for data transformation (log and untransformed), and model (t-test and BCa bootsrap).</p>
+<p>This results in four possible analysis combinations, two each for data transformation (log and untransformed), and model (t-test and BCa bootstrap).</p>
 <div id="average-task-completion-time-arithmetic-mean-for-each-condition-" class="section level3">
 <h3 class="hasAnchor">
 <a href="#average-task-completion-time-arithmetic-mean-for-each-condition-" class="anchor"></a>Average task completion time (arithmetic mean) for each condition.</h3>
@@ -257,7 +260,7 @@ conf_level &lt;-  branch(conf_level,
 <pre><code>```{multiverse default-m-2, inside = M}
 duration &lt;- do.call(data_transform, list(data.userlogs.raw$duration))
 ```</code></pre>
-<p>Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a <code>data.frame</code>. We strongly recommend sotring the results that you would wish to extract from the multiverse in a <code>data.frame</code> as that would make it much easier for analysing and visualising the results.</p>
+<p>Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a <code>data.frame</code>. We strongly recommend sorting the results that you would wish to extract from the multiverse in a <code>data.frame</code> as that would make it much easier for analysing and visualising the results.</p>
 <pre><code>```{multiverse default-m-3, inside = M}
 modality &lt;- data.userlogs.raw$modalityname
 
@@ -357,7 +360,7 @@ df &lt;- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(co
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">28</span>,  fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <pre><code>## nframes and fps adjusted to match transition</code></pre>
 <p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-8-1.gif"><!-- --></p>
-<p>The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be cnsistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.</p>
+<p>The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be consistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.</p>
 </div>
 <div id="sidebar-using-the-tidyverse-to-extract-and-visualize-the-results" class="section level3">
 <h3 class="hasAnchor">
@@ -465,7 +468,7 @@ df.diffs
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">28</span>,  fps <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
 <pre><code>## nframes and fps adjusted to match transition</code></pre>
 <p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-13-1.gif"><!-- --></p>
-<p>Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 incidates a statistically significant difference at the α=.05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.</p>
+<p>Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 indicates a statistically significant difference at the α = .05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.</p>
 </div>
 <div id="conclusion" class="section level2">
 <h2 class="hasAnchor">

@@ -8,7 +8,7 @@ An easier way to interact with a multiverse object by using a custom code block
 }
 \details{
 This is a custom code block that allows the users to interface directly with a created multiverse object. 
-This allows users to implement analysis in RMarkdown without using auxillary functions such as [inside]. However,
+This allows users to implement analysis in RMarkdown without using auxiliary functions such as [inside]. However,
 [inside] is still required to define and execute multiverse analyses in a RScript using this package. 
 See examples for more details.
 

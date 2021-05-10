@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -76,9 +76,12 @@
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -105,7 +108,7 @@
                         <h4 class="author">Pierre Dragicevic, Inria</h4>
                         <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
             
-            <h4 class="date">2021-04-22</h4>
+            <h4 class="date">2021-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/dance.Rmd"><code>vignettes/dance.Rmd</code></a></small>
       <div class="hidden name"><code>dance.Rmd</code></div>
@@ -252,7 +255,7 @@
 <div id="implementation-in-multiverse" class="section level2">
 <h2 class="hasAnchor">
 <a href="#implementation-in-multiverse" class="anchor"></a>Implementation in multiverse</h2>
-<p>A multiverse implementation in this case might involve resampling to generate alternative dataset using a the common non-paramteric boostrapping approach, as shown by Dragicevic in <a href="https://explorablemultiverse.github.io/examples/dance/">Adding Inferential Information to plots using Resampling and Animations</a>. This technique enables providing ``inferential information to arbitrary statistical plots based on resampling’’ as in many cases “the bootstrap distribution provides a good approximation of the sampling distribution”.</p>
+<p>A multiverse implementation in this case might involve resampling to generate alternative dataset using a the common non-parameteric bootstrapping approach, as shown by Dragicevic in <a href="https://explorablemultiverse.github.io/examples/dance/">Adding Inferential Information to plots using Resampling and Animations</a>. This technique enables providing ``inferential information to arbitrary statistical plots based on resampling’’ as in many cases “the bootstrap distribution provides a good approximation of the sampling distribution”.</p>
 <div id="note" class="section level4">
 <h4 class="hasAnchor">
 <a href="#note" class="anchor"></a>Note</h4>
@@ -387,7 +390,7 @@
 <p>The following figure shows the regression lines for all conditions.</p>
 <blockquote>
 <p>The lower a line the better the performance. Some differences are large and extremely consistent across bootstrap datasets: for example, the inferiority of line-positive over the two other conditions on the first plot, or the inferiority of parallel-coordinates-positive on the last plot. Other differences are less clear but actually hold in a vast majority of bootstrap datasets: for example, the overall superiority of radar-positive in the second plot and of stackedbar-negative in the third plot. In contrast, many other comparisons are inconclusive. All these informal inferences agree with formal null hypothesis significance tests reported in the original paper. Although formal tests inspire more confidence to many readers, interpreting them together with effect size figures requires constant back and forth between figures and p-values provided in the text or in a table. Doing so is often quite tedious and can easily cause impatient readers to give up and be content with a superficial examination of the results.</p>
-<p>It is possible, and common practice, to display a 95% confidence interval around a regression line by plotting a confidence limit curve on each side of the line. Such visual representations can greatly facilitate inference but can also easily produce cluttered plots. Although it may have been possible to add 95% confidence intervals to follwoing figure, doing so would have likely rendered it illegible.</p>
+<p>It is possible, and common practice, to display a 95% confidence interval around a regression line by plotting a confidence limit curve on each side of the line. Such visual representations can greatly facilitate inference but can also easily produce cluttered plots. Although it may have been possible to add 95% confidence intervals to following figure, doing so would have likely rendered it illegible.</p>
 </blockquote>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p.fitted_lines</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -403,7 +406,7 @@
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p.fitted_lines</span>, nframes <span class="op">=</span> <span class="va">n</span>, fps <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">840</span>, height <span class="op">=</span> <span class="fl">480</span><span class="op">)</span></code></pre></div>
 <p><img src="dance_files/figure-html/vis-regression-lines-1.gif"><!-- --></p>
 <blockquote>
-<p>The figure is consistent with Harrison et al.’s main findings: ”using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots”. The statistical dance gives credence to these conclusions, while at the same time providing a faithful illustration of the uncertainty behind the estimates. The reader is free to linger on the figure and go beyond the authors’s own summary of findings by examining other comparisons and drawing their own conclusions. All necessary information on effect sizes and inferential statistics is seamlessly combined into this single animated figure, and it would take pages and pages of text to fully describe it.</p>
+<p>The figure is consistent with Harrison et al.’s main findings: ”using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots”. The statistical dance gives credence to these conclusions, while at the same time providing a faithful illustration of the uncertainty behind the estimates. The reader is free to linger on the figure and go beyond the authors’ own summary of findings by examining other comparisons and drawing their own conclusions. All necessary information on effect sizes and inferential statistics is seamlessly combined into this single animated figure, and it would take pages and pages of text to fully describe it.</p>
 </blockquote>
 </div>
 </div>

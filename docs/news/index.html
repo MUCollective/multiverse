@@ -6,13 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Retrieve or change the default analysis of the multiverse — default_parameter_assignment • multiverse</title>
+<title>Changelog • multiverse</title>
 
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumnens/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumen/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
@@ -38,13 +38,10 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
-<meta property="og:title" content="Retrieve or change the default analysis of the multiverse — default_parameter_assignment" />
-<meta property="og:description" content="Functions which allow the user to retrieve or update the default assignments for
-each parameter defined in the multiverse. Retrieving the default analysis allows the users
-to see what the default analysis would look like (what values each parameter would take). Updating
-the default analysis allows the users to specify a different set of parameter assignments which will
-be executed." />
+<meta property="og:title" content="Changelog" />
 
 
 
@@ -63,7 +60,7 @@ be executed." />
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-topic">
+    <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -76,7 +73,7 @@ be executed." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -84,7 +81,7 @@ be executed." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -102,31 +99,39 @@ be executed." />
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/calculate-mean-multiverse.html">The most basic multiverse example: calculating the mean</a>
-    </li>
-    <li>
-      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
-    </li>
-    <li>
       <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multidy</a>
+      <a href="../articles/dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
     </li>
     <li>
-      <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+      <a href="../articles/durante-multiverse-analysis.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
     </li>
     <li>
-      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown</a>
+      <a href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
     </li>
     <li>
-      <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    </li>
+    <li>
+      <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
+    </li>
+    <li>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/MUCollective/multiverse/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -140,65 +145,28 @@ be executed." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Retrieve or change the default analysis of the multiverse</h1>
-    
-    <div class="hidden name"><code>default_parameter_assignment.Rd</code></div>
+      <h1 data-toc-skip>Changelog <small></small></h1>
+      <small>Source: <a href='https://github.com/MUCollective/multiverse/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="ref-description">
-    <p>Functions which allow the user to retrieve or update the default assignments for
-each parameter defined in the multiverse. Retrieving the default analysis allows the users
-to see what the default analysis would look like (what values each parameter would take). Updating
-the default analysis allows the users to specify a different set of parameter assignments which will
-be executed.</p>
-    </div>
-
-    <pre class="usage"><span class='fu'>default_parameter_assignment</span>(<span class='no'>multiverse</span>)
-
-<span class='co'># S3 method for multiverse</span>
-<span class='fu'>default_parameter_assignment</span>(<span class='no'>multiverse</span>)
-
-<span class='co'># S3 method for Multiverse</span>
-<span class='fu'>default_parameter_assignment</span>(<span class='no'>multiverse</span>)
-
-<span class='fu'>default_parameter_assignment</span>(<span class='no'>multiverse</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
-
-<span class='co'># S3 method for multiverse</span>
-<span class='fu'>default_parameter_assignment</span>(<span class='no'>multiverse</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span></pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>multiverse</th>
-      <td><p>The multiverse object</p></td>
-    </tr>
-    <tr>
-      <th>value</th>
-      <td><p>a named list or integer. The named list should consist of all the <em>parameters</em>, and an <em>option name</em> assigned to each.
-The integer indicates the corresponding position in the multiverse table which will be used as the default assignment.</p></td>
-    </tr>
-    </table>
-
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
   </div>
+
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
+
 </div>
 
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://abhsarma.github.io'>Abhraneel Sarma</a>, <a href='http://www.mjskay.com'>Matthew Kay</a>.</p>
+  <p>Developed by <a href='http://abhsarma.github.io'>Abhraneel Sarma</a>, Michael Moon, <a href='http://www.mjskay.com'>Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

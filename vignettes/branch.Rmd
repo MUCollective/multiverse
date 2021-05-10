@@ -5,6 +5,8 @@ date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{A discussion on branches in the multiverse}
@@ -20,11 +22,16 @@ library(ggplot2)
 library(multiverse)
 ```
 
+```{r, include=FALSE}
+M = multiverse()
+```
+
 ```{r, chunk-setup, include=FALSE}
-opts_knit$set(
+opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
-  fig.height = 4
+  fig.height = 4,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
 )
 ```
 

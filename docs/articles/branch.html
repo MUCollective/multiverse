@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -76,9 +76,12 @@
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -104,7 +107,7 @@
       <h1 data-toc-skip>A discussion on branches in the multiverse</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-04-22</h4>
+            <h4 class="date">2021-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/branch.Rmd"><code>vignettes/branch.Rmd</code></a></small>
       <div class="hidden name"><code>branch.Rmd</code></div>
@@ -125,7 +128,7 @@
 <a href="#branches-in-a-multiverse-analysis" class="anchor"></a>Branches in a multiverse analysis</h2>
 <p>In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations. Thus, a multiverse analysis consists of different paths or <strong>branches</strong> of analysis for the same problem.</p>
 <p>For an example of how a branch might arise during analysis, let’s say that you have a variable, <span class="math inline">\(x\)</span>, which can assume any value between 1 and 60. You want to discretise this variable into two ordinal categories — <em>high</em> (if x &gt;= 30) and <em>low</em> (if x &lt; 30). However, another researcher might argue for discretising this variable into three ordinal categories — <em>high</em> (if x &gt;= 40), <em>medium</em> (if 20 &lt;= x &lt; 40), and <em>low</em> (if x &lt; 20).</p>
-<p>An important aspect of this package is to make declaring such <strong>branches</strong> in the analysis more natural and convenient. Each <strong>branch</strong> is identified by a parameter, which can take two or more options. Thus, the different options are different branchings within the multiverse. A <strong>branch</strong> may be defined for:</p>
+<p>An important aspect of this package is to make declaring such <strong>branches</strong> in the analysis more natural and convenient. Each <strong>branch</strong> is identified by a parameter, which can take two or more options. Thus, the different options are different branches within the multiverse. A <strong>branch</strong> may be defined for:</p>
 <ul>
 <li><p><strong>Data substitution parameters</strong> which offer to switch between different raw datasets, either collected or simulated.</p></li>
 <li><p><strong>Data processing parameters</strong> which offer to process the same raw data in different ways before it is analyzed.</p></li>
@@ -217,7 +220,7 @@ df &lt;- data.userlogs.raw %&gt;%
 <pre><code>```{multiverse default-m-3, inside = M}
 duration &lt;- branch(data_trans,
         "log-transformed" ~ log,
-        "untransformed" ~ identity
+        "un-transformed" ~ identity
     )(data.userlogs.raw$duration)
 ```</code></pre>
 <p>Then we execute the multiverse and inspect the results:</p>
@@ -230,14 +233,14 @@ duration &lt;- branch(data_trans,
 ##   .universe data_trans   .parameter_assign… .code     .results transformed_dura…
 ##       &lt;int&gt; &lt;chr&gt;        &lt;list&gt;             &lt;list&gt;    &lt;list&gt;   &lt;list&gt;           
 ## 1         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;    &lt;dbl [512]&gt;      
-## 2         2 untransform… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;    &lt;dbl [512]&gt;</code></pre>
-<p>As you can see, this creates, in each universe within the multiverse, a vector named <code>duration</code> which is either untransformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire <code><a href="../reference/branch.html">branch(...)</a></code> gets replaced with either <code><a href="https://rdrr.io/r/base/Log.html">log()</a></code> or <code><a href="https://rdrr.io/r/base/identity.html">identity()</a></code> within a given universe.</p>
+## 2         2 un-transfor… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;    &lt;dbl [512]&gt;</code></pre>
+<p>As you can see, this creates, in each universe within the multiverse, a vector named <code>duration</code> which is either un-transformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire <code><a href="../reference/branch.html">branch(...)</a></code> gets replaced with either <code><a href="https://rdrr.io/r/base/Log.html">log()</a></code> or <code><a href="https://rdrr.io/r/base/identity.html">identity()</a></code> within a given universe.</p>
 <p>A more readable pattern might be:</p>
 <p>M = multiverse()</p>
 <pre><code>```{multiverse default-m-4, inside = M}
 duration_transform &lt;- branch(data_trans,
     "log-transformed" ~ log,
-    "untransformed" ~ identity
+    "un-transformed" ~ identity
   )
 
 duration &lt;- duration_transform(data.userlogs.raw$duration)
@@ -263,7 +266,7 @@ duration &lt;- duration_transform(data.userlogs.raw$duration)
 <div id="example-4-parameters-can-be-reused" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-4-parameters-can-be-reused" class="anchor"></a>Example 4: Parameters can be reused</h2>
-<p>If you want to use a parameter multiple times, or just want to define it upfront, you can assign it to a variable and use the variable in your code. For example, in the next example, we declare <em>three different branches</em> for data transformation, data modelling and data presentation respectively. We also define any necessary functions along the way.</p>
+<p>If you want to use a parameter multiple times, or just want to define it upfront, you can assign it to a variable and use the variable in your code. For example, in the next example, we declare <em>three different branches</em> for data transformation, data modeling and data presentation respectively. We also define any necessary functions along the way.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span>
@@ -283,7 +286,7 @@ duration &lt;- duration_transform(data.userlogs.raw$duration)
 <pre><code>```{multiverse default-m-5, inside = M}
 data_trans &lt;- branch(data_trans,
       "log-transformed" ~ log,
-      "untransformed" ~ identity
+      "un-transformed" ~ identity
     )
 
   fit &lt;- branch(bootstrap,
@@ -307,7 +310,7 @@ data_trans &lt;- branch(data_trans,
     select(-data) %&gt;%
     unnest( cols = c(fit) )
 ```</code></pre>
-<p>We then write the anaysis and use those variables to indicate branches in our analysis within the multiverse.</p>
+<p>We then write the analysis and use those variables to indicate branches in our analysis within the multiverse.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
 <p>To see the results of using branches, we plot a part of this multiverse. We see the different transformations (no transformations in the right column and log-transform in the left column). Each row shows the different data presentation branches by presenting different confidence levels.</p>
@@ -339,7 +342,7 @@ data_trans &lt;- branch(data_trans,
 <h2 class="hasAnchor">
 <a href="#example-5-declaring-continuous-variables-in-branch" class="anchor"></a>Example 5: Declaring continuous variables in <code>branch</code>
 </h2>
-<p>So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not oo high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.</p>
+<p>So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not too high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>```{multiverse default-m-6, inside = M}
@@ -367,7 +370,7 @@ intervals &lt;- broom::tidy(m, conf.int = TRUE)
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span> breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span>, by <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Universe (i.e. the seed parameter)"</span>, y <span class="op">=</span> <span class="st">"Model Parameter Values"</span>, title <span class="op">=</span> <span class="st">"Estimates with 95% confidence intervals"</span><span class="op">)</span></code></pre></div>
 <p><img src="branch_files/figure-html/unnamed-chunk-15-1.png" width="768"></p>
-<p><strong>Note</strong>: in this vignette we used the script-oriented <code><a href="../reference/inside.html">inside()</a></code> function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the <code>multiverse-code-block</code> for more interactive programming. To implement this using a <code>multiverse-code-block</code>, we can simply place the code passed into the inside function (the second argument) inside a code block of type <code>multiverse</code>, provide it with the appropriate labels and multiverse object, and execute it. See (multiverse-in-rmd) and (branch) for more details and examples.</p>
+<p><strong>Note</strong>: in this vignette we used the script-oriented <code><a href="../reference/inside.html">inside()</a></code> function for implementing the multiverse. However, we can implement the exact same multiverse in RMarkdown using the <code>multiverse-code-block</code> for more interactive programming. To implement this using a <code>multiverse-code-block</code>, we can simply place the code passed into the inside function (the second argument) inside a code block of type <code>multiverse</code>, provide it with the appropriate labels and multiverse object, and execute it. See (multiverse-in-rmd) and (branch) for more details and examples.</p>
 </div>
   </div>
 

@@ -20,7 +20,7 @@ in the analysis.
 \details{
 For every step in the analysis, there may be more than one analysis option. We use `branch()`
 to declare these different analysis options. Each branch is characterised by a parameter. The first
-argument passed into the branch is the paramter. 
+argument passed into the branch is the parameter. 
 
 All the other arguments passed into branch are the different analysis options corresponding to 
 that parameter (that particular step in the analysis process). Naturally, at least two or more 

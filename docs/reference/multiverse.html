@@ -76,7 +76,7 @@ and `FALSE` for all other objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -120,9 +120,12 @@ and `FALSE` for all other objects." />
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualising-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -195,7 +198,7 @@ contains the following slots:</p><ul>
 <li><p>current_parameter_assignment: This slot is a list which contains a single option
   assigned for each parameter defined in the `code`.</p></li>
 <li><p>multiverse_table: This slot contains a table (in implementation, a tibble which is a
-  rectangular data structure) where each column of the table will be a unqiue parameter.
+  rectangular data structure) where each column of the table will be a unique parameter.
   The table will contains every possible combination of options for each parameter — the number of rows
   corresponds to the number of different analysis paths. The table also contains, for each row, a list of
   option assignments for each parameter (`parameter_assignment` column), code for executing that particular
@@ -204,9 +207,9 @@ contains the following slots:</p><ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='co'># \dontrun{</span>
 <span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'>multiverse</span><span class='op'>(</span><span class='op'>)</span>
-<span class='op'>}</span>
+<span class='co'># }</span>
 
 </div></pre>
   </div>
