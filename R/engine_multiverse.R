@@ -78,6 +78,8 @@ multiverse_block_code <- function(.multiverse, .label, .code) {
 }
 
 multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
+  # if the code chunk is not supposed to be evaluated
+  # skip all these steps while knitting.
   if (knit && options$eval) {
     .multiverse = options$inside
     # execute_multiverse(.multiverse)
