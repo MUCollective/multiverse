@@ -109,7 +109,7 @@
                         <h4 class="author">Yvonne Jansen, CNRS &amp; Sorbonne Universite</h4>
                         <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
             
-            <h4 class="date">2021-04-24</h4>
+            <h4 class="date">2021-05-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/frequentist-multiverse-analysis.Rmd"><code>vignettes/frequentist-multiverse-analysis.Rmd</code></a></small>
       <div class="hidden name"><code>frequentist-multiverse-analysis.Rmd</code></div>
@@ -119,8 +119,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
@@ -359,7 +358,7 @@ df &lt;- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(co
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">28</span>,  fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <pre><code>## nframes and fps adjusted to match transition</code></pre>
-<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-8-1.gif"><!-- --></p>
+<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-9-1.gif"><!-- --></p>
 <p>The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be consistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.</p>
 </div>
 <div id="sidebar-using-the-tidyverse-to-extract-and-visualize-the-results" class="section level3">
@@ -467,7 +466,7 @@ df.diffs
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">28</span>,  fps <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
 <pre><code>## nframes and fps adjusted to match transition</code></pre>
-<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-13-1.gif"><!-- --></p>
+<p><img src="frequentist-multiverse-analysis_files/figure-html/unnamed-chunk-14-1.gif"><!-- --></p>
 <p>Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 indicates a statistically significant difference at the α = .05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.</p>
 </div>
 <div id="conclusion" class="section level2">

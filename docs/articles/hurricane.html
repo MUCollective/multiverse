@@ -108,7 +108,7 @@
                         <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
                         <h4 class="author">Alex Kale, University of Washington</h4>
             
-            <h4 class="date">2021-04-24</h4>
+            <h4 class="date">2021-05-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/hurricane.Rmd"><code>vignettes/hurricane.Rmd</code></a></small>
       <div class="hidden name"><code>hurricane.Rmd</code></div>
@@ -177,6 +177,7 @@
 <h4 class="hasAnchor">
 <a href="#note" class="anchor"></a>Note</h4>
 <p>In this vignette, we make use of <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code chunks</em></a>, a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (<code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details. Users could instead make use of the  function which is more suited for a script-style implementation. Please refer to the vignettes (<code>vignette("complete-multiverse-analysis")</code> and <code>vignette("basic-multiverse")</code>) for more details.</p>
+<p><text>:11:0: unexpected end of input 9: “most_extreme_two_damage” ~ ! (name %in% c(“Sandy”, “Andrew”)), 10: “most_extreme_three_damage” ~ ! (name %in% c(“Sandy”, “Andrew”, “Donna”)) ^</text></p>
 <pre><code>```{multiverse default-m-1, inside = M}
 df &lt;- hurricane_data %&gt;%
     filter(branch(death_outliers, 
@@ -199,6 +200,7 @@ df &lt;- hurricane_data %&gt;%
 <p>The next decision involves identifying the appropriate dependent variable for the primary effect — how do we operationalise femininity of the name of a hurricane. Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.</p>
 <p>The other decision involved is whether or not to transform <code>damages</code>, another independent variable. damages follow a long tailed, positive only valued distribution.</p>
 <p>We implement these two decisions in our multiverse as follows:</p>
+<p><text>:10:0: unexpected end of input 8: “log_transform” ~ log(dam) 9: ) ^</text></p>
 <pre><code>```{multiverse label = default-m-2, inside = M}
 df &lt;- df %&gt;%
     mutate(
@@ -217,18 +219,9 @@ df &lt;- df %&gt;%
 <h3 class="hasAnchor">
 <a href="#declaring-alternative-specifications-of-regression-model" class="anchor"></a>Declaring alternative specifications of regression model</h3>
 <p>The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between <code>femininity</code> and <code>damage</code>. This results in the following specification:</p>
+<p><text>:11:83: unexpected ‘,’ 10: “all_no_interaction” %when% (main_interaction == “no”) ~ z3 11: ) + branch(covariates, “1” ~ NULL, “2” ~ year:damage, “3” ~ post:damage), ^</text></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 7 x 5
-##   term              estimate std.error statistic  p.value
-##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)        -4.05     0.463     -8.75   2.11e-18
-## 2 femininity          0.0289   0.537      0.0538 9.57e- 1
-## 3 damage              0.851    0.0536    15.9    7.97e-57
-## 4 z3                 -0.745    0.105     -7.10   1.29e-12
-## 5 femininity:damage  -0.0338   0.0603    -0.560  5.75e- 1
-## 6 femininity:z3       0.852    0.109      7.79   6.87e-15
-## 7 damage:post        -0.0687   0.00601  -11.4    3.33e-30</code></pre>
 <pre><code>```{multiverse label = default-m-3, inside = M}
 fit &lt;- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
           branch(main_interaction,
@@ -248,6 +241,7 @@ fit &lt;- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
 broom::tidy(fit)
 ```</code></pre>
 <p>Once we have implemented the analysis model in our multiverse, the corresponding step will be applied to each analysis path. To interpret the results, we first estimate a prediction interval corresponding to each analysis path.</p>
+<p><text>:20:0: unexpected end of input 18: group_by(female) %&gt;% 19: summarise(mean_deaths = mean(expected_deaths), .groups = “drop_last”) %&gt;% ^</text></p>
 <pre><code>```{multiverse label = default-m-4, inside = M}
 pred &lt;- predict(fit, se.fit = TRUE, type = "response")
 
@@ -276,7 +270,7 @@ expectation &lt;- disagg_fit %&gt;%
 <h3 class="hasAnchor">
 <a href="#execution-and-results" class="anchor"></a>Execution and Results</h3>
 <p>After we’ve specified our multiverse analysis, we would like to execute the entire multiverse, and view the results. Below, we plot the mean difference point estimate for expected deaths when a hurricane has a more feminine name, for each unique analysis path. We find that based on these arbitrary specifications of the multiverse, there is perhaps no relation between <code>femininity</code> of the name of a hurricane and the number of deaths that it causes, as some models predict a lower number of deaths, and some predict much higher.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
 
 <span class="va">mean_deaths</span> <span class="op">&lt;-</span> <span class="fu">multiverse</span><span class="fu">::</span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -290,7 +284,6 @@ expectation &lt;- disagg_fit %&gt;%
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"universe"</span>, y <span class="op">=</span> <span class="st">"Mean difference in expected deaths"</span><span class="op">)</span></code></pre></div>
-<p><img src="hurricane_files/figure-html/unnamed-chunk-5-1.png" width="768"></p>
 </div>
 </div>
   </div>

@@ -107,7 +107,7 @@
       <h1 data-toc-skip>Extracting and Visualising the results of a multiverse analysis</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-04-24</h4>
+            <h4 class="date">2021-05-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/visualising-multiverse.Rmd"><code>vignettes/visualising-multiverse.Rmd</code></a></small>
       <div class="hidden name"><code>visualising-multiverse.Rmd</code></div>
@@ -121,8 +121,7 @@
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualise the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualising them can be difficult. We will show how our package can be used to create the visualisations by Steegen et al. in <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637">Increasing Transparency Through a Multiverse Analysis</a> and Simonsohn et al. in <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998">Specification curve: Descriptive and inferential statistics on all reasonable specifications</a>, as well as using other uncertainty visualisation approaches.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
@@ -249,22 +248,6 @@
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> summary <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"summary_RelComp"</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> <span class="va">summary</span> <span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 840 x 16
-##    .universe cycle_length certainty  menstrual_calcula… fertile relationship_st…
-##        &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;              &lt;chr&gt;   &lt;chr&gt;           
-##  1         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
-##  2         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
-##  3         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
-##  4         1 cl_option1   cer_optio… mc_option1         fer_op… rs_option1      
-##  5         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
-##  6         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
-##  7         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
-##  8         2 cl_option1   cer_optio… mc_option1         fer_op… rs_option2      
-##  9         3 cl_option1   cer_optio… mc_option1         fer_op… rs_option3      
-## 10         3 cl_option1   cer_optio… mc_option1         fer_op… rs_option3      
-## # … with 830 more rows, and 10 more variables: .parameter_assignment &lt;list&gt;,
-## #   .code &lt;list&gt;, .results &lt;list&gt;, term &lt;chr&gt;, estimate &lt;dbl&gt;, std.error &lt;dbl&gt;,
-## #   statistic &lt;dbl&gt;, p.value &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</code></pre>
 <p>We can then use various R packages to visualise the results. Below, we show some standard visualisations.</p>
 </div>
 </div>
@@ -275,7 +258,7 @@
 <h3 class="hasAnchor">
 <a href="#animating-the-coefficients-of-the-model-from-each-multiverse" class="anchor"></a>Animating the coefficients of the model from each multiverse</h3>
 <p>One way to visualise over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in <a href="https://dl.acm.org/doi/10.1145/3290605.3300295">Increasing the Transparency of Research Papers with Explorable Multiverse Analyses</a>. This approach allows us to quickly see the robustness of a result — if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> summary_RelComp <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"summary_RelComp"</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary_RelComp</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -291,14 +274,13 @@
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="visualising-multiverse_files/figure-html/unnamed-chunk-1-1.gif"><!-- --></p>
 </div>
 <div id="histogram-of-p-values-of-the-fertility-relationship-status-interaction" class="section level3">
 <h3 class="hasAnchor">
 <a href="#histogram-of-p-values-of-the-fertility-relationship-status-interaction" class="anchor"></a>Histogram of p-values of the Fertility × Relationship status interaction</h3>
 <p>Another approach would be to summarise the results. Steegen et al. which depicts a histogram of p values of the Fertility × Relationship status interaction on religiosity for the multiverse of 210 data sets in Study 2 (<code>summary_RelComp</code>), on fiscal and social political attitudes for the multiverse of 210 data sets in Study 2 (<code>summary_FiscConsComp</code> and <code>summary_SocConsComp</code>), and on voting and donation preferences for the multiverse of 210 data sets in Study 2 (<code>summary_Donate</code> and <code>summary_Vote</code>). The dashed line indicates p = 0.05.</p>
 <p>Below we show how to re-create the visualisation.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> 
@@ -316,13 +298,12 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">p.value</span><span class="op">)</span>, bins <span class="op">=</span> <span class="fl">100</span>, fill <span class="op">=</span> <span class="st">"#ffffff"</span>, color <span class="op">=</span> <span class="st">"#333333"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0.05</span>, color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">analysis</span>, scales <span class="op">=</span> <span class="st">"free"</span>, nrow <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
-<p><img src="visualising-multiverse_files/figure-html/unnamed-chunk-2-1.png" width="864"></p>
 </div>
 <div id="specification-curve" class="section level3">
 <h3 class="hasAnchor">
 <a href="#specification-curve" class="anchor"></a>Specification curve</h3>
 <p>Simonsohn et al. propose visualising results from the multiverse as a <code>specification curve</code>, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data.spec_curve</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> summary_RelComp <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"summary_RelComp"</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary_RelComp</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -356,9 +337,6 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">"coefficient of\ninteraction term:\nfertility x relationship"</span><span class="op">)</span>
   
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">p2</span>, <span class="va">p1</span>, axis <span class="op">=</span> <span class="st">"bltr"</span>,  align <span class="op">=</span> <span class="st">"v"</span>, ncol <span class="op">=</span> <span class="fl">1</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="figure">
-<img src="../man/figures/spec-curve-steegen-analysis.png" alt=""><p class="caption">Specification curve visualisation</p>
-</div>
 </div>
 </div>
   </div>

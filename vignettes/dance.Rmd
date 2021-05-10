@@ -175,7 +175,7 @@ df.corr_fitted %>%
 
 ## Implementation in multiverse
 
-A multiverse implementation in this case might involve resampling to generate alternative dataset using a the common non-parameteric bootstrapping approach, as shown by Dragicevic in [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/). This technique enables providing ``inferential information to arbitrary statistical plots based on resampling'' as in many cases "the bootstrap distribution provides a good approximation of the sampling distribution".
+A multiverse implementation in this case might involve resampling to generate alternative dataset using a the common non-parametric bootstrapping approach, as shown by Dragicevic in [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/). This technique enables providing ``inferential information to arbitrary statistical plots based on resampling'' as in many cases "the bootstrap distribution provides a good approximation of the sampling distribution".
 
 
 #### Note 

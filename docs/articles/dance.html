@@ -108,7 +108,7 @@
                         <h4 class="author">Pierre Dragicevic, Inria</h4>
                         <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
             
-            <h4 class="date">2021-04-24</h4>
+            <h4 class="date">2021-05-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/dance.Rmd"><code>vignettes/dance.Rmd</code></a></small>
       <div class="hidden name"><code>dance.Rmd</code></div>
@@ -155,8 +155,7 @@
     jnd_limit <span class="op">=</span> <span class="fl">3</span> <span class="op">*</span> <span class="va">mads</span>
   <span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by 'vis', 'rbase', 'approach'. You can override using the `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df.error_bar</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">jnd</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">jnd</span> <span class="op">-</span> <span class="va">median</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">jnd_limit</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -166,12 +165,11 @@
     sd <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dbl</a></span><span class="op">(</span><span class="va">jnd</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
     mean <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dbl</a></span><span class="op">(</span><span class="va">jnd</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by 'vis', 'rbase', 'approach'. You can override using the `.groups` argument.</code></pre>
 <div id="just-noticeable-differences-jnds" class="section level3">
 <h3 class="hasAnchor">
 <a href="#just-noticeable-differences-jnds" class="anchor"></a>Just Noticeable Differences (JNDs)</h3>
 <p>The following figure shows the mean JND for each of the 216 conditions, each displayed as a dot. We show JND as a function of correlation <em>r</em> for both above (light points) and below (dark points) approaches.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df.error_bar</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_errorbar</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbase</span>, ymin <span class="op">=</span> <span class="op">(</span><span class="va">mean</span> <span class="op">-</span> <span class="va">sd</span><span class="op">)</span>, ymax <span class="op">=</span> <span class="va">mean</span> <span class="op">+</span> <span class="va">sd</span>, color <span class="op">=</span> <span class="va">approach</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">0.025</span><span class="op">)</span> <span class="op">+</span>
@@ -179,7 +177,6 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span> yintercept <span class="op">=</span> <span class="fl">0.45</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_abline</a></span><span class="op">(</span> slope <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, intercept <span class="op">=</span> <span class="fl">1</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="va">vis</span> <span class="op">~</span> <span class="va">sign</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
-<p><img src="dance_files/figure-html/unnamed-chunk-1-1.png" width="768"></p>
 </div>
 <div id="regression-results" class="section level3">
 <h3 class="hasAnchor">
@@ -188,7 +185,7 @@
 <ul>
 <li>filter out outlier conditions (the <em>donut</em>, <em>stacked area</em>, <em>stacked line</em> and <em>stacked bar</em> chart conditions with positive correlation; the <em>radar</em> and <em>line</em> chart conditions with negative correlation)</li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">filter_outliers</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">median</span>, <span class="va">limit</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">median</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">limit</span><span class="op">]</span> <span class="op">)</span>
 <span class="op">}</span>
@@ -208,17 +205,16 @@
 <li>next we calculate rbase adjustment coefficient (see original paper for more details on this)</li>
 <li>fit the linear model using jnd as the outcome variable, and (computed) rbase metric as the predictor</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rbase_adj_coef</span> <span class="op">&lt;-</span> <span class="va">df.corr</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span> <span class="va">vis</span>, <span class="va">sign</span>, <span class="va">rbase</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span> jnd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">jnd</span><span class="op">)</span>, mean_jnd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">mean_jnd</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>, approach <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">approach</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> rbase_adj_coef <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2_dbl</a></span><span class="op">(</span><span class="va">mean_jnd</span>, <span class="va">n</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.x</span> <span class="op">*</span> <span class="va">.y</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.y</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> rbase_adj_coef <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2_dbl</a></span><span class="op">(</span><span class="va">mean_jnd</span>, <span class="va">n</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.x</span> <span class="op">*</span> <span class="va">.y</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.y</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">jnd</span>, <span class="va">mean_jnd</span>, <span class="va">approach</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">magrittr</span><span class="fu">::</span><span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">extract2</a></span><span class="op">(</span><span class="st">"rbase_adj_coef"</span><span class="op">)</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by 'vis', 'sign'. You can override using the `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df.corr_fitted</span> <span class="op">&lt;-</span> <span class="va">df.corr</span> <span class="op">%&gt;%</span>
+  <span class="fu">magrittr</span><span class="fu">::</span><span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">extract2</a></span><span class="op">(</span><span class="st">"rbase_adj_coef"</span><span class="op">)</span>
+
+<span class="va">df.corr_fitted</span> <span class="op">&lt;-</span> <span class="va">df.corr</span> <span class="op">%&gt;%</span>
   <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_column.html">add_column</a></span><span class="op">(</span> rbase_adj_coef <span class="op">=</span> <span class="va">rbase_adj_coef</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> 
     multiplier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">approach</span> <span class="op">==</span> <span class="st">"above"</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,
@@ -242,26 +238,25 @@
 <li>Finally we plot the figure</li>
 </ul>
 <p>These results are consistent with the paper’s main findings: <em>using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots</em></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df.corr_fitted</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span> x<span class="op">=</span><span class="va">x</span>, y<span class="op">=</span><span class="va">y</span>, xend<span class="op">=</span><span class="va">xend</span>, yend<span class="op">=</span><span class="va">yend</span>, color <span class="op">=</span> <span class="va">vis</span>, linetype <span class="op">=</span> <span class="va">sign</span><span class="op">)</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span> xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.6</span><span class="op">)</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span> breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span> breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="dance_files/figure-html/regression-vis-1.png" width="768"></p>
 </div>
 </div>
 <div id="implementation-in-multiverse" class="section level2">
 <h2 class="hasAnchor">
 <a href="#implementation-in-multiverse" class="anchor"></a>Implementation in multiverse</h2>
-<p>A multiverse implementation in this case might involve resampling to generate alternative dataset using a the common non-parameteric bootstrapping approach, as shown by Dragicevic in <a href="https://explorablemultiverse.github.io/examples/dance/">Adding Inferential Information to plots using Resampling and Animations</a>. This technique enables providing ``inferential information to arbitrary statistical plots based on resampling’’ as in many cases “the bootstrap distribution provides a good approximation of the sampling distribution”.</p>
+<p>A multiverse implementation in this case might involve resampling to generate alternative dataset using a the common non-parametric bootstrapping approach, as shown by Dragicevic in <a href="https://explorablemultiverse.github.io/examples/dance/">Adding Inferential Information to plots using Resampling and Animations</a>. This technique enables providing ``inferential information to arbitrary statistical plots based on resampling’’ as in many cases “the bootstrap distribution provides a good approximation of the sampling distribution”.</p>
 <div id="note" class="section level4">
 <h4 class="hasAnchor">
 <a href="#note" class="anchor"></a>Note</h4>
 <p>In this vignette, we make use of the  function which is more suited for a script-style implementation. Keeping consistency with the interactive programming interface of RStudio, we also offer the user <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code chunks</em></a>, a custom engine designed to work with the multiverse package, to implement the multiverse analyses. <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code chunks</em></a> can be used instead of the <code>r</code> code block to write code inside a multiverse object. See  or refer to the vignette (<code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details on using the multiverse with RMarkdown.</p>
 <p>Our multiverse implementation begins with first generating alternate datasets using bootstrapping, within a multiverse object:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#data_original &lt;- read.csv("master-alt.csv")</span>
 <span class="va">n</span> <span class="op">=</span> <span class="fl">200</span>
 
@@ -282,7 +277,7 @@
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span> jnd <span class="op">=</span> <span class="va">bootstrap_samples</span> <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p>The subsequent steps are very similar to a single dataset analysis.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
   <span class="va">df.i</span> <span class="op">&lt;-</span> <span class="va">data.i</span> <span class="op">%&gt;%</span> 
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span> <span class="va">vis</span>, <span class="va">rbase</span>, <span class="va">approach</span>, <span class="va">sign</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -349,7 +344,7 @@
       <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p>We then execute the entire multiverse analysis:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
 <p>Once we have the results stored from each unique analysis from our defined multiverse in the multiverse object, we can visualise the results. Animation can be used to show outcomes of multiple simulated replications of the same hypothetical experiment. The term statistical dance has been used to refer to such plots. Dragicevic writes:</p>
 <blockquote>
@@ -357,7 +352,7 @@
 <p>Statistical dances are a particular case hypothetical outcome plots (HOPs) [7], that “visualize a set of draws from a distribution, where each draw is shown as a new plot in either a small multiples or animated form”.</p>
 <p>The following plots shows the mean JND for each of the 216 conditions as a point estimate with the corresponding error bars communicating inferential uncertainty. As inferential information is already conveyed by the way of error bars, the dance is somewhat redundant. However, showing the dance still has educational value, as researchers tend to grossly overestimate the reliability and the replicability of inferential statistics such as p-values [5] and confidence intervals [4]. One might notice that the error bars are jumping more wildly than in a regular dance of 95% confidence intervals [5, 4]. This is because the error bars are standard errors, which are approximately twice as short as 95% CIs. Although in the original article this was clearly stated in the Figure caption, the dance might make it less likely for the reader to miss this important information.</p>
 </blockquote>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p.above</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"df.error_bar.i"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -371,8 +366,7 @@
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span><span class="va">.universe</span><span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p.above</span>, nframes <span class="op">=</span> <span class="va">n</span>, fps <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">840</span>, height <span class="op">=</span> <span class="fl">320</span><span class="op">)</span></code></pre></div>
-<p><img src="dance_files/figure-html/vis-errorbars-above-1.gif"><!-- --></p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p.below</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"df.error_bar.i"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -386,13 +380,12 @@
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span><span class="va">.universe</span><span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p.below</span>, nframes <span class="op">=</span> <span class="va">n</span>, fps <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">840</span>, height <span class="op">=</span> <span class="fl">320</span><span class="op">)</span></code></pre></div>
-<p><img src="dance_files/figure-html/vis-errorbars-below-1.gif"><!-- --></p>
 <p>The following figure shows the regression lines for all conditions.</p>
 <blockquote>
 <p>The lower a line the better the performance. Some differences are large and extremely consistent across bootstrap datasets: for example, the inferiority of line-positive over the two other conditions on the first plot, or the inferiority of parallel-coordinates-positive on the last plot. Other differences are less clear but actually hold in a vast majority of bootstrap datasets: for example, the overall superiority of radar-positive in the second plot and of stackedbar-negative in the third plot. In contrast, many other comparisons are inconclusive. All these informal inferences agree with formal null hypothesis significance tests reported in the original paper. Although formal tests inspire more confidence to many readers, interpreting them together with effect size figures requires constant back and forth between figures and p-values provided in the text or in a table. Doing so is often quite tedious and can easily cause impatient readers to give up and be content with a superficial examination of the results.</p>
 <p>It is possible, and common practice, to display a 95% confidence interval around a regression line by plotting a confidence limit curve on each side of the line. Such visual representations can greatly facilitate inference but can also easily produce cluttered plots. Although it may have been possible to add 95% confidence intervals to following figure, doing so would have likely rendered it illegible.</p>
 </blockquote>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p.fitted_lines</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"df.corr_fitted.i"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -404,7 +397,6 @@
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span><span class="va">.universe</span><span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p.fitted_lines</span>, nframes <span class="op">=</span> <span class="va">n</span>, fps <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">840</span>, height <span class="op">=</span> <span class="fl">480</span><span class="op">)</span></code></pre></div>
-<p><img src="dance_files/figure-html/vis-regression-lines-1.gif"><!-- --></p>
 <blockquote>
 <p>The figure is consistent with Harrison et al.’s main findings: ”using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots”. The statistical dance gives credence to these conclusions, while at the same time providing a faithful illustration of the uncertainty behind the estimates. The reader is free to linger on the figure and go beyond the authors’ own summary of findings by examining other comparisons and drawing their own conclusions. All necessary information on effect sizes and inferential statistics is seamlessly combined into this single animated figure, and it would take pages and pages of text to fully describe it.</p>
 </blockquote>

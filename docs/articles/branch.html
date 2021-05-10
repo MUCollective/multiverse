@@ -107,7 +107,7 @@
       <h1 data-toc-skip>A discussion on branches in the multiverse</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-04-24</h4>
+            <h4 class="date">2021-05-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/branch.Rmd"><code>vignettes/branch.Rmd</code></a></small>
       <div class="hidden name"><code>branch.Rmd</code></div>
@@ -156,27 +156,22 @@ x &lt;- branch(a_parameter, "low", "medium", "high")
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">.universe</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 3 x 5
-##   .universe a_parameter .parameter_assignment .code            .results
-##       &lt;int&gt; &lt;chr&gt;       &lt;list&gt;                &lt;list&gt;           &lt;list&gt;  
-## 1         1 low         &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
-## 2         2 medium      &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
-## 3         3 high        &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;</code></pre>
 </div>
 <div id="example-2-a-branch-within-functions-in-a-pipe" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-2-a-branch-within-functions-in-a-pipe" class="anchor"></a>Example 2: A branch within functions in a “pipe”: <code>%&gt;%</code>
 </h2>
 <p>Let’s say that we have some data which indicates the amount of time spent by a user in four different conditions which are indexed 1, 2, 3 and 4 (the <code>modality</code> column in the following dataset). We will first load the data and convert the column into factor from integer.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"userlogs"</span><span class="op">)</span>
 <span class="va">data.userlogs.raw</span> <span class="op">=</span> <span class="va">userlogs</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">modality</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">modality</span><span class="op">)</span></code></pre></div>
 <p>We then create the multiverse object for this analysis</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>The data variable <code>duration</code> is approximately normally distributed, however, as is common with such data it has a long right-tail. Before using a regression model, we can choose to either log-transform the data, or assume that it is normally distribution and analyse it. We can perform both analysis in our multiverse by declaring two branches — one where the variable is log-transformed and the other where it is not.</p>
+<p><text>:5:0: unexpected end of input 3: “none” ~ duration, 4: “log” ~ log(duration) ^</text></p>
 <pre><code>```{multiverse default-m-2, inside = M}
 df &lt;- data.userlogs.raw %&gt;%
     select(modality, duration) %&gt;%
@@ -186,37 +181,19 @@ df &lt;- data.userlogs.raw %&gt;%
     ))
 ```</code></pre>
 <p>The <code>expand</code> shows that there are two rows for the <code>data transform</code> branch which correspond to the two different reasonable alternatives for transforming time spent data.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 2 x 5
-##   .universe data_transform .parameter_assignment .code            .results
-##       &lt;int&gt; &lt;chr&gt;          &lt;list&gt;                &lt;list&gt;           &lt;list&gt;  
-## 1         1 none           &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;   
-## 2         2 log            &lt;named list [1]&gt;      &lt;named list [1]&gt; &lt;env&gt;</code></pre>
 <p>If we look at the code column, which is a list of expressions, we see that the variable <code>duration</code> is defined in two separate ways, one for each row of the multiverse table. In other words, for each alternate analysis path, one of these would get executed and that would be the how the <code>duration</code> variable is transformed for that analysis path.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span><span class="op">$</span><span class="va">.code</span></code></pre></div>
-<pre><code>## [[1]]
-## [[1]]$`h-2`
-## {
-##     df &lt;- data.userlogs.raw %&gt;% select(modality, duration) %&gt;% 
-##         mutate(duration = duration)
-## }
-## 
-## 
-## [[2]]
-## [[2]]$`h-2`
-## {
-##     df &lt;- data.userlogs.raw %&gt;% select(modality, duration) %&gt;% 
-##         mutate(duration = log(duration))
-## }</code></pre>
 </div>
 <div id="example-3-a-branch-as-a-function" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-3-a-branch-as-a-function" class="anchor"></a>Example 3: A branch as a function</h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Say we are not familiar with R’s tidyverse packages and it’s style of writing code. An alternate way of declaring a branch for transforming the <code>duration</code> variable in the analysis would be to use two separate functions for the transformation depending on which universe one is.</p>
+<p><text>:1:32: unexpected ‘,’ 1: “log-transformed” ~ log, ^</text></p>
 <pre><code>```{multiverse default-m-3, inside = M}
 duration &lt;- branch(data_trans,
         "log-transformed" ~ log,
@@ -224,19 +201,15 @@ duration &lt;- branch(data_trans,
     )(data.userlogs.raw$duration)
 ```</code></pre>
 <p>Then we execute the multiverse and inspect the results:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>transformed_duration <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"duration"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 2 x 6
-##   .universe data_trans   .parameter_assign… .code     .results transformed_dura…
-##       &lt;int&gt; &lt;chr&gt;        &lt;list&gt;             &lt;list&gt;    &lt;list&gt;   &lt;list&gt;           
-## 1         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;    &lt;dbl [512]&gt;      
-## 2         2 un-transfor… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;    &lt;dbl [512]&gt;</code></pre>
 <p>As you can see, this creates, in each universe within the multiverse, a vector named <code>duration</code> which is either un-transformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire <code><a href="../reference/branch.html">branch(...)</a></code> gets replaced with either <code><a href="https://rdrr.io/r/base/Log.html">log()</a></code> or <code><a href="https://rdrr.io/r/base/identity.html">identity()</a></code> within a given universe.</p>
 <p>A more readable pattern might be:</p>
 <p>M = multiverse()</p>
+<p><text>:1:28: unexpected ‘,’ 1: “log-transformed” ~ log, ^</text></p>
 <pre><code>```{multiverse default-m-4, inside = M}
 duration_transform &lt;- branch(data_trans,
     "log-transformed" ~ log,
@@ -246,28 +219,19 @@ duration_transform &lt;- branch(data_trans,
 duration &lt;- duration_transform(data.userlogs.raw$duration)
 ```</code></pre>
 <p>Next, we execute and inspect the results. Again, this alternate calculation also leads to the same result.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> transformed_duration <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"duration"</span> <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">transformed_duration</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 6
-##   .universe data_trans   .parameter_assign… .code     .results transformed_dura…
-##       &lt;int&gt; &lt;chr&gt;        &lt;list&gt;             &lt;list&gt;    &lt;list&gt;               &lt;dbl&gt;
-## 1         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 4.25
-## 2         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 4.80
-## 3         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 3.89
-## 4         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 3.75
-## 5         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 4.01
-## 6         1 log-transfo… &lt;named list [1]&gt;   &lt;named l… &lt;env&gt;                 3.41</code></pre>
 </div>
 <div id="example-4-parameters-can-be-reused" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-4-parameters-can-be-reused" class="anchor"></a>Example 4: Parameters can be reused</h2>
 <p>If you want to use a parameter multiple times, or just want to define it upfront, you can assign it to a variable and use the variable in your code. For example, in the next example, we declare <em>three different branches</em> for data transformation, data modeling and data presentation respectively. We also define any necessary functions along the way.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span>
 <span class="va">samplemean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">d</span><span class="op">)</span> <span class="op">{</span><span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">d</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">}</span>
@@ -283,6 +247,7 @@ duration &lt;- duration_transform(data.userlogs.raw$duration)
         <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span> conf.int <span class="op">=</span> <span class="cn">TRUE</span>, conf.method <span class="op">=</span> <span class="st">"bca"</span>, conf.level <span class="op">=</span>  <span class="va">y</span><span class="op">)</span> <span class="op">%&gt;%</span>
         <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>estimate <span class="op">=</span> <span class="va">statistic</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
+<p><text>:1:30: unexpected ‘,’ 1: “log-transformed” ~ log, ^</text></p>
 <pre><code>```{multiverse default-m-5, inside = M}
 data_trans &lt;- branch(data_trans,
       "log-transformed" ~ log,
@@ -311,10 +276,10 @@ data_trans &lt;- branch(data_trans,
     unnest( cols = c(fit) )
 ```</code></pre>
 <p>We then write the analysis and use those variables to indicate branches in our analysis within the multiverse.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
 <p>To see the results of using branches, we plot a part of this multiverse. We see the different transformations (no transformations in the right column and log-transform in the left column). Each row shows the different data presentation branches by presenting different confidence levels.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>df <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"df"</span> <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">)</span>  <span class="op">%&gt;%</span>
@@ -336,14 +301,13 @@ data_trans &lt;- branch(data_trans,
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">modality.f</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">modality.f</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">ci</span> <span class="op">~</span> <span class="va">data_trans</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></code></pre></div>
-<p><img src="branch_files/figure-html/unnamed-chunk-12-1.png" width="768"></p>
 </div>
 <div id="example-5-declaring-continuous-variables-in-branch" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-5-declaring-continuous-variables-in-branch" class="anchor"></a>Example 5: Declaring continuous variables in <code>branch</code>
 </h2>
 <p>So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not too high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>```{multiverse default-m-6, inside = M}
 set.seed(branch(seed, .options = 1:25))
@@ -356,10 +320,10 @@ m &lt;- lm(y ~ x1+ x2)
 
 intervals &lt;- broom::tidy(m, conf.int = TRUE)
 ```</code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
 <p>We then plot the estimates from the multiverse to see if we obtain the correct results:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>df <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"intervals"</span> <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
@@ -369,7 +333,6 @@ intervals &lt;- broom::tidy(m, conf.int = TRUE)
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span> <span class="va">.</span> <span class="op">~</span> <span class="va">term</span> <span class="op">)</span>  <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span> breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span>, by <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Universe (i.e. the seed parameter)"</span>, y <span class="op">=</span> <span class="st">"Model Parameter Values"</span>, title <span class="op">=</span> <span class="st">"Estimates with 95% confidence intervals"</span><span class="op">)</span></code></pre></div>
-<p><img src="branch_files/figure-html/unnamed-chunk-15-1.png" width="768"></p>
 <p><strong>Note</strong>: in this vignette we used the script-oriented <code><a href="../reference/inside.html">inside()</a></code> function for implementing the multiverse. However, we can implement the exact same multiverse in RMarkdown using the <code>multiverse-code-block</code> for more interactive programming. To implement this using a <code>multiverse-code-block</code>, we can simply place the code passed into the inside function (the second argument) inside a code block of type <code>multiverse</code>, provide it with the appropriate labels and multiverse object, and execute it. See (multiverse-in-rmd) and (branch) for more details and examples.</p>
 </div>
   </div>
