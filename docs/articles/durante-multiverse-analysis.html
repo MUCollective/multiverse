@@ -107,7 +107,7 @@
       <h1 data-toc-skip>Example multiverse implementation: Effect of fertility on religiosity and political attitudes</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-05-10</h4>
+            <h4 class="date">2021-05-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/durante-multiverse-analysis.Rmd"><code>vignettes/durante-multiverse-analysis.Rmd</code></a></small>
       <div class="hidden name"><code>durante-multiverse-analysis.Rmd</code></div>
@@ -623,117 +623,6 @@
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="durante-multiverse-analysis_files/figure-html/unnamed-chunk-23-1.gif"><!-- --></p>
-</div>
-<div id="models-3---6" class="section level3">
-<h3 class="hasAnchor">
-<a href="#models-3---6" class="anchor"></a>Models #3 - 6</h3>
-<p>The authors also perform a number of other analysis using the same independent variables (<code>Fertility</code>, <code>Relationship Status</code> and their interaction term), but with different dependent variables: <code>Fiscal political attitudes</code>, <code>Social political attitudes</code>, <code>Voting preferences</code> and <code>Donation preferences</code>. Below we perform these analyses and visualise the results.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">fit_FiscConsComp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span> <span class="va">FiscConsComp</span> <span class="op">~</span> <span class="va">Fertility</span> <span class="op">*</span> <span class="va">RelationshipStatus</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span>
-  <span class="va">summary_FiscConsComp</span> <span class="op">&lt;-</span> <span class="va">fit_FiscConsComp</span> <span class="op">%&gt;%</span> 
-    <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span> conf.int <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span>
-
-  <span class="va">fit_SocConsComp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span> <span class="va">SocConsComp</span> <span class="op">~</span> <span class="va">Fertility</span> <span class="op">*</span> <span class="va">RelationshipStatus</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span>
-  <span class="va">summary_SocConsComp</span> <span class="op">&lt;-</span> <span class="va">fit_SocConsComp</span> <span class="op">%&gt;%</span> 
-    <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span> conf.int <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span>
-
-  <span class="va">fit_Donate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span> <span class="va">Donate</span> <span class="op">~</span> <span class="va">Fertility</span> <span class="op">*</span> <span class="va">Relationship</span>, data <span class="op">=</span> <span class="va">df</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span> <span class="op">)</span>
-  <span class="va">summary_Donate</span> <span class="op">&lt;-</span> <span class="va">fit_Donate</span> <span class="op">%&gt;%</span> 
-    <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span> conf.int <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span>
-
-  <span class="va">fit_Vote</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span> <span class="va">Vote</span> <span class="op">~</span> <span class="va">Fertility</span> <span class="op">*</span> <span class="va">Relationship</span>, data <span class="op">=</span> <span class="va">df</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span> <span class="op">)</span>
-  <span class="va">summary_Vote</span> <span class="op">&lt;-</span> <span class="va">fit_Vote</span> <span class="op">%&gt;%</span> 
-    <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span> conf.int <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<div id="model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="section level4">
-<h4 class="hasAnchor">
-<a href="#model-3-effect-of-fertility-and-relationship-status-on-fiscal-political-attitudes" class="anchor"></a>Model #3: Effect of Fertility and Relationship status on Fiscal political attitudes</h4>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">summary_FiscConsComp</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary_FiscConsComp</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> term <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span> <span class="va">term</span>, 
-                 <span class="st">"RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single"</span>,
-                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single:Fertility_low"</span>
-  <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span> <span class="va">term</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
-
-<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="durante-multiverse-analysis_files/figure-html/unnamed-chunk-25-1.gif"><!-- --></p>
-</div>
-<div id="model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="section level4">
-<h4 class="hasAnchor">
-<a href="#model-4-effect-of-fertility-and-relationship-status-on-social-political-attitudes" class="anchor"></a>Model #4: Effect of Fertility and Relationship status on Social political attitudes</h4>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">summary_SocConsComp</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary_SocConsComp</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> term <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span> <span class="va">term</span>, 
-                 <span class="st">"RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single"</span>,
-                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single:Fertility_low"</span>
-  <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span> <span class="va">term</span> <span class="op">!=</span>  <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
-
-<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="durante-multiverse-analysis_files/figure-html/unnamed-chunk-26-1.gif"><!-- --></p>
-</div>
-<div id="model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="section level4">
-<h4 class="hasAnchor">
-<a href="#model-5-effect-of-fertility-and-relationship-status-on-voting-preferences" class="anchor"></a>Model #5: Effect of Fertility and Relationship status on Voting preferences</h4>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">summary_Donate</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary_Donate</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> term <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span> <span class="va">term</span>, 
-                 <span class="st">"RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single"</span>,
-                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single:Fertility_low"</span>
-  <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
-
-<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="durante-multiverse-analysis_files/figure-html/unnamed-chunk-27-1.gif"><!-- --></p>
-</div>
-<div id="model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="section level4">
-<h4 class="hasAnchor">
-<a href="#model-6-effect-of-fertility-and-relationship-status-on-donation-preferences" class="anchor"></a>Model #6: Effect of Fertility and Relationship status on Donation preferences</h4>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">summary_Vote</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span> cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary_Vote</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span> term <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span> <span class="va">term</span>, 
-                 <span class="st">"RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single"</span>,
-                 <span class="st">"Fertilitylow:RelationshipStatusSingle"</span> <span class="op">=</span> <span class="st">"Single:Fertility_low"</span>
-  <span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span> xintercept <span class="op">=</span> <span class="fl">0</span>,  colour <span class="op">=</span> <span class="st">'#979797'</span> <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html">geom_errorbarh</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span>, y <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html">transition_manual</a></span><span class="op">(</span> <span class="va">.universe</span> <span class="op">)</span>
-
-<span class="fu"><a href="https://gganimate.com/reference/animate.html">animate</a></span><span class="op">(</span><span class="va">p</span>, nframes <span class="op">=</span> <span class="fl">210</span>, fps <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="durante-multiverse-analysis_files/figure-html/unnamed-chunk-28-1.gif"><!-- --></p>
-</div>
 </div>
 </div>
   </div>

@@ -522,9 +522,9 @@ animate(p, nframes = 210, fps = 2)
 
 
 ## Conclusion
-The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`. These analyses can be found in `vignette(complete-multiverse-analysis)`
+The authors also perform a number of other analysis using the same independent variables (`Fertility`, `Relationship Status` and their interaction term), but with different dependent variables: `Fiscal political attitudes`, `Social political attitudes`, `Voting preferences` and `Donation preferences`, which we omit here.
 
-In addition, we also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:
+We also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:
 
 - Simonsohn et al.'s [specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
 - Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
