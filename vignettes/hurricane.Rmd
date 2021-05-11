@@ -33,9 +33,9 @@ M = multiverse()
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
+  # eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
   fig.width = 6, 
-  fig.height = 4,
-  eval = FALSE #if (isTRUE(exists("params"))) params$EVAL else FALSE
+  fig.height = 4
 )
 ```
 

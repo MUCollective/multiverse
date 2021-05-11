@@ -162,6 +162,9 @@ Object variables such as the `code`, the `expanded parameter options table`, the
     <pre class="usage"># S3 method for multiverse
 $(multiverse, name)
 
+# S3 method for multiverse
+$(multiverse, name) &lt;- value
+
 expand(multiverse)
 
 # S3 method for default
@@ -214,6 +217,10 @@ extract_variable_from_universe(multiverse, idx, name)</pre>
     <tr>
       <th>name</th>
       <td><p>a variable name</p></td>
+    </tr>
+    <tr>
+      <th>value</th>
+      <td><p>a new value to be assigned</p></td>
     </tr>
     <tr>
       <th>idx</th>

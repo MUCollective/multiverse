@@ -189,7 +189,6 @@
       <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p>In <code>multiverse code chunks</code> conditionals can be declared in pretty much the same way:</p>
-<p><text>:11:0: unexpected end of input 9: “mc_option2” %when% (cycle_length != “cl_option2”) ~ StartDateofLastPeriod + ReportedCycleLength, 10: “mc_option3” ~ StartDateNext) ^</text></p>
 <pre><code>```{multiverse default-m-1, inside = M}
 df &lt;- df_durante  %&gt;%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %&gt;%
@@ -208,6 +207,16 @@ df &lt;- df_durante  %&gt;%
 <p>As the condition implies, the parameter <code>menstrual_calcaultion</code> (which is for calculating the variable <code>NextMenstrualCalculation</code>) cannot take the value of “mc_option1” when we filter <code>cycle_length</code> using “cl_option3”. Similarly, <code>menstrual_calcaultion</code> cannot take the value of “mc_option2” when we filter <code>cycle_length</code> using “cl_option2”. In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
+<pre><code>## # A tibble: 7 x 6
+##   .universe cycle_length menstrual_calcula… .parameter_assign… .code    .results
+##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;              &lt;list&gt;             &lt;list&gt;   &lt;list&gt;  
+## 1         1 cl_option1   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 2         2 cl_option1   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 3         3 cl_option1   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 4         4 cl_option2   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 5         5 cl_option2   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 6         6 cl_option3   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 7         7 cl_option3   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;</code></pre>
 </div>
 <div id="the-branch_assert-function" class="section level4">
 <h4 class="hasAnchor">
@@ -215,12 +224,12 @@ df &lt;- df_durante  %&gt;%
 <p>The same can be performed with the <code>branch_assert()</code> function. The benefit of using this is that within the branch assert function, the user can specify any logical operation.</p>
 <p>For eg: the above logical operations can be specified as: <code>branch_assert((menstrual_calculation != "mc_option1" | cycle_length != "cl_option3"))</code></p>
 <p>Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the <code>branch_assert()</code> function in our example as:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span>
     <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option1"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option2"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></code></pre></div>
 <p>Using the <code>branch_assert()</code>, we can perform the exact same analysis:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
@@ -240,17 +249,26 @@ df &lt;- df_durante  %&gt;%
         <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option2"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p>As we can see, this results in the same multiverse, where universes indexed 3 and 5 are not compatible.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
+<pre><code>## # A tibble: 7 x 6
+##   .universe cycle_length menstrual_calcula… .parameter_assign… .code    .results
+##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;              &lt;list&gt;             &lt;list&gt;   &lt;list&gt;  
+## 1         1 cl_option1   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 2         2 cl_option1   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 3         3 cl_option1   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 4         4 cl_option2   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 5         5 cl_option2   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 6         6 cl_option3   mc_option2         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
+## 7         7 cl_option3   mc_option3         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;</code></pre>
 </div>
 </div>
 <div id="implementing-conditions-in-a-complete-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#implementing-conditions-in-a-complete-analysis" class="anchor"></a>Implementing conditions in a complete analysis</h2>
 <p>Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let’s update the example from <a href="https://mucollective.github.io/multiverse/">home page</a> by including these conditions:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><text>:31:0: unexpected end of input 29: “rs_option2” ~ factor(ifelse(Relationship==1, ‘Single’, ‘Relationship’)), 30: “rs_option3” ~ factor(ifelse(Relationship==1, ‘Single’, ifelse(Relationship==3 | Relationship==4, ‘Relationship’, NA))) ) ^</text></p>
 <pre><code>```{multiverse default-m-2, inside = M, echo = FALSE}
 df &lt;- df_durante  %&gt;%
   mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %&gt;%
@@ -286,8 +304,9 @@ df &lt;- df_durante  %&gt;%
   )
 ```</code></pre>
 <p>After excluding the inconsistent choice combinations, <span class="math inline">\(270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210\)</span> choice combinations remain:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] 210</code></pre>
 <p>Now, we’ve created the complete multiverse that was presented as example #2 from Steegen et al.’s paper.</p>
 </div>
   </div>

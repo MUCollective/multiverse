@@ -27,7 +27,6 @@ library(broom)
 library(gganimate)
 library(cowplot)
 library(stringr)
-library(forcats)
 library(multiverse)
 ```
 
@@ -39,9 +38,9 @@ M = multiverse()
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
   fig.width = 6, 
-  fig.height = 4,
-  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
+  fig.height = 4
 )
 ```
 
@@ -226,7 +225,7 @@ expand(M) %>%
 ### Specification curve
 Simonsohn et al. propose visualising results from the multiverse as a `specification curve`, which consists of two panels. The top panel shows the effect size (here the value of a coefficient) for each universe (or specification). The bottom panel shows which specification of the parameters results in that result.
 
-```{r, fig.width = 8, fig.height = 8}
+```{r, fig.width = 8, fig.height = 8, eval = FALSE}
 data.spec_curve <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
@@ -240,7 +239,6 @@ p1 <- data.spec_curve %>%
   select( .universe, parameter_name, parameter_option) %>%
   mutate(
     parameter_name = factor(str_replace(parameter_name, "_", "\n"))
-    #parameter_option = fct_relevel(factor(parameter_option), "relationship status", after = Inf)
   ) %>%
   ggplot() +
   geom_point( aes(x = .universe, y = parameter_option, color = parameter_name), size = 0.5 ) +
@@ -250,7 +248,6 @@ p1 <- data.spec_curve %>%
         strip.background = element_rect(fill=NA,colour=NA),
         panel.spacing.x=unit(0.15,"cm"), 
         strip.text.y = element_text(angle = 180, face="bold", size=10), 
-        #legend.position = "none",
         panel.spacing = unit(0.25, "lines")
       )
 
@@ -262,9 +259,5 @@ p2 <- data.spec_curve %>%
 cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 3))
 ```
 
-
-```{r include = FALSE}
-# ![Specification curve visualisation](../man/figures/spec-curve-steegen-analysis.png)
-```
-
+![Specification curve visualisation](../man/figures/spec-curve-steegen-analysis.png)
 

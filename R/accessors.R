@@ -7,6 +7,7 @@
 #' @name accessors
 #' @param multiverse Object of class multiverse
 #' @param name a variable name
+#' @param value a new value to be assigned
 #'
 #'@importFrom dplyr select
 #'
@@ -19,6 +20,7 @@
   get(as.character(name), .env)
 }
 
+#' @rdname accessors
 #' @export
 `$<-.multiverse` <- function(multiverse, name, value) {
   stop(
@@ -164,7 +166,6 @@ conditions.default <- function(multiverse) {
 }
 
 #' @rdname accessors
-#' @export
 conditions.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['conditions']]
 }
