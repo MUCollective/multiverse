@@ -19,9 +19,8 @@ make_data <- function(nrow = 500) {
       ReportedCycleLength = sample(14:28, nrow, TRUE)
     )
 }
-# HACK: code executed in the multiverse only has access to the global environment, so need to put
-# variables into that environment for testing purposes. TODO: come up with better solution
-test_df <<- make_data()
+
+test_df <- make_data()
 
 M = multiverse()
 an_expr = quote(

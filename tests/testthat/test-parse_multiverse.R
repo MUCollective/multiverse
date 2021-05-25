@@ -25,7 +25,7 @@ make_data <- function(nrow = 500) {
 }
 # HACK: code executed in the multiverse only has access to the global environment, so need to put
 # variables into that environment for testing purposes. TODO: come up with better solution
-test_df <<- make_data()
+test_df <- make_data()
 
 # get_branch_parameter_conditions -----------------------------------------
 
@@ -288,9 +288,12 @@ test_that("`get_condition` ignores `%when%` if assigned to subexpression of an o
 # parse_multiverse --------------------------------------------------------
 
 test_that("`parse_multiverse` returns the complete parameter table", {
+  a_test_df <- make_data()
+  
   M = multiverse()
+  
   add_and_parse_code(M, expr({
-    df <- test_df  %>%
+    df <- a_test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -404,10 +407,11 @@ test_that("`parse_multiverse` requires multiple uses of the same paramater to co
 
 test_that("`parameter_assignment` is created appropriately for single parameter multiverses", {
   ref_list = lapply(c("mc_option1", "mc_option2", "mc_option3"), function(x) list(menstrual_calculation = x))
-
+  
+  a_test_df <- make_data()
   M = multiverse()
   add_and_parse_code(M, expr({
-    df <- test_df %>%
+    df <- a_test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
                                           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -422,9 +426,10 @@ test_that("`parameter_assignment` is created appropriately for single parameter 
 })
 
 test_that("`parameter_assignment` is created appropriately for two or more parameter multiverses", {
+  a_test_df <- make_data()
   M = multiverse()
   add_and_parse_code(M, expr({
-    df <- test_df %>%
+    df <- a_test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate( NextMenstrualOnset = branch(menstrual_calculation,
                                           "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -475,9 +480,10 @@ test_that("unnamed options in branches are supported", {
 })
 
 test_that("conditions are extracted when specified using `branch_assert`", {
+  a_test_df <- make_data()
   M = multiverse()
   add_and_parse_code(M, expr({
-    df <- test_df  %>%
+    df <- a_test_df  %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
       mutate(NextMenstrualOnset = branch(menstrual_calculation,
                                          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,

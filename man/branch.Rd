@@ -30,34 +30,27 @@ if the total number arguments passed is less than three.
 The `branch()` function does not support nested branches. Thus, we cannot declare a branch within a branch.
 }
 \examples{
-\dontrun{
-# declaring multiple options for a data processing step (calculating a new variable) 
-data(fertility)
-data.fertility <- fertility
+\donttest{
+library(dplyr)
 
-data.fertility  \%>\%
+# declaring multiple options for a data processing step (calculating a new variable) 
+data(durante)
+data.durante <- durante
+
+data.durante  \%>\%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) \%>\%
     mutate( NextMenstrualOnset = StartDateNext)
 
-# if the variable `NextMenstrualOnset` can be calculated in more than one way
-# we can use branch to declare all the different analysis options as:
-branch(menstrual_calculation, 
-          "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-          "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-          "mc_option3" ~ StartDateNext)
-          
-# this will replace the current analysis within the current syntax.
-data.fertility  \%>\%
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) \%>\%
-    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
-                                   "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
-                                   "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
-                                   "mc_option3" ~ StartDateNext)
-    )
 
+# create a multiverse object
+M <- multiverse()
+
+# if the variable `NextMenstrualOnset` can be calculated in more than one way
+# we can use branch to declare all the different analysis options. This will 
+# replace the current analysis within the current syntax.
 # Since this is a multiverse analysis, this is only supported within a multiverse object. Hence:
 inside(M, {
-  df <- data.fertility  \%>\%
+  df <- data.durante  \%>\%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) \%>\%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
                                    "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -69,9 +62,12 @@ inside(M, {
 # continuous option values for a parameter
 inside(M, {
   branch(foo, "option1" ~ 1, .options = 1:10)
-  })
-  
-inside(M, {
+})
+
+M2 = multiverse()
+# alternatively, we could specify how we want the vector to be expanded
+# for continuous parameters
+inside(M2, {
   branch(foo, "option1" ~ 1, .options = seq(0, 1, by = 0.1))
 })
 }

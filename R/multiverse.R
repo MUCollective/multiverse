@@ -54,9 +54,7 @@ Multiverse <- R6Class("Multiverse",
 #' @param ... currently unused
 #'
 #' @examples
-#' \dontrun{
 #' M <- multiverse()
-#' }
 #'
 #' @return An empty multiverse object
 #'

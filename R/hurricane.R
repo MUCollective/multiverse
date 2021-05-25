@@ -29,7 +29,7 @@
 #' }
 #'
 #' @details
-#' This dataset was collated by Jung et al in their study \emph{Female hurricanes are deadlier than male hurricanes}
+#' This dataset was collated by Jung et. al in their study \emph{Female hurricanes are deadlier than male hurricanes}
 #' They hypothesised that hurricanes with more feminine names might be perceived as less dangerous and hence lead to 
 #' people taking fewer precautionary measures, resulting in more death and damages.
 #' 
@@ -38,7 +38,7 @@
 #' @keywords datasets
 #' 
 #' @references
-#' Kiju Junga and Sharon Shavitta and Madhu Viswanathana and Joseph M. Hilbed. (2014).
+#' Kiju Jung and Sharon Shavitta and Madhu Viswanathana and Joseph M. Hilbed. (2014).
 #' "Female hurricanes are deadlier than male hurricanes."
 #' *Proceedings of the National Academy of Sciences*, 111(24), 8782-8787.
 #' 

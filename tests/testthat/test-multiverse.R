@@ -54,7 +54,7 @@ make_data <- function(nrow = 500) {
     )
 }
 
-test_df <<- make_data()
+test_df <- make_data()
 
 inside(M.2, {
   df <- test_df %>%

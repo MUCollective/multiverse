@@ -36,12 +36,13 @@
 #' inside(M, { df = data.frame( x = 1:10 ) })
 #' ```
 #' 
-#' # Here, they would need to reference the multiverse object everytime they want to add anythign to it
+#' # Here, they would need to reference the multiverse object
+#' #every time they want to add anything to it.
 #' # Instead, they could add code to the multiverse by using a custom code engine:
 #' 
 #' ```{multiverse, default-m-1, inside = M}
 #' df = data.frame( x = 1:10 )
-#' ````
+#' ```
 #' }
 #'  
 #' @name mulitiverse_code_block

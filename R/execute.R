@@ -18,8 +18,11 @@
 #' under the results column.
 #'
 #' @examples
-#' \dontrun{
-#' #' M <- multiverse()
+#' \donttest{
+#' library(dplyr)
+#' 
+#' M <- multiverse()
+#' 
 #' inside(M, {
 #'   data <- rnorm(100, 50, 20)
 #'

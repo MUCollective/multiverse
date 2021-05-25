@@ -57,8 +57,6 @@ contains the following slots:
 }
 }
 \examples{
-\dontrun{
 M <- multiverse()
-}
 
 }

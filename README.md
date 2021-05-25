@@ -445,9 +445,9 @@ expand(M) %>% select(-.code)
 
 | .universe | menstrual\_calculation | .parameter\_assignment | .results                            |
 |----------:|:-----------------------|:-----------------------|:------------------------------------|
-|         1 | mc\_option1            | mc\_option1            | &lt;environment: 0x7f86255c9590&gt; |
-|         2 | mc\_option2            | mc\_option2            | &lt;environment: 0x7f86255ec608&gt; |
-|         3 | mc\_option3            | mc\_option3            | &lt;environment: 0x7f8625609d48&gt; |
+|         1 | mc\_option1            | mc\_option1            | &lt;environment: 0x7f9047573278&gt; |
+|         2 | mc\_option2            | mc\_option2            | &lt;environment: 0x7f904759a1c8&gt; |
+|         3 | mc\_option3            | mc\_option3            | &lt;environment: 0x7f90475b5be0&gt; |
 
 </div>
 
@@ -595,12 +595,12 @@ expand(M) %>%
 
 | .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                            |
 |----------:|:-----------------------|:---------------------|:--------------|:-------------|:-------------|:---------------------------------------------------------------------|:------------------------------------|
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f861e680b08&gt; |
-|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f861e73b1d0&gt; |
-|         3 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option3 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option3 | &lt;environment: 0x7f861ad00138&gt; |
-|         4 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option4 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option4 | &lt;environment: 0x7f8620f9f108&gt; |
-|         5 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option5 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option5 | &lt;environment: 0x7f861c402298&gt; |
-|         6 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option2 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option2, fer\_option1 | &lt;environment: 0x7f8620d611f0&gt; |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f9047f97860&gt; |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f905003c780&gt; |
+|         3 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option3 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option3 | &lt;environment: 0x7f90495c8d80&gt; |
+|         4 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option4 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option4 | &lt;environment: 0x7f9048c613f8&gt; |
+|         5 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option5 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option5 | &lt;environment: 0x7f904708a908&gt; |
+|         6 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option2 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option2, fer\_option1 | &lt;environment: 0x7f9048bd01c0&gt; |
 
 </div>
 
@@ -719,16 +719,16 @@ expand(M) %>%
 
 | .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                            | term                                     |   estimate | std.error |  statistic |   p.value |   conf.low |  conf.high |
 |----------:|:-----------------------|:---------------------|:--------------|:-------------|:-------------|:---------------------------------------------------------------------|:------------------------------------|:-----------------------------------------|-----------:|----------:|-----------:|----------:|-----------:|-----------:|
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f860ee404d8&gt; | (Intercept)                              |  6.3749123 | 0.4015673 | 15.8750795 | 0.0000000 |  5.5859219 |  7.1639027 |
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f860ee404d8&gt; | Fertilitylow                             | -1.1993860 | 0.5312236 | -2.2577801 | 0.0243951 | -2.2431222 | -0.1556497 |
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f860ee404d8&gt; | Fertilitymedium                          | -0.2931038 | 0.5089591 | -0.5758887 | 0.5649527 | -1.2930952 |  0.7068877 |
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f860ee404d8&gt; | RelationshipStatusSingle                 | -1.4568301 | 0.5358812 | -2.7185689 | 0.0067871 | -2.5097176 | -0.4039426 |
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f860ee404d8&gt; | Fertilitylow:RelationshipStatusSingle    |  2.0287775 | 0.7105383 |  2.8552683 | 0.0044810 |  0.6327276 |  3.4248273 |
-|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f860ee404d8&gt; | Fertilitymedium:RelationshipStatusSingle |  1.0066406 | 0.6873797 |  1.4644608 | 0.1437042 | -0.3439077 |  2.3571890 |
-|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f860ee71b00&gt; | (Intercept)                              |  6.3953846 | 0.3741693 | 17.0922227 | 0.0000000 |  5.6602251 |  7.1305441 |
-|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f860ee71b00&gt; | Fertilitylow                             | -1.1692735 | 0.4910353 | -2.3812412 | 0.0176323 | -2.1340487 | -0.2044983 |
-|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f860ee71b00&gt; | Fertilitymedium                          | -0.2516346 | 0.5161336 | -0.4875377 | 0.6260936 | -1.2657225 |  0.7624533 |
-|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f860ee71b00&gt; | RelationshipStatusSingle                 | -1.6535869 | 0.4921908 | -3.3596461 | 0.0008408 | -2.6206324 | -0.6865414 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f904c7f9550&gt; | (Intercept)                              |  6.3749123 | 0.4015673 | 15.8750795 | 0.0000000 |  5.5859219 |  7.1639027 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f904c7f9550&gt; | Fertilitylow                             | -1.1993860 | 0.5312236 | -2.2577801 | 0.0243951 | -2.2431222 | -0.1556497 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f904c7f9550&gt; | Fertilitymedium                          | -0.2931038 | 0.5089591 | -0.5758887 | 0.5649527 | -1.2930952 |  0.7068877 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f904c7f9550&gt; | RelationshipStatusSingle                 | -1.4568301 | 0.5358812 | -2.7185689 | 0.0067871 | -2.5097176 | -0.4039426 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f904c7f9550&gt; | Fertilitylow:RelationshipStatusSingle    |  2.0287775 | 0.7105383 |  2.8552683 | 0.0044810 |  0.6327276 |  3.4248273 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7f904c7f9550&gt; | Fertilitymedium:RelationshipStatusSingle |  1.0066406 | 0.6873797 |  1.4644608 | 0.1437042 | -0.3439077 |  2.3571890 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f90358c5a18&gt; | (Intercept)                              |  6.3953846 | 0.3741693 | 17.0922227 | 0.0000000 |  5.6602251 |  7.1305441 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f90358c5a18&gt; | Fertilitylow                             | -1.1692735 | 0.4910353 | -2.3812412 | 0.0176323 | -2.1340487 | -0.2044983 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f90358c5a18&gt; | Fertilitymedium                          | -0.2516346 | 0.5161336 | -0.4875377 | 0.6260936 | -1.2657225 |  0.7624533 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7f90358c5a18&gt; | RelationshipStatusSingle                 | -1.6535869 | 0.4921908 | -3.3596461 | 0.0008408 | -2.6206324 | -0.6865414 |
 
 </div>
 

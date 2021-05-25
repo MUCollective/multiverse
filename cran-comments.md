@@ -1,3 +1,9 @@
+## Resubmission
+This is a resubmission to fix the following:
+* added references to DESCRIPTION
+* removed \dontrun{} from examples
+* removed use of `<<-` (modification of the global environment) which was only used in the test files
+
 ## Submission comments
 This is the first submission to CRAN of the package `multiverse`. 
 The package allows users to conduct multiverse-style analysis in R.

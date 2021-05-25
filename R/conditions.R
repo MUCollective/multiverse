@@ -14,7 +14,9 @@
 #' \deqn{  A \implies B is an abbreviation for \neg A \lor B }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' M <- multiverse()
+#' 
 #' # There are different ways to specifying conditions
 #' # One way is to use the %when% operator
 #' # the %when% operator can be specified after the option name
