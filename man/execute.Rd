@@ -31,8 +31,11 @@ parts or whole of the multiverse. Each analysis can also be accessed from the mu
 under the results column.
 }
 \examples{
-\dontrun{
-#' M <- multiverse()
+\donttest{
+library(dplyr)
+
+M <- multiverse()
+
 inside(M, {
   data <- rnorm(100, 50, 20)
 

@@ -1,17 +1,16 @@
-pandoc: 2.7.3
+pandoc: '2.13'
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
-  basic-multiverse: basic-multiverse.html
   branch: branch.html
-  complete-multiverse-analysis: complete-multiverse-analysis.html
   conditions: conditions.html
   dance: dance.html
+  durante-multiverse-analysis: durante-multiverse-analysis.html
   frequentist-multiverse-analysis: frequentist-multiverse-analysis.html
   hurricane: hurricane.html
   multiverse-in-rmd: multiverse-in-rmd.html
-  visualizing-multiverse: visualizing-multiverse.html
-last_built: 2021-02-13T21:43Z
+  visualising-multiverse: visualising-multiverse.html
+last_built: 2021-05-25T19:43Z
 urls:
   reference: http://mucollective.github.io/multiverse/reference
   article: http://mucollective.github.io/multiverse/articles

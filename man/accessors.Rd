@@ -3,6 +3,7 @@
 \name{accessors}
 \alias{accessors}
 \alias{$.multiverse}
+\alias{$<-.multiverse}
 \alias{expand}
 \alias{expand.default}
 \alias{expand.multiverse}
@@ -22,6 +23,8 @@
 \title{Accessing contents of the multiverse object}
 \usage{
 \method{$}{multiverse}(multiverse, name)
+
+\method{$}{multiverse}(multiverse, name) <- value
 
 expand(multiverse)
 
@@ -59,6 +62,8 @@ extract_variable_from_universe(multiverse, idx, name)
 \item{multiverse}{Object of class multiverse}
 
 \item{name}{a variable name}
+
+\item{value}{a new value to be assigned}
 
 \item{idx}{index of the universe in the multiverse (corresponds to the row in the table)}
 }

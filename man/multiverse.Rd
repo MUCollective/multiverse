@@ -49,7 +49,7 @@ contains the following slots:
   assigned for each parameter defined in the `code`.
 
   \item multiverse_table: This slot contains a table (in implementation, a tibble which is a
-  rectangular data structure) where each column of the table will be a unqiue parameter.
+  rectangular data structure) where each column of the table will be a unique parameter.
   The table will contains every possible combination of options for each parameter — the number of rows
   corresponds to the number of different analysis paths. The table also contains, for each row, a list of
   option assignments for each parameter (`parameter_assignment` column), code for executing that particular
@@ -57,8 +57,6 @@ contains the following slots:
 }
 }
 \examples{
-\dontrun{
 M <- multiverse()
-}
 
 }

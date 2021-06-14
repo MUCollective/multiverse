@@ -11,12 +11,11 @@ authors:
   Matthew Kay:
     href: http://www.mjskay.com
 
-
 reference:
 - title: Package overview
   desc:  Overview of multiverse.
-#  contents:
-#  - multiverse-package
+  contents:
+  - multiverse-package
 
 - title: Defining and running a multiverse analysis
   desc:  Creating and adding code to the multiverse object for concise multiverse analysis
@@ -57,5 +56,4 @@ reference:
   - userlogs
   - hurricane
   - vis_correlation
-  - vis_correlation2
 

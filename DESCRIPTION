@@ -1,23 +1,35 @@
 Package: multiverse
-Version: 0.3.1.1
-Date: 2021-02-15
-Title: Explorable Multiverse Data Analysis and Reports in R
+Version: 0.5.0
+Date: 2021-05-25
+Title: 'Explorable Multiverse' Data Analysis and Reports
 Authors@R: c(
-		person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
-		person("Michael", "Moon", role = "aut", email = "moon@utstat.toronto.edu"),
-        person("Matthew", "Kay", role = "aut", email = "mjskay@umich.edu")    
+        person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
+        person("Michael", "Moon", role = "aut", email = "moon@utstat.toronto.edu"),
+        person("Matthew", "Kay", role = "aut", email = "mjskay@northwestern.edu"),
+        person("Alex", "Kale", role = "ctb", email = "kalea@uw.edu"),
+        person("Nathan", "Taback", role = "ctb", email = "nathan.taback@utoronto.ca"),
+        person("Fanny", "Chevalier", role = "ctb", email = "fanny@dgp.toronto.edu"),
+        person("Jessica", "Hullman", role = "ctb", email = "jessica.hullman@gmail.com"),
+        person("Pierre", "Dragicevic", role = "ctb", email = "pierre.dragicevic@inria.fr"),
+        person("Yvonne", "Jansen", role = "ctb", email = "yvonne.jansen@sorbonne-universite.fr")
     )
 Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
-Description: Create Explorable Multiverse Analysis in R. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are.
+Description: Implement 'multiverse' style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016)
+    <doi:10.1177/1745691616658637>, (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) <doi:10.1145/3290605.3300295> 
+    to show the robustness of statistical inference. 'Multiverse analysis' is a philosophy of 
+    statistical reporting where paper authors report the outcomes of many different statistical 
+    analyses in order to show how fragile or robust their findings are. 
+    The 'multiverse' package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) <doi:10.31219/osf.io/yfbwm>
+    allows users to concisely and flexibly implement 'multiverse-style' 
+    analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks.
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 Depends:
     R (>= 3.5.0),
-    knitr
+    knitr (>= 1.3.2)
 Imports:
     dplyr (>= 0.8.1),
-    ggplot2 (>= 3.0.0),
     purrr (>= 0.3.2),
     rlang (>= 0.4.0),
     R6,
@@ -25,21 +37,16 @@ Imports:
     tidyr (>= 1.0.0),
     tibble,
     magrittr,
-    stringi,
-    modelr,
     tidyselect,
     formatR,
-    styler,
-    codetools,
     collections,
-    highr,
     evaluate,
     rstudioapi,
     berryFunctions
-Remotes:
-    yihui/knitr
 Suggests:
+    ggplot2 (>= 3.0.0),
     testthat (>= 2.1.0),
+    highr,
     lubridate,
     rmarkdown,
     covr,
@@ -50,8 +57,13 @@ Suggests:
     forcats,
     stringr,
     cowplot,
-    png
+    tidybayes,
+    png,
+    stringi,
+    modelr,
+    styler
+VignetteBuilder: 
+    knitr
 Language: en-US
-VignetteBuilder: knitr
 BugReports: https://github.com/MUCollective/multiverse/issues/new
 URL: https://mucollective.github.io/multiverse/, https://github.com/mucollective/multiverse/

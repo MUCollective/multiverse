@@ -2,7 +2,11 @@
 title: "A discussion on branches in the multiverse"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{A discussion on branches in the multiverse}
@@ -18,11 +22,16 @@ library(ggplot2)
 library(multiverse)
 ```
 
+```{r, include=FALSE}
+M = multiverse()
+```
+
 ```{r, chunk-setup, include=FALSE}
-opts_knit$set(
+opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
-  fig.height = 4
+  fig.height = 4,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
 )
 ```
 
@@ -32,7 +41,7 @@ In a multiverse analysis, researchers identify sets of defensible analysis choic
 
 For an example of how a branch might arise during analysis, let's say that you have a variable, $x$, which can assume any value between 1 and 60. You want to discretise this variable into two ordinal categories --- *high* (if x >= 30) and *low* (if x < 30). However, another researcher might argue for discretising this variable into three ordinal categories --- *high* (if x >= 40), *medium* (if 20 <= x < 40), and *low* (if x < 20).
 
-An important aspect of this package is to make declaring such **branches** in the analysis more natural and convenient. Each **branch** is identified by a parameter, which can take two or more options. Thus, the different options are different branchings within the multiverse. A **branch** may be defined for:
+An important aspect of this package is to make declaring such **branches** in the analysis more natural and convenient. Each **branch** is identified by a parameter, which can take two or more options. Thus, the different options are different branches within the multiverse. A **branch** may be defined for:
 
 - **Data substitution parameters** which offer to switch between different raw datasets, either collected or simulated.
 
@@ -45,7 +54,7 @@ An important aspect of this package is to make declaring such **branches** in th
 In this document we describe different ways of declaring a **branch**, using different syntactical styles that are popular with R users, including base R syntax and tidyverse syntax.
 
 #### Note 
-In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
+In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
 
 ## Example 1: A simple branch
 
@@ -136,7 +145,7 @@ Say we are not familiar with R's tidyverse packages and it's style of writing co
 ```{multiverse h-3, inside = M, echo = FALSE}
 duration <- branch(data_trans,
         "log-transformed" ~ log,
-        "untransformed" ~ identity
+        "un-transformed" ~ identity
     )(data.userlogs.raw$duration)
 ```
 
@@ -145,7 +154,7 @@ duration <- branch(data_trans,
 ```{multiverse default-m-3, inside = M}`r ''`
 duration <- branch(data_trans,
         "log-transformed" ~ log,
-        "untransformed" ~ identity
+        "un-transformed" ~ identity
     )(data.userlogs.raw$duration)
 ```
 ````
@@ -159,7 +168,7 @@ expand(M) %>%
   mutate(transformed_duration = map(.results, "duration"))
 ```
 
-As you can see, this creates, in each universe within the multiverse, a vector named `duration` which is either untransformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire `branch(...)` gets replaced with either `log()` or `identity()` within a given universe.
+As you can see, this creates, in each universe within the multiverse, a vector named `duration` which is either un-transformed or log-transformed. However, this suffers from being slightly unintuitive as it is harder to read or write the code. What is actually happening here is that the entire `branch(...)` gets replaced with either `log()` or `identity()` within a given universe.
 
 A more readable pattern might be:
 
@@ -168,7 +177,7 @@ M = multiverse()
 ```{multiverse h-4, inside = M, echo = FALSE}
 duration_transform <- branch(data_trans,
     "log-transformed" ~ log,
-    "untransformed" ~ identity
+    "un-transformed" ~ identity
   )
 
 duration <- duration_transform(data.userlogs.raw$duration)
@@ -178,7 +187,7 @@ duration <- duration_transform(data.userlogs.raw$duration)
 ```{multiverse default-m-4, inside = M}`r ''`
 duration_transform <- branch(data_trans,
     "log-transformed" ~ log,
-    "untransformed" ~ identity
+    "un-transformed" ~ identity
   )
 
 duration <- duration_transform(data.userlogs.raw$duration)
@@ -198,7 +207,7 @@ expand(M) %>%
 
 ## Example 4: Parameters can be reused
 
-If you want to use a parameter multiple times, or just want to define it upfront, you can assign it to a variable and use the variable in your code. For example, in the next example, we declare *three different branches* for data transformation, data modelling and data presentation respectively. We also define any necessary functions along the way.
+If you want to use a parameter multiple times, or just want to define it upfront, you can assign it to a variable and use the variable in your code. For example, in the next example, we declare *three different branches* for data transformation, data modeling and data presentation respectively. We also define any necessary functions along the way.
 
 ```{r}
 library(boot)
@@ -221,7 +230,7 @@ bootstrapped_ci <- function(x, y) {
 ```{multiverse h-5, inside = M, echo = FALSE}
 data_trans <- branch(data_trans,
       "log-transformed" ~ log,
-      "untransformed" ~ identity
+      "un-transformed" ~ identity
     )
 
   fit <- branch(bootstrap,
@@ -250,7 +259,7 @@ data_trans <- branch(data_trans,
 ```{multiverse default-m-5, inside = M}`r ''`
 data_trans <- branch(data_trans,
       "log-transformed" ~ log,
-      "untransformed" ~ identity
+      "un-transformed" ~ identity
     )
 
   fit <- branch(bootstrap,
@@ -276,7 +285,7 @@ data_trans <- branch(data_trans,
 ```
 ````
 
-We then write the anaysis and use those variables to indicate branches in our analysis within the multiverse.
+We then write the analysis and use those variables to indicate branches in our analysis within the multiverse.
 
 ```{r}
 execute_multiverse(M)
@@ -311,7 +320,7 @@ expand(M) %>%
 ```
 
 ## Example 5: Declaring continuous variables in `branch`
-So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not oo high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.
+So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not too high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.
 
 ```{r}
 M = multiverse()
@@ -366,6 +375,6 @@ expand(M) %>%
   labs(x = "Universe (i.e. the seed parameter)", y = "Model Parameter Values", title = "Estimates with 95% confidence intervals")
 ```
 
-**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multivere. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
+**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multiverse. However, we can implement the exact same multiverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
 
 

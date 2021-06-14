@@ -73,6 +73,7 @@ test_that("`multiverse_table()` throws error for objects of class other than mul
 
 test_that("basic retrieval works with `conditions()`", {
   M <- multiverse()
+  
   inside(M, {
     df <- data.frame (x = 1:10 ) %>%
       mutate( y = branch( values_y,
@@ -87,6 +88,9 @@ test_that("basic retrieval works with `conditions()`", {
         )
       )
   })
+  
+  print(class(M))
+  print(conditions(M))
   
   expect_equal( conditions(M), list(expr((values_z != "sum" | (values_y == TRUE)))) )
 })

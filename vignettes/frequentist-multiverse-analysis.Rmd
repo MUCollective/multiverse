@@ -1,19 +1,23 @@
 ---
-title: "A multiverse analysis of the efficiency of physical visualizations"
+title: "Example multiverse implementation: Re-evaluating the efficiency of physical visualizations"
 author: 
   - Pierre Dragicevic, Inria
   - Yvonne Jansen, CNRS & Sorbonne Universite
   - Abhraneel Sarma, Northwestern University
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{A multiverse analysis of the efficiency of physical visualizations}
+  %\VignetteIndexEntry{Example multiverse implementation: Re-evaluating the efficiency of physical visualizations}
   %\usepackage[UTF-8]{inputenc}
 ---
 
+
 ```{r setup, message=FALSE, warning=FALSE}
-library(knitr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -24,9 +28,16 @@ library(multiverse)
 library(boot)
 ```
 
-```{r, chunk-setup, include=FALSE}
-opts_knit$set(
+
+```{r, include=FALSE}
+M = multiverse()
+```
+
+
+```{r, chunk-setup, include=FALSE, eval=FALSE}
+knitr::opts_chunk$set(
   echo = TRUE,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
   fig.width = 6, 
   fig.height = 4
 )
@@ -34,7 +45,7 @@ opts_knit$set(
 
 ## Multiverse case study #2
 
-In this vignette, we will recreate the multiverse analysis, [Frequentist](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
+In this vignette, we will recreate the multiverse analysis, [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
 
 ## Introduction
 
@@ -71,7 +82,7 @@ In this vignette, we are primarily concerned with the variables: `duration` and 
 
 The first (default) analysis is a one-sided t-test to estimate the means and 95% confidence intervals of the log-transformed task completion time (duration). Since, task completion times are strictly positive, and may have a long tail, this decision makes sense. However, it may be reasonable to use the untransformed data as well.  On the other hand, it is also reasonable to use a bootstrap test instead of a t-test.
 
-This results in four possible analysis combinations, two each for data transformation (log and untransformed), and model (t-test and BCa bootsrap).
+This results in four possible analysis combinations, two each for data transformation (log and untransformed), and model (t-test and BCa bootstrap).
 
 ### Average task completion time (arithmetic mean) for each condition. 
 
@@ -100,7 +111,7 @@ tCI <- function(observations, conf.level) {
 
 Next we initialise the multiverse object within which this analysis will take place.
 
-```{r}
+```{r, eval = FALSE}
 M = multiverse()
 ```
 
@@ -164,6 +175,7 @@ expand(M)
 We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options.
 First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.
 
+
 ```{multiverse default-m-2, inside = M, echo = FALSE}
 duration <- do.call(data_transform, list(data.userlogs.raw$duration))
 ```
@@ -174,7 +186,7 @@ duration <- do.call(data_transform, list(data.userlogs.raw$duration))
 ```
 ````
 
-Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a `data.frame`. We strongly recommend sotring the results that you would wish to extract from the multiverse in a `data.frame` as that would make it much easier for analysing and visualising the results.
+Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a `data.frame`. We strongly recommend sorting the results that you would wish to extract from the multiverse in a `data.frame` as that would make it much easier for analysing and visualising the results.
 
 ```{multiverse default-m-3, inside = M, echo = FALSE, message = FALSE, warning = FALSE}
 modality <- data.userlogs.raw$modalityname
@@ -273,7 +285,7 @@ p <- df.results %>%
 animate(p, nframes = 28,  fps = 2)
 ```
 
-The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be cnsistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.
+The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be consistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.
 
 ### Sidebar: Using the tidyverse to extract and visualize the results
 So far we have tried to keep this analysis in base R. However, the steps involved in extracting and visualising results from the multiverse maybe more convenient for some using the tidyverse API. We can implement the steps that we have taken in the previous three code block in the following way using the tidyverse. The result of this is the same data frame that was created in the previous step, and was used as input data to ggplot, `df.results`. The `multiverse` package is flexible, and does not restrict you towards a particular style of R programming.
@@ -380,7 +392,7 @@ p <- df.results.diff %>%
 animate(p, nframes = 28,  fps = 4)
 ```
 
-Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 incidates a statistically significant difference at the α=.05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.
+Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 indicates a statistically significant difference at the α = .05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.
 
 ## Conclusion
 

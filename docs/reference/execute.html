@@ -76,7 +76,7 @@ whole of the multiverse using the execute_multiverse." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -99,33 +99,33 @@ whole of the multiverse using the execute_multiverse." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/basic-multiverse.html">The most basic multiverse example: calculating the mean</a>
-    </li>
-    <li>
       <a href="../articles/branch.html">A discussion on branches in the multiverse</a>
-    </li>
-    <li>
-      <a href="../articles/complete-multiverse-analysis.html">A complete implementation of a multiverse analysis</a>
     </li>
     <li>
       <a href="../articles/conditions.html">Declaring conditions in the multiverse</a>
     </li>
     <li>
-      <a href="../articles/dance.html">Recreating `Adding inferential treatments to plots using Resampling and Animations` using multiverse</a>
+      <a href="../articles/dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
     </li>
     <li>
-      <a href="../articles/frequentist-multiverse-analysis.html">A multiverse analysis of the efficiency of physical visualizations</a>
+      <a href="../articles/durante-multiverse-analysis.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
     </li>
     <li>
-      <a href="../articles/hurricane.html">Are hurricanes with more female names deadlier --- an implementation using multiverse</a>
+      <a href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    </li>
+    <li>
+      <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
-      <a href="../articles/visualizing-multiverse.html">Extracting and Visualizing the results of a multiverse analysis</a>
+      <a href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -190,8 +190,11 @@ parts or whole of the multiverse. Each analysis can also be accessed from the mu
 under the results column.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'>#' M &lt;- multiverse()</span>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+
+<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='multiverse.html'>multiverse</a></span><span class='op'>(</span><span class='op'>)</span>
+
 <span class='fu'><a href='inside.html'>inside</a></span><span class='op'>(</span><span class='va'>M</span>, <span class='op'>{</span>
   <span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span>, <span class='fl'>50</span>, <span class='fl'>20</span><span class='op'>)</span>
 
@@ -208,7 +211,7 @@ under the results column.</p>
 <span class='co'># universes in the multiverse`</span>
 <span class='va'>M</span> <span class='op'>%&gt;%</span>
   <span class='fu'>execute_multiverse</span><span class='op'>(</span><span class='op'>)</span>
-<span class='op'>}</span>
+<span class='co'># }</span>
 
 </div></pre>
   </div>
