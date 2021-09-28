@@ -22,7 +22,7 @@ jobs:
           - {os: windows-latest, r: 'release', suffix: '', not_cran: 'true', vignettes: 'NULL'}
           - {os: windows-latest, r: 'devel', suffix: '', not_cran: 'true', vignettes: 'NULL'}
           - {os: macOS-latest, r: 'release', suffix: '', not_cran: 'true', vignettes: 'NULL'}
-          - {os: ubuntu-16.04, r: 'release', suffix: '', not_cran: 'true', vignettes: 'NULL', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
+          - {os: ubuntu-18.04, r: 'release', suffix: '', not_cran: 'true', vignettes: 'NULL', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -51,14 +51,13 @@ jobs:
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-1-
 
-      - name: Install system dependencies
+      - name: Install system dependencies on Linux
         if: runner.os == 'Linux'
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          Rscript -e "remotes::install_github('r-hub/sysreqs')"
-          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
-          sudo -s eval "$sysreqs"
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "18.04"))')
 
       - name: Install dependencies
         run: |

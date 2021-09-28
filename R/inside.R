@@ -103,40 +103,6 @@ inside <- function(multiverse, .expr, .label = NULL) {
   execute_universe(multiverse)
 }
 
-
-# @param name,value If the shorthand assignment `$<-` is used to assign values to variables 
-# in the multiverse name and value of arguments should be specified. Name indicates the variable name; 
-# value indicates the value to be assigned to name.
-
-# #' @rdname inside
-# #' @export
-# `$<-.multiverse` <- function(multiverse, name, value) {
-# must use call here instead of putting { .. } inside the expr()
-# because otherwise covr::package_coverage() will insert line number stubs
-# *into* the expression and cause tests to break
-#   if (!is.call(value)) stop(
-#     "Only objects of type language can be passed into the multiverse. Did you forget to add `~`?"
-#  )
-
-#   .expr = call("{", expr( !!sym(name) <- !!rlang::f_rhs(value) ))
-#   .expr = expand_branch_options(.expr)
-
-#   add_and_parse_code(multiverse, .expr)
-
-#   multiverse
-# }
-
-compare_code <- function(x, y) {
-  if (!is.list(x)) x <- list(x)
-  if (!is.list(y)) y <- list(y)
-  
-  n <- max(length(x), length(y))
-  length(x) <- n                      
-  length(y) <- n
-  
-  mapply( function(.x, .y) identical(deparse(.x), deparse(.y)), x, y )
-}
-
 add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   m_obj <- attr(multiverse, "multiverse")
   .super_env <- attr(multiverse, "multiverse_super_env")
@@ -190,23 +156,6 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   m_obj$code <- .c
   m_obj$unchanged_until <- length(.c) - length(.name)
 }
-
-concatenate_expr <- function(ref, to_add){
-  if (is_call(to_add, "{")) {
-    ref = concatenate_expr( ref, as.list(to_add)[-1] )
-  } else {
-    if(length(to_add) == 1){
-      ref = inset2(ref, length(ref) + 1, to_add[[1]])
-    } else {
-      ref = inset2(ref, length(ref) + 1, to_add[[1]])
-      to_add = to_add[-1]
-      ref = concatenate_expr(ref, to_add)
-    }
-  }
-  
-  ref
-}
-
 
 # expand use of .options argument in branch calls
 expand_branch_options <- function(.expr) {

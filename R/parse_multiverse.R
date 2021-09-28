@@ -326,17 +326,6 @@ get_option_name <- function(x) {
   }
 }
 
-combine_parameter_conditions_list <- function(l) {
-  .list = list(parameters = list(), conditions = list())
-  
-  for (i in range(1:length(l))) {
-    .list$parameters <- modifyList(.list$parameters, l[[i]]$parameters)
-    .list$conditions <- modifyList(.list$conditions, l[[i]]$conditions)
-  }
-  
-  .list
-}
-
 
 
 

@@ -113,14 +113,14 @@ test_that("`inside` executes the default analysis", {
   expect_equal( as.list(df), as.list(df.ref) )
 })
 
-test_that("continuous parameters defined in the multiverse are evaluated", {
+test_that("`expand_branch_options()`: continuous parameters defined in the multiverse are evaluated", {
   .expr_1 = expr({
     y <- branch(foo, "option1" ~ 1, .options = 2:10)
-  }) %>% expand_branch_options()
+  })
 
   .expr_2 = expr({
     y <- branch(foo, "option1" ~ 1, .options = seq(2, 3, by = 0.1))
-  }) %>% expand_branch_options()
+  })
 
   .ref_expr_1 = expr({
     y <- branch(foo, "option1" ~ 1, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)
@@ -131,8 +131,8 @@ test_that("continuous parameters defined in the multiverse are evaluated", {
                 2.6, 2.7, 2.8, 2.9, 3)
   })
 
-  expect_equal(.expr_1, .ref_expr_1)
-  expect_equal(.expr_2, .ref_expr_2)
+  expect_equal(expand_branch_options(.expr_1), .ref_expr_1)
+  expect_equal(expand_branch_options(.expr_2), .ref_expr_2)
 })
 
 

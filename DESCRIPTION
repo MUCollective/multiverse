@@ -24,7 +24,7 @@ Description: Implement 'multiverse' style analyses (Steegen S., Tuerlinckx F, Ge
     analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks.
 License: GPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends:
     R (>= 3.5.0),
     knitr (>= 1.3.2)
