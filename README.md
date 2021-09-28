@@ -1,44 +1,53 @@
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions)
 [![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://codecov.io/gh/MUCollective/multiverse)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/multiverse)](https://cran.r-project.org/package=multiverse)
-![Download
-count](https://cranlogs.r-pkg.org/badges/last-month/multiverse)
 
 <!-- badges: end -->
 
 # Multiverse: An R package for creating multiverse analysis
 
-In any end-to-end analysis there likely exists points in the analysis
-where researchers have to make a decision between two or more equally
-defensible choices (e.g., different ways of excluding outliers,
-different data transformations). In a multiverse analysis, researchers
-identify all the possible decision points for an analysis, determine
-alternative analysis steps at each decision point, implements them all,
-and then report the outcomes of all analyses resulting from all possible
-choice combinations.
+`multiverse` is an R package that allows users to specify multiverse of
+statistical analysis, also called a multiverse analysis. In a multiverse
+analysis, researchers identify sets of defensible analysis choices
+(e.g., different ways of excluding outliers, different data
+transformations), implement them all, and then report the outcomes of
+all analyses resulting from all possible choice combinations. However,
+declaring several alternative analysis paths can be tricky, often
+requiring custom control flows such as nested for-loops and multiple
+if-else statements. The **goal** of `multiverse` is to allow users to
+create multiverse analyses in a concise and easily interpretable manner.
+`multiverse` enables this by providing both an embedded Domain-Specific
+Language (DSL) as well as an API to interact with and extract results
+from a multiverse analysis, which can then be neatly wrapped within a
+larger analysis in R.
 
-However, declaring several alternative analysis paths can be tricky,
-often requiring custom control flows such as nested for-loops and
-multiple if-else statements. The **goal** of `multiverse` is to allow
-users to create a multitude of end-to-end analyses in a concise and
-easily interpretable manner. `multiverse` enables this by providing both
-an embedded Domain-Specific Language (DSL) as well as an API to interact
-with and extract results from a multiverse analysis, which can then be
-neatly wrapped within a larger analysis in R.
-
-For more background on what a *multiverse analysis* is, please refer to
-the works of Steegen et al., who first put forth the concept of
-[multiverse
-analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637),
-and Simonsohn et al., who put forth a similar notion called the
-[Specification curve
+Steegen et al. first put forth the concept of [multiverse
+analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637);
+Simonsohn et al. put forth a similar notion called the [Specification
+curve
 analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
 
+In a `multiverse` analysis, alternate analysis paths can arise from
+having points in the analysis where an analyst has to make a decision of
+choosing between two or more reasonable steps. We refer to these
+decision points as **parameters**, and they could be:
+
+-   **Data substitution parameters** offer to switch between different
+    raw datasets, either collected or simulated.
+
+-   **Data processing parameters** offer to process the same raw data in
+    different ways before it is analysed.
+
+-   **Modeling parameters** offer different ways of analysing the same
+    processed data
+
+-   **Presentation parameters** offer different ways of presenting
+    analysis outcomes
+
 The `multiverse` documentation predominantly follows the tidyverse
-syntax.
+syntax
 
 ## Installation
 
@@ -52,17 +61,14 @@ devtools::install_github("mucollective/multiverse")
 
 ## Overview
 
-In this document, we will provide you with details on how to quickly get
-started with this package. Please refer to the following vignettes for
-further information on:
+For details on how to quickly get started with this package, please
+refer to this document as well as the following vignettes:
 
 -   How `multiverse` can be used in different environments such as in
-    RMarkdown and RScripts. See `vignette("multiverse-in-rmd")`.
--   How alternate analysis paths are declared in `multiverse` using
-    branch, and how `multiverse` processes the user-declared
-    (`multiverse` DSL) code to create multiple end-to-end executable R
-    analysis code. See `vignette("branch")`.
--   How conditions and dependencies can be declared in `multiverse`;
+    RScripts and RMarkdown. See `vignette("multiverse-in-rmd")`.
+-   How alternate analysis paths can be declared in `multiverse` using
+    branch. See `vignette("branch")`.
+-   How conditions can be declared in `multiverse` using conditions;
     conditions can be used to state when two steps in a multiverse are
     incompatible with one another. See `vignette("conditions")`.
 -   How multiverse results can be extracted and visualised. . See
@@ -99,273 +105,245 @@ found in the
 
 In this document, we outline an initial approach to conducting a
 multiverse analysis in R. We will show how our package can be used to
-perform the multiverse analysis outlined by Simohnsohn et al. in
-[Specification Curve: Descriptive and Inferential Statistics on All
-Reasonable Specifications](http://dx.doi.org/10.2139/ssrn.2694998) where
-they reanalysed the study titled [Female hurricanes are deadlier than
-male hurricanes](https://doi.org/10.1073/pnas.1402786111).
+perform the multiverse analysis outlined by Steegen et al. in
+[Increasing Transparency Through a Multiverse
+Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
 
-Before we dive into the analysis, it might be helpful to establish a
-terminology to help describe the steps that go into creating a
-multiverse analysis. We adopt the “tree of analysis” metaphor (see
-Figure below): “an analysis proceeds from top to bottom, and each
-branching represents a choice between different analysis options”.
+Data analysis can involve several decisions involving two or more
+options. In most statistical analysis, these decisions are taken by the
+researcher based on some reasonable justification. However, for several
+decisions, there can be more than one reasonable options to choose from.
+A multiverse analysis is a form of analysis which makes all such
+decisions explicit and conducts the complete analysis for all
+combinations of options (of each decision).
 
-<img src="vignettes/figures/00-reporting-strategies.png" width="60%" />
+Below, we first illustrate an example of a single analysis for a
+dataset. We will then extend it to a multiverse analysis.
 
-In this terminology:
+## The data
 
--   a *parameter* represents a node in the tree that has more than one
-    child—a point in the analysis where the analyst must decide between
-    reasonable alternatives
--   an *option* is one of those children.
--   A singular analysis (i.e. universe) is a complete path from the root
-    to a leaf.
-
-### Background: The Data
-
-The dataset used by Jung et al., in their study [Female hurricanes are
-deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111),
-contained information on 94 hurricanes from a list published by National
-Oceanic and Atmospheric Administration (NOAA). For each storm, the
-authors compiled information on the year (`year`), number of deaths
-(`deaths`), minimum pressure (`pressure`), maximum wind speed at time of
-landfall (`wind`), dollar amount of property damages (`damage`) and
-hurricane severity or category of the storm (category). Nine independent
-coders were asked to rate the names of the hurricanes on a two-item
-11-point scale (1 = more masculine; 11 = more feminine), and the
-`femininity` of each name was computed as the mean of these two items.
-
-We first load the raw data and store it as a tibble. The data is
-provided with the package and can be loaded using the `data("hurricane)`
-command.
+The first step is to read the raw data from the file and store it as a
+tibble. We will be following the **tidy data** format here. The data is
+provided with the package and can be loaded using the `data("durante)`
+command. In this example, we will use the data collected by *Durante et
+al.*, which investigated the effect of fertility on religiosity and
+political attitudes. We will focus on their second study (which we store
+in `df_durante`).
 
 ``` r
-data("hurricane")
-hurricane_data <- hurricane %>%
-    # rename some variables
-    rename(
-        year = Year,
-        name = Name,
-        dam = NDAM,
-        death = alldeaths,
-        female = Gender_MF,
-        masfem = MasFem,
-        category = Category,
-        pressure = Minpressure_Updated_2014,
-        wind = HighestWindSpeed
-    ) %>%
-    # create new variables
-    # which are relevant later on
-    mutate(
-        post = ifelse(year>1979, 1, 0),
-        zcat = as.numeric(scale(category)),
-        zpressure = -scale(pressure),
-        zwind = as.numeric(scale(wind)),
-        z3 = as.numeric((zpressure + zcat + zwind) / 3)
-    )
+data("durante")
+
+df_durante <- durante
 ```
 
 The data look like this:
 
 ``` r
-hurricane_data %>%
+df_durante %>%
   head()
-#>   year     name  masfem MinPressure_before pressure female category death wind
-#> 1 1950     Easy 5.40625                958      960      0        3     2  125
-#> 2 1950     King 1.59375                955      955      0        4     4  134
-#> 3 1952     Able 2.96875                985      985      0        1     3  125
-#> 4 1953  Barbara 8.62500                987      987      1        1     1   75
-#> 5 1953 Florence 7.87500                985      985      1        1     0  115
-#> 6 1954    Carol 8.53125                960      960      1        3    60  115
-#>     dam Elapsed.Yrs Source post       zcat  zpressure       zwind         z3
-#> 1  2380          63    MWR    0  0.8281862  0.2017975 -0.02006244  0.3366404
-#> 2  7220          63    MWR    0  1.7661320  0.4513891  0.27257241  0.8300312
-#> 3   210          61    MWR    0 -1.0477054 -1.0461607 -0.02006244 -0.7046428
-#> 4    78          60    MWR    0 -1.0477054 -1.1459973 -1.64581157 -1.2798381
-#> 5    21          60    MWR    0 -1.0477054 -1.0461607 -0.34521226 -0.8130261
-#> 6 24962          59    MWR    0  0.8281862  0.2017975 -0.34521226  0.2282571
 ```
 
-### A single data set analysis: one possible analysis among many
+<div class="kable-table">
 
-The original analysis removed the two hurricanes with the highest death
-toll as outliers. To test their hypothesis that hurricanes with more
-feminine names result in more deaths, the authors fit a negative
-binomial model using the number of deaths as the response variable (due
-to some issues with implementing the negative binomial model in R, we
-approximate it by fitting a poisson model instead). For predictors, they
-use `femininity`, `damages`, standardised value of pressure
-(`zpressure)`, interaction between `femininity` and `damages`, and the
-interaction between `femininity` and `zpressure`.
+| WorkerID | Rel1 | Rel2 | Rel3 | Abortion | Marriage | StemCell | RestrictAbortion | Marijuana | FreeMarket | RichTax | StLiving | Profit | PrivSocialSec | Sure1 | Sure2 | Relationship | ReportedCycleLength | Vote | Donate | DateTesting | StartDateofLastPeriod | StartDateofPeriodBeforeLast | StartDateNext |
+|---------:|-----:|-----:|-----:|---------:|---------:|---------:|-----------------:|----------:|-----------:|--------:|---------:|-------:|--------------:|------:|------:|-------------:|--------------------:|-----:|-------:|:------------|:----------------------|:----------------------------|:--------------|
+|        1 |    8 |    8 |    7 |        2 |        7 |        7 |                7 |         2 |          4 |       7 |        6 |      6 |             3 |     9 |     9 |            4 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-18            | 2012-04-18                  | 2012-06-15    |
+|        2 |    8 |    7 |    7 |        7 |        2 |        5 |                1 |         6 |          4 |       4 |        5 |      4 |             6 |     9 |     7 |            3 |                  28 |    1 |      1 | 2012-05-22  | 2012-04-29            | 2012-03-31                  | 2012-05-30    |
+|        3 |    6 |    6 |    2 |        3 |        1 |        6 |                4 |         7 |          2 |       5 |        5 |      3 |             5 |     8 |     7 |            3 |                  27 |    1 |      1 | 2012-05-21  | 2012-05-04            | 2012-04-07                  | 2012-05-31    |
+|        4 |    7 |    8 |    6 |        7 |        5 |        6 |                2 |         5 |          3 |       6 |        5 |      5 |             4 |     9 |     9 |            3 |                  37 |    1 |      1 | 2012-05-21  | 2012-04-27            | 2012-03-22                  | 2012-06-05    |
+|        5 |    7 |    7 |    9 |        7 |        1 |        4 |                1 |         4 |          6 |       5 |        2 |      2 |             3 |     5 |     4 |            3 |                  38 |    1 |      1 | 2012-05-22  | 2012-04-19            | 2012-03-09                  | 2012-05-25    |
+|        6 |    9 |    9 |    9 |        1 |        7 |        6 |                7 |         2 |          3 |       5 |        3 |      5 |             5 |     8 |     8 |            2 |                  30 |    0 |      0 | 2012-05-22  | 2012-04-21            | 2012-03-20                  | 2012-05-22    |
 
-The following code block contains the steps involved in implementing the
-original analysis:
+</div>
+
+The original paper looked at the relationship between fertility,
+relationship status, and religiosity. But there are many reasonable ways
+to have defined each of these three variables from this dataset, so it
+is a good candidate for multiverse analysis.
+
+## A single data set analysis: one possible analysis among many
+
+The data collected needs to be processed before it can be modeled.
+Preparing the data set for analysis can involve several steps and
+decisions regarding how to encode the different raw values. The
+following is one example of data processing that can be performed for
+this study, where the original authors of the study compute, for each
+participant in their study, the typical duration of their menstrual
+cycle (`ComputedCycleNext`), the likely date of the next onset of their
+menstrual cycle (`NextMenstrualOnset`), the day of the cycle that they
+were in when taking the questionnaire (`CycleDay`); they also codify
+participants’ relationship status into a binary value (`Relationship`),
+and remove data which they believe might have been not captured
+accurately such as if the calculation of the length of menstrual cycle
+is either too short or too long
+(`ComputedCycleLength > 25 & ComputedCycleLength < 35`), or if the
+participants were quite unsure of their responses
+(`Sure1 <= 5 & Sure2 <= 5`).
 
 ``` r
-df.filtered = hurricane_data %>% 
-  filter(name != "Katrina" & name != "Audrey") %>%
-  mutate(zpressure = -scale(pressure))
-
-fit = glm(
-  death ~ masfem * dam + masfem * zpressure,
-  data = df.filtered,
-  family = "poisson"
-)
+one_universe = df_durante %>%
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+  mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
+  mutate(
+    CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+    CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+  ) %>%
+  mutate(
+    RelationshipStatus = factor(ifelse(Relationship==1 | Relationship==2, "Single", "Relationship"))
+  ) %>%
+  filter( ComputedCycleLength > 25 & ComputedCycleLength < 35) %>%
+  filter( Sure1 > 6 | Sure2 > 6 ) %>%
+  mutate( Fertility = factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ) )
 ```
 
-The result below indicates that there is a small but positive effect of
-`masfem` (femininity of the name of a hurricane) on `deaths`, when
-controlled for damages. This appears to support the original hypothesis.
+The transformed data for this one universe looks like this:
 
 ``` r
-tidy(fit) %>%
-  filter(term != "(Intercept)") %>%
-  ggplot() +
-  geom_vline(xintercept = 0, color = "red") +
-  geom_pointinterval(aes(x = estimate, y = term, xmin = estimate + qnorm(0.025)*std.error, xmax = estimate + qnorm(0.975)*std.error)) +
-  theme_minimal()
+one_universe %>%
+  select( NextMenstrualOnset, Relationship, Sure1, Sure2, Fertility, everything() ) %>%
+  head()
+```
+
+<div class="kable-table">
+
+| NextMenstrualOnset | Relationship | Sure1 | Sure2 | Fertility | WorkerID | Rel1 | Rel2 | Rel3 | Abortion | Marriage | StemCell | RestrictAbortion | Marijuana | FreeMarket | RichTax | StLiving | Profit | PrivSocialSec | ReportedCycleLength | Vote | Donate | DateTesting | StartDateofLastPeriod | StartDateofPeriodBeforeLast | StartDateNext | ComputedCycleLength | CycleDay | RelationshipStatus |
+|:-------------------|-------------:|------:|------:|:----------|---------:|-----:|-----:|-----:|---------:|---------:|---------:|-----------------:|----------:|-----------:|--------:|---------:|-------:|--------------:|--------------------:|-----:|-------:|:------------|:----------------------|:----------------------------|:--------------|:--------------------|---------:|:-------------------|
+| 2012-06-17         |            4 |     9 |     9 | medium    |        1 |    8 |    8 |    7 |        2 |        7 |        7 |                7 |         2 |          4 |       7 |        6 |      6 |             3 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-18            | 2012-04-18                  | 2012-06-15    | 30 days             |        2 | Relationship       |
+| 2012-05-28         |            3 |     9 |     7 | low       |        2 |    8 |    7 |    7 |        7 |        2 |        5 |                1 |         6 |          4 |       4 |        5 |      4 |             6 |                  28 |    1 |      1 | 2012-05-22  | 2012-04-29            | 2012-03-31                  | 2012-05-30    | 29 days             |       22 | Relationship       |
+| 2012-05-31         |            3 |     8 |     7 | low       |        3 |    6 |    6 |    2 |        3 |        1 |        6 |                4 |         7 |          2 |       5 |        5 |      3 |             5 |                  27 |    1 |      1 | 2012-05-21  | 2012-05-04            | 2012-04-07                  | 2012-05-31    | 27 days             |       18 | Relationship       |
+| 2012-05-23         |            2 |     8 |     8 | medium    |        6 |    9 |    9 |    9 |        1 |        7 |        6 |                7 |         2 |          3 |       5 |        3 |      5 |             5 |                  30 |    0 |      0 | 2012-05-22  | 2012-04-21            | 2012-03-20                  | 2012-05-22    | 32 days             |       27 | Single             |
+| 2012-05-31         |            4 |     9 |     9 | low       |        7 |    5 |    8 |    5 |        5 |        4 |        5 |                5 |         7 |          5 |       7 |        3 |      7 |             2 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-03            | 2012-04-05                  | 2012-05-31    | 28 days             |       19 | Relationship       |
+| 2012-06-15         |            1 |     8 |     8 | medium    |       11 |    2 |    5 |    8 |        7 |        1 |        7 |                1 |         7 |          2 |       7 |        5 |      5 |             5 |                  30 |    1 |      1 | 2012-05-24  | 2012-05-18            | 2012-04-20                  | 2012-06-17    | 28 days             |        6 | Single             |
+
+</div>
+
+``` r
+one_universe %>%
+  ggplot(aes(x = Relationship, y = Rel1 + Rel2 + Rel3, color = Fertility)) +
+  stat_summary(position = position_dodge(width = .1), fun.data = "mean_se")
 ```
 
 ![results from a single analysis: point estimates and 95% confidence
-intervals of all the coefficients of the
-predictors](man/figures/universe-summary-1.png)
+intervals of the coefficients of the predictors relationship and
+single](man/figures/universe-summary-1.png)
 
-However, the original analysis involved at least four analysis decisions
-(A-D), and at each decision point (node) alternative choices may have
-led to a different result. These decisions are highlighted in the figure
-below:
+However, there also exists other valid processing options: instead of
+calculating
+`NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength`, it
+can also be calculated as `StartDateofLastPeriod + ReportedCycleLength`.
+Such alternate processing options can exist for several decisions that a
+researcher makes in the data processing, analysis and presentation
+stages. This can thus result in a *multiverse of analysis*, with the one
+described above representing a single *universe*.
 
-<img src="vignettes/figures/00-default-analysis.png" width="90%" />
-
-Several subsequent studies, each proposing a different analysis
-strategy, found no presence of such an effect, suggesting that the
-original finding may have been a result of a idiosyncratic combination
-of analysis choices. Data analysis can often involve several decisions
-involving two or more options. In most statistical analysis, these
-decisions are taken by the researcher based on some reasonable
-justification. However, for several decisions, there can be more than
-one reasonable option to choose from. A multiverse analysis makes all
-such decisions explicit and conducts the complete analysis for all
-combinations of options (of each decision). Below, we use this analysis
-as an example of how a single analysis can be extended to a multiverse
-analysis.
+How would one declare such different alternate ways of calculation
+easily and efficiently? Below, we describe how our package allows you to
+make such declarations with ease.
 
 ## Multiverse specification
 
 `multiverse` provides flexible functions which can be used to easily
 multiplex over alternative analysis steps, and perform a multiverse
-analysis. To describe both the features of multiverse and to sketch out
-how an analyst might progressively create a multiverse from the bottom
-up, we describe how to modify the traditional, single-universe analysis
-from the previous figure in to a multiverse analysis.
+analysis.
 
-The first step is to load the library and define a *new multiverse*,
-which is the variable `M`. We will use this multiverse object to create
-a set of universes, each representing a different way of analysing our
-data.
+The first step is to define a *new multiverse*. We will use the
+multiverse object to create a set of universes, each representing a
+different way of analysing our data.
 
 ``` r
-#load the library
-library(multiverse)
-
-#create multiverse object
-M = multiverse()
+M <- multiverse()
 ```
 
 ### Two ways to building a multiverse
 
-Through the `multiverse` DSL, users are specifying multiple analysis
-paths at the same time. The DSL cannot be executed directly in an R
-environment or R code chunk and needs to be declared, processed and
-executed in a special environment. To be more precise, `multiverse`
-takes the user declared code, parses and rewrites the code into multiple
-versions of valid R code, each corresponding to an unique analysis path
-in the multiverse. For more information on this processing step, see
-vignette(branch)
+The `multiverse` enables the users to declare alternative analysis using
+a embedded DSL, the syntax for which closely resembles R and tidyverse
+syntax. However, this DSL cannot be executed directly in R and needs to
+be declared, processed and executed in a special environment. To be more
+precise, `multiverse` takes the user declared code in the DSL form,
+parses the abstract syntax tree, and rewrites the code into multiple
+versions of valid R code corresponding to each universe in the
+multiverse.
 
-To get around these limitations, we need to declare this (multiverse
-DSL) code “inside a multiverse object”. The `multiverse` package
-facilitates this through some boilerplate code:
+To get around these limitations, we declare this code “inside the
+multiverse object”. In the `multiverse` package, we support this
+declaration in two ways:
 
--   *multiverse code chunks*: allows users to declare multiverse code in
-    a dedicated code chunk, and is more consistent with the interactive
-    programming interface of RStudio.
--   the `inside()` function: allows users to declare multiverse code in
-    RScripts (or withn regular R code blocks).
+-   using *multiverse code chunks*, which allow users to declare
+    multiverse code in a dedicated code chunk, and is more consistent
+    with the interactive programming interface of RStudio.
+-   using the `inside()` function. The inside function which allows
+    users to declare multiverse code in RScripts or regular R code
+    blocks, and is more suited for a script-style implementation.
 
 **Note** that the `inside` function is more suited for a script-style
-implementation. When using the interactive programming interface of
-RStudio, user should use `multiverse code chunks`.
+implementation. Keeping consistency with the interactive programming
+interface of RStudio, we also offer the user a `multiverse code block`
+which can be used instead of the `r` code block to write code inside a
+multiverse object (see for more details on using the multiverse with
+RMarkdown).
 
 #### Multiverse code blocks
 
-RMarkdown [supports languages other than
-R](https://bookdown.org/yihui/rmarkdown/language-engines.html) and these
-languages have dedicated code blocks. We extend this by providing
-[*multiverse code
+We can use the [*multiverse code
 blocks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html)
-which can be used instead of the regular `r` code block to write code
-inside a multiverse object (see \\link{multiverse-in-rmd} for more
-details on using the multiverse code blocks with RMarkdown). A
+instead of the regular `r` code block to write code inside a multiverse
+object (see for more details on using the multiverse code blocks with
+RMarkdown). This allows you to write more concise code and is more
+consistent with the interactive programming interface of RStudio. A
 *multiverse code block* is a custom engine designed to work with the
-`multiverse` package, to implement the multiverse analyses. This allows
-you to write more concise code and is more consistent with the
-interactive programming interface of RStudio. Below we show how code can
-be implemented using the *multiverse code block:*
+`multiverse` package, to implement the multiverse analyses. Below we
+show how code can be implemented using the *multiverse code block*
 
     ```{multiverse default-m-1, inside = M}
     # here we just create the variable `df` in the multiverse
-    df = hurricane_data
+    df <- df_durante
 
-    # here, we perform a `filter` operation in the multiverse
-    df.filtered = df %>%
-      filter(branch(death_outliers,
-          "no_exclusion" ~ TRUE,
-          "most_extreme" ~ name != "Katrina",
-          "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
-    ))
+    # here, we perform two `mutate` operations in the multiverse.
+    # although they could have been chained, this illustrates 
+    # how multiple variables can be declared together using the `{}`
+    df <- df_durante %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+      mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+        "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+        "mc_option3" ~ StartDateNext)
+      )
     ```
 
-The code within the `filter` function call is written in the
+The code within the second `mutate` function call is written in the
 `multiverse` DSL and cannot be executed directly in R. For now, ignore
 what the `branch` function does as we will discuss about this in more
-detail in the next section. When this code is written and executed
-inside a *multiverse code block*, it allows the multiverse library to
-process and compile it to three different analyses.
+detail in the next section
 
 We provide the ability to declare multiverse code block as an *Addin* in
 RStudio. Users can click on *Addins* toolbar menu in RStudio (see the
 image below). This would create a multiverse code block at the location
 of the cursor in the document.
 
-<img src="vignettes/figures/01-multiverse-addins.png" width="90%" />
+<img src="vignettes/multiverse-addins.png" width="90%" />
 
 Alternately, users can insert a multiverse code block using a keyboard
 shortcut. Users can create a keyboard shortcut to declare a multiverse
 code block inside a RMarkdown document through the following steps:
 
--   Tools > Addins > Browse Addins… > Keyboard Shortcuts
+-   Tools &gt; Addins &gt; Browse Addins… &gt; Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one
     result with “Insert multiverse code chunk” as the name.
 -   Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or
     Ctrl+Shift+Alt+M (on Windows).
 -   Click “Apply” and exit the dialog box
 
-Please refer to \\link{multiverse-in-rmd} for more details on using the
-multiverse code blocks with RMarkdown. The vignette also contains
-information on steps for debugging some of the common problems in
-assigning keyboard shortcuts.
+Please refer to for more details on using the multiverse code blocks
+with RMarkdown.
 
 #### `inside()`
 
-Alternatively, when working with RScripts (or in a regular `r` code
-block), users can make use of the `inside()` function to write code
-inside a multiverse object. `inside()` takes in two arguments:
-
-1.  the multiverse object, M; and
-2.  the code for the analysis (including branches). Note that if you are
-    passing multiple expressions, they should be enclosed within `{}`.
+Alternatively, we can use regular `r` code blocks instead of the regular
+to write code inside a multiverse object The `inside()` function takes
+in two arguments: 1. the multiverse object, M; and 2. the code for the
+analysis (including branches). Note that if you are passing multiple
+expressions, they should be enclosed within `{}`.
 
 Note that `inside()` is primarily designed for script style programming.
 If a user is working with an RScript, the previous code can be declared
@@ -373,95 +351,87 @@ If a user is working with an RScript, the previous code can be declared
 
 ``` r
 # here we just create the variable `df` in the multiverse
-inside(M, df = hurricane_data)
+inside(M, df <- df_durante)
 
 # here, we perform two `mutate` operations in the multiverse.
 # although they could have been chained, this illustrates 
 # how multiple variables can be declared together using the `{}`
 inside(M, {
-  df.filtered = df %>%
-    filter(branch(death_outliers,
-        "no_exclusion" ~ TRUE,
-        "most_extreme" ~ name != "Katrina",
-        "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
-  ))
+  df <- df %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
+  
+  df <- df %>%
+    mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+      "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+      "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+      "mc_option3" ~ StartDateNext)
+    )
 })
 ```
 
 In the rest of this vignette, we will use **multiverse code blocks** to
 specify the multiverse. Please refer to the vignette
 (`vignette("multiverse-in-rmd")`) for more details on **declaring
-multiverse analyses in both RMarkdown and RScripts**
+multiverse analyses in RScripts and RMarkdown**
 
-### Declaring alternative analysis
+### Declaring alternative analyses
 
-After you’ve specified the appropriate boilerplate which is necessary to
-use the `multiverse` DSL, the next step is to define our possible
-alternate analysis paths. The multiverse package includes functions that
-aim to make it easy to declare multiple alternate choices at each
-analysis decision point. We do this by enabling analysts to declare code
-using syntax which is as close to that of a single universe analysis as
-possible. Consider these first few lines from the transformation code in
-the single analysis above:
+Coming back to the analysis, the next step is to define our possible
+alternate analysis paths. The `multiverse` package includes functions
+that aim to make it easy to multiplex over these alternative analysis
+steps and write multiverse analyses. We do this by enabling analysts to
+declare code using syntax which is as close to that of a single universe
+analysis as possible.
+
+Consider these first few lines from the transformation code in the
+single analysis above:
 
 ``` r
-df.filtered = hurricane_data %>% 
-  filter(name != "Katrina" & name != "Audrey")
+df <- df_durante %>%
+  mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) %>%
+  mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength)
 ```
 
-Here, the researchers are faced with the decision of which hurricanes to
-exclude as outliers. They decide to exclude the two hurricanes which
-have caused the most deaths. However, this decision is arbitrary. Why
-not include all hurricanes? Why not exclude only the one with most
-deaths? Thus we could have three possible ways of removing outliers
-based on extreme number of deaths:
+But `NextMenstrualOnset` could be calculated in at least two other
+reasonable ways:
 
--   No exclusion
--   Remove one most extreme hurricane
--   Remove two most extreme hurricanes
+-   `NextMenstrualOnset = StartDateofLastPeriod + ReportedCycleLength`
+-   `NextMenstrualOnset = StartDateNext`
 
-To create a multiverse that includes these three possible analysis
-options, we use the `branch()` function. The `branch()` function accepts
-three or more arguments. The first argument defines a *parameter* (here
-`death outliers`). The subsequent arguments, which we refer to as
-*options*, define the different choices that a researcher can make at
-that decision node of their analysis; these follow the syntax
-`<option_name> ~ <option_definition>`. The `<option_name>` part is
-intended to allow naming the branches with meaningful names to help the
-user keep track of declared options (in the multiverse specification
-below, “no_exclusion”, “most_extreme”, “two_most_extreme” are used as
-option names). However, names can be omitted; if omitted, the entire
-syntax for performing that operation will be treated as the name for
-that particular option.
+To create a multiverse that includes these three possible processing
+options, we can use the `branch()` function. The `branch()` function
+accepts three or more arguments. The first argument defines a
+*parameter* (here `menstrual_calculation`) which is used as an
+identifier for the decision point. The subsequent arguments define the
+different *options* that the parameter can take which can optionally be
+named. Each option defines the different choices that a researcher can
+make at that decision point of their analysis. Here, the researcher
+declares three ways of computing the variable `NextMenstrualOnset`. Each
+option can be named (here, `"mc_option1"`, `"mc_option2"`,
+`"mc_option3"`); however, names can be omitted. We strongly recommend
+naming the branches with meaningful names to help the user keep track of
+choices. If omitted, the entire syntax for performing that operation
+will be treated as the name for that particular option.
 
-Putting it all together, a decision point in a multiverse analysis can
-thus be declared as:
-
-    ```{multiverse branch_definition, inside = M}
-    # here we just create the variable `df` in the multiverse
-    df = hurricane_data
-
-    # here, we perform a `filter` operation in the multiverse
-    df.filtered = df %>%
-      filter(branch(death_outliers,
-          "no_exclusion" ~ TRUE,
-          "most_extreme" ~ name != "Katrina",
-          "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
-    ))
+    ```{multiverse parameter_options, inside = M}
+    # here, we perform two `mutate` operations in the multiverse.
+    # although they could have been chained, this illustrates 
+    # how multiple variables can be declared together using the `{}`
+    df <- df_durante %>%
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+      mutate( NextMenstrualOnset = branch(menstrual_calculation, 
+        "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+        "mc_option3" ~ StartDateNext)
+      )
     ```
-
-The `multiverse` library then takes this user-declared syntax in the
-multiverse DSL and and compiles it into three separate, executable R
-expressions as shown in the figure below:
-
-<img src="vignettes/figures/02-branch.png" width="90%" />
 
 More details on the `branch()` function can be found in the
 corresponding `vignette(branch)`.
 
-## Interfacing with the multiverse
+## The multiverse, with declared code and branches
 
-Once you add the code to the multiverse, it automatically processes the
+Once you add the code to the multiverse, it automatically parses the
 code to identify the `parameters` and the corresponding `options` that
 have been defined for each parameter.
 
@@ -472,39 +442,37 @@ following attributes:
 
 ``` r
 parameters(M)
-#> $death_outliers
-#> $death_outliers[[1]]
-#> [1] "no_exclusion"
+#> $menstrual_calculation
+#> $menstrual_calculation[[1]]
+#> [1] "mc_option1"
 #> 
-#> $death_outliers[[2]]
-#> [1] "most_extreme"
+#> $menstrual_calculation[[2]]
+#> [1] "mc_option2"
 #> 
-#> $death_outliers[[3]]
-#> [1] "two_most_extreme"
+#> $menstrual_calculation[[3]]
+#> [1] "mc_option3"
 ```
 
-1.  `conditions`, which is a list of conditions (we’ll define this
+2.  `conditions`, which is a list of conditions (we’ll define this
     later)
-
-2.  `expand` returns a table where each row corresponds to a single
-    analysis path (i.e., a single universe). This view provides the user
-    with the information of which choices have resulted in the analysis
-    path, along with the entire unevaluated code expression
-    corresponding to each analysis. Analysts can use this table to
-    explore multiverse specifications with all the tools available in R
-    and RStudio for exploring data tables.
+3.  `expand`, which is a tibble consisting of all possible combination
+    of values for the multiverse
 
 ``` r
-expand(M)
-#> # A tibble: 3 × 5
-#>   .universe death_outliers   .parameter_assignment .code            .results
-#>       <int> <chr>            <list>                <list>           <list>  
-#> 1         1 no_exclusion     <named list [1]>      <named list [1]> <env>   
-#> 2         2 most_extreme     <named list [1]>      <named list [1]> <env>   
-#> 3         3 two_most_extreme <named list [1]>      <named list [1]> <env>
+expand(M) %>% select(-.code)
 ```
 
-3.  `code`, which is the code that the user passes to the multiverse to
+<div class="kable-table">
+
+| .universe | menstrual\_calculation | .parameter\_assignment | .results                            |
+|----------:|:-----------------------|:-----------------------|:------------------------------------|
+|         1 | mc\_option1            | mc\_option1            | &lt;environment: 0x7fb6158f41d0&gt; |
+|         2 | mc\_option2            | mc\_option2            | &lt;environment: 0x7fb615927a68&gt; |
+|         3 | mc\_option3            | mc\_option3            | &lt;environment: 0x7fb615943748&gt; |
+
+</div>
+
+4.  `code`, which is the code that the user passes to the multiverse to
     conduct a multiverse analysis. However, we do not execute this code
     and it is stored unevaluated. The user can interactively edit and
     rewrite this code, and can execute it for the current analysis or
@@ -512,261 +480,316 @@ expand(M)
 
 ``` r
 code(M)
-#> $branch_definition
+#> $parameter_options
 #> {
-#>     df = hurricane_data
-#>     df.filtered = df %>% filter(branch(death_outliers, "no_exclusion" ~ 
-#>         TRUE, "most_extreme" ~ name != "Katrina", "two_most_extreme" ~ 
-#>         !(name %in% c("Katrina", "Audrey"))))
+#>     df <- df_durante %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
+#>         StartDateofPeriodBeforeLast) %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
+#>         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
+#>         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
+#>         "mc_option3" ~ StartDateNext))
 #> }
 ```
 
-4.  `extract_variables(M, <variable names>)` extracts the supplied
-    variable from the results of each analysis path, returning a table
-    similar to the output of `expand(M)`, but with new columns for each
-    variable that has been extracted. This would allow an analyst to,
-    for example, extract summary statistics or even entire data tables
-    from all universes simultaneously. These columns can easily be
-    turned into long format data tables using the `tidyverse` packages
-    and then visualized using the `ggplot2` package
+## Running a single analysis from the multiverse
+
+At this point, we have defined three possible processing options (three
+universes) in our multiverse. Keeping consistency with the interactive
+programming interface of RStudio, we also execute the default analysis
+in each step. In the previous step, we stored the results in the
+variable `df`. We can see the result of the default analysis in the
+multiverse by accessing the data frame from the multiverse object as
+shown:
 
 ``` r
-extract_variables(M, df.filtered)
-#> # A tibble: 3 × 6
-#>   .universe death_outliers   .parameter_assig… .code        .results df.filtered
-#>       <int> <chr>            <list>            <list>       <list>   <list>     
-#> 1         1 no_exclusion     <named list [1]>  <named list> <env>    <df>       
-#> 2         2 most_extreme     <named list [1]>  <named list> <env>    <df>       
-#> 3         3 two_most_extreme <named list [1]>  <named list> <env>    <df>
+M$df %>% head()
 ```
 
-## Building up a complete analysis
+<div class="kable-table">
 
-Subsequent branch calls will progressively expand the multiverse, by
-enumerating all possible combinations. We will now expand our multiverse
-to include other possible decision points in the analysis where
-reasonable alternatives could have been chosen. For instance, the
-researchers could have:
+| WorkerID | Rel1 | Rel2 | Rel3 | Abortion | Marriage | StemCell | RestrictAbortion | Marijuana | FreeMarket | RichTax | StLiving | Profit | PrivSocialSec | Sure1 | Sure2 | Relationship | ReportedCycleLength | Vote | Donate | DateTesting | StartDateofLastPeriod | StartDateofPeriodBeforeLast | StartDateNext | ComputedCycleLength | NextMenstrualOnset |
+|---------:|-----:|-----:|-----:|---------:|---------:|---------:|-----------------:|----------:|-----------:|--------:|---------:|-------:|--------------:|------:|------:|-------------:|--------------------:|-----:|-------:|:------------|:----------------------|:----------------------------|:--------------|:--------------------|:-------------------|
+|        1 |    8 |    8 |    7 |        2 |        7 |        7 |                7 |         2 |          4 |       7 |        6 |      6 |             3 |     9 |     9 |            4 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-18            | 2012-04-18                  | 2012-06-15    | 30 days             | 2012-06-15         |
+|        2 |    8 |    7 |    7 |        7 |        2 |        5 |                1 |         6 |          4 |       4 |        5 |      4 |             6 |     9 |     7 |            3 |                  28 |    1 |      1 | 2012-05-22  | 2012-04-29            | 2012-03-31                  | 2012-05-30    | 29 days             | 2012-05-30         |
+|        3 |    6 |    6 |    2 |        3 |        1 |        6 |                4 |         7 |          2 |       5 |        5 |      3 |             5 |     8 |     7 |            3 |                  27 |    1 |      1 | 2012-05-21  | 2012-05-04            | 2012-04-07                  | 2012-05-31    | 27 days             | 2012-05-31         |
+|        4 |    7 |    8 |    6 |        7 |        5 |        6 |                2 |         5 |          3 |       6 |        5 |      5 |             4 |     9 |     9 |            3 |                  37 |    1 |      1 | 2012-05-21  | 2012-04-27            | 2012-03-22                  | 2012-06-05    | 36 days             | 2012-06-05         |
+|        5 |    7 |    7 |    9 |        7 |        1 |        4 |                1 |         4 |          6 |       5 |        2 |      2 |             3 |     5 |     4 |            3 |                  38 |    1 |      1 | 2012-05-22  | 2012-04-19            | 2012-03-09                  | 2012-05-25    | 41 days             | 2012-05-25         |
+|        6 |    9 |    9 |    9 |        1 |        7 |        6 |                7 |         2 |          3 |       5 |        3 |      5 |             5 |     8 |     8 |            2 |                  30 |    0 |      0 | 2012-05-22  | 2012-04-21            | 2012-03-20                  | 2012-05-22    | 32 days             | 2012-05-22         |
 
-1.  used a binary indicator for whether a hurricane’s name was female,
-    instead of the 11-point rating of how feminine the name of a
-    hurricane was
-2.  log transformed the `damage` variable, as it is a positive only
-    value with a long right-tail
+</div>
 
-This would result in 3 × 2 × 2 = 12 analysis paths.
+## A multiverse with all possible combinations specified
 
-    ```{multiverse label = variable_definitions, inside = M}
-        df.filtered <- df.filtered %>%
-            mutate(
-                femininity = branch(femininity_calculation,
-                  "masfem" ~ masfem,
-                  "female" ~ female
-                ),
-                damage = branch(damage_transform,
-                  "no_transform" ~ identity(dam),
-                  "log_transform" ~ log(dam)
-                )
-            )
+Besides calculating the onset of the next menstruation cycle, there are
+other variables which have multiple valid and reasonable processing
+options. According to Steegen et al., these include defining
+`Relationship` and `Fertility`, and exclusion criteria based on the
+values for cycle length and certainty of responses. The next code chunk
+illustrates how this can be added to the multiverse object defined
+above.
+
+    ```{multiverse default-m-2 inside = M}
+    df <- df %>%
+        mutate(Relationship = branch( relationship_status, 
+          "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+          "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+          "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+        ) %>%
+        mutate(
+          CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+          CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+        ) %>%
+        filter( branch(cycle_length, 
+          "cl_option1" ~ TRUE,
+          "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+          "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+        )) %>%
+        filter( branch(certainty,
+            "cer_option1" ~ TRUE,
+            "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+        )) %>%
+        mutate( Fertility = branch( fertile,
+            "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ),
+            "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", "medium")) ),
+            "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", "medium")) ),
+            "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+            "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+        ))
+    })
     ```
 
-The next step in this multiverse analysis is to estimate the effect of
-`femininity` on `deaths` using linear regression. There are multiple
-decisions involved at this step. We take this opportunity to introduce
-certain scenarios that an analyst may encounter while attempting to
-create a multiverse, that may be difficult to discover but are supported
-by the library.
-
-### Reusing analysis parameters in `branch()`
-
-One way of implementing this regression analysis may be a poisson model
-with the number of deaths caused by the hurricane as the response
-variable. Recall that this is specified as:
+Since the multiverse object has already been created and the one
+parameter has already been defined, this will simply add to the previous
+code:
 
 ``` r
-fit = glm(death ~ masfem * dam + masfem * zpressure, data = df.filtered, family = "poisson")
+code(M)
+#> $parameter_options
+#> {
+#>     df <- df_durante %>% mutate(ComputedCycleLength = StartDateofLastPeriod - 
+#>         StartDateofPeriodBeforeLast) %>% mutate(NextMenstrualOnset = branch(menstrual_calculation, 
+#>         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength, 
+#>         "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength, 
+#>         "mc_option3" ~ StartDateNext))
+#> }
+#> 
+#> $`default-m-2`
+#> {
+#>     df <- df %>% mutate(RelationshipStatus = branch(relationship_status, 
+#>         "rs_option1" ~ factor(ifelse(Relationship == 1 | Relationship == 
+#>             2, "Single", "Relationship")), "rs_option2" ~ factor(ifelse(Relationship == 
+#>             1, "Single", "Relationship")), "rs_option3" ~ factor(ifelse(Relationship == 
+#>             1, "Single", ifelse(Relationship == 3 | Relationship == 
+#>             4, "Relationship", NA))))) %>% mutate(CycleDay = 28 - 
+#>         (NextMenstrualOnset - DateTesting), CycleDay = ifelse(CycleDay > 
+#>         1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 
+#>         28))) %>% filter(branch(cycle_length, "cl_option1" ~ 
+#>         TRUE, "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 
+#>         35, "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 
+#>         35)) %>% filter(branch(certainty, "cer_option1" ~ TRUE, 
+#>         "cer_option2" ~ Sure1 > 6 | Sure2 > 6)) %>% mutate(Fertility = branch(fertile, 
+#>         "fer_option1" ~ factor(ifelse(CycleDay >= 7 & CycleDay <= 
+#>             14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, 
+#>             "low", "medium"))), "fer_option2" ~ factor(ifelse(CycleDay >= 
+#>             6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & 
+#>             CycleDay <= 27, "low", "medium"))), "fer_option3" ~ 
+#>             factor(ifelse(CycleDay >= 9 & CycleDay <= 17, "high", 
+#>                 ifelse(CycleDay >= 18 & CycleDay <= 25, "low", 
+#>                   "medium"))), "fer_option4" ~ factor(ifelse(CycleDay >= 
+#>             8 & CycleDay <= 14, "high", "low")), "fer_option5" ~ 
+#>             factor(ifelse(CycleDay >= 8 & CycleDay <= 17, "high", 
+#>                 "low"))))
+#> }
 ```
 
-Although this is a reasonable choice for count data, one can also argue
-for a log-linear regression model instead, as count data such as deaths
-tend to be approximately log-normally distributed.
-
-Specifying this in a multiverse analysis may require changes in two
-different locations in the code: the specification of the `deaths`
-dependent variable and the value of the `family` argument. However,
-these are not two separate decisions, but rather a consequence of the
-same analysis parameter: the choice of model. Often, a single analysis
-parameter will require the analyst to change the code in more than one
-location. To represent these semantics, multiverse allows us to re-use
-the same analysis parameter in multiple `branch()` statements, so long
-as each `branch()` uses the exact same set of analysis options. In a
-branch on a previously defined parameter, option names must be the same,
-but the code for each option can be different. Thus, we represent the
-consequences of the choice of model with a single analysis parameter:
-model. We insert two branch() statements using this parameter, one to
-set the variable transformation and one to set the family.
-
-    ```{multiverse label = variable_definitions, inside = M}
-    fit <- glm(branch(model,
-            "linear" ~ log(death+1),
-            "poisson" ~ death
-        ) ~ femininity * damage + femininity * zpressure,
-        family = branch(model, 
-            "linear" ~ gaussian, 
-            "poisson" ~ poisson
-        ), data = df.filtered)
-    ```
-
-### Specifying conditions in the multiverse analysis
-
-Another decision that was made at this step was the choice of
-predictors, which includes the interaction between `femininity` and
-`damage`, and between `femininity` and `zpressure.` Here, the predictors
-`damage` and `zpressure` are used as measures of the storm severity,
-with the interaction between femininity and damage indicating whether
-the main effect is stronger in more “destructive” or “severe” storms.
-Yet again, there are other reasonable approaches to study the primary
-effect which may include *no interaction term* or only include
-interactions between femininity and variables such as pressure, wind or
-category in conjunction with the interaction between femininity and
-damage.
-
-In a multiverse analysis, there may arise such dependencies between two
-or more analysis parameters that make certain analysis paths
-inconsistent, or even impossible. In other words, the applicability of
-some analysis options may be conditional on a previous, upstream
-decision. By default, multiverse assumes all combinations of options are
-valid. However, it provides a flexible way to specify that an analysis
-option is incompatible with previously-specified analysis options. These
-dependencies can be specified using the `%when%` operator followed by a
-boolean expression, right after the option name. Here, interaction term
-between `femininity` and `zpressure` only make sense in the presence of
-the interaction involving `damage`, so we use a `%when%` expression in
-the definition of the `other_predictors` analysis parameter.
-
-This results in the following multiverse specification (for now, let’s
-ignore the previous decision on choice of models):
-
-    ```{multiverse label = variable_definitions, inside = M}
-    fit <- glm(death ~ 
-              branch(main_interaction,
-                  "no" ~ femininity + damage,
-                  "yes" ~ femininity * damage
-              ) + branch(other_predictors,
-                  "none" ~ NULL,
-                  "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-                  "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-                  "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-                  "all" %when% (main_interaction == "yes") ~ femininity * z3,
-                  "all_no_interaction" %when% (main_interaction == "no") ~ z3
-              ), family = "poisson", data = df)
-    ```
-
-For more details on how this can be done, as well as other details on
-conditions, please refer to vignette(conditions).
-
-## Executing multiverse code
-
-As with code chunks in a typical computational notebook, users can
-execute a multiverse code chunk in the interactive editor in RStudio.
-When a user executes a single code chunk, multiverse internally
-transforms the input from that code chunk into one unevaluated
-expression (R’s internal representation of an abstract syntax tree) for
-each unique combination of analysis options and immediately executes the
-default analysis: the analysis path obtained by taking the first
-analysis option at each decision point. The default analysis is executed
-in the current active R environment (i.e. the same environment that
-regular R code blocks are executed in — the R Global Environment). Thus,
-the result of the default analysis is always accessible to the user. The
-output of an executed code chunk (text or visualization) is displayed
-immediately below it, mimicking notebook code chunks
-
-    ```{multiverse label = default-m-3, inside = M}
-    fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
-              branch(main_interaction,
-                  "no" ~ femininity + damage,
-                  "yes" ~ femininity * damage
-              ) + branch(other_predictors,
-                  "none" ~ NULL,
-                  "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-                  "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-                  "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-                  "all" %when% (main_interaction == "yes") ~ femininity * z3,
-                  "all_no_interaction" %when% (main_interaction == "no") ~ z3
-              ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
-              family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
-              data = df)
-    ```
-
-The following code chunk illustrates this behavior. Even though the
-variable `fit` was defined in a multiverse code block, since the default
-analysis is executed in the active R environment, the version
-corresponding to the default analysis can be accessed directly in R:
+The `expand` function will contain all the possible combinations of the
+parameter options that have been identified.
 
 ``` r
-broom::tidy(fit)
-#> # A tibble: 7 × 5
-#>   term              estimate std.error statistic  p.value
-#>   <chr>                <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 (Intercept)       -3.59      0.451      -7.97  1.53e-15
-#> 2 femininity        -0.146     0.504      -0.290 7.71e- 1
-#> 3 damage             0.772     0.0517     14.9   1.97e-50
-#> 4 z3                -0.481     0.0886     -5.43  5.69e- 8
-#> 5 femininity:damage  0.00719   0.0563      0.128 8.98e- 1
-#> 6 femininity:z3      0.484     0.0938      5.17  2.38e- 7
-#> 7 damage:post       -0.0386    0.00515    -7.48  7.27e-14
+expand(M) %>%
+  select(-.code) %>%
+  head()
 ```
 
-Analysts can change which analysis path is executed by default. Inline
-code output of a single analysis path (and the ability to select that
-path) is meant to support the familiar trial and error workflow of data
-analysts and to aid debugging.
+<div class="kable-table">
 
-## Executing the entire multiverse
+| .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                            |
+|----------:|:-----------------------|:---------------------|:--------------|:-------------|:-------------|:---------------------------------------------------------------------|:------------------------------------|
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7fb615fb49b0&gt; |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7fb6180cf5a8&gt; |
+|         3 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option3 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option3 | &lt;environment: 0x7fb61817a7d0&gt; |
+|         4 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option4 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option4 | &lt;environment: 0x7fb618294aa8&gt; |
+|         5 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option5 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option5 | &lt;environment: 0x7fb618314108&gt; |
+|         6 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option2 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option2, fer\_option1 | &lt;environment: 0x7fb618390258&gt; |
 
-To execute all unique analysis paths in the multiverse, an analyst can
-call `execute_multiverse(M)`. We support local parallelization with an
-optional cores argument indicating the number of cpu cores to use. The
-multiverse object can also be easily adapted to use with existing
-parallel computing packages in R, such as
-[future](https://cran.r-project.org/web/packages/future/index.html), to
-run analyses across computing clusters.
+</div>
 
-## Debugging and Diagnosing Errors
+In our multiverse we have identified 5 options for calculating
+`fertility`, 3 options for calculating `menstrual calculation` and
+`relationship status` each, 3 wyas of excluding participants based on
+their `cycle length` and 2 ways of excluding participants based on the
+self-reported `certainty` of their responses.
 
-For the default analysis, as it executes in the R environment, users
-have access to the same set of debugging utilities that R provides. When
-the user executes the entire multiverse, the library outputs the error
-message, a traceback—an object containing the entire call stack that
-caused the error—and the index of the corresponding analysis path in
-which the error was encountered. The execution of the remaining analysis
-paths in the multiverse are not halted if any errors are encountered.
-The traceback is helpful to identify the location of the error, as often
-R expressions return unidentifiable error messages.
-`execute_universe(<universe ID>)` (universe ID are found in the table
-output by `expand()`, see below) allows analysts to execute a particular
-analysis path and reproduce errors encountered in the execution of that
-specific path.
+This results in $ 5 = 270$ possible combinations.
 
-<img src="vignettes/figures/06-expand.png" width="90%" />
+``` r
+expand(M) %>% nrow()
+#> [1] 270
+```
+
+We can then inspect the default analysis the default single universe
+analysis from this multiverse:
+
+``` r
+M$df %>%
+  head()
+```
+
+<div class="kable-table">
+
+| WorkerID | Rel1 | Rel2 | Rel3 | Abortion | Marriage | StemCell | RestrictAbortion | Marijuana | FreeMarket | RichTax | StLiving | Profit | PrivSocialSec | Sure1 | Sure2 | Relationship | ReportedCycleLength | Vote | Donate | DateTesting | StartDateofLastPeriod | StartDateofPeriodBeforeLast | StartDateNext | ComputedCycleLength | NextMenstrualOnset | RelationshipStatus | CycleDay | Fertility |
+|---------:|-----:|-----:|-----:|---------:|---------:|---------:|-----------------:|----------:|-----------:|--------:|---------:|-------:|--------------:|------:|------:|-------------:|--------------------:|-----:|-------:|:------------|:----------------------|:----------------------------|:--------------|:--------------------|:-------------------|:-------------------|---------:|:----------|
+|        1 |    8 |    8 |    7 |        2 |        7 |        7 |                7 |         2 |          4 |       7 |        6 |      6 |             3 |     9 |     9 |            4 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-18            | 2012-04-18                  | 2012-06-15    | 30 days             | 2012-06-15         | Relationship       |        4 | low       |
+|        2 |    8 |    7 |    7 |        7 |        2 |        5 |                1 |         6 |          4 |       4 |        5 |      4 |             6 |     9 |     7 |            3 |                  28 |    1 |      1 | 2012-05-22  | 2012-04-29            | 2012-03-31                  | 2012-05-30    | 29 days             | 2012-05-30         | Relationship       |       20 | low       |
+|        3 |    6 |    6 |    2 |        3 |        1 |        6 |                4 |         7 |          2 |       5 |        5 |      3 |             5 |     8 |     7 |            3 |                  27 |    1 |      1 | 2012-05-21  | 2012-05-04            | 2012-04-07                  | 2012-05-31    | 27 days             | 2012-05-31         | Relationship       |       18 | low       |
+|        6 |    9 |    9 |    9 |        1 |        7 |        6 |                7 |         2 |          3 |       5 |        3 |      5 |             5 |     8 |     8 |            2 |                  30 |    0 |      0 | 2012-05-22  | 2012-04-21            | 2012-03-20                  | 2012-05-22    | 32 days             | 2012-05-22         | NA                 |       28 | low       |
+|        7 |    5 |    8 |    5 |        5 |        4 |        5 |                5 |         7 |          5 |       7 |        3 |      7 |             2 |     9 |     9 |            4 |                  28 |    1 |      1 | 2012-05-22  | 2012-05-03            | 2012-04-05                  | 2012-05-31    | 28 days             | 2012-05-31         | Relationship       |       19 | low       |
+|       11 |    2 |    5 |    8 |        7 |        1 |        7 |                1 |         7 |          2 |       7 |        5 |      5 |             5 |     8 |     8 |            1 |                  30 |    1 |      1 | 2012-05-24  | 2012-05-18            | 2012-04-20                  | 2012-06-17    | 28 days             | 2012-06-17         | Single             |        4 | low       |
+
+</div>
+
+## Specifying conditions in the multiverse analysis
+
+In our example, we are excluding participants based on their *cycle
+length*. This can be done in two ways: we can use the values of the
+variable,`ComputedCycleLength` or `ReportedCycleLength`. If we are using
+`ComputedCycleLength` to exclude participants, this means that we should
+not calculate the variable `NextMenstrualOnset` (date for the onset of
+the next menstrual cycle) using the `ReportedCycleLength` value.
+Similarly, if we are using `ReportedCycleLength` to exclude participants
+it is inconsistent to calculate `NextMenstrualOnset` using
+`ComputedCycleLength`. In a multiverse analysis, it may occur that the
+value of one variable might depend on the value of another variable
+defined previously.
+
+We should be able to express these conditions in the multiverse. We show
+how this can be done, as well as other details on `conditions`, in the
+corresponding `vignette(conditions)`.
+
+## Modeling
+
+Steegen et al. define a multiverse which only considers the various data
+processing parameters, which we have defined above. To analyse the data,
+they create 6 models. The first model uses data from example \#1. The
+other five models use the data from example \#2, which we’ve using so
+far.
+
+### Model \#2: Effect of Fertility and Relationship status on Religiosity
+
+The authors compute a composite score of Religiosity by calculating the
+average of the three Religiosity items.
+
+    ```{multiverse default-m-4, inside = M}
+    df <- df %>%
+      mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
+    ```
+
+The authors perform an ANOVA to study the effect of *Fertility*,
+*Relationship* and their interaction term, on the composite Religiosity
+score. We fit the linear model using the call:
+`lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our
+multiverse and save the result to a variable called `fit_RelComp`.
+
+    ```{multiverse default-m-5, inside = M, echo = FALSE}
+    fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+    ```
+
+To extract the results from the analysis, we first create a tidy
+data-frame of the results of the model, using `broom::tidy`.
+
+    ```{multiverse default-m-6, inside = M}
+    summary_RelComp <- fit_RelComp %>% 
+        broom::tidy( conf.int = TRUE )
+    ```
+
+Recall that declaring a variable in the multiverse only executes it in
+the default universe, and hence we need to call `execute_multiverse()`
+to execute our analysis in each multiverse.
+
+``` r
+execute_multiverse(M)
+```
+
+Now that we have performed the analysis in each universe of the
+multiverse, we need to plot the data. To plot the data, we need to
+extract the relevant result data-frame from each universe into a single
+data-frame. The following code does this, by extracting the variable
+where the estimates of the model are stored, `summary_RelComp` and
+creating a single tidy data-frame that can be accessed easily.
+
+``` r
+expand(M) %>%
+  select(-.code) %>%
+  mutate( summary = map(.results, "summary_RelComp" ) ) %>%
+  unnest( cols = c(summary) ) %>%
+  head( 10 )
+```
+
+<div class="kable-table">
+
+| .universe | menstrual\_calculation | relationship\_status | cycle\_length | certainty    | fertile      | .parameter\_assignment                                               | .results                            | term                                     |   estimate | std.error |  statistic |   p.value |   conf.low |  conf.high |
+|----------:|:-----------------------|:---------------------|:--------------|:-------------|:-------------|:---------------------------------------------------------------------|:------------------------------------|:-----------------------------------------|-----------:|----------:|-----------:|----------:|-----------:|-----------:|
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7fb5fedc8bf0&gt; | (Intercept)                              |  6.3749123 | 0.4015673 | 15.8750795 | 0.0000000 |  5.5859219 |  7.1639027 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7fb5fedc8bf0&gt; | Fertilitylow                             | -1.1993860 | 0.5312236 | -2.2577801 | 0.0243951 | -2.2431222 | -0.1556497 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7fb5fedc8bf0&gt; | Fertilitymedium                          | -0.2931038 | 0.5089591 | -0.5758887 | 0.5649527 | -1.2930952 |  0.7068877 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7fb5fedc8bf0&gt; | RelationshipStatusSingle                 | -1.4568301 | 0.5358812 | -2.7185689 | 0.0067871 | -2.5097176 | -0.4039426 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7fb5fedc8bf0&gt; | Fertilitylow:RelationshipStatusSingle    |  2.0287775 | 0.7105383 |  2.8552683 | 0.0044810 |  0.6327276 |  3.4248273 |
+|         1 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option1 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option1 | &lt;environment: 0x7fb5fedc8bf0&gt; | Fertilitymedium:RelationshipStatusSingle |  1.0066406 | 0.6873797 |  1.4644608 | 0.1437042 | -0.3439077 |  2.3571890 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7fb5fedfb600&gt; | (Intercept)                              |  6.3953846 | 0.3741693 | 17.0922227 | 0.0000000 |  5.6602251 |  7.1305441 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7fb5fedfb600&gt; | Fertilitylow                             | -1.1692735 | 0.4910353 | -2.3812412 | 0.0176323 | -2.1340487 | -0.2044983 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7fb5fedfb600&gt; | Fertilitymedium                          | -0.2516346 | 0.5161336 | -0.4875377 | 0.6260936 | -1.2657225 |  0.7624533 |
+|         2 | mc\_option1            | rs\_option1          | cl\_option1   | cer\_option1 | fer\_option2 | mc\_option1 , rs\_option1 , cl\_option1 , cer\_option1, fer\_option2 | &lt;environment: 0x7fb5fedfb600&gt; | RelationshipStatusSingle                 | -1.6535869 | 0.4921908 | -3.3596461 | 0.0008408 | -2.6206324 | -0.6865414 |
+
+</div>
+
+We then take this data frame and plot the results as a confidence
+interval and point estimate using `ggplot2`. As you can see, this is
+similar to how you would plot a point estimate and confidence intervals
+for a regular analysis. We then use `gganimate` to animate through the
+results of each universe to quickly get an overview of the robustness of
+the results.
+
+Note: we discuss extracting results from the multiverse and visualizing
+them in more detail in `vignette(visualising-multiverse)`
+
+``` r
+p <- expand(M) %>%
+  mutate( summary = map(.results, "summary_RelComp") ) %>%
+  unnest( cols = c(summary) ) %>%
+  mutate( term = recode( term, 
+                 "RelationshipStatusSingle" = "Single",
+                 "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
+  ) ) %>%
+  filter( term != "(Intercept)" ) %>%
+  ggplot() + 
+  geom_vline( xintercept = 0,  colour = '#979797' ) +
+  geom_point( aes(x = estimate, y = term)) +
+  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  transition_manual( .universe )
+
+animate(p, nframes = 210, fps = 2)
+```
+
+![results from a multiverse analysis: point estimates and 95% confidence
+intervals of the coefficients of the predictors fertility, single and
+their interaction term](man/figures/model-1-vis-1.gif)
 
 ## Conclusion
 
-In this document, we covered details to help you quickly get started
-with this package. Please refer to the following vignettes for further
-information on:
-
--   How `multiverse` can be used in different environments such as in
-    RMarkdown and RScripts. See `vignette("multiverse-in-rmd")`.
--   How alternate analysis paths are declared in `multiverse` using
-    branch, and how `multiverse` processes the user-declared
-    (`multiverse` DSL) code to create multiple end-to-end executable R
-    analysis code. See `vignette("branch")`.
--   How conditions and dependencies can be declared in `multiverse`;
-    conditions can be used to state when two steps in a multiverse are
-    incompatible with one another. See `vignette("conditions")`.
--   How multiverse results can be extracted and visualised. . See
-    `vignette("visualising-multiverse")`.
+The authors also perform a number of other analysis using the same
+independent variables (`Fertility`, `Relationship Status` and their
+interaction term), but with different dependent variables:
+`Fiscal political attitudes`, `Social political attitudes`,
+`Voting preferences` and `Donation preferences`, which we omit here.
 
 We also implement a series of other end-to-end multiverse
 implementations using this package to demonstrate how it might be used:
