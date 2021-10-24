@@ -30,6 +30,7 @@ library(multiverse)
 M = multiverse()
 ```
 
+
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
