@@ -473,7 +473,6 @@ expand(M) %>% select(-.code)
 |         1 | mc\_option1            | mc\_option1            | &lt;environment: 0x7fc6ea5de108&gt; |
 |         2 | mc\_option2            | mc\_option2            | &lt;environment: 0x7fc6ea61a7e0&gt; |
 |         3 | mc\_option3            | mc\_option3            | &lt;environment: 0x7fc6ea63c868&gt; |
-
 </div>
 
 4.  `code`, which is the code that the user passes to the multiverse to
