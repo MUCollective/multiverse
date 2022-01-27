@@ -1,0 +1,178 @@
+---
+title: "Integrating tangle.js with the output on multiverse notebook analysis"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(broom)
+library(gganimate)
+library(multiverse)
+library(boot)
+library(ggdist)
+```
+
+
+```{r, chunk-setup, include=FALSE, eval=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
+  fig.width = 6, 
+  fig.height = 4
+)
+```
+
+## Multiverse case study #2
+
+In this vignette, we will recreate the multiverse analysis, [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
+
+## Introduction
+
+The original study investigated the effects of moving 3D data visualizations to the physical world and found that it can improve users' efficiency at information retrieval tasks. The original study consisted of two experiments. Dragicevic et al. only re-analyze the second experiment, whose goal was to better understand why physical visualizations appear to be superior.
+
+
+## The data
+
+The experiment involved an “enhanced” version of the on-screen 3D chart and an “impoverished” version of the physical 3D chart. The enhanced on-screen chart was rotated using a 3D-tracked tangible prop instead of a mouse. The impoverished physical chart consisted of the same physical object but participants were instructed not to use their fingers for marking. There were 4 conditions:
+
+* physical touch: physical 3D bar charts where touch was explicitly encouraged in the instructions.
+* physical no touch: same charts as above except subjects were told not to use their fingers to mark points of interest (labels and bars).
+* virtual prop: on-screen 3D bar charts with a tangible prop for controlling 3D rotation.
+* virtual mouse: same charts as above, but 3D rotation was mouse-controlled.
+
+These manipulations were meant to answer three questions: 
+
+1. how important is direct touch in the physical condition? 
+2. how important is rotation by direct manipulation? 
+3. how important is visual realism? Visual realism referred to the higher perceptual richness of physical objects compared to on-screen objects, especially concerning depth cues.
+
+We load the data for this study which is contained in `data(userlogs)` in the `multiverse` package.
+
+```{r}
+data("userlogs")
+data.userlogs.raw = userlogs
+
+head(data.userlogs.raw)
+```
+
+## Analysis #1: Mean and Confidence Intervals for each condition
+
+In this vignette, we are primarily concerned with the variables: `duration` and `modality`, as the focus of this analysis is on task completion times.
+
+The first (default) analysis is a one-sided t-test to estimate the means and 95% confidence intervals of the log-transformed task completion time (duration). Since, task completion times are strictly positive, and may have a long tail, this decision makes sense. However, it may be reasonable to use the untransformed data as well.  On the other hand, it is also reasonable to use a bootstrap test instead of a t-test.
+
+This results in four possible analysis combinations, two each for data transformation (log and untransformed), and model (t-test and BCa bootstrap).
+
+### Average task completion time (arithmetic mean) for each condition. 
+
+We need a few helper functions to so that they take the same arguments and return the same output.These functions will help us calculate the mean point estimate and the upper and lower bounds of the 95% confidence interval using the bootstrap method and t-test method.
+
+```{r helper-functions}
+bootstrappedCI <- function(observations, conf.level, seed = 0) {
+  samplemean <- function(x, d) {return(mean(x[d]))}
+  pointEstimate <- samplemean(observations)
+  if (!(is.na(seed) | is.null(seed))){
+    set.seed(seed) # make deterministic
+  }
+  bootstrap_samples <- boot::boot(data = observations, statistic = samplemean, R = 5000)
+  bootci <- boot::boot.ci(bootstrap_samples, type = "bca", conf = conf.level)
+  c(pointEstimate,  bootci$bca[4], bootci$bca[5])
+}
+
+tCI <- function(observations, conf.level) {
+  pointEstimate <- mean(observations)
+  sampleSD <- sd(observations)
+  sampleN <- length(observations)
+  sampleError <- qt(1-(1-conf.level)/2, df = sampleN-1) * sampleSD/sqrt(sampleN)
+  c(pointEstimate, pointEstimate - sampleError, pointEstimate + sampleError)
+}
+```
+
+Next we initialise the multiverse object within which this analysis will take place.
+
+```{r}
+M = multiverse()
+```
+
+
+Now we define the parameters we want to consider in the multiverse: confidence interval method (`ci_method`) and data transformation method (`data_transform`). We also define a parameter for confidence level, as the choice of a 95% confidence level is arbitrary and we can choose to instead present our results with alternate confidence levels. Here we vary between: 50%, 75%, 89%, 85%, 99%, 99.9%. Thus our multiverse consists of: 2 $\times$ 2 $\times$ 7 different analysis combinations.
+
+#### Note 
+In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
+
+```{multiverse default-m-1, inside = M}
+ci_method <- branch(ci_method,
+    "t based"   ~ "tCI",
+    "bootstrap" ~ "bootstrappedCI"
+)
+
+data_transform <- branch(data_transform,
+    "log-transformed" ~ log,
+    "untransformed" ~ identity
+)
+
+conf_level <-  branch(conf_level,
+    "50%" ~ 0.5,
+    "67" ~ 0.67,
+    "89" ~ 0.89,
+    "95%" ~ 0.95,
+    "99%" ~ 0.99,
+    "99.9%" ~ 0.999
+)
+```
+
+
+
+We now look at the multiverse table and see that it has created all the possible combinations:
+
+```{r}
+expand(M)
+```
+
+We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options.
+First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.
+
+
+```{multiverse default-m-2, inside = M}
+duration <- do.call(data_transform, list(data.userlogs.raw$duration))
+```
+
+
+Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a `data.frame`. We strongly recommend sorting the results that you would wish to extract from the multiverse in a `data.frame` as that would make it much easier for analysing and visualising the results.
+
+```{multiverse default-m-3, inside = M, message = FALSE, warning = FALSE}
+modality <- data.userlogs.raw$modalityname
+
+ci.physical_notouch <- do.call(ci_method, list(duration[modality == 'physical-notouch'], conf_level))
+ci.physical_notouch <- setNames(as.list(c("physical_notouch", ci.physical_notouch)), c("modality", "estimate", "conf.low", "conf.high"))
+
+ci.physical_touch <- do.call(ci_method, list(duration[modality == 'physical-touch'], conf_level))
+ci.physical_touch <- setNames(as.list(c("physical_touch", ci.physical_touch)), c("modality", "estimate", "conf.low", "conf.high"))
+
+ci.virtual_prop <- do.call(ci_method, list(duration[modality == 'virtual-prop'], conf_level))
+ci.virtual_prop <- setNames(as.list(c("virtual_prop", ci.virtual_prop)), c("modality", "estimate", "conf.low", "conf.high"))
+
+ci.virtual_mouse <- do.call(ci_method, list(duration[modality == 'virtual-mouse'], conf_level))
+ci.virtual_mouse <- setNames(as.list(c("virtual_mouse", ci.virtual_mouse)), c("modality", "estimate", "conf.low", "conf.high"))
+
+df <- rbind.data.frame(ci.physical_notouch, ci.physical_touch, ci.virtual_prop, ci.virtual_mouse, make.row.names = FALSE, stringsAsFactors = FALSE)
+df <- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
+```
+
+Since the multiverse only executes the default analysis, we then run the following command to run all the analysis that we have defined in the multiverse.
+
+```{r, warning = FALSE}
+execute_multiverse(M)
+```
+
+
+```{multiverse default-m-4, inside = M}
+df %>%
+  ggplot() +
+  geom_pointinterval(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = modality))
+```
+
+
