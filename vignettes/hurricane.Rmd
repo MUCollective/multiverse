@@ -176,6 +176,10 @@ df <- df %>%
 ```
 ````
 
+```{multiverse default-m-9, inside = M}
+df
+```
+
 ### Declaring alternative specifications of regression model
 The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
 
@@ -223,6 +227,11 @@ broom::tidy(fit)
 ````
 
 Once we have implemented the analysis model in our multiverse, the corresponding step will be applied to each analysis path. To interpret the results, we first estimate a prediction interval corresponding to each analysis path. 
+
+```{r}
+execute_multiverse(M)
+```
+
 
 ```{multiverse label = default-m-4, inside = M, echo = FALSE}
 pred <- predict(fit, se.fit = TRUE, type = "response")
