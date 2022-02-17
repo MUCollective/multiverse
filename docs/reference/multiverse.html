@@ -42,9 +42,7 @@
   
 
 <meta property="og:title" content="Create a new multiverse object — multiverse" />
-<meta property="og:description" content="Constructs a new multiverse object which enables conducting a multiverse analysis
-This function returns `TRUE` for objects of class multiverse,
-and `FALSE` for all other objects." />
+<meta property="og:description" content="Constructs a new multiverse object which enables conducting a multiverse analysis" />
 
 
 
@@ -76,7 +74,7 @@ and `FALSE` for all other objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -117,6 +115,9 @@ and `FALSE` for all other objects." />
       <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
+      <a href="../articles/multiverse-export-json.html">multiverse-export-json</a>
+    </li>
+    <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
@@ -155,8 +156,6 @@ and `FALSE` for all other objects." />
 
     <div class="ref-description">
     <p>Constructs a new multiverse object which enables conducting a multiverse analysis</p>
-<p>This function returns `TRUE` for objects of class multiverse,
-and `FALSE` for all other objects.</p>
     </div>
 
     <pre class="usage"><span class='fu'>multiverse</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
@@ -168,10 +167,6 @@ and `FALSE` for all other objects.</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>...</th>
-      <td><p>currently unused</p></td>
-    </tr>
     <tr>
       <th>x</th>
       <td><p>An object</p></td>
@@ -186,7 +181,7 @@ and `FALSE` for all other objects.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>To perform a multiverse analysis, the user needs to first constructs a new multiverse object. The user can declare
-multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object is
+multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object
 contains the following slots:</p><ul>
 <li><p>code: This slot stores the user's code for conducting a multiverse analysis. The user can
   define multiple analysis pathways at each step in the analysis using the `branch` call. It supports tidyverse syntax.</p></li>

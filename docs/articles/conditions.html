@@ -73,6 +73,9 @@
       <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
+      <a href="../articles/multiverse-export-json.html">multiverse-export-json</a>
+    </li>
+    <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
@@ -101,13 +104,13 @@
 
       
 
-      </header><script src="conditions_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="conditions_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Declaring conditions in the multiverse</h1>
                         <h4 class="author">Abhraneel Sarma</h4>
             
-            <h4 class="date">2021-05-25</h4>
+            <h4 class="date">2022-02-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/conditions.Rmd"><code>vignettes/conditions.Rmd</code></a></small>
       <div class="hidden name"><code>conditions.Rmd</code></div>
@@ -207,7 +210,7 @@ df &lt;- df_durante  %&gt;%
 <p>As the condition implies, the parameter <code>menstrual_calcaultion</code> (which is for calculating the variable <code>NextMenstrualCalculation</code>) cannot take the value of “mc_option1” when we filter <code>cycle_length</code> using “cl_option3”. Similarly, <code>menstrual_calcaultion</code> cannot take the value of “mc_option2” when we filter <code>cycle_length</code> using “cl_option2”. In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 7 x 6
+<pre><code>## # A tibble: 7 × 6
 ##   .universe cycle_length menstrual_calcula… .parameter_assign… .code    .results
 ##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;              &lt;list&gt;             &lt;list&gt;   &lt;list&gt;  
 ## 1         1 cl_option1   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   
@@ -251,7 +254,7 @@ df &lt;- df_durante  %&gt;%
 <p>As we can see, this results in the same multiverse, where universes indexed 3 and 5 are not compatible.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 7 x 6
+<pre><code>## # A tibble: 7 × 6
 ##   .universe cycle_length menstrual_calcula… .parameter_assign… .code    .results
 ##       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;              &lt;list&gt;             &lt;list&gt;   &lt;list&gt;  
 ## 1         1 cl_option1   mc_option1         &lt;named list [2]&gt;   &lt;named … &lt;env&gt;   

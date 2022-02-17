@@ -116,6 +116,9 @@ in a tidy format." />
       <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
+      <a href="../articles/multiverse-export-json.html">multiverse-export-json</a>
+    </li>
+    <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
@@ -215,7 +218,7 @@ then they a column of type data frame (or tibble) would be created (which is a s
 <span class='co'># Extracts the relevant variable from the multiverse</span>
 <span class='va'>M</span> <span class='op'>%&gt;%</span>
   <span class='fu'>extract_variables</span><span class='op'>(</span><span class='va'>x.mean</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 x 6</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 × 6</span>
 #&gt;   .universe trim_values .parameter_assignment .code            .results x.mean
 #&gt;       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>                <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
 #&gt; <span style='color: #BCBCBC;'>1</span>         1 trim_none   <span style='color: #949494;'>&lt;named list [1]&gt;</span>      <span style='color: #949494;'>&lt;named list [1]&gt;</span> <span style='color: #949494;'>&lt;env&gt;</span>      49.0
@@ -226,7 +229,7 @@ then they a column of type data frame (or tibble) would be created (which is a s
 <span class='co'># you ca first create the table and manipulate it before extracting variables</span>
 <span class='fu'><a href='accessors.html'>expand</a></span><span class='op'>(</span><span class='va'>M</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>extract_variables</span><span class='op'>(</span><span class='va'>x.mean</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 x 6</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 × 6</span>
 #&gt;   .universe trim_values .parameter_assignment .code            .results x.mean
 #&gt;       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>                <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
 #&gt; <span style='color: #BCBCBC;'>1</span>         1 trim_none   <span style='color: #949494;'>&lt;named list [1]&gt;</span>      <span style='color: #949494;'>&lt;named list [1]&gt;</span> <span style='color: #949494;'>&lt;env&gt;</span>      49.0

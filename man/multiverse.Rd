@@ -13,8 +13,6 @@ is_multiverse(x)
 is.multiverse(x)
 }
 \arguments{
-\item{...}{currently unused}
-
 \item{x}{An object}
 }
 \value{
@@ -26,13 +24,10 @@ An empty multiverse object
 }
 \description{
 Constructs a new multiverse object which enables conducting a multiverse analysis
-
-This function returns `TRUE` for objects of class multiverse,
-and `FALSE` for all other objects.
 }
 \details{
 To perform a multiverse analysis, the user needs to first constructs a new multiverse object. The user can declare
-multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object is
+multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object
 contains the following slots:
 \itemize{
   \item code: This slot stores the user's code for conducting a multiverse analysis. The user can
