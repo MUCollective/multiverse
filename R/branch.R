@@ -12,7 +12,8 @@
 #' options should be declared. Thus, the branch function will provide a warning
 #' if the total number arguments passed is less than three.
 #' 
-#' Please refer to the `vignette(branch)` for more details on how to use this function to create a complete multiverse analysis.
+#' Please refer to the `vignette(branch)` for more details on how to use this function to create a 
+#' complete multiverse analysis.
 #' 
 #' @param parameter A string to identify the branch. Each branch is characterised using a parameter which takes
 #' different options.
@@ -47,8 +48,9 @@
 #' 
 #' 
 #' # Example 2: using branch with tidyverse and `%>%`
-#' # Let’s say that we have some data which indicates the amount of time spent by a user in four 
-#' # different conditions which are indexed 1, 2, 3 and 4 (the modality column in the following dataset). 
+#' # Let’s say that we have some data which indicates the amount of time spent by a user
+#' # in four different conditions which are indexed 1, 2, 3 and 4
+#' # (the modality column in the following dataset). 
 #' # We will first load the data and convert the column into factor from integer.
 #' 
 #' data("userlogs")
