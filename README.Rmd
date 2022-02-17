@@ -2,7 +2,6 @@
 output: 
   md_document:
     variant: markdown_github
-    df_print: kable
     toc: true
 ---
 
@@ -141,7 +140,7 @@ fit = glm(
 
 The result below indicates that there is a small but positive effect of `masfem` (femininity of the name of a hurricane) on `deaths`, when controlled for damages. This appears to support the original hypothesis.
 
-```{r, one_universe_result}
+```{r, one_universe_result, fig.align = 'center', eval = FALSE}
 tidy(fit) %>%
   filter(term != "(Intercept)") %>%
   ggplot() +
@@ -149,6 +148,9 @@ tidy(fit) %>%
   geom_pointinterval(aes(x = estimate, y = term, xmin = estimate + qnorm(0.025)*std.error, xmax = estimate + qnorm(0.975)*std.error)) +
   theme_minimal()
 ```
+
+![results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors](man/figures/universe-summary-1.png)
+
 
 However, the original analysis involved at least four analysis decisions (A-D), and at each decision point (node) alternative choices may have led to a different result. These decisions are highlighted in the figure below:
 
