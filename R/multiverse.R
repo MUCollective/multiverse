@@ -64,14 +64,11 @@ Multiverse <- R6Class("Multiverse",
 #' @importFrom collections ordered_dict
 #'
 #' @export
-multiverse <- function(...) {
+multiverse <- function() {
   x <- env()
   attr(x, "multiverse_super_env") <- caller_env()
   attr(x, "multiverse") <- Multiverse$new()
-  structure(x,
-            ...,
-            class = c("multiverse")
-  )
+  structure(x, class = c("multiverse"))
 }
 #'
 #' @rdname multiverse

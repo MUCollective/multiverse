@@ -6,7 +6,7 @@
 \alias{is.multiverse}
 \title{Create a new multiverse object}
 \usage{
-multiverse(...)
+multiverse()
 
 is_multiverse(x)
 
