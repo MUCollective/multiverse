@@ -79,7 +79,7 @@ bootstrappedCI <- function(observations, conf.level, seed = 0) {
   }
   bootstrap_samples <- boot::boot(data = observations, statistic = samplemean, R = 5000)
   bootci <- boot::boot.ci(bootstrap_samples, type = "bca", conf = conf.level)
-  c(pointEstimate,  bootci$bca[4], bootci$bca[5])
+  data.frame(estimate = pointEstimate, conf.low = bootci$bca[4], conf.high = bootci$bca[5])
 }
 
 tCI <- function(observations, conf.level) {
@@ -87,8 +87,10 @@ tCI <- function(observations, conf.level) {
   sampleSD <- sd(observations)
   sampleN <- length(observations)
   sampleError <- qt(1-(1-conf.level)/2, df = sampleN-1) * sampleSD/sqrt(sampleN)
-  c(pointEstimate, pointEstimate - sampleError, pointEstimate + sampleError)
+  data.frame(estimate = pointEstimate,  conf.low = pointEstimate - sampleError, conf.high = pointEstimate + sampleError)
 }
+
+conf_level = 0.99
 ```
 
 Next we initialise the multiverse object within which this analysis will take place.
@@ -105,74 +107,23 @@ In this vignette, we make use of [*multiverse code chunks*](https://mucollective
 
 ```{multiverse default-m-1, inside = M}
 ci_method <- branch(ci_method,
-    "t based"   ~ "tCI",
-    "bootstrap" ~ "bootstrappedCI"
+    "t based"   ~ tCI,
+    "bootstrap" ~ bootstrappedCI
 )
 
-data_transform <- branch(data_transform,
-    "log-transformed" ~ log,
-    "untransformed" ~ identity
-)
-
-conf_level <-  branch(conf_level,
-    "50%" ~ 0.5,
-    "67" ~ 0.67,
-    "89" ~ 0.89,
-    "95%" ~ 0.95,
-    "99%" ~ 0.99,
-    "99.9%" ~ 0.999
-)
+data.userlogs.raw %>%
+  mutate(duration = branch(
+    data_transform,
+    "log-transformed" ~ log(duration),
+    "untransformed" ~ identity(duration)
+  )) %>%
+  group_by(modalityname) %>%
+  summarise(duration = list(duration)) %>%
+  mutate(ci = map(duration, ~ ci_method(., conf_level))) %>%
+  unnest_wider(ci) %>%
+  ggplot() +
+  geom_pointinterval(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = modalityname))
 ```
 
-
-
-We now look at the multiverse table and see that it has created all the possible combinations:
-
-```{r}
-expand(M)
-```
-
-We then actually perform the steps within the multiverse to get results from the different possible combinations of analysis options.
-First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.
-
-
-```{multiverse default-m-2, inside = M}
-duration <- do.call(data_transform, list(data.userlogs.raw$duration))
-```
-
-
-Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a `data.frame`. We strongly recommend sorting the results that you would wish to extract from the multiverse in a `data.frame` as that would make it much easier for analysing and visualising the results.
-
-```{multiverse default-m-3, inside = M, message = FALSE, warning = FALSE}
-modality <- data.userlogs.raw$modalityname
-
-ci.physical_notouch <- do.call(ci_method, list(duration[modality == 'physical-notouch'], conf_level))
-ci.physical_notouch <- setNames(as.list(c("physical_notouch", ci.physical_notouch)), c("modality", "estimate", "conf.low", "conf.high"))
-
-ci.physical_touch <- do.call(ci_method, list(duration[modality == 'physical-touch'], conf_level))
-ci.physical_touch <- setNames(as.list(c("physical_touch", ci.physical_touch)), c("modality", "estimate", "conf.low", "conf.high"))
-
-ci.virtual_prop <- do.call(ci_method, list(duration[modality == 'virtual-prop'], conf_level))
-ci.virtual_prop <- setNames(as.list(c("virtual_prop", ci.virtual_prop)), c("modality", "estimate", "conf.low", "conf.high"))
-
-ci.virtual_mouse <- do.call(ci_method, list(duration[modality == 'virtual-mouse'], conf_level))
-ci.virtual_mouse <- setNames(as.list(c("virtual_mouse", ci.virtual_mouse)), c("modality", "estimate", "conf.low", "conf.high"))
-
-df <- rbind.data.frame(ci.physical_notouch, ci.physical_touch, ci.virtual_prop, ci.virtual_mouse, make.row.names = FALSE, stringsAsFactors = FALSE)
-df <- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(conf.low), conf.high = as.numeric(conf.high))
-```
 
 Since the multiverse only executes the default analysis, we then run the following command to run all the analysis that we have defined in the multiverse.
-
-```{r, warning = FALSE}
-execute_multiverse(M)
-```
-
-
-```{multiverse default-m-4, inside = M}
-df %>%
-  ggplot() +
-  geom_pointinterval(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = modality))
-```
-
-
