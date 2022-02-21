@@ -96,6 +96,8 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     options$comment = ""
     options$dev = 'png'
     
+    eng_r = knit_engines$get("R")
+    
     # if (options$eval != FALSE) {
     options_list <- lapply(1:size(.multiverse), function(x) {
       temp_options <- options
@@ -103,6 +105,8 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
         tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1), 
         ~ gsub(pattern = " ", replacement = "", x = .)
       ))$text.tidy
+      
+      temp_env = expand(.multiverse)[[".results"]][[x]]
     
       # assuming default is the first universe,
       # conditional should be change to use the default universe argument
@@ -114,11 +118,10 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
           temp_options$class.output = paste0("multiverse universe-", x, "")
       }
       
-      temp_options
+      eng_r(temp_options, temp_env)
     })
-    eng_r = knit_engines$get("R")
-    unlist(lapply(options_list, eng_r))
-    # }
+    
+    unlist(options_list)
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
@@ -131,7 +134,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # to evaluate the various pieces of code in the code chunk and return
     # the output strings from each line of code.
     outputs = evaluate::evaluate(
-      code, 
+      code,
       # must have new_device = FALSE otherwise plots don't seem to be written to
       # the graphics device inside rmarkdown in RStudio
       new_device = FALSE,
