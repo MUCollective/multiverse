@@ -533,11 +533,11 @@ code(M)
 ``` r
 extract_variables(M, df.filtered)
 #> # A tibble: 3 × 6
-#>   .universe death_outliers   .parameter_assignm… .code     .results df.filtered 
-#>       <int> <chr>            <list>              <list>    <list>   <list>      
-#> 1         1 no_exclusion     <named list [1]>    <named l… <env>    <df [92 × 1…
-#> 2         2 most_extreme     <named list [1]>    <named l… <env>    <df [92 × 1…
-#> 3         3 two_most_extreme <named list [1]>    <named l… <env>    <df [92 × 1…
+#>   .universe death_outliers   .parameter_assig… .code        .results df.filtered
+#>       <int> <chr>            <list>            <list>       <list>   <list>     
+#> 1         1 no_exclusion     <named list [1]>  <named list> <env>    <df>       
+#> 2         2 most_extreme     <named list [1]>  <named list> <env>    <df>       
+#> 3         3 two_most_extreme <named list [1]>  <named list> <env>    <df>
 ```
 
 ## Building up a complete analysis
@@ -725,7 +725,7 @@ analysts and to aid debugging.
 ## Executing the entire multiverse
 
 To execute all unique analysis paths in the multiverse, an analyst can
-call `execute_multiverse(M)` . We support local parallelization with an
+call `execute_multiverse(M)`. We support local parallelization with an
 optional cores argument indicating the number of cpu cores to use. The
 multiverse object can also be easily adapted to use with existing
 parallel computing packages in R, such as
