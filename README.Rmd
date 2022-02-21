@@ -479,7 +479,7 @@ Analysts can change which analysis path is executed by default. Inline code outp
 
 ## Executing the entire multiverse
 
-To execute all unique analysis paths in the multiverse, an analyst can call `execute_multiverse(M)` . We support local parallelization with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as [future](https://cran.r-project.org/web/packages/future/index.html), to run analyses across computing clusters.
+To execute all unique analysis paths in the multiverse, an analyst can call `execute_multiverse(M)`. We support local parallelization with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as [future](https://cran.r-project.org/web/packages/future/index.html), to run analyses across computing clusters.
 
 ## Debugging and Diagnosing Errors
 
