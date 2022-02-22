@@ -91,37 +91,40 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # What we want is to create a `div` for each universe
     # options$eval = TRUE
     # options$class.source = "multiverse"
-
+    
     options$engine = "R"
     options$comment = ""
     options$dev = 'png'
+    multiverse_options = options
     
     eng_r = knit_engines$get("R")
     
-    # if (options$eval != FALSE) {
     options_list <- lapply(1:size(.multiverse), function(x) {
       temp_options <- options
       temp_options$code = tidy_source(text = map_chr(
-        tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1), 
+        tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1),
         ~ gsub(pattern = " ", replacement = "", x = .)
       ))$text.tidy
-      
+
       temp_env = expand(.multiverse)[[".results"]][[x]]
-    
+
       # assuming default is the first universe,
       # conditional should be change to use the default universe argument
-      if (x == 1) { 
+      if (x == 1) {
           temp_options$class.source = paste0("multiverse universe-", x, " default")
           temp_options$class.output = paste0("multiverse universe-", x, " default")
       } else {
           temp_options$class.source = paste0("multiverse universe-", x, "")
           temp_options$class.output = paste0("multiverse universe-", x, "")
       }
-      
+
       eng_r(temp_options, temp_env)
     })
     
-    unlist(options_list)
+    multiverse_options$eval = FALSE
+    multiverse_options$class.source = "multiverse-spec"
+    multiverse_options$class.output = "multiverse-spec"
+    unlist(append(options_list, eng_r(multiverse_options)))
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     

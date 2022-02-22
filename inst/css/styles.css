@@ -6,6 +6,12 @@
   background-color: #FFFFFF;
 }
 
+/*
 :not(.default).multiverse {
+   display: none;
+}
+*/
+
+.multiverse-spec {
   display: none;
 }
