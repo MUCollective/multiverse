@@ -1,7 +1,7 @@
 ---
 output: 
-  github_document:
-    df_print: kable
+  md_document:
+    variant: markdown_github
     toc: true
 ---
 
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-```{r, setup}
+```{r, setup, include=FALSE}
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -44,7 +44,7 @@ The `multiverse` documentation predominantly follows the tidyverse syntax.
 
 You can install the latest development version from GitHub with these R commands:
 
-``` r
+```{r, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("mucollective/multiverse")
 ```
@@ -68,6 +68,18 @@ We also implement a series of end-to-end multiverse implementations using this p
 ## Example analysis
 
 In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Simohnsohn et al. in [Specification Curve: Descriptive and Inferential Statistics on All Reasonable Specifications](http://dx.doi.org/10.2139/ssrn.2694998) where they reanalysed the study titled [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111).
+
+Before we dive into the analysis, it might be helpful to establish a terminology to help describe the steps that go into creating a multiverse analysis. We adopt the "tree of analysis" metaphor (see Figure below): "an analysis proceeds from top to bottom, and each branching represents a choice between different analysis options". 
+
+```{r echo = FALSE, out.width = '60%'}
+knitr::include_graphics("vignettes/figures/00-reporting-strategies.png")
+```
+
+In this terminology:
+
+- a *parameter* represents a node in the tree that has more than one child---a point in the analysis where the analyst must decide between reasonable alternatives
+- an *option* is one of those children. 
+- A singular analysis (i.e. universe) is a complete path from the root to a leaf.
 
 ### Background: The Data
 
@@ -128,7 +140,7 @@ fit = glm(
 
 The result below indicates that there is a small but positive effect of `masfem` (femininity of the name of a hurricane) on `deaths`, when controlled for damages. This appears to support the original hypothesis.
 
-```{r, one_universe_result}
+```{r, one_universe_result, fig.align = 'center', eval = FALSE}
 tidy(fit) %>%
   filter(term != "(Intercept)") %>%
   ggplot() +
@@ -137,9 +149,14 @@ tidy(fit) %>%
   theme_minimal()
 ```
 
-However, the original analysis involved at least four decisions (A-D), and at each decision point alternative choices may have led to a different result. These decisions are highlighted in the figure below:
+![results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors](man/figures/universe-summary-1.png)
 
-![An implementation of the original (single-universe) analysis in R.](man/figures/00-default-analysis.png)
+
+However, the original analysis involved at least four analysis decisions (A-D), and at each decision point (node) alternative choices may have led to a different result. These decisions are highlighted in the figure below:
+
+```{r echo = FALSE, out.width = '90%'}
+knitr::include_graphics("vignettes/figures/00-default-analysis.png")
+```
 
 Several subsequent studies, each proposing a different analysis strategy, found no presence of such an effect, suggesting that the original finding may have been a result of a idiosyncratic combination of analysis choices. Data analysis can often involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable option to choose from. A multiverse analysis makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). Below, we use this analysis as an example of how a single analysis can be extended to a multiverse analysis.
 
@@ -172,25 +189,27 @@ To get around these limitations, we need to declare this (multiverse DSL) code "
 
 RMarkdown [supports languages other than R](https://bookdown.org/yihui/rmarkdown/language-engines.html) and these languages have dedicated code blocks. We extend this by providing [*multiverse code blocks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html) which can be used instead of the regular `r` code block to write code inside a multiverse object (see \\link{multiverse-in-rmd} for more details on using the multiverse code blocks with RMarkdown). A *multiverse code block* is a custom engine designed to work with the `multiverse` package, to implement the multiverse analyses. This allows you to write more concise code and is more consistent with the interactive programming interface of RStudio. Below we show how code can be implemented using the *multiverse code block:*
 
-    ```{multiverse default-m-1, inside = M}`r ''`
-    # here we just create the variable `df` in the multiverse
-    df = hurricane_data
+````
+```{multiverse default-m-1, inside = M}`r ''`
+# here we just create the variable `df` in the multiverse
+df = hurricane_data
 
-    # here, we perform a `filter` operation in the multiverse
-    df.filtered = df %>%
-      filter(branch(death_outliers,
-          "no_exclusion" ~ TRUE,
-          "most_extreme" ~ name != "Katrina",
-          "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
-    ))
-    ```
+# here, we perform a `filter` operation in the multiverse
+df.filtered = df %>%
+  filter(branch(death_outliers,
+      "no_exclusion" ~ TRUE,
+      "most_extreme" ~ name != "Katrina",
+      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+))
+```
+````
 
 The code within the `filter` function call is written in the `multiverse` DSL and cannot be executed directly in R. For now, ignore what the `branch` function does as we will discuss about this in more detail in the next section. When this code is written and executed inside a *multiverse code block*, it allows the multiverse library to process and compile it to three different analyses.
 
 We provide the ability to declare multiverse code block as an *Addin* in RStudio. Users can click on *Addins* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
 
 ```{r echo = FALSE, out.width = '90%'}
-knitr::include_graphics("vignettes/multiverse-addins.png")
+knitr::include_graphics("vignettes/figures/01-multiverse-addins.png")
 ```
 
 Alternately, users can insert a multiverse code block using a keyboard shortcut. Users can create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document through the following steps:
@@ -245,7 +264,7 @@ Here, the researchers are faced with the decision of which hurricanes to exclude
 -   Remove one most extreme hurricane
 -   Remove two most extreme hurricanes
 
-To create a multiverse that includes these three possible processing options, we use the `branch()` function. The `branch()` function accepts three or more arguments. The first argument defines a *parameter* (here `death outliers`) which is used as an identifier for the decision point. The subsequent arguments, which we refer to as *options*, define the different choices that a researcher can make at that decision point of their analysis; these follow the syntax `<option_name> ~ <option_definition>`. The `<option_name>` part is intended to allow naming the branches with meaningful names to help the user keep track of choices (in the multiverse specification below, "no_exclusion", "most_extreme", "two_most_extreme" are used as option names). However, names can be omitted; if omitted, the entire syntax for performing that operation will be treated as the name for that particular option.
+To create a multiverse that includes these three possible analysis options, we use the `branch()` function. The `branch()` function accepts three or more arguments. The first argument defines a *parameter* (here `death outliers`). The subsequent arguments, which we refer to as *options*, define the different choices that a researcher can make at that decision node of their analysis; these follow the syntax `<option_name> ~ <option_definition>`. The `<option_name>` part is intended to allow naming the branches with meaningful names to help the user keep track of declared options (in the multiverse specification below, "no_exclusion", "most_extreme", "two_most_extreme" are used as option names). However, names can be omitted; if omitted, the entire syntax for performing that operation will be treated as the name for that particular option.
 
 Putting it all together, a decision point in a multiverse analysis can thus be declared as:
 
@@ -262,22 +281,26 @@ df.filtered = df %>%
 ))
 ```
 
-    ```{multiverse branch_definition, inside = M}`r ''`
-    # here we just create the variable `df` in the multiverse
-    df = hurricane_data
+````
+```{multiverse branch_definition, inside = M}`r ''`
+# here we just create the variable `df` in the multiverse
+df = hurricane_data
 
-    # here, we perform a `filter` operation in the multiverse
-    df.filtered = df %>%
-      filter(branch(death_outliers,
-          "no_exclusion" ~ TRUE,
-          "most_extreme" ~ name != "Katrina",
-          "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
-    ))
-    ```
+# here, we perform a `filter` operation in the multiverse
+df.filtered = df %>%
+  filter(branch(death_outliers,
+      "no_exclusion" ~ TRUE,
+      "most_extreme" ~ name != "Katrina",
+      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+))
+```
+````
 
 The `multiverse` library then takes this user-declared syntax in the multiverse DSL and and compiles it into three separate, executable R expressions as shown in the figure below:
 
-![branch() allows declarations of alternative ways of performing an analysis step which is multiplexed over, to create the multiverse](man/figures/02-branch.png)
+```{r echo = FALSE, out.width = '90%'}
+knitr::include_graphics("vignettes/figures/02-branch.png")
+```
 
 More details on the `branch()` function can be found in the corresponding `vignette(branch)`.
 
@@ -317,13 +340,12 @@ extract_variables(M, df.filtered)
 
 Subsequent branch calls will progressively expand the multiverse, by enumerating all possible combinations. We will now expand our multiverse to include other possible decision points in the analysis where reasonable alternatives could have been chosen. For instance, the researchers could have:
 
-\(1\) used a binary indicator for whether a hurricane's name was female, instead of the 11-point rating of how feminine the name of a hurricane was
+1. used a binary indicator for whether a hurricane's name was female, instead of the 11-point rating of how feminine the name of a hurricane was
+2. log transformed the `damage` variable, as it is a positive only value with a long right-tail
 
-\(2\) log transformed the `damage` variable, as it is a positive only value with a long right-tail
+This would result in $3 \times 2 \times 2 = 12$ analysis paths.
 
-This would result in $3 \\times 2 \\times 2 = 12$ analysis paths.
-
-```{multiverse label = variable_definitions, inside = M}
+```{multiverse label = variable_definitions, inside = M, echo = FALSE}
 df.filtered <- df.filtered %>%
     mutate(
         femininity = branch(femininity_calculation,
@@ -337,7 +359,8 @@ df.filtered <- df.filtered %>%
     )
 ```
 
-    ```{multiverse label = variable_definitions, inside = M}`r''`
+````
+```{multiverse label = variable_definitions, inside = M}`r ''`
     df.filtered <- df.filtered %>%
         mutate(
             femininity = branch(femininity_calculation,
@@ -349,7 +372,8 @@ df.filtered <- df.filtered %>%
               "log_transform" ~ log(dam)
             )
         )
-    ```
+```
+````
 
 The next step in this multiverse analysis is to estimate the effect of `femininity` on `deaths` using linear regression. There are multiple decisions involved at this step. We take this opportunity to introduce certain scenarios that an analyst may encounter while attempting to create a multiverse, that may be difficult to discover but are supported by the library.
 
@@ -365,16 +389,18 @@ Although this is a reasonable choice for count data, one can also argue for a lo
 
 Specifying this in a multiverse analysis may require changes in two different locations in the code: the specification of the `deaths` dependent variable and the value of the `family` argument. However, these are not two separate decisions, but rather a consequence of the same analysis parameter: the choice of model. Often, a single analysis parameter will require the analyst to change the code in more than one location. To represent these semantics, multiverse allows us to re-use the same analysis parameter in multiple `branch()` statements, so long as each `branch()` uses the exact same set of analysis options. In a branch on a previously defined parameter, option names must be the same, but the code for each option can be different. Thus, we represent the consequences of the choice of model with a single analysis parameter: model. We insert two branch() statements using this parameter, one to set the variable transformation and one to set the family.
 
-    ```{multiverse label = variable_definitions, inside = M}`r''`
-    fit <- glm(branch(model,
-            "linear" ~ log(death+1),
-            "poisson" ~ death
-        ) ~ femininity * damage + femininity * zpressure,
-        family = branch(model, 
-            "linear" ~ gaussian, 
-            "poisson" ~ poisson
-        ), data = df.filtered)
-    ```
+````
+```{multiverse label = variable_definitions, inside = M}`r ''`
+fit <- glm(branch(model,
+        "linear" ~ log(death+1),
+        "poisson" ~ death
+    ) ~ femininity * damage + femininity * zpressure,
+    family = branch(model, 
+        "linear" ~ gaussian, 
+        "poisson" ~ poisson
+    ), data = df.filtered)
+```
+````
 
 ### Specifying conditions in the multiverse analysis
 
@@ -384,20 +410,22 @@ In a multiverse analysis, there may arise such dependencies between two or more 
 
 This results in the following multiverse specification (for now, let's ignore the previous decision on choice of models):
 
-    ```{multiverse label = variable_definitions, inside = M}`r''`
-    fit <- glm(death ~ 
-              branch(main_interaction,
-                  "no" ~ femininity + damage,
-                  "yes" ~ femininity * damage
-              ) + branch(other_predictors,
-                  "none" ~ NULL,
-                  "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-                  "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-                  "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-                  "all" %when% (main_interaction == "yes") ~ femininity * z3,
-                  "all_no_interaction" %when% (main_interaction == "no") ~ z3
-              ), family = "poisson", data = df)
-    ```
+````
+```{multiverse label = variable_definitions, inside = M}`r ''`
+fit <- glm(death ~ 
+          branch(main_interaction,
+              "no" ~ femininity + damage,
+              "yes" ~ femininity * damage
+          ) + branch(other_predictors,
+              "none" ~ NULL,
+              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+              "all" %when% (main_interaction == "yes") ~ femininity * z3,
+              "all_no_interaction" %when% (main_interaction == "no") ~ z3
+          ), family = "poisson", data = df)
+```
+````
 
 For more details on how this can be done, as well as other details on conditions, please refer to vignette(conditions).
 
@@ -405,28 +433,26 @@ For more details on how this can be done, as well as other details on conditions
 
 As with code chunks in a typical computational notebook, users can execute a multiverse code chunk in the interactive editor in RStudio. When a user executes a single code chunk, multiverse internally transforms the input from that code chunk into one unevaluated expression (R's internal representation of an abstract syntax tree) for each unique combination of analysis options and immediately executes the default analysis: the analysis path obtained by taking the first analysis option at each decision point. The default analysis is executed in the current active R environment (i.e. the same environment that regular R code blocks are executed in --- the R Global Environment). Thus, the result of the default analysis is always accessible to the user. The output of an executed code chunk (text or visualization) is displayed immediately below it, mimicking notebook code chunks
 
-The following code chunk illustrates this behavior. It fits the regression model that has been described in the previous two sections, and prints the summary of the regression model. The result will be printed below:
+````
+```{multiverse label = default-m-3, inside = M}`r ''`
+fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+          branch(main_interaction,
+              "no" ~ femininity + damage,
+              "yes" ~ femininity * damage
+          ) + branch(other_predictors,
+              "none" ~ NULL,
+              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+              "all" %when% (main_interaction == "yes") ~ femininity * z3,
+              "all_no_interaction" %when% (main_interaction == "no") ~ z3
+          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
+          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+          data = df)
+```
+````
 
-    ```{multiverse label = default-m-3, inside = M}`r''`
-    fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
-              branch(main_interaction,
-                  "no" ~ femininity + damage,
-                  "yes" ~ femininity * damage
-              ) + branch(other_predictors,
-                  "none" ~ NULL,
-                  "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-                  "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-                  "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-                  "all" %when% (main_interaction == "yes") ~ femininity * z3,
-                  "all_no_interaction" %when% (main_interaction == "no") ~ z3
-              ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
-              family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
-              data = df)
-
-    broom::tidy(fit)
-    ```
-
-```{multiverse label = default-m-3, inside = M}
+```{multiverse label = default-m-3, inside = M, echo = FALSE}
 fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
           branch(main_interaction,
               "no" ~ femininity + damage,
@@ -441,11 +467,9 @@ fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
           ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
           family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
           data = df.filtered)
-
-broom::tidy(fit)
 ```
 
-Even though the variable `fit` was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:
+The following code chunk illustrates this behavior. Even though the variable `fit` was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:
 
 ```{r}
 broom::tidy(fit)
@@ -461,7 +485,10 @@ To execute all unique analysis paths in the multiverse, an analyst can call `exe
 
 For the default analysis, as it executes in the R environment, users have access to the same set of debugging utilities that R provides. When the user executes the entire multiverse, the library outputs the error message, a traceback—an object containing the entire call stack that caused the error—and the index of the corresponding analysis path in which the error was encountered. The execution of the remaining analysis paths in the multiverse are not halted if any errors are encountered. The traceback is helpful to identify the location of the error, as often R expressions return unidentifiable error messages. `execute_universe(<universe ID>)` (universe ID are found in the table output by `expand()`, see below) allows analysts to execute a particular analysis path and reproduce errors encountered in the execution of that specific path.
 
-![expand() provides an overview of the complete decision tree of the specified multiverse, with each row corresponding to the set of decisions creating the a particular analysis path](man/figures/06-expand.png)
+
+```{r echo = FALSE, out.width = '90%'}
+knitr::include_graphics("vignettes/figures/06-expand.png")
+```
 
 ## Conclusion
 

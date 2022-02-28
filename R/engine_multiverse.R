@@ -91,34 +91,43 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # What we want is to create a `div` for each universe
     # options$eval = TRUE
     # options$class.source = "multiverse"
-
+    
     options$engine = "R"
     options$comment = ""
     options$dev = 'png'
+    multiverse_options = options
     
-    # if (options$eval != FALSE) {
+    eng_r = knit_engines$get("R")
+    
     options_list <- lapply(1:size(.multiverse), function(x) {
       temp_options <- options
       temp_options$code = tidy_source(text = map_chr(
-        tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1), 
+        tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1),
         ~ gsub(pattern = " ", replacement = "", x = .)
       ))$text.tidy
-    
+
+      temp_env = expand(.multiverse)[[".results"]][[x]]
+      
+      .assignment = expand(M)[[".parameter_assignment"]][[x]]
+      class_name = paste(names(.assignment), .assignment, sep="---", collapse=" ")
+
       # assuming default is the first universe,
       # conditional should be change to use the default universe argument
-      if (x == 1) { 
-          temp_options$class.source = paste0("multiverse universe-", x, " default")
-          temp_options$class.output = paste0("multiverse universe-", x, " default")
+      if (x == 1) {
+          temp_options$class.source = paste0("multiverse universe ", class_name, " default")
+          temp_options$class.output = paste0("multiverse universe ", class_name, " default")
       } else {
-          temp_options$class.source = paste0("multiverse universe-", x, "")
-          temp_options$class.output = paste0("multiverse universe-", x, "")
+          temp_options$class.source = paste0("multiverse universe ", class_name, "")
+          temp_options$class.output = paste0("multiverse universe ", class_name, "")
       }
-      
-      temp_options
+
+      eng_r(temp_options, temp_env)
     })
-    eng_r = knit_engines$get("R")
-    unlist(lapply(options_list, eng_r))
-    # }
+    
+    multiverse_options$eval = FALSE
+    multiverse_options$class.source = "multiverse-spec"
+    multiverse_options$class.output = "multiverse-spec"
+    unlist(append(options_list, eng_r(multiverse_options)))
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
@@ -131,7 +140,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # to evaluate the various pieces of code in the code chunk and return
     # the output strings from each line of code.
     outputs = evaluate::evaluate(
-      code, 
+      code,
       # must have new_device = FALSE otherwise plots don't seem to be written to
       # the graphics device inside rmarkdown in RStudio
       new_device = FALSE,

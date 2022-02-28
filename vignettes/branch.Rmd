@@ -22,6 +22,7 @@ library(ggplot2)
 library(multiverse)
 ```
 
+
 ```{r, include=FALSE}
 M = multiverse()
 ```
@@ -35,13 +36,74 @@ opts_chunk$set(
 )
 ```
 
-
 ## Branches in a multiverse analysis
 In a multiverse analysis, researchers identify sets of defensible analysis choices (e.g., different ways of excluding outliers, different data transformations), implement them all, and then report the outcomes of all analyses resulting from all possible choice combinations. Thus, a multiverse analysis consists of different paths or **branches** of analysis for the same problem. 
 
 For an example of how a branch might arise during analysis, let's say that you have a variable, $x$, which can assume any value between 1 and 60. You want to discretise this variable into two ordinal categories --- *high* (if x >= 30) and *low* (if x < 30). However, another researcher might argue for discretising this variable into three ordinal categories --- *high* (if x >= 40), *medium* (if 20 <= x < 40), and *low* (if x < 20).
 
-An important aspect of this package is to make declaring such **branches** in the analysis more natural and convenient. Each **branch** is identified by a parameter, which can take two or more options. Thus, the different options are different branches within the multiverse. A **branch** may be defined for:
+An important aspect of this package is to make declaring such **branches** in the analysis more natural and convenient. Each **branch** is identified by a parameter, which can take two or more options. Thus, the different options are different branches within the multiverse. Below, we show how a user can specify these two alternative analysis paths using the `multiverse` library.
+
+To do this, we first create a **multiverse object**, M:
+
+```{r}
+M = multiverse()
+```
+
+Let us then define the variable `x`:
+
+```{r}
+x = rnorm(100, 30, 10)
+```
+
+Then we can use the `branch()` function to specify the two alternatives as follows:
+
+```{multiverse h-0, inside = M, echo = FALSE}
+y = branch(discretisation, 
+      "two_levels" ~ ifelse(x < 30, "low", "high"),
+      "three_levels" ~ ifelse(x < 20, "low", ifelse(x > 40, "high", "medium"))
+    )
+```
+
+````
+```{multiverse default-m-0, inside = M}`r ''`
+y = branch(discretisation, 
+      "two_levels" ~ ifelse(x < 30, "low", "high"),
+      "three_levels" ~ ifelse(x < 20, "low", ifelse(x > 40, "high", "medium"))
+    )
+```
+````
+
+Now, we can inspect the multiverse object to see if all the options were created. 
+
+```{r}
+expand(M)
+```
+
+Above, we see that the multiverse object contains two alternative analysis paths, one for each different option of discretisation.
+
+### The syntax for declaring a `branch()`
+The `branch()` function accepts three or more arguments---the first argument defines a *parameter* (here `discretisation`) which is used as an unique identifier for each decision point. The subsequent arguments, which we refer to as *options*, define the different choices that a researcher can make at that decision point of their analysis; these follow the syntax `<option_name> ~ <option_definition>`. The `<option_name>` part is intended to support meaningful naming of the branches to help the user keep track of choices. (in the multiverse specification below, "two_levels", and "three_levels" are used as option names). However, names can be omitted; if omitted, the entire syntax for performing that operation will be treated as the name for that particular option.
+
+**Note**
+In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the \code{inside} function which is more suited for a script-style implementation. Please refer to the [README](https://mucollective.github.io/multiverse/index.html) or refer to `vignette("complete-multiverse-analysis")` for more details.
+
+
+## Diving deeper: the multiverse compiler
+In this section, we will go into a little detail on how the `branch()` function is used by `multiverse` to create two or more distinct end-to-end analysis paths from the user-specified syntax. You can skip to the next section if the specific implementation details of the `multiverse` library do not interest you. `Multiverse` captures the user's declared code as an unevaluated expression, which is an internal representation of an [abstract syntax tree](https://adv-r.hadley.nz/expressions.html) used by R for meta-programming purposes. This is why we need a dedicated multiverse code chunk or the `inside()` function, as such boilerplate allows us to prevent the code from being executed by R directly. The multiverse compiler transforms these unevaluated expressions into multiple unique R expressions, one for every possible analysis path in the multiverse. This is done in two steps.
+
+First, `multiverse` enumerates all possible valid *parameter assignments*. A *parameter assignment* consists of a single assignment of an *option* to each *parameter*. Valid parameter assignments are those that satisfy all procedural dependencies (e.g., `%when%` clauses). Each parameter assignment corresponds to a single possible analysis path through the multiverse, in other words a single `universe.`
+
+Second, multiverse takes each *universe* and uses its *parameter assignment* to recursively rewrite the unevaluated multiverse code expression into code specifically for that universe. It does this by replacing each `branch()` subexpression with the subexpression corresponding to the parameter assignment for that branch. 
+
+We use a tree structure to store the output of the multiverse compiler, with each level in the tree corresponding to a single *unit* of the multiverse. If the analyst is using multiverse code chunks, each *unit* is a single code chunk; if the user is using `inside()`, each *unit* is one call to `inside()`. When the user declares their first *unit* with one or more *parameters*, we enumerate all combinations of the *options* which form the children of a singular root node, and then prune paths which are incompatible with declared *procedural dependencies*. At each subsequent level, we again enumerate all newly declared combinations of the  *options*, which are then added to each existing node from the previous level as children, followed by pruning any inconsistent analysis paths. Thus, if we declare a multiverse with $m parameters$, 1 parameter per unit on average, and $n options$ per *parameter* on average, we have a multiverse with $mn$ distinct analyses and a tree with approximately $\frac{m^(n+1) - m}{m-1}$ nodes.
+
+Each node in the tree contains: (1) a *parameter assignment*---a dictionary mapping each *parameter* onto its assigned *option* for analysis paths passing through that node; (2) the unevaluated R expression for the current *unit* that is created using the *parameter assignment* for that node; (3) a unique R environment, which is a child environment of the parent node’s environment.
+
+In R, environments are mutable dictionaries that encapsulate variable state and power scoping in the language (see https://adv-r.hadley.nz/environments.html); all code in R is executed inside an environment that determines the variables defined for that code and the values assigned to those variables. Moreover, every environment has a parent environment, and variable bindings in the parent environment are accessible via its child environments. We execute each node in its own environment. Because we share parent environments for nodes at the same level of the tree, two nodes which are children of the same parent node will automatically have results of the parent node’s computation available in their execution environment, avoiding redundant computation. Consequently, we reduce the execution time from the naive approach of executing all analysis paths *separately* ($O(nm^n)$) to executing just the code at each node in the tree: $O(\frac{m^(n+1) - m}{m - 1})$
+
+## Going back to branches
+
+A **branch** may be defined for:
 
 - **Data substitution parameters** which offer to switch between different raw datasets, either collected or simulated.
 
@@ -51,39 +113,9 @@ An important aspect of this package is to make declaring such **branches** in th
 
 - **Presentation parameters** offer different ways of presenting analysis outcomes
 
-In this document we describe different ways of declaring a **branch**, using different syntactical styles that are popular with R users, including base R syntax and tidyverse syntax.
+In the rest of this document we describe different ways of declaring a **branch**, using different syntactical styles that are popular with R users, including base R syntax and tidyverse syntax.
 
-#### Note 
-In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
-
-## Example 1: A simple branch
-
-Let's say that there is a variable `x` which can take any of three different values --- "low", "medium", "high".  We can perform the effect of encoding `x` as each of these values separately through separate branches. To do this, we first create a **multiverse object**, M:
-
-```{r}
-M = multiverse()
-```
-
-Then declare `x` as three possible values within the multiverse using the `branch()` function.
-
-```{multiverse h-1, inside = M, echo = FALSE}
-x <- branch(a_parameter, "low", "medium", "high")
-```
-
-````
-```{multiverse default-m-1, inside = M}`r ''`
-x <- branch(a_parameter, "low", "medium", "high")
-```
-````
-
-Now, we can inspect the multiverse object to see if all the options were created. 
-
-```{r}
-expand(M) %>%
-  select(.universe, everything())
-```
-
-## Example 2: A branch within functions in a "pipe": `%>%`
+## Example 1: A branch within functions in a "pipe": `%>%`
 
 Let's say that we have some data which indicates the amount of time spent by a user in four different conditions which are indexed 1, 2, 3 and 4 (the `modality` column in the following dataset). We will first load the data and convert the column into factor from integer.
 
@@ -91,7 +123,7 @@ Let's say that we have some data which indicates the amount of time spent by a u
 data("userlogs")
 data.userlogs.raw = userlogs %>%
   mutate( modality = factor(modality) ) %>%
-  arrange(modality)
+  arrange( modality )
 ```
 
 We then create the multiverse object for this analysis
@@ -102,7 +134,7 @@ M = multiverse()
 
 The data variable `duration` is approximately normally distributed, however, as is common with such data it has a long right-tail. Before using a regression model, we can choose to either log-transform the data, or assume that it is normally distribution and analyse it. We can perform both analysis in our multiverse by declaring two branches --- one where the variable is log-transformed and the other where it is not.
 
-```{multiverse h-2, inside = M, echo = FALSE}
+```{multiverse h-1, inside = M, echo = FALSE}
 df <- data.userlogs.raw %>%
     select(modality, duration) %>%
     mutate( duration = branch( data_transform, 
@@ -112,7 +144,7 @@ df <- data.userlogs.raw %>%
 ```
 
 ````
-```{multiverse default-m-2, inside = M}`r ''`
+```{multiverse default-m-1, inside = M}`r ''`
 df <- data.userlogs.raw %>%
     select(modality, duration) %>%
     mutate( duration = branch( data_transform, 
@@ -134,6 +166,82 @@ If we look at the code column, which is a list of expressions, we see that the v
 expand(M)$.code
 ```
 
+## Example 2: Another branch within a function
+
+```{r}
+M = multiverse()
+```
+
+Recall the hurricane example from the [README](https://mucollective.github.io/multiverse/). In that example, the researchers are faced with the decision of which hurricanes to exclude as outliers. They decide to exclude the two hurricanes which have caused the most deaths. However, there may be other possible ways of removing outliers based on extreme number of deaths:
+
+-   No exclusion
+-   Remove one most extreme hurricane
+-   Remove two most extreme hurricanes
+
+this decision node in a multiverse analysis can thus be declared as:
+
+```{multiverse h-2, inside = M, echo = FALSE}
+# here we just create the variable `df` in the multiverse
+data("hurricane")
+
+hurricane_data = hurricane %>%
+  # rename some variables
+  rename(
+      year = Year,
+      name = Name,
+      dam = NDAM,
+      death = alldeaths,
+      female = Gender_MF,
+      masfem = MasFem,
+      category = Category,
+      pressure = Minpressure_Updated_2014,
+      wind = HighestWindSpeed
+  )
+
+# here, we perform a `filter` operation in the multiverse
+df.filtered = hurricane_data %>%
+  filter(branch(death_outliers,
+      "no_exclusion" ~ TRUE,
+      "most_extreme" ~ name != "Katrina",
+      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+))
+```
+
+````
+```{multiverse default-m-2, inside = M}`r ''`
+# here we just create the variable `df` in the multiverse
+df = data("hurricane")
+
+hurricane_data = hurricane %>%
+    # rename some variables
+    rename(
+        year = Year,
+        name = Name,
+        dam = NDAM,
+        death = alldeaths,
+        female = Gender_MF,
+        masfem = MasFem,
+        category = Category,
+        pressure = Minpressure_Updated_2014,
+        wind = HighestWindSpeed
+    )
+
+# here, we perform a `filter` operation in the multiverse
+df.filtered = hurricane %>%
+  filter(branch(death_outliers,
+      "no_exclusion" ~ TRUE,
+      "most_extreme" ~ name != "Katrina",
+      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+))
+```
+````
+
+We can inspect the multiverse object to see our declared analysis paths:
+
+```{r}
+expand(M)
+```
+
 ## Example 3: A branch as a function
 
 ```{r}
@@ -143,7 +251,7 @@ M = multiverse()
 Say we are not familiar with R's tidyverse packages and it's style of writing code. An alternate way of declaring a branch for transforming the `duration` variable in the analysis would be to use two separate functions for the transformation depending on which universe one is.
 
 ```{multiverse h-3, inside = M, echo = FALSE}
-duration <- branch(data_trans,
+duration = branch(data_trans,
         "log-transformed" ~ log,
         "un-transformed" ~ identity
     )(data.userlogs.raw$duration)
@@ -172,25 +280,27 @@ As you can see, this creates, in each universe within the multiverse, a vector n
 
 A more readable pattern might be:
 
+```{r}
 M = multiverse()
+```
 
 ```{multiverse h-4, inside = M, echo = FALSE}
-duration_transform <- branch(data_trans,
+duration_transform = branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
   )
 
-duration <- duration_transform(data.userlogs.raw$duration)
+duration = duration_transform(data.userlogs.raw$duration)
 ```
 
 ````
 ```{multiverse default-m-4, inside = M}`r ''`
-duration_transform <- branch(data_trans,
+duration_transform = branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
   )
 
-duration <- duration_transform(data.userlogs.raw$duration)
+duration = duration_transform(data.userlogs.raw$duration)
 ```
 ````
 

@@ -9,11 +9,7 @@ library(tidyr)
 library(ggplot2)
 library(purrr)
 library(broom)
-library(gganimate)
-library(multiverse)
-library(boot)
-library(ggdist)
-```
+devtools::load_all(".")
 
 
 ```{r, chunk-setup, include=FALSE, eval=FALSE}
@@ -54,8 +50,6 @@ We load the data for this study which is contained in `data(userlogs)` in the `m
 ```{r}
 data("userlogs")
 data.userlogs.raw = userlogs
-
-head(data.userlogs.raw)
 ```
 
 ## Analysis #1: Mean and Confidence Intervals for each condition
@@ -79,6 +73,7 @@ bootstrappedCI <- function(observations, conf.level, seed = 0) {
   }
   bootstrap_samples <- boot::boot(data = observations, statistic = samplemean, R = 5000)
   bootci <- boot::boot.ci(bootstrap_samples, type = "bca", conf = conf.level)
+
   data.frame(estimate = pointEstimate, conf.low = bootci$bca[4], conf.high = bootci$bca[5])
 }
 

@@ -73,6 +73,9 @@
       <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
+      <a href="../articles/multiverse-export-json.html">multiverse-export-json</a>
+    </li>
+    <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
@@ -101,14 +104,14 @@
 
       
 
-      </header><script src="hurricane_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="hurricane_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</h1>
                         <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
                         <h4 class="author">Alex Kale, University of Washington</h4>
             
-            <h4 class="date">2021-05-25</h4>
+            <h4 class="date">2022-02-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/hurricane.Rmd"><code>vignettes/hurricane.Rmd</code></a></small>
       <div class="hidden name"><code>hurricane.Rmd</code></div>
@@ -219,7 +222,7 @@ df &lt;- df %&gt;%
 <p>The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between <code>femininity</code> and <code>damage</code>. This results in the following specification:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 7 x 5
+<pre><code>## # A tibble: 7 × 5
 ##   term              estimate std.error statistic  p.value
 ##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)        -4.05     0.463     -8.75   2.11e-18
