@@ -107,15 +107,18 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
       ))$text.tidy
 
       temp_env = expand(.multiverse)[[".results"]][[x]]
+      
+      .assignment = expand(M)[[".parameter_assignment"]][[x]]
+      class_name = paste(names(.assignment), .assignment, sep="---", collapse=" ")
 
       # assuming default is the first universe,
       # conditional should be change to use the default universe argument
       if (x == 1) {
-          temp_options$class.source = paste0("multiverse universe-", x, " default")
-          temp_options$class.output = paste0("multiverse universe-", x, " default")
+          temp_options$class.source = paste0("multiverse universe ", class_name, " default")
+          temp_options$class.output = paste0("multiverse universe ", class_name, " default")
       } else {
-          temp_options$class.source = paste0("multiverse universe-", x, "")
-          temp_options$class.output = paste0("multiverse universe-", x, "")
+          temp_options$class.source = paste0("multiverse universe ", class_name, "")
+          temp_options$class.output = paste0("multiverse universe ", class_name, "")
       }
 
       eng_r(temp_options, temp_env)
