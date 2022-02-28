@@ -101,6 +101,20 @@ execute_multiverse(M)
 expand(M) %>%
   extract_variables(summary_RelComp) %>%
   select(-.code, -.results) %>%
+  rename(results = summary_RelComp) %>%
+  unnest(results) %>%
+  mutate(
+    term = ifelse(term == "(Intercept)", 'Intercept', term),
+    min = estimate - 5*std.error,
+    max = estimate + 5*std.error
+  ) %>%
+  group_by(term) %>%
+  mutate(min = min(min), max = max(max)) %>%
+  mutate(
+    cdf.x = map2(min, max, ~ seq(.x, .y, length.out = 100)),
+    cdf.y = pmap(list(cdf.x, estimate, std.error), ~ pnorm(..1, ..2, ..3))
+  ) %>%
+  nest(results = c(term:cdf.y)) %>%
   write_json('../../multiverse-vis/static/data/data.json', pretty = TRUE)
 ```
 
