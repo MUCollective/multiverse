@@ -1,0 +1,109 @@
+---
+title: "temp"
+author: "Abhraneel Sarma"
+date: "2/19/2022"
+output:
+  html_document:
+    css: ../inst/css/styles.css
+  pdf_document: default
+---
+
+```{r setup, include=FALSE} 
+library(dplyr)
+library(modelr)
+library(tidyr)
+library(ggplot2)
+library(tidybayes)
+library(purrr)
+devtools::load_all(".")
+```
+
+## Multiverse case study #4
+
+```{r}
+data("hurricane")
+
+# read and process data
+hurricane_data <- hurricane %>%
+    # rename some variables
+    rename(
+        year = Year,
+        name = Name,
+        dam = NDAM,
+        death = alldeaths,
+        female = Gender_MF,
+        masfem = MasFem,
+        category = Category,
+        pressure = Minpressure_Updated_2014,
+        wind = HighestWindSpeed
+    ) %>%
+    # create new variables
+    mutate(
+        post = ifelse(year>1979, 1, 0),
+        zcat = as.numeric(scale(category)),
+        zpressure = -scale(pressure),
+        zwind = as.numeric(scale(wind)),
+        z3 = as.numeric((zpressure + zcat + zwind) / 3)
+    )
+```
+
+
+## Multiverse Analysis
+
+To implement a multiverse analysis, we first need to create the `js parameter('masfem')` object:
+
+```{r}
+M = multiverse()
+```
+
+
+```{multiverse default-m-1, inside = M}
+df = hurricane_data %>%
+    mutate(
+        femininity = branch(femininity_calculation,
+          "masfem" ~ masfem,
+          "female" ~ female
+        )
+    )
+```
+
+```{multiverse default-m-2, inside = M}
+df = df %>%
+   mutate(damage = branch(damage_transform,
+            "no_transform" ~ identity(dam),
+            "log_transform" ~ log(dam)
+        ))
+```
+
+
+```{multiverse default-m-3, inside = M}
+head(df)
+```
+
+```{multiverse default-m-4, inside = M}
+hist(df$damage)
+```
+
+```{r}
+expand(M)
+```
+
+```{r}
+parameters(M)
+```
+
+```{r}
+out = evaluate::evaluate(
+  input = "hist(df$damage)",
+  new_device = FALSE, 
+  envir = expand(M)$.results[[1]]
+)
+```
+
+
+<SCRIPT text = "javascript">
+  function parameter (name) {
+    console.log(name)
+  }
+</SCRIPT>
+
