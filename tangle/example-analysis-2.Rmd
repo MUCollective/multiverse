@@ -10,10 +10,7 @@ output:
 
 ```{r setup, include=FALSE} 
 library(dplyr)
-library(modelr)
 library(tidyr)
-library(ggplot2)
-library(tidybayes)
 library(purrr)
 devtools::load_all(".")
 ```
@@ -21,30 +18,19 @@ devtools::load_all(".")
 ## Multiverse case study #4
 
 ```{r}
-data("hurricane")
+data("durante")
 
-# read and process data
-hurricane_data <- hurricane %>%
-    # rename some variables
-    rename(
-        year = Year,
-        name = Name,
-        dam = NDAM,
-        death = alldeaths,
-        female = Gender_MF,
-        masfem = MasFem,
-        category = Category,
-        pressure = Minpressure_Updated_2014,
-        wind = HighestWindSpeed
-    ) %>%
-    # create new variables
-    mutate(
-        post = ifelse(year>1979, 1, 0),
-        zcat = as.numeric(scale(category)),
-        zpressure = -scale(pressure),
-        zwind = as.numeric(scale(wind)),
-        z3 = as.numeric((zpressure + zcat + zwind) / 3)
-    )
+data.raw.study2 = durante %>%
+  mutate(
+    Abortion = abs(7 - Abortion) + 1,
+    StemCell = abs(7 - StemCell) + 1,
+    Marijuana = abs(7 - Marijuana) + 1,
+    RichTax = abs(7 - RichTax) + 1,
+    StLiving = abs(7 - StLiving) + 1,
+    Profit = abs(7 - Profit) + 1,
+    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
+    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
+  )
 ```
 
 
@@ -58,38 +44,43 @@ M = multiverse()
 
 
 ```{multiverse default-m-1, inside = M}
-df = hurricane_data %>%
-    mutate(
-        femininity = branch(femininity_calculation,
-          "masfem" ~ masfem,
-          "female" ~ female
-        )
-    )
+df = data.raw.study2  %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+    dplyr::filter( branch(cycle_length,
+        "cl_option1" ~ TRUE,
+        "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+        "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+    ))
 ```
 
 ```{multiverse default-m-2, inside = M}
 df = df %>%
-   mutate(damage = branch(damage_transform,
-            "no_transform" ~ identity(dam),
-            "log_transform" ~ log(dam)
-        ))
+    dplyr::filter( branch(certainty,
+        "cer_option1" ~ TRUE,
+        "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+    ))
 ```
 
 
 ```{multiverse default-m-3, inside = M}
-head(df)
+df = df %>%
+    mutate(NextMenstrualOnset = branch(menstrual_calculation,
+        "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+        "mc_option3" ~ StartDateNext)
+    )
 ```
 
 ```{multiverse default-m-4, inside = M}
-hist(df$damage)
+head(df)
+```
+
+```{multiverse default-m-5, inside = M}
+hist(df$Rel1)
 ```
 
 ```{r}
 expand(M)
-```
-
-```{r}
-parameters(M)
 ```
 
 ```{r}

@@ -10,7 +10,7 @@ library(ggplot2)
 library(purrr)
 library(broom)
 devtools::load_all(".")
-
+```
 
 ```{r, chunk-setup, include=FALSE, eval=FALSE}
 knitr::opts_chunk$set(
@@ -50,6 +50,10 @@ We load the data for this study which is contained in `data(userlogs)` in the `m
 ```{r}
 data("userlogs")
 data.userlogs.raw = userlogs
+
+knit_print.data.frame = lemon_print
+
+print(userlogs)
 ```
 
 ## Analysis #1: Mean and Confidence Intervals for each condition
