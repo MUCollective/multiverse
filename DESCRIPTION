@@ -61,8 +61,7 @@ Suggests:
     png,
     stringi,
     modelr,
-    styler,
-    pbmcapply
+    styler
 VignetteBuilder: 
     knitr
 Language: en-US
