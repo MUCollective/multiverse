@@ -9,6 +9,9 @@
 #' @param cores Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
 #' Defaults to NULL (running in a single core)
 #' 
+#' @param progress Indicates whether to include a progress bar for each step of the execution.
+#' Defaults to FALSE. Using TRUE requires the library \code{pbmcapply}.
+#' 
 #' @param .universe Indicate which universe to execute, if the user wants to execute a specific combination
 #' of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.
 #'
@@ -45,10 +48,11 @@
 #' @importFrom parallel detectCores
 #' @importFrom parallel mcmapply
 #' @importFrom berryFunctions tryStack
+#' @importFrom utils installed.packages
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
+execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L), progress = FALSE) {
   m_obj <- attr(multiverse, "multiverse")
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   
@@ -56,7 +60,16 @@ execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
   .m_list <- m_diction$as_list()[.to_exec] # list of unexecuted (vertical) steps in the multiverse
-  .res <- lapply(.m_list, exec_all, cores = cores) # we execute each step in sequence from top to bottom
+  
+  if (progress && !("pbmcapply" %in% rownames(installed.packages()))) {
+    warning("Progress could not be displayed as package `pbmcapply` is not installed.")
+    progress <- FALSE
+  }
+  
+  .res <- mapply(
+    exec_all, .m_list, cores = cores, progress = progress, 
+    step = seq_along(.m_list), steps = length(.m_list)
+  ) # we execute each step in sequence from top to bottom
   
   m_obj$exec_all_until <- length(m_diction$as_list())
 }
@@ -64,11 +77,16 @@ execute_multiverse <- function(multiverse, cores = getOption("mc.cores", 1L)) {
 # executes all the options resulting from decisions declared within a single code 
 # block in parallel. We do not need to communicate with other universes at this step
 # making it suitable for parallelisation.
-exec_all <- function(x, cores) {
+exec_all <- function(x, cores, progress, step, steps) {
+  if(progress) {
+    cat(paste0("Step ", step, "/", steps, "\n"))
+  }
   .code_list = lapply(x, `[[`, "code")
   .env_list = lapply(x, `[[`, "env")
   
-  .res <- mcmapply(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
+  mcmapply_fn <- if (progress) {pbmcapply::pbmcmapply} else {mcmapply}
+  
+  .res <- mcmapply_fn(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
   
   lapply(seq_along(.res), function(i, x) {
     if (is(x[[i]], "try-error"))  {
