@@ -6,7 +6,11 @@
 \alias{execute_universe}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(multiverse, cores = getOption("mc.cores", 1L))
+execute_multiverse(
+  multiverse,
+  cores = getOption("mc.cores", 1L),
+  progress = FALSE
+)
 
 execute_universe(multiverse, .universe = 1)
 }
@@ -15,6 +19,9 @@ execute_universe(multiverse, .universe = 1)
 
 \item{cores}{Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
 Defaults to NULL (running in a single core)}
+
+\item{progress}{Indicates whether to include a progress bar for each step of the execution.
+Defaults to FALSE. Using TRUE requires the library \code{pbmcapply}.}
 
 \item{.universe}{Indicate which universe to execute, if the user wants to execute a specific combination
 of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.}
