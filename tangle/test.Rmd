@@ -1,0 +1,94 @@
+```{css, echo=FALSE}
+.main-container {
+  margin-top: 48px;
+}
+p {
+  font-size: 64px;
+}
+#asdf {
+  margin-top: -16px;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+span:active {
+  user-select: none;
+}
+```
+
+<script src="./Tangle.js"></script>
+<link rel="stylesheet" href="TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="TangleKit/mootools.js"></script>
+<script type="text/javascript" src="TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="TangleKit/TangleKit.js"></script>
+<script>
+  Tangle.classes.Iterate = {
+    initialize: function(element, options, tangle, variable) {
+      element.addEvent("click", (event) => {
+        let a = tangle.getValue("data")[variable];
+        console.log(a);
+        if (options.i === a.length-1) options.i = 0;
+        else                          options.i++;
+        tangle.setValue(variable, a[options.i]);
+      })
+    },
+    update: function(element, value) {
+      element.textContent = value;
+    }
+  }
+
+  function setup() {
+    <!-- depending on implementation, i think i might have to create the <span class="Iterate"> here, since it's kind of hard-coded right now. -->
+    <!-- if i were to do this, i also have to do the this.data stuff here. -->
+    var t = new Tangle(
+      document.getElementById("asdf"),
+      {
+        initialize: function() {
+          const pre = document.querySelectorAll("pre.multiverse");
+          this.data = [];
+          for (let e of pre) {
+            let paramOption = {};
+            for (let className of e.classList) {
+              if (className.includes("---")) {
+                let split = className.split("---");
+                paramOption[split[0]] = split[1];
+              }
+            }
+            this.data.push(paramOption);
+            document.getElementById("insert").innerHTML += `<p style='font-size:14px;'>`+JSON.stringify(paramOption)+`</p>`;
+          }
+          this.keys = Object.keys(this.data[0]);
+          for (let k of this.keys) {
+            this[k] = this.data[k][0];
+          }
+        },
+        update: function() {
+        }
+      }
+    )
+  }
+  document.body.onload = setup;
+</script>
+
+
+<p id="asdf">
+  <span class="Iterate" data-var="a" data-i=0></span>
+  <span class="Iterate" data-var="b" data-i=0></span>
+  <span class="Iterate" data-var="c" data-i=0></span>
+</p>
+<div id="insert"></div>
+
+<!-- ∄(a==2 <=> b==y), ((c==4 && a==1) <=> b==x), (b==z <=> c==5)  -->
+<pre class='multiverse a---2 b---x c---4'>2x4</pre>
+<pre class='multiverse a---3 b---x c---4'>3x4</pre>
+<pre class='multiverse a---1 b---y c---4'>1y4</pre>
+<pre class='multiverse a---3 b---y c---4'>3y4</pre>
+<pre class='multiverse a---1 b---z c---4'>1z4</pre>
+<pre class='multiverse a---2 b---z c---4'>2z4</pre>
+<pre class='multiverse a---3 b---z c---4'>3z4</pre>
+<pre class='multiverse a---1 b---x c---5'>1x5</pre>
+<pre class='multiverse a---2 b---x c---5'>2x5</pre>
+<pre class='multiverse a---3 b---x c---5'>3x5</pre>
+<pre class='multiverse a---1 b---y c---5'>1y5</pre>
+<pre class='multiverse a---3 b---y c---5'>3y5</pre>
