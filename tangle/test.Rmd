@@ -1,3 +1,8 @@
+---
+title: "Integrating tangle.js with the output on multiverse notebook analysis"
+output: html_document
+---
+
 ```{css, echo=FALSE}
 .main-container {
   margin-top: 48px;
