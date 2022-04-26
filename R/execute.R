@@ -83,15 +83,18 @@ exec_all <- function(x, cores) { #, step, steps) {
   
   # mcmapply_fn <- if (progress) {pbmcmapply} else {mcmapply}
   
-  # .res <- mcmapply_fn(execute_code_from_universe, .code_list, .env_list, mc.cores = cores)
-  .res = future.apply::future_mapply(execute_code_from_universe, .code_list, .env_list)
+  .res <- mcmapply_fn(execute_code_from_universe, .code_list, .env_list, mc.cores = cores, SIMPLIFY = F)
   
-  lapply(seq_along(.res), function(i, x) {
+  mapply(function(old_env, r) {list2env(as.list(r$env), envir = old_env)}, .env_list, .res)
+  
+  .ts <- lapply(.res, function(r) {r$ts})
+  
+  lapply(seq_along(.ts), function(i, x) {
     if (is(x[[i]], "try-error"))  {
       warning("error in universe ", i, "\n")
        cat(x[[i]])
     }
-  }, x = .res)
+  }, x = .ts)
 }
 
 
@@ -110,8 +113,8 @@ execute_universe <- function(multiverse, .universe = 1) {
 }
 
 execute_code_from_universe <- function(.c, .env = globalenv()) {
-  # lapply(.c, eval, envir = .env)
-  tryStack(lapply(.c, eval, envir = .env), silent = TRUE)
+  ts <- tryStack(lapply(.c, eval, envir = .env), silent = TRUE)
+  list(ts = ts, env = .env)
 }
 
 # for a universe, get the indices which need to be executed
