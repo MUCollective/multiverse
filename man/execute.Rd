@@ -6,12 +6,17 @@
 \alias{execute_universe}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(multiverse)
+execute_multiverse(multiverse, parallel = FALSE, progress = FALSE)
 
 execute_universe(multiverse, .universe = 1)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
+
+\item{parallel}{Indicates whether to execute the multiverse analysis in parallel. If TRUE, multiverse makes use of
+[future::future] as backend to support parallel processing. Requires configuration of [future::plan]. Defaults to FALSE.}
+
+\item{progress}{Indicates whether to include a progress bar for each step of the execution. Defaults to FALSE.}
 
 \item{.universe}{Indicate which universe to execute, if the user wants to execute a specific combination
 of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.}

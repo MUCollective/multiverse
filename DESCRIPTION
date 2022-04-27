@@ -63,7 +63,7 @@ Suggests:
     stringi,
     modelr,
     styler,
-    pbmcapply
+    future
 VignetteBuilder: 
     knitr
 Language: en-US
