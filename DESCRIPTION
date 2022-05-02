@@ -43,7 +43,8 @@ Imports:
     collections,
     evaluate,
     rstudioapi,
-    berryFunctions
+    berryFunctions,
+    future.apply
 Suggests:
     ggplot2 (>= 3.0.0),
     testthat (>= 2.1.0),
@@ -63,7 +64,7 @@ Suggests:
     stringi,
     modelr,
     styler,
-    pbmcapply
+    future
 VignetteBuilder: 
     knitr
 Language: en-US

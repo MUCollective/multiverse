@@ -1,7 +1,11 @@
 
 context("execute")
 
+library(future)
+library(tidyr)
+
 values_x = exprs("a", 0, 5, 10, 14)
+values_y = exprs("b", 2, 1, 4, 3)
 
 test_that("auto-executes the default analysis in the multiverse", {
   M <- multiverse()
@@ -22,6 +26,58 @@ test_that("`execute_multiverse` executes the all the analyses in the multiverse"
   expect_equal(extract_variable_from_universe(M, 5, x), values_x[[5]])
 })
 
+
+test_that("parallel computation is supported", {
+  M_cores_2.1 <- multiverse()
+
+  inside(M_cores_2.1, {x <- branch(value_x, 0, 5, 10, 14)} )
+  inside(M_cores_2.1, {y <- branch(value_y, 1, 2, 3, 4)} )
+  
+  ref_list.1 = crossing(
+    x = c(0, 5, 10, 14),
+    y = c(1, 2, 3, 4)
+  )
+  
+  M_cores_2.2 <- multiverse()
+  
+  inside(M_cores_2.2, {
+    var1 <- branch(
+      var_num,
+      "var1" ~ 1,
+      "var2" ~ 2,
+      "var3" ~ 3
+    )
+  })
+  
+  inside(M_cores_2.2, {
+    var2 <- branch(
+      var_char,
+      "vara" ~ "a",
+      "varb" ~ "b",
+      "varc" ~ "c"
+    )
+  })
+  
+  ref_list.2 = crossing(
+    var1 = c(1, 2, 3),
+    var2 = c("a", "b", "c")
+  )
+  
+  plan(multisession, workers = 2)
+  execute_multiverse(M_cores_2.1, parallel = TRUE)
+  execute_multiverse(M_cores_2.2, parallel = TRUE)
+  plan(sequential)
+  
+  expect_equal(
+    as.list(select(extract_variables(M_cores_2.1, x, y), x, y)), 
+    as.list( ref_list.1 )
+  )
+  
+  expect_equal(
+    as.list(select(extract_variables(M_cores_2.2, var1, var2), var1, var2)),
+    as.list( ref_list.2)
+  )
+})
 
 test_that("`execute_multiverse` sends error and warning messages but does not stop execution", {
   M <- multiverse()

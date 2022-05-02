@@ -69,7 +69,6 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
     new_params = get_parameter_conditions_list( unname(.expr) )$parameters
     m_obj$parameter_set <- setdiff(m_obj$parameter_set, names(new_params))
   }
-  # print(m_obj$parameter_set)
   
   # multiverse_diction is an ordered dictionary with keys corresponding to the names of the code blocks (.label)
   # calculates the previous row in the multiverse dictionary
@@ -116,7 +115,6 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
   }
   
   new_params <- setdiff(names(.param_options), .m_obj$parameter_set)
-  #parameter_set <- c(.m_obj$parameter_set, setdiff(names(.param_options), .m_obj$parameter_set))
   
   ## take a parameter set from the previous level and a parameter set from the current level, do a set diff
   ## do the expand_grid of the set of new parameters
@@ -130,14 +128,13 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
       .p <- lapply(df, "[[", i)
       
       list(
-        env = new.env(parent = .super_env), 
+        env = new.env(parent = .super_env),
         parent = 0,
         parameter_assignment = .p, 
         code = get_code(.expr, .p)
       )
     })
   } else {
-    # lapply(.m_obj$multiverse_diction$get(.parent_block), `[[`, "env")
     parents <- .m_obj$multiverse_diction$get(.parent_block)
     
     q <- lapply(seq_along(parents), function(i, dat) {
@@ -155,15 +152,13 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
         df <- filter(df, eval(all_conditions))
       }
       
-      # print(parents[[i]]$parameter_assignment)
-      
       n <- ifelse(nrow(df), nrow(df), 1)
       
       lapply(seq_len(n), function(j) {
         .p <- lapply(df, "[[", j)
         
         list(
-          env = new.env(parent = parents[[i]]$env), 
+          env = new.env(parent = parents[[i]]$env),
           parent = i,
           parameter_assignment = .p, 
           code = get_code(.expr, .p)
