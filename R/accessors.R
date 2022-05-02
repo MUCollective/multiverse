@@ -140,7 +140,7 @@ parameters <- function(multiverse) {
 parameters.default <- function(multiverse) {
   stop(
     "Objects of type ", deparse(class(multiverse)), " do not have method `parameters`. \n",
-    "Please use objects of type `multiverse."
+    "Please use objects of type `multiverse`."
   )
 }
 
@@ -161,14 +161,16 @@ conditions <- function(multiverse) {
 conditions.default <- function(multiverse) {
   stop(
     "Objects of type ", deparse(class(multiverse)), " do not have method `conditions`. \n",
-    "Please use objects of type `multiverse."
+    "Please use objects of type `multiverse`."
   )
 }
 
 #' @rdname accessors
+#' @export
 conditions.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['conditions']]
 }
+
 
 #' @rdname accessors
 #' @param idx index of the universe in the multiverse (corresponds to the row in the table)

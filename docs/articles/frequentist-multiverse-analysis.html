@@ -73,6 +73,9 @@
       <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
+      <a href="../articles/multiverse-export-json.html">multiverse-export-json</a>
+    </li>
+    <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
@@ -101,7 +104,7 @@
 
       
 
-      </header><script src="frequentist-multiverse-analysis_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="frequentist-multiverse-analysis_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</h1>
@@ -109,7 +112,7 @@
                         <h4 class="author">Yvonne Jansen, CNRS &amp; Sorbonne Universite</h4>
                         <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
             
-            <h4 class="date">2021-05-25</h4>
+            <h4 class="date">2022-02-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/frequentist-multiverse-analysis.Rmd"><code>vignettes/frequentist-multiverse-analysis.Rmd</code></a></small>
       <div class="hidden name"><code>frequentist-multiverse-analysis.Rmd</code></div>
@@ -241,7 +244,7 @@ conf_level &lt;-  branch(conf_level,
 <p>We now look at the multiverse table and see that it has created all the possible combinations:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 24 x 7
+<pre><code>## # A tibble: 24 × 7
 ##    .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##        &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ##  1         1 t based   log-transform… 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
@@ -296,7 +299,7 @@ df &lt;- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(co
 <span class="va">df.mtbl</span><span class="op">$</span><span class="va">summary</span> <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">.results</span>, <span class="st">"df"</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 8
+<pre><code>## # A tibble: 6 × 8
 ##   .universe ci_method data_transform  conf_level .parameter_assi… .code .results
 ##       &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ## 1         1 t based   log-transformed 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
@@ -312,7 +315,7 @@ df &lt;- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(co
 <code class="sourceCode R"><span class="va">df.mtbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html">unnest_wider</a></span><span class="op">(</span><span class="va">df.mtbl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>
 <span class="va">df.mtbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span><span class="va">df.mtbl</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">modality</span>, <span class="va">estimate</span>, <span class="va">conf.low</span>, <span class="va">conf.high</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 11
+<pre><code>## # A tibble: 6 × 11
 ##   .universe ci_method data_transform  conf_level .parameter_assi… .code .results
 ##       &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ## 1         1 t based   log-transformed 50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
@@ -337,7 +340,7 @@ df &lt;- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(co
 <span class="va">df.results</span><span class="op">$</span><span class="va">conf.high</span><span class="op">[</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">data_transform</span> <span class="op">==</span> <span class="st">"log-transformed"</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">conf.high</span><span class="op">[</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">data_transform</span> <span class="op">==</span> <span class="st">"log-transformed"</span><span class="op">]</span><span class="op">)</span>
 
 <span class="va">df.results</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 11
+<pre><code>## # A tibble: 6 × 11
 ##   .universe ci_method data_transform conf_level .parameter_assig… .code .results
 ##       &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;            &lt;lis&gt; &lt;list&gt;  
 ## 1         7 t based   untransformed  50%        &lt;named list [3]&gt;  &lt;nam… &lt;env&gt;   
@@ -377,7 +380,7 @@ df &lt;- transform(df, estimate = as.numeric(estimate), conf.low = as.numeric(co
     conf.high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">data_transform</span> <span class="op">==</span> <span class="st">"log-transformed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">conf.high</span><span class="op">)</span>, <span class="va">conf.high</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">conf_level</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">data_transform</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">ci_method</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 96 x 12
+<pre><code>## # A tibble: 96 × 12
 ##    .universe ci_method data_transform conf_level .parameter_assi… .code .results
 ##        &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;           &lt;lis&gt; &lt;list&gt;  
 ##  1         7 t based   untransformed  50%        &lt;named list [3]&gt; &lt;nam… &lt;env&gt;   
@@ -439,7 +442,7 @@ df.diffs
 
 <span class="va">df.results.diff</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 11
+<pre><code>## # A tibble: 6 × 11
 ##   .universe ci_method data_transform conf_level .parameter_assig… .code .results
 ##       &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;list&gt;            &lt;lis&gt; &lt;list&gt;  
 ## 1         7 t based   untransformed  50%        &lt;named list [3]&gt;  &lt;nam… &lt;env&gt;   

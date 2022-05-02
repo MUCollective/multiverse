@@ -1,4 +1,4 @@
-#' Define conditions for analysis paths in the multiverse
+#' Define constraints for combinations of analysis paths in the multiverse
 #'
 #' Users can specify conditions for which a particular analysis path may or may not be valid
 #' using either the `%when%` operator or the `branch_assert` function.
@@ -15,12 +15,12 @@
 #'
 #' @examples
 #' \donttest{
-#' M <- multiverse()
+#' M.1 <- multiverse()
 #' 
 #' # There are different ways to specifying conditions
 #' # One way is to use the %when% operator
 #' # the %when% operator can be specified after the option name
-#' inside(M, {
+#' inside(M.1, {
 #'     df <- data.frame (x = 1:10 ) %>%
 #'         mutate( y = branch( values_y, TRUE, FALSE )) %>%
 #'         mutate( z = branch(values_z,
@@ -31,7 +31,7 @@
 #' })
 #'
 #' # or it can be specified after the expression for computing the option value
-#' inside(M, {
+#' inside(M.1, {
 #'     df <- data.frame (x = 1:10 ) %>%
 #'         mutate( y = branch( values_y, TRUE, FALSE )) %>%
 #'         mutate( z = branch(values_z,
@@ -41,7 +41,7 @@
 #'         ))
 #' })
 #'
-#' # an advantage of the '%when' operator is that it can also be used it the
+#' # an advantage of the '%when' operator is that it can also be used when the
 #' # option names are not specified for branches.
 #' # when option names are not specified for branches, option names are assigned to
 #' # the branches. For character, logical or numeric expressions, option names are of the
@@ -49,7 +49,9 @@
 #' # For expressions of type symbol or call, options names are characters strings
 #' # containing the expression.
 #' # see the next two examples:
-#' inside(M, {
+#' M.2 <- multiverse()
+#' 
+#' inside(M.2, {
 #'  df <- data.frame (x = 1:10 ) %>%
 #'    mutate( y = branch( values_y, TRUE, FALSE )) %>%
 #'    mutate( z = branch(values_z,
@@ -59,12 +61,13 @@
 #'    ))
 #' })
 #'
-#' inside(M, {
+#' M.3 <- multiverse()
+#' inside(M.3, {
 #'  df <- data.frame (x = 1:10 ) %>%
 #'    filter( branch( values_x,
 #'        TRUE,
 #'        x > 2 | x < 6
-#'    ) %>%
+#'    )) %>%
 #'    mutate( z = branch(values_z,
 #'           5,
 #'           x + 1,
@@ -73,7 +76,8 @@
 #' })
 #'
 #' # or it can be specified after the expression for computing the option value
-#' inside(M, {
+#' M.4 <- multiverse()
+#' inside(M.4, {
 #'     df <- data.frame (x = 1:10 ) %>%
 #'         mutate( y = branch( values_y, TRUE, FALSE )) %>%
 #'         mutate( z = branch(values_z,
@@ -85,5 +89,7 @@
 #' })
 #' }
 #'
-#' @name conditions
+#' @rdname conditionals
+#' @name %when%
+NULL
 

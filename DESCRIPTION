@@ -1,11 +1,12 @@
 Package: multiverse
-Version: 0.5.0
-Date: 2021-05-25
+Version: 0.5.1
+Date: 2022-2-17
 Title: 'Explorable Multiverse' Data Analysis and Reports
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
-        person("Michael", "Moon", role = "aut", email = "moon@utstat.toronto.edu"),
         person("Matthew", "Kay", role = "aut", email = "mjskay@northwestern.edu"),
+        person("Michael", "Moon", role = "ctb", email = "moon@utstat.toronto.edu"),
+        person("Mark", "Miller", role = "ctb", email = "725mrm@gmail.com"),
         person("Alex", "Kale", role = "ctb", email = "kalea@uw.edu"),
         person("Nathan", "Taback", role = "ctb", email = "nathan.taback@utoronto.ca"),
         person("Fanny", "Chevalier", role = "ctb", email = "fanny@dgp.toronto.edu"),
@@ -42,7 +43,8 @@ Imports:
     collections,
     evaluate,
     rstudioapi,
-    berryFunctions
+    berryFunctions,
+    future.apply
 Suggests:
     ggplot2 (>= 3.0.0),
     testthat (>= 2.1.0),
@@ -61,7 +63,8 @@ Suggests:
     png,
     stringi,
     modelr,
-    styler
+    styler,
+    future
 VignetteBuilder: 
     knitr
 Language: en-US

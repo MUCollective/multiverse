@@ -179,27 +179,6 @@ df <- df %>%
 ### Declaring alternative specifications of regression model
 The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
 
-```{multiverse label = default-m-3, inside = M, echo = FALSE}
-fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
-          branch(main_interaction,
-              "no" ~ femininity + damage,
-              "yes" ~ femininity * damage
-          ) + branch(other_predictors,
-              "none" ~ NULL,
-              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-              "all" %when% (main_interaction == "yes") ~ femininity * z3,
-              "all_no_interaction" %when% (main_interaction == "no") ~ z3
-          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
-          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
-          data = df)
-```
-
-```{r}
-broom::tidy(fit)
-```
-
 
 ````
 ```{multiverse label = default-m-3, inside = M}`r ''`
@@ -221,6 +200,26 @@ fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
 broom::tidy(fit)
 ```
 ````
+
+
+```{multiverse label = default-m-3, inside = M, echo = FALSE}
+fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+          branch(main_interaction,
+              "no" ~ femininity + damage,
+              "yes" ~ femininity * damage
+          ) + branch(other_predictors,
+              "none" ~ NULL,
+              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+              "all" %when% (main_interaction == "yes") ~ femininity * z3,
+              "all_no_interaction" %when% (main_interaction == "no") ~ z3
+          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
+          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+          data = df)
+
+broom::tidy(fit)
+```
 
 Once we have implemented the analysis model in our multiverse, the corresponding step will be applied to each analysis path. To interpret the results, we first estimate a prediction interval corresponding to each analysis path. 
 

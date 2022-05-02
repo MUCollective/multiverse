@@ -20,6 +20,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -32,18 +34,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -73,6 +69,9 @@
       <a href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
     </li>
     <li>
+      <a href="../articles/multiverse-export-json.html">multiverse-export-json</a>
+    </li>
+    <li>
       <a href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     </li>
     <li>
@@ -86,7 +85,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/MUCollective/multiverse/">
+  <a href="https://github.com/MUCollective/multiverse/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -101,38 +100,38 @@
 
       
 
-      </header><script src="hurricane_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</h1>
-                        <h4 class="author">Abhraneel Sarma, Northwestern University</h4>
-                        <h4 class="author">Alex Kale, University of Washington</h4>
+                        <h4 data-toc-skip class="author">Abhraneel Sarma, Northwestern University</h4>
+                        <h4 data-toc-skip class="author">Alex Kale, University of Washington</h4>
             
-            <h4 class="date">2021-05-25</h4>
+            <h4 data-toc-skip class="date">2022-02-21</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/master/vignettes/hurricane.Rmd"><code>vignettes/hurricane.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/hurricane.Rmd" class="external-link"><code>vignettes/hurricane.Rmd</code></a></small>
       <div class="hidden name"><code>hurricane.Rmd</code></div>
 
     </div>
 
     
     
-<div id="multiverse-case-study-4" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multiverse-case-study-4" class="anchor"></a>Multiverse case study #4</h2>
-<p>In this document we re-implement the specification curve analysis by Simonsohn et al. [<a href="http://dx.doi.org/10.2139/ssrn.2694998" class="uri">http://dx.doi.org/10.2139/ssrn.2694998</a>] using the Multiverse library. </p>
+<div class="section level2">
+<h2 id="multiverse-case-study-4">Multiverse case study #4<a class="anchor" aria-label="anchor" href="#multiverse-case-study-4"></a>
+</h2>
+<p>In this document we re-implement the specification curve analysis by Simonsohn et al. [<a href="http://dx.doi.org/10.2139/ssrn.2694998" class="external-link uri">http://dx.doi.org/10.2139/ssrn.2694998</a>] using the Multiverse library. </p>
 </div>
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>The specification curve analysis is in principle similar to a multiverse analysis, where all alternate specifications of a particular analysis asking the same research question are explored. In their study, Simonsohn et al. explore the robustness of the analysis by Jung et al. [<a href="https://doi.org/10.1073/pnas.1402786111" class="uri">https://doi.org/10.1073/pnas.1402786111</a>], which investigated whether hurricanes with female sounding names are more deadlier than hurricanes with more male sounding names. We first begin by loading the dataset which is provided by the library. We then rename some of the variables and perform some data transformations which standardises some of the variables (mean = 0 and standard deviation = 1).</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>The specification curve analysis is in principle similar to a multiverse analysis, where all alternate specifications of a particular analysis asking the same research question are explored. In their study, Simonsohn et al. explore the robustness of the analysis by Jung et al. [<a href="https://doi.org/10.1073/pnas.1402786111" class="external-link uri">https://doi.org/10.1073/pnas.1402786111</a>], which investigated whether hurricanes with female sounding names are more deadlier than hurricanes with more male sounding names. We first begin by loading the dataset which is provided by the library. We then rename some of the variables and perform some data transformations which standardises some of the variables (mean = 0 and standard deviation = 1).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"hurricane"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hurricane"</span><span class="op">)</span>
 
 <span class="co"># read and process data</span>
-<span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op">%&gt;%</span>
+<span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="co"># rename some variables</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>
         year <span class="op">=</span> <span class="va">Year</span>,
         name <span class="op">=</span> <span class="va">Name</span>,
         dam <span class="op">=</span> <span class="va">NDAM</span>,
@@ -142,41 +141,42 @@
         category <span class="op">=</span> <span class="va">Category</span>,
         pressure <span class="op">=</span> <span class="va">Minpressure_Updated_2014</span>,
         wind <span class="op">=</span> <span class="va">HighestWindSpeed</span>
-    <span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="co"># create new variables</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
-        post <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">year</span><span class="op">&gt;</span><span class="fl">1979</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
-        zcat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">category</span><span class="op">)</span><span class="op">)</span>,
-        zpressure <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pressure</span><span class="op">)</span>,
-        zwind <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">wind</span><span class="op">)</span><span class="op">)</span>,
-        z3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">(</span><span class="va">zpressure</span> <span class="op">+</span> <span class="va">zcat</span> <span class="op">+</span> <span class="va">zwind</span><span class="op">)</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
+        post <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">year</span><span class="op">&gt;</span><span class="fl">1979</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+        zcat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">category</span><span class="op">)</span><span class="op">)</span>,
+        zpressure <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">pressure</span><span class="op">)</span>,
+        zwind <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">wind</span><span class="op">)</span><span class="op">)</span>,
+        z3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="op">(</span><span class="va">zpressure</span> <span class="op">+</span> <span class="va">zcat</span> <span class="op">+</span> <span class="va">zwind</span><span class="op">)</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span>
     <span class="op">)</span></code></pre></div>
 </div>
-<div id="original-analysis" class="section level2">
-<h2 class="hasAnchor">
-<a href="#original-analysis" class="anchor"></a>Original analysis</h2>
-<p>We then illustrate an implementation of the original analysis by Jung et al. [<a href="https://doi.org/10.1073/pnas.1402786111" class="uri">https://doi.org/10.1073/pnas.1402786111</a>]. The original analysis used a negative binomial model, which is suitable for overdispersed count data. Due to some issues with model fit with the <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html">MASS::glm.nb</a></code> function (see Note 3: <a href="https://github.com/uwdata/boba/tree/master/example/hurricane" class="uri">https://github.com/uwdata/boba/tree/master/example/hurricane</a>), we instead use the simpler poisson regression model which will ensure that none of the models fail while fitting.</p>
+<div class="section level2">
+<h2 id="original-analysis">Original analysis<a class="anchor" aria-label="anchor" href="#original-analysis"></a>
+</h2>
+<p>We then illustrate an implementation of the original analysis by Jung et al. [<a href="https://doi.org/10.1073/pnas.1402786111" class="external-link uri">https://doi.org/10.1073/pnas.1402786111</a>]. The original analysis used a negative binomial model, which is suitable for overdispersed count data. Due to some issues with model fit with the <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb</a></code> function (see Note 3: <a href="https://github.com/uwdata/boba/tree/master/example/hurricane" class="external-link uri">https://github.com/uwdata/boba/tree/master/example/hurricane</a>), we instead use the simpler poisson regression model which will ensure that none of the models fail while fitting.</p>
 <p>In the original analysis, Jung et al. exclude two hurricanes which caused the highest number of deaths (Katrina and Audrey) as outliers. They transform the variable used the interactions between the 11-point femininity rating and both damages and zpressure respectively, as seen below:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span> <span class="op">&amp;</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Audrey"</span> <span class="op">)</span>
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span> <span class="op">&amp;</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Audrey"</span> <span class="op">)</span>
 
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">death</span> <span class="op">~</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">dam</span> <span class="op">+</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">zpressure</span>, data <span class="op">=</span> <span class="va">df</span>, family <span class="op">=</span> <span class="st">"poisson"</span><span class="op">)</span></code></pre></div>
+<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">death</span> <span class="op">~</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">dam</span> <span class="op">+</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">zpressure</span>, data <span class="op">=</span> <span class="va">df</span>, family <span class="op">=</span> <span class="st">"poisson"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="multiverse-analysis" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multiverse-analysis" class="anchor"></a>Multiverse Analysis</h2>
+<div class="section level2">
+<h2 id="multiverse-analysis">Multiverse Analysis<a class="anchor" aria-label="anchor" href="#multiverse-analysis"></a>
+</h2>
 <p>To implement a multiverse analysis, we first need to create the multiverse object:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div id="excluding-outliers" class="section level3">
-<h3 class="hasAnchor">
-<a href="#excluding-outliers" class="anchor"></a>Excluding outliers</h3>
+<div class="section level3">
+<h3 id="excluding-outliers">Excluding outliers<a class="anchor" aria-label="anchor" href="#excluding-outliers"></a>
+</h3>
 <p>In their implementation, Simonsohn et al. describe a principled method of excluding outliers based on extreme observations of death and damages. The consider it reasonable to exclude up two most extreme hurricanes in terms of death, and upto three most extreme hurricanes in terms of damages. This space of decisions is implemented using <code>multiverse</code> as follows:</p>
-<div id="note" class="section level4">
-<h4 class="hasAnchor">
-<a href="#note" class="anchor"></a>Note</h4>
-<p>In this vignette, we make use of <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse code chunks</em></a>, a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (<code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details. Users could instead make use of the  function which is more suited for a script-style implementation. Please refer to the vignettes (<code>vignette("complete-multiverse-analysis")</code> and <code>vignette("basic-multiverse")</code>) for more details.</p>
+<div class="section level4">
+<h4 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a>
+</h4>
+<p>In this vignette, we make use of <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html" class="external-link"><em>multiverse code chunks</em></a>, a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (<code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more details. Users could instead make use of the  function which is more suited for a script-style implementation. Please refer to the vignettes (<code>vignette("complete-multiverse-analysis")</code> and <code>vignette("basic-multiverse")</code>) for more details.</p>
+<p><text>:11:0: unexpected end of input 9: “most_extreme_two_damage” ~ ! (name %in% c(“Sandy”, “Andrew”)), 10: “most_extreme_three_damage” ~ ! (name %in% c(“Sandy”, “Andrew”, “Donna”)) ^</text></p>
 <pre><code>```{multiverse default-m-1, inside = M}
 df &lt;- hurricane_data %&gt;%
     filter(branch(death_outliers, 
@@ -193,12 +193,13 @@ df &lt;- hurricane_data %&gt;%
 ```</code></pre>
 </div>
 </div>
-<div id="identifying-independent-variables" class="section level3">
-<h3 class="hasAnchor">
-<a href="#identifying-independent-variables" class="anchor"></a>Identifying independent variables</h3>
+<div class="section level3">
+<h3 id="identifying-independent-variables">Identifying independent variables<a class="anchor" aria-label="anchor" href="#identifying-independent-variables"></a>
+</h3>
 <p>The next decision involves identifying the appropriate dependent variable for the primary effect — how do we operationalise femininity of the name of a hurricane. Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.</p>
 <p>The other decision involved is whether or not to transform <code>damages</code>, another independent variable. damages follow a long tailed, positive only valued distribution.</p>
 <p>We implement these two decisions in our multiverse as follows:</p>
+<p><text>:10:0: unexpected end of input 8: “log_transform” ~ log(dam) 9: ) ^</text></p>
 <pre><code>```{multiverse label = default-m-2, inside = M}
 df &lt;- df %&gt;%
     mutate(
@@ -213,22 +214,10 @@ df &lt;- df %&gt;%
     )
 ```</code></pre>
 </div>
-<div id="declaring-alternative-specifications-of-regression-model" class="section level3">
-<h3 class="hasAnchor">
-<a href="#declaring-alternative-specifications-of-regression-model" class="anchor"></a>Declaring alternative specifications of regression model</h3>
+<div class="section level3">
+<h3 id="declaring-alternative-specifications-of-regression-model">Declaring alternative specifications of regression model<a class="anchor" aria-label="anchor" href="#declaring-alternative-specifications-of-regression-model"></a>
+</h3>
 <p>The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between <code>femininity</code> and <code>damage</code>. This results in the following specification:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 7 x 5
-##   term              estimate std.error statistic  p.value
-##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)        -4.05     0.463     -8.75   2.11e-18
-## 2 femininity          0.0289   0.537      0.0538 9.57e- 1
-## 3 damage              0.851    0.0536    15.9    7.97e-57
-## 4 z3                 -0.745    0.105     -7.10   1.29e-12
-## 5 femininity:damage  -0.0338   0.0603    -0.560  5.75e- 1
-## 6 femininity:z3       0.852    0.109      7.79   6.87e-15
-## 7 damage:post        -0.0687   0.00601  -11.4    3.33e-30</code></pre>
 <pre><code>```{multiverse label = default-m-3, inside = M}
 fit &lt;- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
           branch(main_interaction,
@@ -247,7 +236,9 @@ fit &lt;- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
 
 broom::tidy(fit)
 ```</code></pre>
+<p><text>:11:83: unexpected ‘,’ 10: “all_no_interaction” %when% (main_interaction == “no”) ~ z3 11: ) + branch(covariates, “1” ~ NULL, “2” ~ year:damage, “3” ~ post:damage), ^</text></p>
 <p>Once we have implemented the analysis model in our multiverse, the corresponding step will be applied to each analysis path. To interpret the results, we first estimate a prediction interval corresponding to each analysis path.</p>
+<p><text>:20:0: unexpected end of input 18: group_by(female) %&gt;% 19: summarise(mean_deaths = mean(expected_deaths), .groups = “drop_last”) %&gt;% ^</text></p>
 <pre><code>```{multiverse label = default-m-4, inside = M}
 pred &lt;- predict(fit, se.fit = TRUE, type = "response")
 
@@ -272,25 +263,24 @@ expectation &lt;- disagg_fit %&gt;%
     compare_levels(mean_deaths, by = female)
 ```</code></pre>
 </div>
-<div id="execution-and-results" class="section level3">
-<h3 class="hasAnchor">
-<a href="#execution-and-results" class="anchor"></a>Execution and Results</h3>
+<div class="section level3">
+<h3 id="execution-and-results">Execution and Results<a class="anchor" aria-label="anchor" href="#execution-and-results"></a>
+</h3>
 <p>After we’ve specified our multiverse analysis, we would like to execute the entire multiverse, and view the results. Below, we plot the mean difference point estimate for expected deaths when a hurricane has a more feminine name, for each unique analysis path. We find that based on these arbitrary specifications of the multiverse, there is perhaps no relation between <code>femininity</code> of the name of a hurricane and the number of deaths that it causes, as some models predict a lower number of deaths, and some predict much higher.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span>
 
-<span class="va">mean_deaths</span> <span class="op">&lt;-</span> <span class="fu">multiverse</span><span class="fu">::</span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">expectation</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span><span class="va">expectation</span><span class="op">)</span>
+<span class="va">mean_deaths</span> <span class="op">&lt;-</span> <span class="fu">multiverse</span><span class="fu">::</span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">expectation</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">expectation</span><span class="op">)</span>
 
-<span class="va">mean_deaths</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">mean_deaths</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">mean_deaths</span>, x <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"universe"</span>, y <span class="op">=</span> <span class="st">"Mean difference in expected deaths"</span><span class="op">)</span></code></pre></div>
-<p><img src="hurricane_files/figure-html/unnamed-chunk-6-1.png" width="768"></p>
+<span class="va">mean_deaths</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">mean_deaths</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">mean_deaths</span>, x <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"universe"</span>, y <span class="op">=</span> <span class="st">"Mean difference in expected deaths"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>
@@ -306,11 +296,13 @@ expectation &lt;- disagg_fit %&gt;%
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://abhsarma.github.io">Abhraneel Sarma</a>, Michael Moon, <a href="http://www.mjskay.com">Matthew Kay</a>.</p>
+  <p></p>
+<p>Developed by <a href="http://abhsarma.github.io" class="external-link">Abhraneel Sarma</a>, Michael Moon, <a href="http://www.mjskay.com" class="external-link">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -318,6 +310,8 @@ expectation &lt;- disagg_fit %&gt;%
 
   
 
+
+  
 
   </body>
 </html>
