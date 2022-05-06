@@ -28,14 +28,33 @@ span:active {
 <script type="text/javascript" src="TangleKit/BVTouchable.js"></script>
 <script type="text/javascript" src="TangleKit/TangleKit.js"></script>
 <script>
+  let comboExists = (curr, combos) => {
+    curr = JSON.stringify(curr);
+    for (let combo of combos) {
+      if (curr == JSON.stringify(combo)) return true;
+    }
+    return false;
+  }
+
   Tangle.classes.Iterate = {
     initialize: function(element, options, tangle, variable) {
       element.addEvent("click", (event) => {
-        let a = tangle.getValue("data")[variable];
-        console.log(a);
-        if (options.i === a.length-1) options.i = 0;
-        else                          options.i++;
-        tangle.setValue(variable, a[options.i]);
+        let choices = tangle.getValue("choices");
+        let combos = tangle.getValue("combos");
+        let keys = Object.keys(choices);
+        let curr = {}
+        for (let key of keys) {
+          curr[key] = tangle.getValue(key)
+        }
+        let it = 0;
+        do {
+          if (options.i === choices[variable].length-1)
+            options.i = 0;
+          else
+            options.i++;
+          curr[variable] = choices[variable][options.i];
+        } while (!(comboExists(curr, combos)) && it++ < 4);
+        tangle.setValue(variable, choices[variable][options.i]);
       })
     },
     update: function(element, value) {
@@ -51,21 +70,25 @@ span:active {
       {
         initialize: function() {
           const pre = document.querySelectorAll("pre.multiverse");
-          this.data = [];
+          this.choices = {};
+          this.combos = [];
           for (let e of pre) {
             let paramOption = {};
             for (let className of e.classList) {
               if (className.includes("---")) {
                 let split = className.split("---");
                 paramOption[split[0]] = split[1];
+                if (split[0] in this.choices) this.choices[split[0]].add(split[1]);
+                else this.choices[split[0]] = new Set([split[1]]);
               }
             }
-            this.data.push(paramOption);
-            document.getElementById("insert").innerHTML += `<p style='font-size:14px;'>`+JSON.stringify(paramOption)+`</p>`;
+            this.combos.push(paramOption);
           }
-          this.keys = Object.keys(this.data[0]);
+          this.combos = new Set(this.combos);
+          this.keys = Object.keys(this.choices);
           for (let k of this.keys) {
-            this[k] = this.data[k][0];
+            this.choices[k] = [...this.choices[k]];
+            this[k] = this.choices[k][0];
           }
         },
         update: function() {
