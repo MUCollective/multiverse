@@ -41,6 +41,8 @@ span:active {
       element.addEvent("click", (event) => {
         let choices = tangle.getValue("choices");
         let combos = tangle.getValue("combos");
+        console.log(choices)
+        console.log(combos)
         let keys = Object.keys(choices);
         let curr = {}
         for (let key of keys) {
@@ -101,9 +103,9 @@ span:active {
 
 
 <p id="asdf">
-  <span class="Iterate" data-var="a" data-i=0></span>
-  <span class="Iterate" data-var="b" data-i=0></span>
-  <span class="Iterate" data-var="c" data-i=0></span>
+  <span class="Iterate TKSwitch" data-var="a" data-i=0></span>
+	<span class="Iterate TKSwitch" data-var="b" data-i=0></span>
+	<span class="Iterate TKSwitch" data-var="c" data-i=0></span>
 </p>
 <div id="insert"></div>
 

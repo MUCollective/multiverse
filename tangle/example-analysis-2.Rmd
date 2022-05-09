@@ -15,22 +15,166 @@ library(purrr)
 devtools::load_all(".")
 ```
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="./Tangle.js"></script>
+<link rel="stylesheet" href="TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="TangleKit/mootools.js"></script>
+<script type="text/javascript" src="TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="TangleKit/TangleKit.js"></script>
+<script>
+  let choices, combos;
+  let comboExists = (curr, combos) => {
+    curr = JSON.stringify(curr);
+    for (let combo of combos) {
+      if (curr == JSON.stringify(combo)) return true;
+    }
+    return false;
+  }
+
+  Tangle.classes.Iterate = {
+    initialize: function(element, options, tangle, variable) {
+      element.addEvent("click", (event) => {
+        choices = tangle.getValue("choices");
+        combos = tangle.getValue("combos");
+        let keys = Object.keys(choices);
+        let curr = {}
+        for (let key of keys) {
+          curr[key] = tangle.getValue(key)
+        }
+        let it = 0;
+        do {
+          if (options.i === choices[variable].length-1)
+            options.i = 0;
+          else
+            options.i++;
+          curr[variable] = choices[variable][options.i];
+        } while (!(comboExists(curr, combos)) && it++ < 4);
+        tangle.setValue(variable, choices[variable][options.i]);
+      })
+    },
+    update: function(element, value) {
+      element.textContent = element.getAttribute("data-var") + ": " +value;
+    }
+  }
+
+  function setup() {
+    let elem = $("p#multiverse-params").get(0);
+    let t = new Tangle(
+      elem,
+      {
+        initialize: function() {
+          const pre = $("pre.multiverse").get();
+          this.choices = {};
+          this.combos = [];
+          for (let e of pre) {
+            let paramOption = {};
+            for (let className of e.classList) {
+              if (className.includes("---")) {
+                let split = className.split("---");
+                paramOption[split[0]] = split[1];
+                if (split[0] in this.choices) this.choices[split[0]].add(split[1]);
+                else this.choices[split[0]] = new Set([split[1]]);
+              }
+            }
+            this.combos.push(paramOption);
+          }
+          this.combos = new Set(this.combos);
+          this.keys = Object.keys(this.choices);
+          for (let k of this.keys) {
+            this.choices[k] = [...this.choices[k]];
+            this[k] = this.choices[k][0];
+          }
+        },
+        update: function() {
+          let universe = {}
+          for (let k of this.keys) {
+            universe[k] = this[k];
+          }
+          $("pre.multiverse").hide();
+          $("." + Object.entries(universe).map(d => d.join('---')).join('.')).show();
+        }
+      }
+    )
+  }
+  
+  // given a specification of the multiverse
+  // and a list of parameters
+  // return a list of classess to be added
+  function getClasses(spec, p) {
+    let classes = Object.entries(spec).filter(i => !(p.includes(i[0])))
+    return classes.map(d => d[1].map(x => d[0] + "---" + x)).flat()
+  }
+  
+  const load = () => {
+    const pre = $("pre.multiverse").get();
+    let multiverse_spec = {}
+    for (let e of pre) {
+      let universe = [...e.classList].filter(i => i.includes("---")).map(d => d.split("---"));
+      universe.forEach(d => {
+        if (Object.keys(multiverse_spec).includes(d[0])) {
+          if (!multiverse_spec[d[0]].includes(d[1])) {
+            multiverse_spec[d[0]].push(d[1])
+          }
+        } else {
+          multiverse_spec[d[0]] = [d[1]]
+        }
+      })
+    }
+    
+    let parameters = Object.keys(multiverse_spec);
+    // creates a tangle widget for each parameter in the declared multiverse
+    for (let i of parameters) {
+        $("p#multiverse-params").append(`<span class="Iterate TKSwitch" data-var=${i} data-i=0></span><br>`)
+    }
+    // adds classes for <pre> tags where parameters are missings
+    for (let e of pre) {
+      let current_params = [...e.classList].filter(i => i.includes("---")).map(d => d.split("---")[0]);
+      // first get the elements where we need to add classes
+      if (current_params.length != parameters.length) {
+        // for each of the elements, add classes for each p---o combinations of the parameters not included
+        let to_add = getClasses(multiverse_spec, current_params)
+        e.classList.add(...to_add)
+      }
+    }
+    setup();
+  }
+  
+  window.onload = load;
+</script>
+
+
+<div class="multiverse-navbar">
+  <p id="multiverse-params"></p>
+</div>
+
 ## Multiverse case study #4
 
 ```{r}
-data("durante")
+data("hurricane")
 
-data.raw.study2 = durante %>%
-  mutate(
-    Abortion = abs(7 - Abortion) + 1,
-    StemCell = abs(7 - StemCell) + 1,
-    Marijuana = abs(7 - Marijuana) + 1,
-    RichTax = abs(7 - RichTax) + 1,
-    StLiving = abs(7 - StLiving) + 1,
-    Profit = abs(7 - Profit) + 1,
-    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
-    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
-  )
+hurricane_data <- hurricane %>%
+    # rename some variables
+    rename(
+        year = Year,
+        name = Name,
+        dam = NDAM,
+        death = alldeaths,
+        female = Gender_MF,
+        masfem = MasFem,
+        category = Category,
+        pressure = Minpressure_Updated_2014,
+        wind = HighestWindSpeed
+    ) %>%
+    # create new variables
+    # which are relevant later on
+    mutate(
+        post = ifelse(year>1979, 1, 0),
+        zcat = as.numeric(scale(category)),
+        zpressure = -scale(pressure),
+        zwind = as.numeric(scale(wind)),
+        z3 = as.numeric((zpressure + zcat + zwind) / 3)
+    )
 ```
 
 
@@ -44,57 +188,60 @@ M = multiverse()
 
 
 ```{multiverse default-m-1, inside = M}
-df = data.raw.study2  %>%
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
-    dplyr::filter( branch(cycle_length,
-        "cl_option1" ~ TRUE,
-        "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
-        "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    ))
+# here we just create the variable `df` in the multiverse
+df = hurricane_data
+
+# here, we perform a `filter` operation in the multiverse
+df.filtered = df %>%
+  filter(branch(death_outliers,
+      "no_exclusion" ~ TRUE,
+      "most_extreme" ~ name != "Katrina",
+      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+))
 ```
 
-```{multiverse default-m-2, inside = M}
-df = df %>%
-    dplyr::filter( branch(certainty,
-        "cer_option1" ~ TRUE,
-        "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-    ))
-```
-
-
-```{multiverse default-m-3, inside = M}
-df = df %>%
-    mutate(NextMenstrualOnset = branch(menstrual_calculation,
-        "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
-        "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
-        "mc_option3" ~ StartDateNext)
+```{multiverse label = variable_definitions, inside = M}
+df.filtered = df.filtered %>%
+    mutate(
+        femininity = branch(femininity_calculation,
+          "masfem" ~ masfem,
+          "female" ~ female
+        ),
+        damage = branch(damage_transform,
+          "no_transform" ~ identity(dam),
+          "log_transform" ~ log(dam)
+        )
     )
 ```
 
-```{multiverse default-m-4, inside = M}
-head(df)
-```
-
-```{multiverse default-m-5, inside = M}
-hist(df$Rel1)
+```{multiverse default-m-5, inside = M, eval = FALSE}
+hist(df.filtered$femininity)
 ```
 
 ```{r}
 expand(M)
 ```
 
+
 ```{r}
 out = evaluate::evaluate(
-  input = "hist(df$damage)",
+  input = "hist(df.filtered$femininity)",
   new_device = FALSE, 
   envir = expand(M)$.results[[1]]
 )
 ```
 
 
-<SCRIPT text = "javascript">
-  function parameter (name) {
-    console.log(name)
-  }
-</SCRIPT>
+```{r}
+out = evaluate::evaluate(
+  input = "hist(df.filtered$femininity)",
+  new_device = FALSE, 
+  envir = expand(M)$.results[[3]]
+)
+```
+
+
+<script text = "javascript">
+  $("div#header").css("margin-top", 60 + $("div.multiverse-navbar").height());
+</script>
 
