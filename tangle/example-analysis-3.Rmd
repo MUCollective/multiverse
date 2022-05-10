@@ -188,26 +188,21 @@ To implement a multiverse analysis, we first need to create the `js parameter('m
 M = multiverse()
 ```
 
-
 ```{multiverse default-m-1, inside = M}
-df <- hurricane_data %>%
-    filter(branch(death_outliers, 
-        "no_exclusion" ~ TRUE,
-        "most_extreme_deaths" ~ name != "Katrina",
-        "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
-    )) %>%
-    filter(branch(damage_outliers,
-        "no_exclusion" ~ TRUE,
-        "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
-        "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
-        "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
-    ))
+# here we just create the variable `df` in the multiverse
+df = hurricane_data
+
+# here, we perform a `filter` operation in the multiverse
+df.filtered = df %>%
+  filter(branch(death_outliers,
+      "no_exclusion" ~ TRUE,
+      "most_extreme" ~ name != "Katrina",
+      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+))
 ```
 
-
-
-```{multiverse label = default-m-2, inside = M}
-df <- df %>%
+```{multiverse label = variable_definitions, inside = M}
+df.filtered = df.filtered %>%
     mutate(
         femininity = branch(femininity_calculation,
           "masfem" ~ masfem,
@@ -220,25 +215,18 @@ df <- df %>%
     )
 ```
 
-
-```{multiverse label = default-m-3, inside = M}
-fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
-          branch(main_interaction,
-              "no" ~ femininity + damage,
-              "yes" ~ femininity * damage
-          ) + branch(other_predictors,
-              "none" ~ NULL,
-              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-              "all" %when% (main_interaction == "yes") ~ femininity * z3,
-              "all_no_interaction" %when% (main_interaction == "no") ~ z3
-          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
-          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
-          data = df)
+```{multiverse default-m-2, inside = M}
+mean(df.filtered$femininity)
 ```
 
 
-```{multiverse default-m-4, inside = M}
-broom::tidy(fit)
+```{multiverse default-m-5, inside = M}
+hist(df.filtered$femininity)
 ```
+
+
+```{r}
+expand(M)
+```
+
+

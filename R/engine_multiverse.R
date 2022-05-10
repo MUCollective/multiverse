@@ -111,8 +111,8 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
       .assignment = expand(M)[[".parameter_assignment"]][[x]]
       class_name = paste(names(.assignment), .assignment, sep="---", collapse=" ")
 
-      # assuming default is the first universe,
-      # conditional should be change to use the default universe argument
+      # assuming default is the first universe, we add a class `default` to the relevant HTML elements
+      # conditional should be changed to use the default universe argument
       if (x == 1) {
           temp_options$class.source = paste0("multiverse universe ", class_name, " default")
           temp_options$class.output = paste0("multiverse universe ", class_name, " default")
@@ -124,6 +124,8 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
       eng_r(temp_options, temp_env)
     })
     
+    # preserves the original declaration of the multiverse code block
+    # i.e. with the branch syntax which specifies alternative analyses
     multiverse_options$eval = FALSE
     multiverse_options$class.source = "multiverse-spec"
     multiverse_options$class.output = "multiverse-spec"
