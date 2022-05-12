@@ -17,7 +17,7 @@ devtools::load_all(".")
 ```
 
 
-```{r, echo = FALSE} 
+```{r, include = FALSE} 
 includeScript("https://code.jquery.com/jquery-3.6.0.min.js")
 includeScript(system.file("js/Tangle.js", package="multiverse"))
 includeScript(system.file("js/TangleKit/mootools.js", package="multiverse"))
@@ -25,6 +25,17 @@ includeScript(system.file("js/TangleKit/sprintf.js", package="multiverse"))
 includeScript(system.file("js/TangleKit/BVTouchable.js", package="multiverse"))
 includeScript(system.file("js/TangleKit/TangleKit.js", package="multiverse"))
 includeScript(system.file("js/custom.js", package="multiverse"))
+```
+
+
+```{r, echo = FALSE} 
+includeScript("https://code.jquery.com/jquery-3.6.0.min.js")
+includeScript("./Tangle.js")
+includeScript("./TangleKit/mootools.js")
+includeScript("./TangleKit/sprintf.js")
+includeScript("./TangleKit/BVTouchable.js")
+includeScript("./TangleKit/TangleKit.js")
+includeScript("./custom.js")
 ```
 
 ## Multiverse case study #4
@@ -58,7 +69,7 @@ hurricane_data <- hurricane %>%
 
 ## Multiverse Analysis
 
-To implement a multiverse analysis, we first need to create the `js parameter('masfem')` object:
+To implement a multiverse analysis, we first need to create the `js parameter('masfem')` object <damage_transform/>:
 
 ```{r}
 M = multiverse()
@@ -99,6 +110,7 @@ mean(df.filtered$femininity)
 
 ```{multiverse default-m-5, inside = M}
 hist(df.filtered$femininity)
+hist(df.filtered$damage)
 ```
 
 
