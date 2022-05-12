@@ -292,3 +292,12 @@ mean_deaths %>%
   theme_minimal() +
   labs(x = "universe", y = "Mean difference in expected deaths")
 ```
+
+
+```{r}
+expand(M) %>%
+  extract_variables(summary_RelComp) %>%
+  select(-.code, -.results) %>%
+  write_json('../../multiverse-vis/static/data/data.json', pretty = TRUE)
+```
+

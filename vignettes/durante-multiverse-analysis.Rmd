@@ -300,7 +300,7 @@ Specifying these conditions allows us to exclude inconsistent combinations from 
 M = multiverse()
 
 inside(M, {
-  df <- data.raw.study2  %>%
+  df <- data.raw.study2 %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
     dplyr::filter( branch(cycle_length,
         "cl_option1" ~ TRUE,
