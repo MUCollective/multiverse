@@ -1,6 +1,7 @@
 Package: multiverse
 Version: 0.5.1
-Date: 2022-2-17
+Date: 2022-5-18
+
 Title: 'Explorable Multiverse' Data Analysis and Reports
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
