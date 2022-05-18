@@ -89,6 +89,7 @@ one_universe = data.raw.study2 %>%
   mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
   mutate(
     CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+    CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
     CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
   ) %>%
   mutate(
@@ -225,6 +226,7 @@ inside(M, {
       ) %>%
       mutate(
         CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+        CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
         CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
       ) %>%
       filter( branch(cycle_length, 
@@ -318,6 +320,7 @@ inside(M, {
     )  %>%
     mutate(
       CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+      CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
       CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
     ) %>%
     mutate( Fertility = branch( fertile,
