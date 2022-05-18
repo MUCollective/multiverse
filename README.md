@@ -504,6 +504,7 @@ expand(M)
 #> 3         3 two_most_extreme <named list [1]>      <named list [1]> <env>
 ```
 
+
 3.  `code`, which is the code that the user passes to the multiverse to
     conduct a multiverse analysis. However, we do not execute this code
     and it is stored unevaluated. The user can interactively edit and
@@ -520,6 +521,7 @@ code(M)
 #>         !(name %in% c("Katrina", "Audrey"))))
 #> }
 ```
+
 
 4.  `extract_variables(M, <variable names>)` extracts the supplied
     variable from the results of each analysis path, returning a table
