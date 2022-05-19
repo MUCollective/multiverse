@@ -144,7 +144,7 @@ However, some studies have created multiverse analyses with thousands or even mi
 
 To process multiverses in parallel, we make use of the [future](https://cran.r-project.org/web/packages/future/index.html) library. `future` allows the user to declare different strategies for resolving futures asynchronously and in parallel using `future::plan()`. The most general approach, which would work on both unix and non-unix based systems is to use a `multisession` future, which resolves futures asynchronously (in parallel) in separate R sessions running in the background on the same machine:
 
-```{r}
+```{r, eval = FALSE}
 plan(multisession, workers = availableCores())
 execute_multiverse(M, parallel = TRUE)
 plan(sequential) # explicitly closes multisession workers by switching plan 
