@@ -23,6 +23,7 @@ reference:
   - multiverse
   - branch
   - inside
+  - starts_with("%")
   - is_multiverse
   - is.multiverse
 

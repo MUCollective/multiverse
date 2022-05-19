@@ -70,8 +70,8 @@ further information on:
 
 We also implement a series of end-to-end multiverse implementations
 using this package to demonstrate how it might be used (which can be
-found in the
-[vignettes](https://mucollective.github.io/multiverse/articles/)):
+found in the package
+[vignettes](https://mucollective.github.io/multiverse/)):
 
 -   Steegen et al.’s [original multiverse
     analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637)
@@ -292,7 +292,7 @@ facilitates this through some boilerplate code:
     a dedicated code chunk, and is more consistent with the interactive
     programming interface of RStudio.
 -   the `inside()` function: allows users to declare multiverse code in
-    RScripts (or withn regular R code blocks).
+    RScripts (or within regular R code blocks).
 
 **Note** that the `inside` function is more suited for a script-style
 implementation. When using the interactive programming interface of
@@ -312,7 +312,9 @@ details on using the multiverse code blocks with RMarkdown). A
 `multiverse` package, to implement the multiverse analyses. This allows
 you to write more concise code and is more consistent with the
 interactive programming interface of RStudio. Below we show how code can
-be implemented using the *multiverse code block:*
+be implemented using the *multiverse code block:* (***Note: if you are
+using an RScript or the R console, please skip to the next section as
+executing the code below will throw an error***)
 
     ```{multiverse default-m-1, inside = M}
     # here we just create the variable `df` in the multiverse
@@ -334,8 +336,8 @@ detail in the next section. When this code is written and executed
 inside a *multiverse code block*, it allows the multiverse library to
 process and compile it to three different analyses.
 
-We provide the ability to declare multiverse code block as an *Addin* in
-RStudio. Users can click on *Addins* toolbar menu in RStudio (see the
+We provide the ability to declare multiverse code block as an *AddIn* in
+RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the
 image below). This would create a multiverse code block at the location
 of the cursor in the document.
 
@@ -345,7 +347,7 @@ Alternately, users can insert a multiverse code block using a keyboard
 shortcut. Users can create a keyboard shortcut to declare a multiverse
 code block inside a RMarkdown document through the following steps:
 
--   Tools > Addins > Browse Addins… > Keyboard Shortcuts
+-   Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one
     result with “Insert multiverse code chunk” as the name.
 -   Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or
@@ -504,8 +506,7 @@ expand(M)
 #> 3         3 two_most_extreme <named list [1]>      <named list [1]> <env>
 ```
 
-
-3.  `code`, which is the code that the user passes to the multiverse to
+1.  `code`, which is the code that the user passes to the multiverse to
     conduct a multiverse analysis. However, we do not execute this code
     and it is stored unevaluated. The user can interactively edit and
     rewrite this code, and can execute it for the current analysis or
@@ -522,8 +523,7 @@ code(M)
 #> }
 ```
 
-
-4.  `extract_variables(M, <variable names>)` extracts the supplied
+1.  `extract_variables(M, <variable names>)` extracts the supplied
     variable from the results of each analysis path, returning a table
     similar to the output of `expand(M)`, but with new columns for each
     variable that has been extracted. This would allow an analyst to,

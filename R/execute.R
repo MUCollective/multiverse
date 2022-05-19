@@ -1,18 +1,18 @@
 #' Execute parts of, or the entire multiverse
 #'
 #' @description These are functions which allow the user to execute parts or whole of the multiverse.
-#' The user can choose to either execute the default analysis using the \code{\link{execute_universe}}, or a part or
-#' whole of the multiverse using the \code{\link{execute_multiverse}}.
+#' The user can choose to either execute the default analysis using the \code{execute_universe()}, or the
+#' whole of the multiverse using the \code{execute_multiverse()}.
 #'
 #' @param multiverse The multiverse object
 #' 
 #' @param parallel Indicates whether to execute the multiverse analysis in parallel. If TRUE, multiverse makes use of
-#' [future::future] as backend to support parallel processing. Requires configuration of [future::plan]. Defaults to FALSE.
+#' \code{future::future} as backend to support parallel processing. Requires configuration of \code{future::plan}. Defaults to FALSE.
 #'
 #' @param progress Indicates whether to include a progress bar for each step of the execution. Defaults to FALSE.
 #' 
 #' @param .universe Indicate which universe to execute, if the user wants to execute a specific combination
-#' of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.
+#' of the parameters using \code{execute_universe()}. Defaults to NULL, which will execute the first (default) analysis.
 #'
 #' @details Each single analysis within the multiverse lives in a separate environment. 
 #' We provide convenient functions to access the results for the  default analysis, as well as 
@@ -98,7 +98,7 @@ exec_all <- function(list_block_exprs, current, progressbar, steps, in_parallel)
     app = lapply
   }
   
-  .res <- app(seq_along(.code_list), execute_each, .code_list, progressbar, current, steps)
+  .res <- app(seq_along(.code_list), execute_each, .code_list, .env_list, progressbar, current, steps)
   
   .ts = lapply(.res, function(x) x$ts)
   .res_envs = lapply(.res, function(x) x$env)
@@ -116,16 +116,17 @@ exec_all <- function(list_block_exprs, current, progressbar, steps, in_parallel)
   # mapply(function(.x, .env) list(append(.x, list(env = .env))), list_block_exprs, list_of_envirs)
 }
 
-execute_each <- function(i, code, pb, curr, n) {
+execute_each <- function(i, code, env_list, pb, curr, n) {
   .c = code[[i]]
-  .env = new.env()
-  .error_stack = tryStack(lapply(.c, eval, envir = .env), silent = TRUE)
+  .e = env_list[[i]]
+  # .env = new.env()
+  .error_stack = tryStack(lapply(.c, eval, envir = .e), silent = TRUE)
   
   if (!is.null(pb)) {
     setTxtProgressBar(pb, (curr + i)/n)
   }
   
-  list(env = .env, ts = .error_stack)
+  list(env = .e, ts = .error_stack)
 }
 
 
@@ -134,6 +135,8 @@ execute_each <- function(i, code, pb, curr, n) {
 execute_universe <- function(multiverse, .universe = 1) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   .level = attr(multiverse, "multiverse")$unchanged_until
+  # print(.level)
+  # print(m_diction$keys())
   
   .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)

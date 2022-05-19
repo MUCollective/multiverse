@@ -435,7 +435,7 @@ expand(M) %>%
 Consider the modeling step from `vignette(hurricane)`. Here, one of the decisions that we face is the choice of regression model to use (gaussian or poisson). As described in the document, this requires two different local changes in the code: 
 
 - the definition of the dependent variable in the model formula
-- the family argument in the modelling function
+- the family argument in the modeling function
 
 However, these are *not* two separate decisions, but rather a consequence of the same analysis parameter: the choice of model. Often, a single analysis parameter will require the analyst to change the code in more than one location. To represent these semantics, multiverse allows us to re-use the same analysis parameter in multiple `branch()` statements, so long as each `branch()` uses the exact same set of analysis options. In a branch on a previously defined parameter, option names must be the same, but the code for each option can be different. Thus, we represent the consequences of the choice of model with a single analysis parameter: model. We insert two `branch()` statements using this parameter, one to set the variable transformation and one to set the family.
 

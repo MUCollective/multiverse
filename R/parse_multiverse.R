@@ -4,8 +4,8 @@ globalVariables(c(".universe", ".parameter_assignment"))
 
 #' Parse the multiverse syntax to identify branches
 #'
-#' In a multiverse, the user can define different values that a parameter can take using the `branch` call.
-#' The `parse_multiverse` identifies the `branch` calls defined in the analysis syntax and parses them into a list of
+#' In a multiverse, the user can define different values that a parameter can take using the \code{branch()} call.
+#' The \code{parse_multiverse()} identifies the \code{branch()} calls defined in the analysis syntax and parses them into a list of
 #' parameters and the corresponding values that each parameter can take. This function is called automatically 
 #' and not exported.
 #'
@@ -18,7 +18,7 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @param .label The label of the code block or inside call which was used to pass the 
 #' code being parsed into the multiverse
 #'
-#' @return The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.
+#' @return \code{parse_multiverse()} returns a list of lists. the list of parameters and the list of conditions.
 #' The list of parameters is a named list which defines all the values that each defined parameter can take.
 #' The list of conditions defines, if any of the parameter values are conditional on a specific value of another
 #' parameter, the condition.

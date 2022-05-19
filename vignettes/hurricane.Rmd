@@ -139,7 +139,7 @@ df <- hurricane_data %>%
 
 ### Identifying independent variables
 
-The next decision involves identifying the appropriate dependent variable for the primary effect --- how do we operationalise femininity of the name of a hurricane. Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.
+The next decision involves identifying the appropriate independent variable for the primary effect --- how do we operationalise femininity of the name of a hurricane. Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.
 
 The other decision involved is whether or not to transform `damages`, another independent variable. damages follow a long tailed, positive only valued distribution.
 
@@ -293,11 +293,4 @@ mean_deaths %>%
   labs(x = "universe", y = "Mean difference in expected deaths")
 ```
 
-
-```{r}
-expand(M) %>%
-  extract_variables(summary_RelComp) %>%
-  select(-.code, -.results) %>%
-  write_json('../../multiverse-vis/static/data/data.json', pretty = TRUE)
-```
 

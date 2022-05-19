@@ -35,11 +35,6 @@ library(multiverse)
 ```
 
 
-```{r, include=FALSE}
-M = multiverse()
-```
-
-
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -124,7 +119,7 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
-```{r, eval = FALSE}
+```{r}
 M <- multiverse()
 ```
 
@@ -219,7 +214,7 @@ Besides calculating the onset of the next menstruation cycle, there are other va
 ```{r}
 inside(M, {
   df <- df %>%
-      mutate(Relationship = branch( relationship_status, 
+      mutate(RelationshipStatus = branch( relationship_status, 
         "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
         "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
         "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
@@ -343,11 +338,6 @@ After excluding the inconsistent choice combinations, $270 − 2 \times (5 \time
 ```{r}
 expand(M) %>% nrow()
 ```
-
-```{r}
-expand(M)$.code[[59]]
-```
-
 
 Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
 

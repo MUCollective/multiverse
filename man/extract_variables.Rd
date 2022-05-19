@@ -13,13 +13,13 @@ extract_variables(x, ..., .results = .results)
 \method{extract_variables}{data.frame}(x, ..., .results = .results)
 }
 \arguments{
-\item{x}{either a multiverse object or a dataframe (created using \code{\link{expand}}) from a multiverse object.
+\item{x}{either a multiverse object or a dataframe (created using \code{expand()}) from a multiverse object.
 See usage.}
 
 \item{...}{one or more variable (or object) names to be extracted from the multiverse object. The names can be quoted or unquoted.}
 
 \item{.results}{(Optional) if the .results column which stores the environments for each unique analysis has been changed, 
-specify the new name of the column. Defaults to `.results`}
+specify the new name of the column. Defaults to \code{.results}}
 }
 \description{
 This is a wrapper function for extracting one or more variables and objects declared from within the multiverse
@@ -28,7 +28,7 @@ in a tidy format.
 \details{
 In a typical analysis, the user will declare variables and objects inside the multiverse object. 
 However, it might be difficult to access the variables and objects, hence we provide convenient wrappers
-in the form of `extract_variables()`.
+in the form of \code{extract_variables()}.
 
 If the user wants to extract one or more literals (strings, integers, doubles or logicals of length 1)
 then each variables is separated out into its own column. If the user wants to extract one or more vectors (or lists)

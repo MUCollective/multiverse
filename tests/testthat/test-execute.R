@@ -1,4 +1,3 @@
-
 context("execute")
 
 library(future)
@@ -6,6 +5,7 @@ library(tidyr)
 
 values_x = exprs("a", 0, 5, 10, 14)
 values_y = exprs("b", 2, 1, 4, 3)
+values_z = exprs(0, 0, 5, 10, 14, 28)
 
 test_that("auto-executes the default analysis in the multiverse", {
   M <- multiverse()
@@ -14,7 +14,7 @@ test_that("auto-executes the default analysis in the multiverse", {
   expect_equal(y, "a")
 })
 
-test_that("`execute_multiverse` executes the all the analyses in the multiverse", {
+test_that("`execute_multiverse` executes all the analyses in the multiverse", {
   M <- multiverse()
   inside(M, {x <- branch(value_x, "a", 0, 5, 10, 14)} )
   
@@ -24,6 +24,25 @@ test_that("`execute_multiverse` executes the all the analyses in the multiverse"
   expect_equal(extract_variable_from_universe(M, 3, x), values_x[[3]])
   expect_equal(extract_variable_from_universe(M, 4, x), values_x[[4]])
   expect_equal(extract_variable_from_universe(M, 5, x), values_x[[5]])
+})
+
+test_that("`execute_multiverse` executes all the analyses across two inside blocks", {
+  M <- multiverse()
+  inside(M, {x <- branch(value_x, 0, 5, 14)} )
+  
+  inside(M, {
+    y <- branch(value_y, 1, 2)
+    
+    z <- x * y
+  } )
+  
+  execute_multiverse(M)
+  expect_equal(extract_variable_from_universe(M, 1, z), values_z[[1]])
+  expect_equal(extract_variable_from_universe(M, 2, z), values_z[[2]])
+  expect_equal(extract_variable_from_universe(M, 3, z), values_z[[3]])
+  expect_equal(extract_variable_from_universe(M, 4, z), values_z[[4]])
+  expect_equal(extract_variable_from_universe(M, 5, z), values_z[[5]])
+  expect_equal(extract_variable_from_universe(M, 6, z), values_z[[6]])
 })
 
 

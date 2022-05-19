@@ -11,8 +11,7 @@
 #' This is primarily going to be called by other functions, and perhaps not going to be as useful to
 #' the user for anything other than inspecting the rewritten code.
 #'
-#' @param .code Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
-#' which can be done using the `remove_branch_assert` function.
+#' @param .code Code that is passed to the multiverse. This is not stripped of calls such as \code{branch_assert()}.
 #'
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #'

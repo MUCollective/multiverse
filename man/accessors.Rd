@@ -69,6 +69,6 @@ extract_variable_from_universe(multiverse, idx, name)
 }
 \description{
 A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
-Variables from the analysis that is being performed within the multiverse can be accessed using the `$`.
-Object variables such as the `code`, the `expanded parameter options table`, the `parameters` and the `conditions` can be accessed using respective functions
+Variables from the analysis that is being performed within the multiverse can be accessed using the \code{$}.
+Object variables such as the \code{code}, the \code{expanded parameter options table}, the \code{parameters} and the \code{conditions} can be accessed using respective functions
 }

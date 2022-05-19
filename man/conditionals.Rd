@@ -8,16 +8,16 @@
 }
 \description{
 Users can specify conditions for which a particular analysis path may or may not be valid
-using either the `%when%` operator or the `branch_assert` function.
+using either the \code{\%when\%} operator or the \code{branch_assert} function.
 }
 \details{
 A user can specify multiple different analysis options at each step of the analysis
-process using [branch]. However, it is possible that the values of certain parameters might be
+process using \code{branch()}. However, it is possible that the values of certain parameters might be
 conditional on the values of certain other parameters.
 
 The conditional or the "implies" relationship between two statements, \emph{A} and \emph{A} has the meaning,
 "if \emph{A} is true, then \emph{B} is also true." We evaluate this relationship using classical logic:
-\deqn{  A \implies B is an abbreviation for \neg A \lor B }
+\deqn{  A \implies B} is an abbreviation for \deqn{\neg A \lor B }
 }
 \examples{
 \donttest{
@@ -95,4 +95,7 @@ inside(M.4, {
 })
 }
 
+}
+\seealso{
+\code{vignette("conditions")}
 }

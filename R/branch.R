@@ -1,10 +1,10 @@
 #' Define multiple analysis paths for a step in the multiverse
 #' 
-#' The `branch()` function allows the user to define multiple analysis options for a particular step
+#' The \code{branch} function allows the user to define multiple analysis options for a particular step
 #' in the analysis.
 #' 
 #' @details For every step in the analysis, there may be more than one analysis option. 
-#' We use `branch()` to declare these different analysis options. Each branch is
+#' We use \code{branch} to declare these different analysis options. Each branch is
 #' characterised by a parameter. The first argument passed into the branch is the parameter.
 #' 
 #' All the other arguments passed into branch are the different analysis options corresponding 
@@ -12,7 +12,7 @@
 #'or more options should be declared. Thus, the branch function will provide a warning
 #' if the total number arguments passed is less than three.
 #' 
-#' Please refer to the `vignette(branch)` for more details on how to use this function to 
+#' Please refer to \code{vignette("branch")} for more details on how to use this function to 
 #' create a complete multiverse analysis.
 #' 
 #' @param parameter A string to identify the branch. Each branch is characterised using a
