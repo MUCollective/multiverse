@@ -11,7 +11,7 @@
 #'
 #' The conditional or the "implies" relationship between two statements, \emph{A} and \emph{A} has the meaning,
 #' "if \emph{A} is true, then \emph{B} is also true." We evaluate this relationship using classical logic:
-#' \deqn{  A \implies B} is an abbreviation for \deqn{\neg A \lor B }
+#' \eqn{A \Longrightarrow B} is an abbreviation for \eqn{\neg A \lor B}
 #' 
 #' @seealso \code{vignette("conditions")}
 #'
