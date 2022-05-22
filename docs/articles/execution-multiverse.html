@@ -108,7 +108,7 @@ and Parallel</h1>
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma</h4>
             
-            <h4 data-toc-skip class="date">2022-05-19</h4>
+            <h4 data-toc-skip class="date">2022-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/execution-multiverse.Rmd" class="external-link"><code>vignettes/execution-multiverse.Rmd</code></a></small>
       <div class="hidden name"><code>execution-multiverse.Rmd</code></div>
@@ -123,8 +123,8 @@ Sarma</h4>
 <p>As some user-specificed multiverses can be quite large, it is only
 natural that we should make use of the rich parallel processing
 resources that are widely available. <code>multiverse</code> makes use
-of futures using the <a href="https://cran.r-project.org/web/packages/future/index.html" class="external-link">future</a>
-library, which “provides a very simple and uniform way of evaluating R
+of futures using the <a href="https://cran.r-project.org/package=future" class="external-link">future</a> library,
+which “provides a very simple and uniform way of evaluating R
 expressions asynchronously…”. This allows both the user and us (as the
 creators of this library) greater flexibility in supporting how
 execution and parallel execution may be supported. How and when
@@ -260,9 +260,9 @@ resources.</p>
 <div class="section level3">
 <h3 id="parallel-separate-r-sessions">Parallel: separate R sessions<a class="anchor" aria-label="anchor" href="#parallel-separate-r-sessions"></a>
 </h3>
-<p>To process multiverses in parallel, we make use of the <a href="https://cran.r-project.org/web/packages/future/index.html" class="external-link">future</a>
-library. <code>future</code> allows the user to declare different
-strategies for resolving futures asynchronously and in parallel using
+<p>To process multiverses in parallel, we make use of the <a href="https://cran.r-project.org/package=future" class="external-link">future</a> library.
+<code>future</code> allows the user to declare different strategies for
+resolving futures asynchronously and in parallel using
 <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code>. The most general approach, which would work
 on both unix and non-unix based systems is to use a
 <code>multisession</code> future, which resolves futures asynchronously

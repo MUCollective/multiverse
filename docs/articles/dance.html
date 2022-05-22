@@ -111,7 +111,7 @@ Dragicevic, Inria</h4>
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma, Northwestern University</h4>
             
-            <h4 data-toc-skip class="date">2022-05-19</h4>
+            <h4 data-toc-skip class="date">2022-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/dance.Rmd" class="external-link"><code>vignettes/dance.Rmd</code></a></small>
       <div class="hidden name"><code>dance.Rmd</code></div>
@@ -457,7 +457,7 @@ the reader to miss this important information.</p>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html" class="external-link">transition_manual</a></span><span class="op">(</span><span class="va">.universe</span><span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html" class="external-link">animate</a></span><span class="op">(</span><span class="va">p.above</span>, nframes <span class="op">=</span> <span class="va">n</span>, fps <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">840</span>, height <span class="op">=</span> <span class="fl">320</span><span class="op">)</span></code></pre></div>
-<p><img src="./dance_files/figure-html/vis-errorbars-above-1.gif"><!-- --></p>
+<p><img src="dance_files/figure-html/vis-errorbars-above-1.gif"><!-- --></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p.below</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">.results</span>, <span class="st">"df.error_bar.i"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -472,7 +472,7 @@ the reader to miss this important information.</p>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html" class="external-link">transition_manual</a></span><span class="op">(</span><span class="va">.universe</span><span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html" class="external-link">animate</a></span><span class="op">(</span><span class="va">p.below</span>, nframes <span class="op">=</span> <span class="va">n</span>, fps <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">840</span>, height <span class="op">=</span> <span class="fl">320</span><span class="op">)</span></code></pre></div>
-<p><img src="./dance_files/figure-html/vis-errorbars-below-1.gif"><!-- --></p>
+<p><img src="dance_files/figure-html/vis-errorbars-below-1.gif"><!-- --></p>
 <p>The following figure shows the regression lines for all
 conditions.</p>
 <blockquote>
@@ -510,7 +510,7 @@ following figure, doing so would have likely rendered it illegible.</p>
   <span class="fu"><a href="https://gganimate.com/reference/transition_manual.html" class="external-link">transition_manual</a></span><span class="op">(</span><span class="va">.universe</span><span class="op">)</span>
 
 <span class="fu"><a href="https://gganimate.com/reference/animate.html" class="external-link">animate</a></span><span class="op">(</span><span class="va">p.fitted_lines</span>, nframes <span class="op">=</span> <span class="va">n</span>, fps <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">840</span>, height <span class="op">=</span> <span class="fl">480</span><span class="op">)</span></code></pre></div>
-<p><img src="./dance_files/figure-html/vis-regression-lines-1.gif"><!-- --></p>
+<p><img src="dance_files/figure-html/vis-regression-lines-1.gif"><!-- --></p>
 <blockquote>
 <p>The figure is consistent with Harrison et al.’s main findings: ”using
 scatterplots to depict correlation results in better performance

@@ -123,8 +123,8 @@ use the <code><a href="branch.html">branch()</a></code> function.</p>
 <p>The <code>inside</code> function only stores the code, and does not execute any code at this step. To execute, we
 provide separate functions. See <code><a href="execute.html">execute()</a></code> for executing the code.</p>
 <p>Instead of using the <code>inside()</code> function, an alternate implementation of the multiverse is using
-the assignment operator, `&lt;-`. See examples below.</p>
-<p>**Note:** the <code>inside()</code> function can only access variables which can be accessed at the same level as the multiverse
+the assignment operator, `&lt;-` (please refer to examples below).</p>
+<p><em>Note</em>: the <code>inside()</code> function can only access variables which can be accessed at the same level as the multiverse
 object. Since <code>inside()</code> is merely an interface to add analysis to the multiverse object, even if it is being called 
 by another function, it is actually manipulating the multiverse object, which will have a different parent environment
 from where <code>inside()</code> is called, and hence not have access to variables which might be accessible in the environment 

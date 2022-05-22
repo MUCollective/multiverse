@@ -15,7 +15,7 @@ vignette: >
 
 ## Introduction
 
-In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualise the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualising them can be difficult. We will show how our package can be used to create the visualisations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998), as well as using other uncertainty visualisation approaches.
+In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualise the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualising them can be difficult. We will show how our package can be used to create the visualisations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://doi.org/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](http://dx.doi.org/10.2139/ssrn.2694998), as well as using other uncertainty visualisation approaches.
 
 
 ```{r, setup, message=FALSE, warning=FALSE}

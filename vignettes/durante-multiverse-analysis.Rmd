@@ -15,7 +15,7 @@ vignette: >
 
 ## Multiverse case study #1
 
-In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
+In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://doi.org/10.1177/1745691616658637).
 
 ## Introduction
 

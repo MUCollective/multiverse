@@ -117,7 +117,7 @@
 </h1></div>
 <p>In any end-to-end analysis there likely exists points in the analysis where researchers have to make a decision between two or more equally defensible choices (e.g., different ways of excluding outliers, different data transformations). In a multiverse analysis, researchers identify all the possible decision points for an analysis, determine alternative analysis steps at each decision point, implements them all, and then report the outcomes of all analyses resulting from all possible choice combinations.</p>
 <p>However, declaring several alternative analysis paths can be tricky, often requiring custom control flows such as nested for-loops and multiple if-else statements. The <strong>goal</strong> of <code>multiverse</code> is to allow users to create a multitude of end-to-end analyses in a concise and easily interpretable manner. <code>multiverse</code> enables this by providing both an embedded Domain-Specific Language (DSL) as well as an API to interact with and extract results from a multiverse analysis, which can then be neatly wrapped within a larger analysis in R.</p>
-<p>For more background on what a <em>multiverse analysis</em> is, please refer to the works of Steegen et al., who first put forth the concept of <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637" class="external-link">multiverse analysis</a>, and Simonsohn et al., who put forth a similar notion called the <a href="https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&amp;context=marketing_papers" class="external-link">Specification curve analysis</a>.</p>
+<p>For more background on what a <em>multiverse analysis</em> is, please refer to the works of Steegen et al., who first put forth the concept of <a href="https://doi.org/10.1177/1745691616658637" class="external-link">multiverse analysis</a>, and Simonsohn et al., who put forth a similar notion called the <a href="http://dx.doi.org/10.2139/ssrn.2694998" class="external-link">Specification curve analysis</a>.</p>
 <p>The <code>multiverse</code> documentation predominantly follows the tidyverse syntax.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -137,9 +137,9 @@
 <li>How conditions and dependencies can be declared in <code>multiverse</code>; conditions can be used to state when two steps in a multiverse are incompatible with one another. See <code><a href="articles/conditions.html">vignette("conditions")</a></code>.</li>
 <li>How multiverse results can be extracted and visualised. . See <code><a href="articles/visualising-multiverse.html">vignette("visualising-multiverse")</a></code>.</li>
 </ul>
-<p>We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used (which can be found in the <a href="https://mucollective.github.io/multiverse/articles/" class="external-link">vignettes</a>):</p>
+<p>We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used (which can be found in the package <a href="https://mucollective.github.io/multiverse/" class="external-link">vignettes</a>):</p>
 <ul>
-<li>Steegen et al.’s <a href="https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637" class="external-link">original multiverse analysis</a> of the paper <a href="https://doi.org/10.1177/0956797612466416" class="external-link">The fluctuating female vote: Politics, religion, and the ovulatory cycle</a>; can also be found <strong>below</strong>.</li>
+<li>Steegen et al.’s <a href="https://doi.org/10.1177/1745691616658637" class="external-link">original multiverse analysis</a> of the paper <a href="https://doi.org/10.1177/0956797612466416" class="external-link">The fluctuating female vote: Politics, religion, and the ovulatory cycle</a>; can also be found <strong>below</strong>.</li>
 <li>Simonsohn et al.’s <a href="http://dx.doi.org/10.2139/ssrn.2694998" class="external-link">specification curve analysis</a> of the paper <a href="https://doi.org/10.1073/pnas.1402786111" class="external-link">Female hurricanes are deadlier than male hurricanes</a>
 </li>
 <li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/dance/" class="external-link">Adding Inferential Information to plots using Resampling and Animations</a> (from <a href="https://hal.inria.fr/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
@@ -509,7 +509,7 @@
 <div class="section level2">
 <h2 id="executing-the-entire-multiverse">Executing the entire multiverse<a class="anchor" aria-label="anchor" href="#executing-the-entire-multiverse"></a>
 </h2>
-<p>To execute all unique analysis paths in the multiverse, an analyst can call <code>execute_multiverse(M)</code>. We support local parallelization with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as <a href="https://cran.r-project.org/web/packages/future/index.html" class="external-link">future</a>, to run analyses across computing clusters.</p>
+<p>To execute all unique analysis paths in the multiverse, an analyst can call <code>execute_multiverse(M)</code>. We support local parallelization with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as <a href="https://CRAN.R-project.org/package=future" class="external-link">future</a>, to run analyses across computing clusters.</p>
 </div>
 <div class="section level2">
 <h2 id="debugging-and-diagnosing-errors">Debugging and Diagnosing Errors<a class="anchor" aria-label="anchor" href="#debugging-and-diagnosing-errors"></a>
@@ -579,7 +579,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/MUCollective/multiverse/actions" class="external-link"><img src="https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/MUCollective/multiverse" class="external-link"><img src="https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J" alt="codecov"></a></li>
+<li><a href="https://app.codecov.io/gh/MUCollective/multiverse" class="external-link"><img src="https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J" alt="codecov"></a></li>
 <li><a href="https://cran.r-project.org/package=multiverse" class="external-link"><img src="https://www.r-pkg.org/badges/version/multiverse" alt="CRAN status"></a></li>
 </ul>
 </div>
