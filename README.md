@@ -1,7 +1,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions)
-[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://codecov.io/gh/MUCollective/multiverse)
+[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://app.codecov.io/gh/MUCollective/multiverse)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/multiverse)](https://cran.r-project.org/package=multiverse)
 ![Download
@@ -31,11 +31,9 @@ neatly wrapped within a larger analysis in R.
 
 For more background on what a *multiverse analysis* is, please refer to
 the works of Steegen et al., who first put forth the concept of
-[multiverse
-analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637),
-and Simonsohn et al., who put forth a similar notion called the
-[Specification curve
-analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
+[multiverse analysis](https://doi.org/10.1177/1745691616658637), and
+Simonsohn et al., who put forth a similar notion called the
+[Specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998).
 
 The `multiverse` documentation predominantly follows the tidyverse
 syntax.
@@ -74,10 +72,10 @@ found in the package
 [vignettes](https://mucollective.github.io/multiverse/)):
 
 -   Steegen et al.’s [original multiverse
-    analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637)
-    of the paper [The fluctuating female vote: Politics, religion, and
-    the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can
-    also be found **below**.
+    analysis](https://doi.org/10.1177/1745691616658637) of the paper
+    [The fluctuating female vote: Politics, religion, and the ovulatory
+    cycle](https://doi.org/10.1177/0956797612466416); can also be found
+    **below**.
 -   Simonsohn et al.’s [specification curve
     analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper
     [Female hurricanes are deadlier than male
@@ -731,8 +729,8 @@ call `execute_multiverse(M)`. We support local parallelization with an
 optional cores argument indicating the number of cpu cores to use. The
 multiverse object can also be easily adapted to use with existing
 parallel computing packages in R, such as
-[future](https://cran.r-project.org/web/packages/future/index.html), to
-run analyses across computing clusters.
+[future](https://CRAN.R-project.org/package=future), to run analyses
+across computing clusters.
 
 ## Debugging and Diagnosing Errors
 

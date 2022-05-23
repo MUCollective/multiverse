@@ -8,6 +8,9 @@
 # excludes all top level Rmd files
 /*.Rmd
 
+# revdep reports
+revdep/.*
+
 # ignore all nonstandard data types
 data/*.rds
 data/*.csv

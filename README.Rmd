@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions) [![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://codecov.io/gh/MUCollective/multiverse) 
+[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions) 
+[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://app.codecov.io/gh/MUCollective/multiverse)
 [![CRAN status](https://www.r-pkg.org/badges/version/multiverse)](https://cran.r-project.org/package=multiverse)
 ![Download count](https://cranlogs.r-pkg.org/badges/last-month/multiverse)
 
@@ -36,7 +37,7 @@ In any end-to-end analysis there likely exists points in the analysis where rese
 
 However, declaring several alternative analysis paths can be tricky, often requiring custom control flows such as nested for-loops and multiple if-else statements. The **goal** of `multiverse` is to allow users to create a multitude of end-to-end analyses in a concise and easily interpretable manner. `multiverse` enables this by providing both an embedded Domain-Specific Language (DSL) as well as an API to interact with and extract results from a multiverse analysis, which can then be neatly wrapped within a larger analysis in R.
 
-For more background on what a *multiverse analysis* is, please refer to the works of Steegen et al., who first put forth the concept of [multiverse analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637), and Simonsohn et al., who put forth a similar notion called the [Specification curve analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
+For more background on what a *multiverse analysis* is, please refer to the works of Steegen et al., who first put forth the concept of [multiverse analysis](https://doi.org/10.1177/1745691616658637), and Simonsohn et al., who put forth a similar notion called the [Specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998).
 
 The `multiverse` documentation predominantly follows the tidyverse syntax.
 
@@ -60,7 +61,7 @@ In this document, we will provide you with details on how to quickly get started
 
 We also implement a series of end-to-end multiverse implementations using this package to demonstrate how it might be used (which can be found in the package [vignettes](https://mucollective.github.io/multiverse/)):
 
--   Steegen et al.'s [original multiverse analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) of the paper [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can also be found **below**.
+-   Steegen et al.'s [original multiverse analysis](https://doi.org/10.1177/1745691616658637) of the paper [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can also be found **below**.
 -   Simonsohn et al.'s [specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
 -   Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
 -   Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
@@ -466,7 +467,7 @@ Analysts can change which analysis path is executed by default. Inline code outp
 
 ## Executing the entire multiverse
 
-To execute all unique analysis paths in the multiverse, an analyst can call `execute_multiverse(M)`. We support local parallelization with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as [future](https://cran.r-project.org/web/packages/future/index.html), to run analyses across computing clusters.
+To execute all unique analysis paths in the multiverse, an analyst can call `execute_multiverse(M)`. We support local parallelization with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as [future](https://CRAN.R-project.org/package=future), to run analyses across computing clusters.
 
 ## Debugging and Diagnosing Errors
 

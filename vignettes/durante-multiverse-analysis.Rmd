@@ -383,6 +383,7 @@ expand(M) %>%
   head( 10 )
 ```
 
+
 We then take this data frame and plot the results as a confidence interval and point estimate using `ggplot2`. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use `gganimate` to animate through the results of each universe to quickly get an overview of the robustness of the results.
 
 Note: we discuss extracting results from the multiverse and visualising them in more detail in `vignette(visualising-multiverse)`
