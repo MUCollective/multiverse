@@ -1,6 +1,6 @@
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions)
+[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg)](https://github.com/MUCollective/multiverse/actions)
 [![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://app.codecov.io/gh/MUCollective/multiverse)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/multiverse)](https://cran.r-project.org/package=multiverse)
