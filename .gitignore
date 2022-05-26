@@ -15,3 +15,5 @@ revdep/.*
 data/*.rds
 data/*.csv
 data/vis_correlation_all_judgements.rda$
+/doc/
+/Meta/

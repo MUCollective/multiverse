@@ -16,7 +16,7 @@
   .idx = 1
   m_obj = attr(multiverse, "multiverse")
   .env <- unlist(unname(tail(attr(multiverse, "multiverse")$multiverse_diction$as_list(), n = 1)), recursive = FALSE)[[1]]$env
-  
+
   get(as.character(name), .env)
 }
 

@@ -60,6 +60,7 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   # the user is editing pre-declared parameters. We need to recompute
   # everything after that point
   .names_in_m <- unlist(m_obj$multiverse_diction$keys())
+  
   if (.label %in% .names_in_m) {
     if ( which(names(.code) == .label) < length(.code)) {
       .code = .code[-((which(names(.code) == .label)+1):length(.code))]
@@ -85,21 +86,20 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
     }
   }
   
-  # extracts the parameters and conditions declared as lists of lists
   parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
   parameters = parameter_conditions_list$parameters
   conditions = parameter_conditions_list$conditions
   
   .expr <- list(.expr)
   names(.expr) <- .label
-  
+
   q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), conditions, .parent_key)
-  
+
   # stores parameters and conditions in the multiverse object
   m_obj$parameters <- parameters
   m_obj$conditions <- conditions
   m_obj$parameter_set <- names(parameters)
-  
+
   invisible( m_obj$multiverse_diction$set(.label, q) )
 }
 
@@ -168,10 +168,6 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
     
     unlist(q, recursive = FALSE)
   }
-  
-  # gets the environments from the previous code block in the multiverse
-  # these will be the parents for the new environments created from the execution
-  # of a new code block.
 }
 
 

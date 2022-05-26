@@ -129,15 +129,14 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   # there is no code declared in the multiverse
   if (is_null(m_obj$code)) {
     # code block is not named, it is just appended to a unnamed list -> inside() declaration
-    if (is.null(.name)) .c = list(.expr) 
-    
-    # code block is named, it is just appended to a named list
+    if (is.null(.name)) {
+      .c = list(.expr)
+    } # code block is named, it is just appended to a named list
     else {
       .c = list()
       .c[[.name]] = .expr
     }
-    
-    .expr <- list(.expr)
+    .expr <- .c
   } else {
     # there is code already declared in the multiverse
     if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
@@ -147,15 +146,33 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
       .c[[.name]] = .expr
       
       #.expr needs to be changed so that we recompute everything that occurs subsequently
-      .expr = .c[which(names(.c) == .name)]
+      .expr = .c[which(names(.c) == .name):length(.c)]
       .name = names(.c)[which(names(.c) == .name)]
     }
   }
   
-  mapply(parse_multiverse, .expr, .name, MoreArgs = list(.multiverse = multiverse, .code = .c))
+  mapply(parse_multiverse, .expr, names(.expr), MoreArgs = list(.multiverse = multiverse, .code = .c))
   
   m_obj$code <- .c
-  m_obj$unchanged_until <- length(.c) - length(.name)
+  
+  # case 1: if code is being added to the end, 
+  # unchanged_until should be the length of the list
+  #
+  # case 2: if a previous element, n, in the code list
+  #  is being edited, unchanged until should be n - 1
+  
+  if (tail(names(.c), n = 1) == .name) {
+    # case 1
+    m_obj$unchanged_until = length(.c) - 1
+  } else {
+    # case 2:
+    # `which` returns the index of the code block which has changed
+    # we substract one to indicate what has been unchanged
+    .p_idx = which( names(.c) == .name ) - 1
+    if (.p_idx == 0) m_obj$unchanged_until = NA
+    else m_obj$unchanged_until = .p_idx
+  }
+  # m_obj$unchanged_until <- length(.c) - length(.name)
 }
 
 # expand use of .options argument in branch calls

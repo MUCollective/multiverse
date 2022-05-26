@@ -135,8 +135,7 @@ execute_each <- function(i, code, env_list, pb, curr, n) {
 execute_universe <- function(multiverse, .universe = 1) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   .level = attr(multiverse, "multiverse")$unchanged_until
-  # print(.level)
-  # print(m_diction$keys())
+  if (is.na(.level)) .level = 0
   
   .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
   .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
@@ -152,9 +151,11 @@ execute_code_from_universe <- function(.c, .env = globalenv()) {
 
 # for a universe, get the indices which need to be executed
 get_exec_order <- function(.m_diction, .uni, .level) {
-  if (.level >= 1){
+  if (.level > 1){
     .p <- .m_diction$get(.m_diction$keys()[[.level]])[[.uni]]$parent
     c(get_exec_order(.m_diction, .p, .level - 1), .uni)
+  } else {
+    1
   }
 }
 

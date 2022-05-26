@@ -1,6 +1,6 @@
 ---
 title: "Example multiverse implementation: Effect of fertility on religiosity and political attitudes"
-author: "Abhraneel Sarma"
+author: "Abhraneel Sarma, Northwestern University"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -388,7 +388,7 @@ We then take this data frame and plot the results as a confidence interval and p
 
 Note: we discuss extracting results from the multiverse and visualising them in more detail in `vignette(visualising-multiverse)`
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 p <- expand(M) %>%
   extract_variables(summary_RelComp) %>%
   unnest( cols = c(summary_RelComp) ) %>%
@@ -404,7 +404,8 @@ p <- expand(M) %>%
   theme_minimal() +
   transition_manual( .universe )
 
-animate(p, nframes = 210, fps = 2)
+animate(p, nframes = 210, fps = 4, res = 72)
 ```
 
+![Animation of linear regression coefficients](../man/figures/durante-regression.gif)
 

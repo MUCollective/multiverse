@@ -14,6 +14,7 @@
 ^README_files$
 ^docs$
 ^figure$
+^revdep$
 
 # all non-relevant data files
 ^data/*\.rds$
@@ -30,3 +31,5 @@
 
 # exclude CRAN comments file
 ^cran-comments.md$
+^doc$
+^Meta$

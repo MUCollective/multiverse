@@ -23,6 +23,7 @@
 #'
 # wrapper function for get_parameter_code
 get_code <- function(.code, .assgn = NULL) {
+  # print(.code)
   lapply(.code, get_parameter_code, .assgn)
 }
 
@@ -83,7 +84,10 @@ compute_branch <- function(.expr, .assgn) {
   option_names = lapply(.expr[-1:-2], get_option_name)
 
   param_assignment <- unlist(lapply(option_names, function(x) x == assigned_parameter_option_name))
-
+  
+  # print(.expr[-1:-2])
+  # print(param_assignment)
+  # print(extract2(.expr[-1:-2], which(param_assignment, arr.ind = TRUE)))
   get_option_value(extract2(.expr[-1:-2], which(param_assignment, arr.ind = TRUE)))
 }
 

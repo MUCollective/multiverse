@@ -160,3 +160,45 @@ test_that("inside cannot access variables which is not accessible from the envir
   
   expect_warning(myfun())
 })
+
+
+test_that("inside: unchanged_until and exec_until are correct", {
+  M <- multiverse()
+
+  # unchanged_until should be undefined at the beginning
+  expect_equal(attr(M, "multiverse")$unchanged_until, NA)
+
+  inside(M, {
+    x <- branch(value_x, 0, 5, 14)
+    z <- branch(value_z, 2, 3)
+  })
+
+  inside(M, {
+    y = branch(value_y, 2, 7)
+  })
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, 1) # we've added two code blocks to the multiverse
+
+  inside(M, {
+    x <- branch(value_x, 3, 6, 9)
+    z <- branch(value_z, 3, 4)
+  }, .label = "1") # we've changed the first code block
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, NA)
+
+  inside(M, {
+    w = branch(value_w, 0, 1)
+  })
+
+  inside(M, {
+    a = branch(value_a, "true", "false")
+  })
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, 3)
+
+  inside(M, {
+    y = branch(value_y, 2, 7)
+  }, .label = "2") # we've changed the second code block now
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, 1)
+})

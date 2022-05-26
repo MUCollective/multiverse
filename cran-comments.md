@@ -5,11 +5,11 @@ This submission contains minor fixes and improves support for the use of {future
 * Windows (winbuilder), R-devel (unstable) (2022-05-20 r82390)
 * Windows (winbuilder), R-release 4.2.0 (2022-04-22)
 * Windows (winbuilder), R-oldrelease 4.1.3 (2022-03-10)
-* MacOs (local), R-release 4.0.5 (2021-03-31)
+* MacOs (local), R-release 4.1.2 (2021-11-01)
 * Ubuntu 16.04 (github), R-release 4.0.5 (2021-03-31)
 
 ## R CMD check results
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 notes
 > checking CRAN incoming feasibility ... NOTE
   Maintainer: ‘Abhraneel Sarma <abhraneel@u.northwestern.edu>’
   Found the following (possibly) invalid URLs:
@@ -33,14 +33,6 @@ This submission contains minor fixes and improves support for the use of {future
       Message: 503
       
 These DOIs are valid and will direct users to the correct webpage of the published article on the publisher's website
-      
-      
-> checking installed package size ... NOTE
-    installed size is  5.7Mb
-    sub-directories of 1Mb or more:
-      doc   4.7Mb
-      
-These build size is less than 5Mb. We have included several vignettes to help support users of the library as our initial user testing of the library has suggested that new users may often find it challenging to implement multiverse-style analyses.
 
 
 ## revdepcheck results
