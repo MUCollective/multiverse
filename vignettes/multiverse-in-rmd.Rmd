@@ -102,6 +102,8 @@ Alternately, users can insert a multiverse We also allow users to create a keybo
 - Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).
 - Click "Apply" and exit the dialog box
 
+If you are experiencing issues creating a keyboard shortcut for code blocks, or if you are experiencing a situation where the shortcut needs to be re-created everytime you open a new RStudio session, please refer to the `Debugging Keyboard Shortcuts` section at the end of this document.
+
 ### Multiverse code block
 
 The declaration of the chunk below is (this gets hidden when we knit the document): ` ```{multiverse default-m-1, inside = M_block}`
@@ -167,6 +169,23 @@ When a document is knit, currently all analysis paths are executed but the docum
 Currently we do not support knitting of RMarkdown documents with multiverse code blocks to PDF documents.
 
 
+## Debugging Keyboard Shortcuts
+
+### On OS X Systems
+
+One issue that I have encountered in the past, is that I had to create the keyboard shortcut everytime I opened a new RStudio session. As discussed here, RStudio keybindings are saves as JSON files in the directory `~/.R/rstudio/keybindings/`, but this directory was missing for me. 
+
+Check if the directory exists for you:
+1. Open Terminal
+2. Enter: `cd ~/.config/rstudio/keybindings `
+
+If it returns an error such as `cd: no such file or directory`, this means that you do not have the directory. The fix is to create this directory which can be done through the following steps:
+
+1. Open Terminal
+2. Enter `mkdir ~/.config/rstudio/keybindings/`
+
+If it returns "Permission denied" you might have to run the command as the superuser in ther Terminal: `sudo mkdir ~/.config/rstudio/keybindings/`
+This will request you to enter your login password.
 
 
 
