@@ -296,6 +296,9 @@ combine_parameter_conditions <- function(l1, l2) {
 }
 
 get_option_name <- function(x) {
+ # if an option is empty
+  if(x == "") stop("options cannot be empty")
+  
   # when option names are specified
   if (is.call(x) && x[[1]] == "~") {
     if (is.call( f_lhs(x) ) && f_lhs(x)[[1]] == "%when%" ) {
