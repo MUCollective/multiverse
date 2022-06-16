@@ -297,7 +297,7 @@ combine_parameter_conditions <- function(l1, l2) {
 
 get_option_name <- function(x) {
  # if an option is empty
-  if(x == "") stop("options cannot be empty")
+  if(x == "") stop("options cannot be empty. make sure your branch statement does not have empty options")
   
   # when option names are specified
   if (is.call(x) && x[[1]] == "~") {
