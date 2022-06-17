@@ -23,10 +23,6 @@ library(multiverse)
 ```
 
 
-```{r, include=FALSE}
-M = multiverse()
-```
-
 ```{r, chunk-setup, include=FALSE}
 opts_chunk$set(
   echo = TRUE,
@@ -242,7 +238,92 @@ We can inspect the multiverse object to see our declared analysis paths:
 expand(M)
 ```
 
-## Example 3: A branch as a function
+## Example 3: Beware of the flexibility
+`multiverse` provides a lot of flexibility in how you can use `branch()` to replace sub-expressions in R with multiple alternative subexpressions. For instance, the previous example could have been re-written as:
+
+```{multiverse h-3, inside = M, echo = FALSE}
+# here, we perform a `filter` operation in the multiverse
+df.filtered = hurricane_data %>%
+  branch(death_outliers,
+      "no_exclusion" ~ filter(TRUE),
+      "most_extreme" ~ filter(name != "Katrina"),
+      "two_most_extreme" ~ filter(!(name %in% c("Katrina", "Audrey")))
+  )
+```
+
+````
+```{multiverse default-m-3, inside = M}`r ''`
+# here, we perform a `filter` operation in the multiverse
+df.filtered = hurricane_data %>%
+  branch(death_outliers,
+      "no_exclusion" ~ filter(TRUE),
+      "most_extreme" ~ filter(name != "Katrina"),
+      "two_most_extreme" ~ filter(!(name %in% c("Katrina", "Audrey")))
+  )
+```
+````
+
+
+However, we cannot chain additional pipes after the `filter()`, within the `branch()` statement. In other words, attempting to do something like this would result in an error:
+
+````
+```{multiverse default-m-4, inside = M}`r ''`
+# do not do this
+df.filtered = hurricane_data %>%
+  branch(death_outliers,
+      "no_exclusion" ~ filter(TRUE) %>% mutate(deaths = log(deaths + 1)),
+      "most_extreme" ~ filter(name != "Katrina") %>% mutate(deaths = log(deaths + 1)),
+      "two_most_extreme" ~ filter(!(name %in% c("Katrina", "Audrey"))) %>% mutate(deaths = log(deaths + 1))
+  )
+```
+````
+
+This is because, due to the presense of the pipe (`%>%`) within the `branch` statement, we are not able to process the option expressions. Workarounds to this problem include declaring additional pipes outside branch (if these are invariant), or declaring it by reusing the same parameter (if they vary based on the options).
+
+## Example 4: Variable assignment inside a branch statement
+
+```{r}
+M = multiverse()
+```
+
+There may be scenarios where you want to assign a value to a variable in a branch statement. The simplest example for this would be:
+
+````
+```{multiverse default-m-5, inside = M}`r ''`
+# do not do this
+branch(variable_declaration,
+  "first_option" ~ x = 1,
+  "second_option" ~ x = 2
+)
+```
+````
+
+Again, this is something which will result in an error because we are not able to parse the expression for each
+option. The solution is to enclose the declaration within curly braces: `{` and `}` as shown below:
+
+
+```{multiverse default-h-6, inside = M}
+# do not do this
+branch(variable_declaration,
+  "first_option" ~ { x = 1 },
+  "second_option" ~ { x = 2 }
+)
+```
+
+
+````
+```{multiverse default-m-6, inside = M}`r ''`
+# do not do this
+branch(variable_declaration,
+  "first_option" ~ { x = 1 },
+  "second_option" ~ { x = 2 }
+)
+```
+````
+
+
+
+## Example 5: A branch as a function
 
 ```{r}
 M = multiverse()
@@ -250,7 +331,7 @@ M = multiverse()
 
 Say we are not familiar with R's tidyverse packages and it's style of writing code. An alternate way of declaring a branch for transforming the `duration` variable in the analysis would be to use two separate functions for the transformation depending on which universe one is.
 
-```{multiverse h-3, inside = M, echo = FALSE}
+```{multiverse h-7, inside = M, echo = FALSE}
 duration = branch(data_trans,
         "log-transformed" ~ log,
         "un-transformed" ~ identity
@@ -259,7 +340,7 @@ duration = branch(data_trans,
 
 
 ````
-```{multiverse default-m-3, inside = M}`r ''`
+```{multiverse default-m-7, inside = M}`r ''`
 duration <- branch(data_trans,
         "log-transformed" ~ log,
         "un-transformed" ~ identity
@@ -284,7 +365,7 @@ A more readable pattern might be:
 M = multiverse()
 ```
 
-```{multiverse h-4, inside = M, echo = FALSE}
+```{multiverse h-8, inside = M, echo = FALSE}
 duration_transform = branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
@@ -294,7 +375,7 @@ duration = duration_transform(data.userlogs.raw$duration)
 ```
 
 ````
-```{multiverse default-m-4, inside = M}`r ''`
+```{multiverse default-m-8, inside = M}`r ''`
 duration_transform = branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
@@ -315,7 +396,7 @@ expand(M) %>%
   head()
 ```
 
-## Example 4: Defining parameters separately
+## Example 6: Defining parameters separately
 
 In this example, we show an alternative for how parameters can be declared. Here, we explore whether different ways of data transformation calculating confidence intervals impact the results. We consider two ways of calculating confidence intervals: the t-test and Bootstrapped CIs.
 
@@ -339,7 +420,7 @@ bootstrapped_ci <- function(x, y) {
 
 Instead of defining parameters locally in the code, where we want the code to differ, we can also just define it upfront by assigning it to a variable and use the variable in your code. For example, in the next example, we declare *two different branches* for data transformation, data modeling and data presentation respectively. We also define any necessary functions along the way.
 
-```{multiverse h-5, inside = M, echo = FALSE}
+```{multiverse h-9, inside = M, echo = FALSE}
 data_trans <- branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
@@ -368,7 +449,7 @@ df <- df %>%
 ```
 
 ````
-```{multiverse default-m-5, inside = M}`r ''`
+```{multiverse default-m-9, inside = M}`r ''`
 data_trans <- branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
@@ -430,7 +511,7 @@ expand(M) %>%
 ```
 
 
-## Example 5: Parameters can be re-used (and alternate ways of declaring the same branch)
+## Example 7: Parameters can be re-used (and alternate ways of declaring the same branch)
 
 Consider the modeling step from `vignette(hurricane)`. Here, one of the decisions that we face is the choice of regression model to use (gaussian or poisson). As described in the document, this requires two different local changes in the code: 
 
@@ -485,7 +566,7 @@ M = multiverse()
 ```
 
 
-```{multiverse h-6, inside = M, echo = FALSE}
+```{multiverse h-10, inside = M, echo = FALSE}
 set.seed(branch(seed, .options = 1:25))
 
 x1 <- rnorm(25)
@@ -500,7 +581,7 @@ intervals <- broom::tidy(m, conf.int = TRUE)
 
 
 ````
-```{multiverse default-m-6, inside = M}`r ''`
+```{multiverse default-m-10, inside = M}`r ''`
 set.seed(branch(seed, .options = 1:25))
 
 x1 <- rnorm(25)
