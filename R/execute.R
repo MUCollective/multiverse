@@ -72,7 +72,9 @@ execute_multiverse <- function(multiverse, parallel = FALSE, progress = FALSE) {
   # we execute each step in sequence from top to bottom
   .res <- mapply(exec_all, .m_list, cumulative_l, MoreArgs = list(progressbar = pb, steps = steps, in_parallel = parallel))
   
-  # update the multiverse_diction  # mapply(function(x, y) m_diction$set(as.character(x), y), .to_exec, .res)
+  
+  # update multiverse diction with new elements
+  m_diction$update(ordered_dict(.res))
   
   m_obj$exec_all_until <- length(m_diction$as_list())
 }
@@ -100,7 +102,7 @@ exec_all <- function(list_block_exprs, current, progressbar, steps, in_parallel)
   
   .res <- app(seq_along(.code_list), execute_each, .code_list, .env_list, progressbar, current, steps)
   
-  .ts = lapply(.res, function(x) x$ts)
+  .error_messages = lapply(.res, function(x) x$ts)
   .res_envs = lapply(.res, function(x) x$env)
   
   # updates the old environments in the dictionary with the new environments
@@ -108,12 +110,18 @@ exec_all <- function(list_block_exprs, current, progressbar, steps, in_parallel)
   
   lapply(seq_along(.res), function(i, x) {
     if (is(x[[i]], "try-error"))  {
-      warning("error in universe ", i, "\n")
-      cat(x[[i]])
+      warning("error in universe ", i)
+      cat(x[[i]], "\n\n")
     }
-  }, x = .ts)
+  }, x = .error_messages)
   
-  # mapply(function(.x, .env) list(append(.x, list(env = .env))), list_block_exprs, list_of_envirs)
+  .error_messages = lapply(.error_messages, function(x) { ifelse(is(x, "try-error"), x, NA) })
+  
+  # save the errors to `list_block_exprs` (current level of m_list)
+  # return the updated `list_block_exprs`
+  list(
+    mapply(function(x, y) {x$error = y; return(list(x))}, list_block_exprs, .error_messages)
+  )
 }
 
 execute_each <- function(i, code, env_list, pb, curr, n) {

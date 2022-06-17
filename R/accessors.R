@@ -74,6 +74,7 @@ expand.multiverse <- function(multiverse) {
     n <- nrow(df)
     param.assgn =  lapply(seq_len(n), function(i) lapply(df, "[[", i))
     .code = lapply(seq_len(n), get_code_universe, .m_list = .m_list, .level = length(.m_list))
+    .error = lapply(seq_len(n), get_error_universe, .m_list = .m_list, .level = length(.m_list))
     .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
   }
   
@@ -81,7 +82,8 @@ expand.multiverse <- function(multiverse) {
                       .universe = 1:nrow(df), 
                       .parameter_assignment = param.assgn, 
                       .code = .code, 
-                      .results = .res
+                      .results = .res,
+                      .errors = .error
                     ), .universe, everything())
 }
 
