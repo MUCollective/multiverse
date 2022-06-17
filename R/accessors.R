@@ -68,6 +68,7 @@ expand.multiverse <- function(multiverse) {
     } else {
       .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
     }
+    .error = NA
     df <- tibble(.universe = seq(1:n))
   } else {
     df <- filter(df, eval(all_conditions))

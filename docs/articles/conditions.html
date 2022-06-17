@@ -107,7 +107,7 @@
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma</h4>
             
-            <h4 data-toc-skip class="date">2022-05-25</h4>
+            <h4 data-toc-skip class="date">2022-06-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/conditions.Rmd" class="external-link"><code>vignettes/conditions.Rmd</code></a></small>
       <div class="hidden name"><code>conditions.Rmd</code></div>
@@ -254,7 +254,7 @@ the value of “mc_option2” when we filter <code>cycle_length</code> using
 parameter combinations are absent (universes indexed 3 and 5.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 7 × 6</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 7 × 7</span></span>
 <span class="co">##   .universe cycle_length menstrual_calcu… .parameter_assi… .code        .results</span>
 <span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  </span>
 <span class="co">## <span style="color: #BCBCBC;">1</span>         1 cl_option1   mc_option1       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
@@ -263,7 +263,8 @@ parameter combinations are absent (universes indexed 3 and 5.</p>
 <span class="co">## <span style="color: #BCBCBC;">4</span>         4 cl_option2   mc_option1       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
 <span class="co">## <span style="color: #BCBCBC;">5</span>         5 cl_option2   mc_option3       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
 <span class="co">## <span style="color: #BCBCBC;">6</span>         6 cl_option3   mc_option2       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
-<span class="co">## <span style="color: #BCBCBC;">7</span>         7 cl_option3   mc_option3       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #BCBCBC;">7</span>         7 cl_option3   mc_option3       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
+<span class="co">## <span style="color: #949494;"># … with 1 more variable: .errors &lt;list&gt;</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="the-branch_assert-function">The <code>branch_assert()</code> function<a class="anchor" aria-label="anchor" href="#the-branch_assert-function"></a>
@@ -305,7 +306,7 @@ analysis:</p>
 indexed 3 and 5 are not compatible.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 7 × 6</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 7 × 7</span></span>
 <span class="co">##   .universe cycle_length menstrual_calcu… .parameter_assi… .code        .results</span>
 <span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  </span>
 <span class="co">## <span style="color: #BCBCBC;">1</span>         1 cl_option1   mc_option1       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
@@ -314,7 +315,8 @@ indexed 3 and 5 are not compatible.</p>
 <span class="co">## <span style="color: #BCBCBC;">4</span>         4 cl_option2   mc_option1       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
 <span class="co">## <span style="color: #BCBCBC;">5</span>         5 cl_option2   mc_option3       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
 <span class="co">## <span style="color: #BCBCBC;">6</span>         6 cl_option3   mc_option2       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
-<span class="co">## <span style="color: #BCBCBC;">7</span>         7 cl_option3   mc_option3       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #BCBCBC;">7</span>         7 cl_option3   mc_option3       <span style="color: #949494;">&lt;named list [2]&gt;</span> &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>   </span>
+<span class="co">## <span style="color: #949494;"># … with 1 more variable: .errors &lt;list&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -386,7 +388,7 @@ example #2 from Steegen et al.’s paper.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer>

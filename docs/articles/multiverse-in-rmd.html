@@ -108,7 +108,7 @@ to multiverse code chunks</h1>
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma</h4>
             
-            <h4 data-toc-skip class="date">2022-05-25</h4>
+            <h4 data-toc-skip class="date">2022-06-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/multiverse-in-rmd.Rmd" class="external-link"><code>vignettes/multiverse-in-rmd.Rmd</code></a></small>
       <div class="hidden name"><code>multiverse-in-rmd.Rmd</code></div>
@@ -226,6 +226,11 @@ see one result with “Insert multiverse code chunk” as the name.</li>
 Ctrl+Shift+Alt+M (on Windows).</li>
 <li>Click “Apply” and exit the dialog box</li>
 </ul>
+<p>If you are experiencing issues creating a keyboard shortcut for code
+blocks, or if you are experiencing a situation where the shortcut needs
+to be re-created everytime you open a new RStudio session, please refer
+to the <code>Debugging Keyboard Shortcuts</code> section at the end of
+this document.</p>
 <div class="section level3">
 <h3 id="multiverse-code-block">Multiverse code block<a class="anchor" aria-label="anchor" href="#multiverse-code-block"></a>
 </h3>
@@ -245,18 +250,18 @@ duration &lt;- do.call(data_transform, list(userlogs$duration))
 generated properly for both the multiverse objects.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M_inside</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 2 × 5</span></span>
-<span class="co">##   .universe data_transform  .parameter_assignment .code            .results</span>
-<span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  </span>
-<span class="co">## <span style="color: #BCBCBC;">1</span>         1 log-transformed <span style="color: #949494;">&lt;named list [1]&gt;</span>      <span style="color: #949494;">&lt;named list [1]&gt;</span> <span style="color: #949494;">&lt;env&gt;</span>   </span>
-<span class="co">## <span style="color: #BCBCBC;">2</span>         2 untransformed   <span style="color: #949494;">&lt;named list [1]&gt;</span>      <span style="color: #949494;">&lt;named list [1]&gt;</span> <span style="color: #949494;">&lt;env&gt;</span></span></code></pre>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 2 × 6</span></span>
+<span class="co">##   .universe data_transform  .parameter_assignment .code        .results .errors</span>
+<span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span> </span>
+<span class="co">## <span style="color: #BCBCBC;">1</span>         1 log-transformed <span style="color: #949494;">&lt;named list [1]&gt;</span>      &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;  </span>
+<span class="co">## <span style="color: #BCBCBC;">2</span>         2 untransformed   <span style="color: #949494;">&lt;named list [1]&gt;</span>      &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;</span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M_block</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 2 × 5</span></span>
-<span class="co">##   .universe data_transform  .parameter_assignment .code            .results</span>
-<span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  </span>
-<span class="co">## <span style="color: #BCBCBC;">1</span>         1 log-transformed <span style="color: #949494;">&lt;named list [1]&gt;</span>      <span style="color: #949494;">&lt;named list [1]&gt;</span> <span style="color: #949494;">&lt;env&gt;</span>   </span>
-<span class="co">## <span style="color: #BCBCBC;">2</span>         2 untransformed   <span style="color: #949494;">&lt;named list [1]&gt;</span>      <span style="color: #949494;">&lt;named list [1]&gt;</span> <span style="color: #949494;">&lt;env&gt;</span></span></code></pre>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 2 × 6</span></span>
+<span class="co">##   .universe data_transform  .parameter_assignment .code        .results .errors</span>
+<span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span> </span>
+<span class="co">## <span style="color: #BCBCBC;">1</span>         1 log-transformed <span style="color: #949494;">&lt;named list [1]&gt;</span>      &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;  </span>
+<span class="co">## <span style="color: #BCBCBC;">2</span>         2 untransformed   <span style="color: #949494;">&lt;named list [1]&gt;</span>      &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;</span></code></pre>
 <p>As you can see above, both the methods yield the same multiverse
 table. Next, we inspect the <code>.code</code> column of the multiverse
 object. This column contains the code used to generate each analysis
@@ -327,6 +332,34 @@ investigate the robustness of the implemented analysis themselves.</p>
 multiverse code blocks to PDF documents.</p>
 </div>
 </div>
+<div class="section level2">
+<h2 id="debugging-keyboard-shortcuts">Debugging Keyboard Shortcuts<a class="anchor" aria-label="anchor" href="#debugging-keyboard-shortcuts"></a>
+</h2>
+<div class="section level3">
+<h3 id="on-os-x-systems">On OS X Systems<a class="anchor" aria-label="anchor" href="#on-os-x-systems"></a>
+</h3>
+<p>One issue that I have encountered in the past, is that I had to
+create the keyboard shortcut everytime I opened a new RStudio session.
+As discussed here, RStudio keybindings are saves as JSON files in the
+directory <code>~/.R/rstudio/keybindings/</code>, but this directory was
+missing for me.</p>
+<p>Check if the directory exists for you: 1. Open Terminal 2. Enter:
+<code>cd ~/.config/rstudio/keybindings</code></p>
+<p>If it returns an error such as
+<code>cd: no such file or directory</code>, this means that you do not
+have the directory. The fix is to create this directory which can be
+done through the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Open Terminal</li>
+<li>Enter <code>mkdir ~/.config/rstudio/keybindings/</code>
+</li>
+</ol>
+<p>If it returns “Permission denied” you might have to run the command
+as the superuser in ther Terminal:
+<code>sudo mkdir ~/.config/rstudio/keybindings/</code> This will request
+you to enter your login password.</p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -346,7 +379,7 @@ multiverse code blocks to PDF documents.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer>

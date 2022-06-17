@@ -133,7 +133,8 @@ test_that("accessor functions retrieve the multiverse table", {
   ref_df = ref_df %>%
     mutate(
       .parameter_assignment = param.assgn,
-      .code = map(.parameter_assignment, ~ get_code(ref_expr, .x))
+      .code = map(.parameter_assignment, ~ get_code(ref_expr, .x)),
+      .errors = list(NA)
     ) %>%
     as_tibble()
 

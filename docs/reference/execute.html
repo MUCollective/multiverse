@@ -100,14 +100,21 @@ whole of the multiverse using the <code>execute_multiverse()</code>.</p>
     <h2>Arguments</h2>
     <dl><dt>multiverse</dt>
 <dd><p>The multiverse object</p></dd>
+
+
 <dt>parallel</dt>
 <dd><p>Indicates whether to execute the multiverse analysis in parallel. If TRUE, multiverse makes use of
 <code><a href="https://future.futureverse.org/reference/future.html" class="external-link">future::future</a></code> as backend to support parallel processing. Requires configuration of <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan</a></code>. Defaults to FALSE.</p></dd>
+
+
 <dt>progress</dt>
 <dd><p>Indicates whether to include a progress bar for each step of the execution. Defaults to FALSE.</p></dd>
+
+
 <dt>.universe</dt>
 <dd><p>Indicate which universe to execute, if the user wants to execute a specific combination
 of the parameters using <code>execute_universe()</code>. Defaults to NULL, which will execute the first (default) analysis.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -156,7 +163,7 @@ under the results column.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

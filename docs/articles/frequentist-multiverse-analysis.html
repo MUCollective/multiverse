@@ -112,7 +112,7 @@ CNRS &amp; Sorbonne Universite</h4>
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma, Northwestern University</h4>
             
-            <h4 data-toc-skip class="date">2022-05-25</h4>
+            <h4 data-toc-skip class="date">2022-06-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/frequentist-multiverse-analysis.Rmd" class="external-link"><code>vignettes/frequentist-multiverse-analysis.Rmd</code></a></small>
       <div class="hidden name"><code>frequentist-multiverse-analysis.Rmd</code></div>
@@ -295,7 +295,7 @@ conf_level &lt;-  branch(conf_level,
 the possible combinations:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 16 × 7</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 16 × 8</span></span>
 <span class="co">##    .universe ci_method data_transform  conf_level .parameter_assig… .code       </span>
 <span class="co">##        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span>
 <span class="co">## <span style="color: #BCBCBC;"> 1</span>         1 t based   log-transformed 50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
@@ -314,7 +314,7 @@ the possible combinations:</p>
 <span class="co">## <span style="color: #BCBCBC;">14</span>        14 bootstrap untransformed   67         <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">15</span>        15 bootstrap untransformed   95%        <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">16</span>        16 bootstrap untransformed   99%        <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
-<span class="co">## <span style="color: #949494;"># … with 1 more variable: .results &lt;list&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;"># … with 2 more variables: .results &lt;list&gt;, .errors &lt;list&gt;</span></span></code></pre>
 <p>We then actually perform the steps within the multiverse to get
 results from the different possible combinations of analysis options.
 First, we perform the data transformation operation within the
@@ -373,7 +373,7 @@ of data frames.</p>
 <span class="va">df.mtbl</span><span class="op">$</span><span class="va">summary</span> <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">.results</span>, <span class="st">"df"</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 8</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 9</span></span>
 <span class="co">##   .universe ci_method data_transform  conf_level .parameter_assign… .code       </span>
 <span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span>
 <span class="co">## <span style="color: #BCBCBC;">1</span>         1 t based   log-transformed 50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
@@ -382,7 +382,7 @@ of data frames.</p>
 <span class="co">## <span style="color: #BCBCBC;">4</span>         4 t based   log-transformed 99%        <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">5</span>         5 t based   untransformed   50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">6</span>         6 t based   untransformed   67         <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
-<span class="co">## <span style="color: #949494;"># … with 2 more variables: .results &lt;list&gt;, summary &lt;list&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;"># … with 3 more variables: .results &lt;list&gt;, .errors &lt;list&gt;, summary &lt;list&gt;</span></span></code></pre>
 <p>As we can see above, each row in the <code>summary</code> column
 consists of a <span class="math inline">\(4 \times 4\)</span>, data
 frame which we will need to unpack. We will use the function to expand
@@ -400,7 +400,7 @@ results for each of the four conditions in our experiment.</p>
 <code class="sourceCode R"><span class="va">df.mtbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_wider</a></span><span class="op">(</span><span class="va">df.mtbl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>
 <span class="va">df.mtbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">df.mtbl</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">modality</span>, <span class="va">estimate</span>, <span class="va">conf.low</span>, <span class="va">conf.high</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 11</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 12</span></span>
 <span class="co">##   .universe ci_method data_transform  conf_level .parameter_assign… .code       </span>
 <span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span>
 <span class="co">## <span style="color: #BCBCBC;">1</span>         1 t based   log-transformed 50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
@@ -409,8 +409,8 @@ results for each of the four conditions in our experiment.</p>
 <span class="co">## <span style="color: #BCBCBC;">4</span>         1 t based   log-transformed 50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">5</span>         2 t based   log-transformed 67         <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">6</span>         2 t based   log-transformed 67         <span style="color: #949494;">&lt;named list [3]&gt;</span>   &lt;named list&gt;</span>
-<span class="co">## <span style="color: #949494;"># … with 5 more variables: .results &lt;list&gt;, modality &lt;chr&gt;, estimate &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;"># … with 6 more variables: .results &lt;list&gt;, .errors &lt;list&gt;, modality &lt;chr&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="visualising-the-results">Visualising the results<a class="anchor" aria-label="anchor" href="#visualising-the-results"></a>
@@ -427,7 +427,7 @@ the result by animating over each universe.</p>
 <span class="va">df.results</span><span class="op">$</span><span class="va">conf.high</span><span class="op">[</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">data_transform</span> <span class="op">==</span> <span class="st">"log-transformed"</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">conf.high</span><span class="op">[</span><span class="va">df.mtbl</span><span class="op">$</span><span class="va">data_transform</span> <span class="op">==</span> <span class="st">"log-transformed"</span><span class="op">]</span><span class="op">)</span>
 
 <span class="va">df.results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 11</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 12</span></span>
 <span class="co">##   .universe ci_method data_transform conf_level .parameter_assignm… .code       </span>
 <span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span>
 <span class="co">## <span style="color: #BCBCBC;">1</span>         5 t based   untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
@@ -436,8 +436,8 @@ the result by animating over each universe.</p>
 <span class="co">## <span style="color: #BCBCBC;">4</span>         5 t based   untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">5</span>        13 bootstrap untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">6</span>        13 bootstrap untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
-<span class="co">## <span style="color: #949494;"># … with 5 more variables: .results &lt;list&gt;, modality &lt;chr&gt;, estimate &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;"># … with 6 more variables: .results &lt;list&gt;, .errors &lt;list&gt;, modality &lt;chr&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">df.results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
@@ -481,7 +481,7 @@ programming.</p>
     conf.high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">data_transform</span> <span class="op">==</span> <span class="st">"log-transformed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">conf.high</span><span class="op">)</span>, <span class="va">conf.high</span><span class="op">)</span>
   <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">conf_level</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">data_transform</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">ci_method</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 64 × 12</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 64 × 13</span></span>
 <span class="co">##    .universe ci_method data_transform  conf_level .parameter_assig… .code       </span>
 <span class="co">##        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span>
 <span class="co">## <span style="color: #BCBCBC;"> 1</span>         5 t based   untransformed   50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
@@ -494,8 +494,9 @@ programming.</p>
 <span class="co">## <span style="color: #BCBCBC;"> 8</span>        13 bootstrap untransformed   50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;"> 9</span>         1 t based   log-transformed 50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">10</span>         1 t based   log-transformed 50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>  &lt;named list&gt;</span>
-<span class="co">## <span style="color: #949494;"># … with 54 more rows, and 6 more variables: .results &lt;list&gt;, index &lt;int&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   modality &lt;chr&gt;, estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;"># … with 54 more rows, and 7 more variables: .results &lt;list&gt;, .errors &lt;list&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   index &lt;int&gt;, modality &lt;chr&gt;, estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   conf.high &lt;dbl&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -552,7 +553,7 @@ plot the results.</p>
 
 <span class="va">df.results.diff</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 11</span></span>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 12</span></span>
 <span class="co">##   .universe ci_method data_transform conf_level .parameter_assignm… .code       </span>
 <span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span>
 <span class="co">## <span style="color: #BCBCBC;">1</span>         5 t based   untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
@@ -561,8 +562,8 @@ plot the results.</p>
 <span class="co">## <span style="color: #BCBCBC;">4</span>        13 bootstrap untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">5</span>        13 bootstrap untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
 <span class="co">## <span style="color: #BCBCBC;">6</span>        13 bootstrap untransformed  50%        <span style="color: #949494;">&lt;named list [3]&gt;</span>    &lt;named list&gt;</span>
-<span class="co">## <span style="color: #949494;"># … with 5 more variables: .results &lt;list&gt;, modality &lt;chr&gt;, estimate &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;"># … with 6 more variables: .results &lt;list&gt;, .errors &lt;list&gt;, modality &lt;chr&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   estimate &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -624,7 +625,7 @@ syntax.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer>

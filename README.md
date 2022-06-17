@@ -496,12 +496,12 @@ parameters(M)
 
 ``` r
 expand(M)
-#> # A tibble: 3 × 5
-#>   .universe death_outliers   .parameter_assignment .code            .results
-#>       <int> <chr>            <list>                <list>           <list>  
-#> 1         1 no_exclusion     <named list [1]>      <named list [1]> <env>   
-#> 2         2 most_extreme     <named list [1]>      <named list [1]> <env>   
-#> 3         3 two_most_extreme <named list [1]>      <named list [1]> <env>
+#> # A tibble: 3 × 6
+#>   .universe death_outliers   .parameter_assignment .code        .results .errors
+#>       <int> <chr>            <list>                <list>       <list>   <list> 
+#> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
+#> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
+#> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>
 ```
 
 1.  `code`, which is the code that the user passes to the multiverse to
@@ -532,12 +532,13 @@ code(M)
 
 ``` r
 extract_variables(M, df.filtered)
-#> # A tibble: 3 × 6
-#>   .universe death_outliers   .parameter_assig… .code        .results df.filtered
-#>       <int> <chr>            <list>            <list>       <list>   <list>     
-#> 1         1 no_exclusion     <named list [1]>  <named list> <env>    <df>       
-#> 2         2 most_extreme     <named list [1]>  <named list> <env>    <df>       
-#> 3         3 two_most_extreme <named list [1]>  <named list> <env>    <df>
+#> # A tibble: 3 × 7
+#>   .universe death_outliers   .parameter_assignment .code        .results .errors
+#>       <int> <chr>            <list>                <list>       <list>   <list> 
+#> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
+#> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
+#> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
+#> # … with 1 more variable: df.filtered <list>
 ```
 
 ## Building up a complete analysis

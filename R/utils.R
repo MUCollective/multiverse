@@ -51,6 +51,7 @@ get_code_universe <- function(.m_list, .uni, .level) {
 get_error_universe <- function(.m_list, .uni, .level) {
   if (.level >= 1) {
     .p <- .m_list[[.level]][[.uni]]$parent
-    c(get_error_universe(.m_list, .p, .level - 1), .m_list[[.level]][[.uni]]$error)
+    error = .m_list[[.level]][[.uni]]$error
+    c(get_error_universe(.m_list, .p, .level - 1), ifelse(is.null(error), NA, error))
   }
 }

@@ -22,6 +22,10 @@ library(ggplot2)
 library(multiverse)
 ```
 
+```{r, include=FALSE}
+M = multiverse()
+```
+
 
 ```{r, chunk-setup, include=FALSE}
 opts_chunk$set(

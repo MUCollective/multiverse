@@ -62,7 +62,7 @@ test_that("expand returns correct output", {
       )
   }))
 
-  m_tbl = expand(M) %>% select(-.parameter_assignment, -.code, -.results)
+  m_tbl = expand(M) %>% select(-.parameter_assignment, -.code, -.results, -.errors)
   params.list <- list(
     values_y = list("TRUE", "FALSE"),
     values_z = list("constant", "linear", "sum")

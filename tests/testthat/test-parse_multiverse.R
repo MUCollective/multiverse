@@ -316,7 +316,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
       ))
   }))
 
-  p_tbl_df = expand(M) %>% select(-.code, -.results)
+  p_tbl_df = expand(M) %>% select(-.code, -.results, -.errors)
   
   params.list <- list(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
@@ -344,7 +344,8 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
   p_tbl_df.ref = tibble::tibble(
     .universe = 1,
     .parameter_assignment = list( list() ),
-    .code = list( list(`1` = quote({df <- data.frame(x = 1:10)})) )
+    .code = list( list(`1` = quote({df <- data.frame(x = 1:10)})) ),
+    .errors = NA
   )
 
   M = multiverse()
@@ -385,7 +386,7 @@ test_that("`parse_multiverse` works when conditions are specified", {
       )
   }))
 
-  p_tbl_df = expand(M) %>% select( -.parameter_assignment, -.code, -.results )
+  p_tbl_df = expand(M) %>% select( -.parameter_assignment, -.code, -.results, -.errors )
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
 })
 
