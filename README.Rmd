@@ -421,7 +421,7 @@ For more details on how this can be done, as well as other details on conditions
 
 ## Executing multiverse code
 
-As with code chunks in a typical computational notebook, users can execute a multiverse code chunk in the interactive editor in RStudio. When a user executes a single code chunk, multiverse internally transforms the input from that code chunk into one unevaluated expression (R's internal representation of an abstract syntax tree) for each unique combination of analysis options and immediately executes the default analysis: the analysis path obtained by taking the first analysis option at each decision point. The default analysis is executed in the current active R environment (i.e. the same environment that regular R code blocks are executed in --- the R Global Environment). Thus, the result of the default analysis is always accessible to the user. The output of an executed code chunk (text or visualization) is displayed immediately below it, mimicking notebook code chunks
+As with code chunks in a typical computational notebook, users can execute a multiverse code chunk in the interactive editor in RStudio. When a user executes a single code chunk, multiverse internally transforms the input from that code chunk into one unevaluated expression (R's internal representation of an abstract syntax tree) for each unique combination of analysis options and immediately executes the default analysis: the analysis path obtained by taking the first analysis option at each decision point. The default analysis is executed in the current active R environment (i.e. the same environment that regular R code blocks are executed in --- the R Global Environment). Thus, the result of the default analysis is always accessible to the user. The output of an executed code chunk (text or visualisation) is displayed immediately below it, mimicking notebook code chunks
 
     ```{multiverse label = default-m-3, inside = M}`r ''`
     fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
@@ -467,7 +467,7 @@ Analysts can change which analysis path is executed by default. Inline code outp
 
 ## Executing the entire multiverse
 
-To execute all unique analysis paths in the multiverse, an analyst can call `execute_multiverse(M)`. We support local parallelization with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as [future](https://CRAN.R-project.org/package=future), to run analyses across computing clusters.
+To execute all unique analysis paths in the multiverse, an analyst can call `execute_multiverse(M)`. We support local parallelisation with an optional cores argument indicating the number of cpu cores to use. The multiverse object can also be easily adapted to use with existing parallel computing packages in R, such as [future](https://CRAN.R-project.org/package=future), to run analyses across computing clusters.
 
 ## Debugging and Diagnosing Errors
 

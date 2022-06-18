@@ -1,12 +1,12 @@
 ## Submission comments
-This submission contains minor fixes and improves support for the use of {future} for parallel computation
+This submission contains minor bug fixes, and improves support for the use of {future} for parallel computation
 
 ## Test environments
-* Windows (winbuilder), R-devel (unstable) (2022-05-20 r82390)
+* Windows (winbuilder), R-devel (unstable) (2022-06-16 r82498)
 * Windows (winbuilder), R-release 4.2.0 (2022-04-22)
 * Windows (winbuilder), R-oldrelease 4.1.3 (2022-03-10)
-* MacOs (local), R-release 4.1.2 (2021-11-01)
-* Ubuntu 16.04 (github), R-release 4.0.5 (2021-03-31)
+* MacOs (local), R-release 4.2.0 (2022-04-22)
+* Ubuntu 16.04 (github), R-release 4.2.0 (2022-04-22)
 
 ## R CMD check results
 0 errors | 0 warnings | 1 notes

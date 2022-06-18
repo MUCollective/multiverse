@@ -389,7 +389,7 @@ p <- df.results.diff %>%
 animate(p, nframes = 28,  fps = 4)
 ```
 
-Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 indicates a statistically significant difference at the α = .05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.
+Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 indicates a statistically significant difference at the α = .05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the family-wise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.
 
 ## Conclusion
 

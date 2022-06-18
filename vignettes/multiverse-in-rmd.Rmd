@@ -184,7 +184,7 @@ If it returns an error such as `cd: no such file or directory`, this means that 
 1. Open Terminal
 2. Enter `mkdir ~/.config/rstudio/keybindings/`
 
-If it returns "Permission denied" you might have to run the command as the superuser in ther Terminal: `sudo mkdir ~/.config/rstudio/keybindings/`
+If it returns "Permission denied" you might have to run the command as the superuser in the Terminal: `sudo mkdir ~/.config/rstudio/keybindings/`
 This will request you to enter your login password.
 
 

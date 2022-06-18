@@ -679,7 +679,7 @@ analysis option at each decision point. The default analysis is executed
 in the current active R environment (i.e. the same environment that
 regular R code blocks are executed in — the R Global Environment). Thus,
 the result of the default analysis is always accessible to the user. The
-output of an executed code chunk (text or visualization) is displayed
+output of an executed code chunk (text or visualisation) is displayed
 immediately below it, mimicking notebook code chunks
 
     ```{multiverse label = default-m-3, inside = M}
@@ -726,7 +726,7 @@ analysts and to aid debugging.
 ## Executing the entire multiverse
 
 To execute all unique analysis paths in the multiverse, an analyst can
-call `execute_multiverse(M)`. We support local parallelization with an
+call `execute_multiverse(M)`. We support local parallelisation with an
 optional cores argument indicating the number of cpu cores to use. The
 multiverse object can also be easily adapted to use with existing
 parallel computing packages in R, such as

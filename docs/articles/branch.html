@@ -438,7 +438,7 @@ df.filtered = hurricane_data %&gt;%
       "two_most_extreme" ~ filter(!(name %in% c("Katrina", "Audrey"))) %&gt;% mutate(deaths = log(deaths + 1))
   )
 ```</code></pre>
-<p>This is because, due to the presense of the pipe
+<p>This is because, due to the presence of the pipe
 (<code>%&gt;%</code>) within the <code>branch</code> statement, we are
 not able to process the option expressions. Workarounds to this problem
 include declaring additional pipes outside branch (if these are

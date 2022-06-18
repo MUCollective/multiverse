@@ -282,7 +282,7 @@ df.filtered = hurricane_data %>%
 ```
 ````
 
-This is because, due to the presense of the pipe (`%>%`) within the `branch` statement, we are not able to process the option expressions. Workarounds to this problem include declaring additional pipes outside branch (if these are invariant), or declaring it by reusing the same parameter (if they vary based on the options).
+This is because, due to the presence of the pipe (`%>%`) within the `branch` statement, we are not able to process the option expressions. Workarounds to this problem include declaring additional pipes outside branch (if these are invariant), or declaring it by reusing the same parameter (if they vary based on the options).
 
 ## Example 4: Variable assignment inside a branch statement
 

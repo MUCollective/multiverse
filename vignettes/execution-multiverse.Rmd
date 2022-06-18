@@ -23,7 +23,7 @@ library(multiverse)
 
 ## Introduction
 
-As some user-specificed multiverses can be quite large, it is only natural that we should make use of the rich parallel processing resources that are widely available. `multiverse` makes use of futures using the [future](https://cran.r-project.org/package=future) library, which "provides a very simple and uniform way of evaluating R expressions asynchronously...". This allows both the user and us (as the creators of this library) greater flexibility in supporting how execution and parallel execution may be supported. How and when evaluation takes place depends on the strategy chosen by the user of executing the multiverse. These strategies include sequential execution in the current R session, or asynchronous parallel execution on the current machine or on a compute cluser.
+As some user-specificed multiverses can be quite large, it is only natural that we should make use of the rich parallel processing resources that are widely available. `multiverse` makes use of futures using the [future](https://cran.r-project.org/package=future) library, which "provides a very simple and uniform way of evaluating R expressions asynchronously...". This allows both the user and us (as the creators of this library) greater flexibility in supporting how execution and parallel execution may be supported. How and when evaluation takes place depends on the strategy chosen by the user of executing the multiverse. These strategies include sequential execution in the current R session, or asynchronous parallel execution on the current machine or on a compute cluster.
 
 In this document, we show how you can execute each of the distinct analyses in your specified multiverse.
 

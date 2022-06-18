@@ -12,7 +12,7 @@ A data frame with 502 rows and 26 variables:
   \item{rdirection}{The direction of the slope of the line (positive or negative)}
   \item{sign}{The direction of the slope of the line (1 or -1)}
   \item{visandsign}{A combination variable of visualization type and rdirection}
-  \item{rbase}{The coefficiant of correlation using which the stimuli was generated}
+  \item{rbase}{The coefficient of correlation using which the stimuli was generated}
   \item{approach}{NA}
   \item{jnd}{Estimated JND value for that participant}
   \item{condition}{Condition that the participant was placed in (which is a combination of vis, rbase and approach)}
