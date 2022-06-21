@@ -1,0 +1,142 @@
+---
+title: "multiverse-export-json"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+opts_knit$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4,
+  fig.path = "README_files/"
+)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(broom)
+library(gganimate)
+library(cowplot)
+library(multiverse)
+library(jsonlite)
+```
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+data("durante")
+
+data.raw.study2 <- durante %>%
+  mutate(
+    Abortion = abs(7 - Abortion) + 1,
+    StemCell = abs(7 - StemCell) + 1,
+    Marijuana = abs(7 - Marijuana) + 1,
+    RichTax = abs(7 - RichTax) + 1,
+    StLiving = abs(7 - StLiving) + 1,
+    Profit = abs(7 - Profit) + 1,
+    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
+    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
+  )
+
+M = multiverse()
+```
+
+
+```{multiverse default-m-1, inside = M}
+df <- data.raw.study2 %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+    dplyr::filter( branch(cycle_length,
+        "cl_option1" ~ TRUE,
+        "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+        "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+    )) %>%
+    dplyr::filter( branch(certainty,
+        "cer_option1" ~ TRUE,
+        "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+    )) %>%
+    mutate(NextMenstrualOnset = branch(menstrual_calculation,
+        "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+        "mc_option3" ~ StartDateNext)
+    )  %>%
+    mutate(
+      CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+      CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
+      CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+    ) %>%
+    mutate( Fertility = branch( fertile,
+        "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
+        "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
+        "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
+        "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+        "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+    )) %>%
+    mutate(RelationshipStatus = branch(relationship_status,
+        "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+        "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+        "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+    )
+```
+
+
+### Model #2: Effect of Fertility and Relationship status on Religiosity
+The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.
+
+```{multiverse default-m-4, inside = M, echo = FALSE}
+df <- df %>%
+  mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
+```
+
+
+The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`.
+
+```{multiverse default-m-5, inside = M, echo = FALSE}
+fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+```
+
+
+To extract the results from the analysis, we first create a tidy data-frame of the results of the model, using `broom::tidy`. 
+
+```{multiverse default-m-6, inside = M, echo = FALSE}
+summary_RelComp <- fit_RelComp %>% 
+    broom::tidy( conf.int = TRUE )
+```
+
+
+```{r, execute-multiverse}
+execute_multiverse(M)
+```
+
+
+
+```{r}
+expand(M) %>%
+  extract_variables(summary_RelComp) %>%
+  select(-.code, -.results, -.errors) %>%
+  rename(results = summary_RelComp) %>%
+  unnest(results) %>%
+  mutate(
+    term = ifelse(term == "(Intercept)", 'Intercept', term),
+    min = estimate - 5*std.error,
+    max = estimate + 5*std.error
+  ) %>%
+  group_by(term) %>%
+  mutate(min = min(min), max = max(max)) %>%
+  mutate(
+    cdf.x = pmap(list(min, max, estimate, std.error), ~ seq(..1, ..2, length.out = 101)),
+    cdf.y = pmap(list(cdf.x, estimate, std.error), ~ c(pnorm(..1, ..2, ..3)))
+  ) %>%
+  # filter(.universe == 1) %>%
+  # unnest(c(cdf.x, cdf.y))
+  nest(results = c(term:cdf.y)) %>%
+  write_json('../../multiverse-vis/static/data/data2.json', pretty = TRUE)
+```
+
