@@ -142,6 +142,20 @@ test_that("`execute_universe` sends message about error but does not stop execut
   expect_equal( env_get(expand(M2)$.results[[5]], "x"), 14 )
 })
 
+test_that("`execute_universe` executes the correct universe", {
+  M <- multiverse()
+  an_expr <- expr({
+    x <- branch(value_x, 1, 2, 3, 4)
+  })
+  
+  inside(M, !!an_expr)
+  
+  execute_universe(M, .universe = 3)
+  expect_true(env_has(expand(M)$.results[[3]], "x"))
+  expect_equal(env_get(expand(M)$.results[[3]], "x"), 3)
+  expect_false(env_has(expand(M)$.results[[2]], "x"))
+})
+
 test_that("multiverse sends warning message and continues to execute when warnings are encountered", {
   M <- multiverse()
   
