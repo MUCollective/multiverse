@@ -98,7 +98,7 @@ test_that("`add_and_parse_code` parses the code", {
   )
 })
 
-test_that("`inside` executes the default analysis", {
+test_that("`inside` executes the default analysis by default", {
   an_expr = expr({
     x = data.frame(x = 1:10) %>%
       mutate( y = branch( value_y, 0, 3, x + 1, x^2))
@@ -111,6 +111,17 @@ test_that("`inside` executes the default analysis", {
   df.ref =  data.frame(x = 1:10) %>%  mutate( y = 0 )
 
   expect_equal( as.list(df), as.list(df.ref) )
+})
+
+test_that("`inside` does not execute the default analysis when specified as such", {
+  an_expr = expr({
+    x = data.frame(x = 1:10) %>%
+      mutate( y = branch( value_y, 0, 3, x + 1, x^2))
+  })
+  
+  M = multiverse()
+  inside(M, !!an_expr, .execute_default = F)
+  expect_error(M$x, "object 'x' not found")
 })
 
 test_that("`expand_branch_options()`: continuous parameters defined in the multiverse are evaluated", {

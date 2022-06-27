@@ -92,7 +92,7 @@
 #'
 #' @name inside
 #' @export
-inside <- function(multiverse, .expr, .label = NULL) {
+inside <- function(multiverse, .expr, .label = NULL, .execute_default = T) {
   .code = enexpr(.expr)
   
   add_and_parse_code(multiverse, .code, .label)
@@ -101,7 +101,9 @@ inside <- function(multiverse, .expr, .label = NULL) {
   
   # direct calls to inside() by the user result in execution of the
   # default universe in the global environment.
-  execute_universe(multiverse)
+  if (.execute_default) {
+    execute_universe(multiverse)
+  }
 }
 
 add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
