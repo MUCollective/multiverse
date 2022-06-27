@@ -33,6 +33,8 @@
 #' @param .label It is extracted automatically from the code block of type \code{multiverse}
 #' when run in an RMarkdown document. This should be used only within an RMarkdown document. 
 #' Defaults to NULL.
+#' 
+#' @param .execute_default Should the default multiverse be executed as part of this call?
 #'
 #' @return a multiverse object
 #'
