@@ -132,7 +132,7 @@ expand(M) %>%
   mutate(min = min(min), max = max(max)) %>%
   mutate(
     cdf.x = pmap(list(min, max, estimate, std.error), ~ seq(..1, ..2, length.out = 101)),
-    cdf.y = pmap(list(cdf.x, estimate, std.error), ~ c(pnorm(..1, ..2, ..3)))
+    cdf.y = pmap(list(cdf.x, estimate, std.error), ~ pnorm(..1, ..2, ..3))
   ) %>%
   # filter(.universe == 1) %>%
   # unnest(c(cdf.x, cdf.y))
