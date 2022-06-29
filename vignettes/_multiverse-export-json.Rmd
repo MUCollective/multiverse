@@ -1,7 +1,28 @@
 ---
-title: "multiverse-export-json"
-output: html_document
+title: "Exporting the output of a multiverse to JSON for visualisation tools"
+author: "Abhraneel Sarma"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Exporting the output of a multiverse to JSON for visualisation tools}
+  %\usepackage[UTF-8]{inputenc}
 ---
+
+
+```{r, chunk-setup, include=FALSE}
+opts_chunk$set(
+  echo = TRUE,
+  fig.width = 6, 
+  fig.height = 4,
+  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
+)
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,13 +38,9 @@ library(tidyr)
 library(ggplot2)
 library(purrr)
 library(broom)
-library(gganimate)
-library(cowplot)
 library(multiverse)
 library(jsonlite)
 ```
-
-
 
 ## R Markdown
 

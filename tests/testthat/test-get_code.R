@@ -2,7 +2,6 @@
 context("get_code")
 
 library(dplyr)
-library(lubridate)
 
 set.seed(123)
 make_data <- function(nrow = 500) {
@@ -10,8 +9,8 @@ make_data <- function(nrow = 500) {
     Relationship = sample(1:4, nrow, replace = TRUE),
     Sure1 = sample(1:9, nrow, replace = TRUE),
     Sure2 = sample(1:9, nrow, replace = TRUE),
-    StartDateofLastPeriod = make_date(2012, sample(4:5, nrow, TRUE), sample(1:22, nrow, TRUE)),
-    DateTesting = make_date(2012, 5, sample(21:26, nrow, TRUE))
+    StartDateofLastPeriod = as.Date(ISOdate(2012, sample(4:5, nrow, TRUE), sample(1:22, nrow, TRUE))),
+    DateTesting = as.Date(ISOdate(2012, 5, sample(21:26, nrow, TRUE)))
   ) %>%
     mutate(
       StartDateofPeriodBeforeLast = StartDateofLastPeriod - sample(20:28, nrow, TRUE),

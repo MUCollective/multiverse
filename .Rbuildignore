@@ -28,7 +28,7 @@
 
 # exclude some vignettes for CRAN
 ^vignettes/dance.Rmd$
-^vignettes/multiverse-export-json.Rmd$
+^vignettes/_multiverse-export-json.Rmd$
 
 # exclude CRAN comments file
 ^cran-comments.md$

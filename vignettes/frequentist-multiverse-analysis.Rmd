@@ -25,7 +25,6 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(multiverse)
-library(boot)
 ```
 
 
@@ -34,7 +33,7 @@ M = multiverse()
 ```
 
 
-```{r, chunk-setup, include=FALSE, eval=FALSE}
+```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
   eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
@@ -42,6 +41,7 @@ knitr::opts_chunk$set(
   fig.height = 4
 )
 ```
+
 
 ## Multiverse case study #2
 

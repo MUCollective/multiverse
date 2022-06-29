@@ -16,16 +16,6 @@ vignette: >
 ---
 
 
-```{r setup, include=FALSE}
-library(dplyr)
-library(modelr)
-library(tidyr)
-library(ggplot2)
-library(tidybayes)
-library(multiverse)
-```
-
-
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -33,6 +23,16 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+```
+
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(modelr)
+library(tidyr)
+library(ggplot2)
+library(tidybayes)
+library(multiverse)
 ```
 
 
