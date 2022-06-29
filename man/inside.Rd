@@ -4,7 +4,7 @@
 \alias{inside}
 \title{Pass code into the multiverse}
 \usage{
-inside(multiverse, .expr, .label = NULL)
+inside(multiverse, .expr, .label = NULL, .execute_default = T)
 }
 \arguments{
 \item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}}
@@ -15,6 +15,8 @@ Since it accepts a single argument, chunks of code can be passed using `\{\}`. S
 \item{.label}{It is extracted automatically from the code block of type \code{multiverse}
 when run in an RMarkdown document. This should be used only within an RMarkdown document. 
 Defaults to NULL.}
+
+\item{.execute_default}{Should the default multiverse be executed as part of this call?}
 }
 \value{
 a multiverse object

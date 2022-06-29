@@ -163,7 +163,7 @@ get_exec_order <- function(.m_diction, .uni, .level) {
     .p <- .m_diction$get(.m_diction$keys()[[.level]])[[.uni]]$parent
     c(get_exec_order(.m_diction, .p, .level - 1), .uni)
   } else {
-    1
+    .uni
   }
 }
 
