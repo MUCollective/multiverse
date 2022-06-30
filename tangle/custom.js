@@ -1,7 +1,42 @@
 $("div.main-container").append('<div class="multiverse-navbar"><p id="multiverse-params"></p></div>')
 
 
+/*
+  choices is an Object where the keys are the parameter names and the value is a list of its option names
+  
+    choices = {
+      param-1 : [option1_param1, option2_param1, ...],
+      param-2 : [option1_param2, option2_param2, ...],
+      ...
+    }
+  
+  combos is a list of Objects. It contains all combinations of option names that are available in the dataset
+    
+    combos = [
+      {
+        param-1 : option1_param1,
+        param-2 : option1_param2,
+        ...
+      },
+      {
+        param-1 : option2_param1,
+        param-2 : option2_param2,
+        ...
+      },
+      ...
+    ]
+*/
 let choices, combos;
+
+/*
+  comboExists checks if curr is in combos
+
+  PARAMETERS:
+  curr:Object
+  combos:Array[Object]
+  
+  RETURNS: curr in combos ? true : false
+*/
 let comboExists = (curr, combos) => {
   curr = JSON.stringify(curr);
   for (let combo of combos) {
@@ -11,23 +46,37 @@ let comboExists = (curr, combos) => {
 }
 
 Tangle.classes.Iterate = {
+  /*
+    element - the HTML element that was clicked
+    options - the data contained in the HTML element itself
+    tangle - used to get this.<variable-name> in the Tangle instance as initialized in setup()
+    variable - the parameter name that was clicked
+  */
   initialize: function(element, options, tangle, variable) {
     element.addEvent("click", (event) => {
       choices = tangle.getValue("choices");
       combos = tangle.getValue("combos");
       let keys = Object.keys(choices);
+      
+      // curr takes the current combination of option names of each parameter
       let curr = {}
       for (let key of keys) {
         curr[key] = tangle.getValue(key)
       }
-      let it = 0;
+      
+      // in each iteration, curr[variable] is set to the (options.i+1)th element in choices[variable]
+      // - if option+1 > the length of choices[variable], then choose the 0th element.
+      // after this change, if curr is in combos, then done. else, next iteration.
+      // `it` is set to choices[variable].length because if it iterates through the whole list with no change, then iterations should stop
+      let it = choices[variable].length;
       do {
         if (options.i === choices[variable].length-1)
           options.i = 0;
         else
           options.i++;
         curr[variable] = choices[variable][options.i];
-      } while (!(comboExists(curr, combos)) && it++ < 4);
+      } while (!(comboExists(curr, combos)) && it-- > 0);
+      
       tangle.setValue(variable, choices[variable][options.i]);
     })
   },
