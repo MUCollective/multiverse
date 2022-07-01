@@ -94,7 +94,7 @@
 #'
 #' @name inside
 #' @export
-inside <- function(multiverse, .expr, .label = NULL, .execute_default = T) {
+inside <- function(multiverse, .expr, .label = NULL, .execute_default = TRUE) {
   .code = enexpr(.expr)
   
   add_and_parse_code(multiverse, .code, .label)

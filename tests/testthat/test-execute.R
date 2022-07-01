@@ -154,6 +154,66 @@ test_that("`execute_universe` executes the correct universe", {
   expect_true(env_has(expand(M)$.results[[3]], "x"))
   expect_equal(env_get(expand(M)$.results[[3]], "x"), 3)
   expect_false(env_has(expand(M)$.results[[2]], "x"))
+  
+})
+
+test_that("test 1/N: `execute_universe` executes the correct universe with multiple levels", {
+  M <- multiverse()
+  an_expr.1 <- expr({
+    x <- branch(value_x, 1, 2, 3, 4)
+  })
+  
+  an_expr.2 <- expr({
+    y <- branch(value_y, 5, 6, 7)
+    z <- x + y
+  })
+  
+  inside(M, !!an_expr.1)
+  inside(M, !!an_expr.2)
+  
+  execute_universe(M, .universe = 3)
+  expect_true(env_has(expand(M)$.results[[3]], "z"))
+  expect_equal(env_get(expand(M)$.results[[3]], "z"), 8)
+  expect_false(env_has(expand(M)$.results[[10]], "x"))
+  expect_false(env_has(expand(M)$.results[[10]], "z"))
+  
+  execute_universe(M, .universe = 10)
+  expect_false(env_has(expand(M)$.results[[10]], "x"))  # x would not be defined in this env, 
+  expect_true(env_has(expand(M)$.results[[10]], "x", inherit = TRUE)) # but x should be defined in its parent env
+  expect_equal(env_get(expand(M)$.results[[10]], "x", inherit = TRUE), 4)
+  expect_equal(env_get(expand(M)$.results[[10]], "z"), 9)
+})
+
+test_that("test 2/N: `execute_universe` executes the correct universe with multiple levels", {
+  M <- multiverse()
+  an_expr.1 <- expr({
+    x <- branch(value_x, 4, 5, 6)
+  })
+  
+  an_expr.2 <- expr({
+    y <- branch(value_y, 11, 21, 31)
+  })
+  
+  an_expr.3 <- expr({
+    z <- branch(calc, x + y, x * y)
+  })
+  
+  inside(M, !!an_expr.1)
+  inside(M, !!an_expr.2)
+  inside(M, !!an_expr.3)
+  
+  execute_universe(M, .universe = 2)
+  expect_true(env_has(expand(M)$.results[[2]], "z"))
+  expect_false(env_has(expand(M)$.results[[2]], "x"))
+  expect_false(env_has(expand(M)$.results[[2]], "y"))
+  expect_true(env_has(expand(M)$.results[[2]], "x", inherit = TRUE))
+  expect_true(env_has(expand(M)$.results[[2]], "y", inherit = TRUE))
+  expect_equal(env_get(expand(M)$.results[[2]], "z"), 44)
+  expect_false(env_has(expand(M)$.results[[1]], "x"))
+  expect_false(env_has(expand(M)$.results[[1]], "y"))
+  
+  execute_universe(M, .universe = 9)
+  expect_equal(env_get(expand(M)$.results[[9]], "z"), 26)
 })
 
 test_that("multiverse sends warning message and continues to execute when warnings are encountered", {

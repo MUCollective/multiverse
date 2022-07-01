@@ -142,11 +142,13 @@ execute_each <- function(i, code, env_list, pb, curr, n) {
 #' @export
 execute_universe <- function(multiverse, .universe = 1) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
-  .level = attr(multiverse, "multiverse")$unchanged_until
-  if (is.na(.level)) .level = 0
+  # .level = attr(multiverse, "multiverse")$unchanged_until
+  # .level = attr(multiverse, "multiverse")$exec_all_until
+  # if (is.na(.level)) .level = 0
+  # we probably don't want to use cached execution when executing a single universe
   
   .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
-  .to_exec = tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
+  .to_exec = seq_len(m_diction$size()) #tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
   
   .m_list <- m_diction$as_list()[.to_exec]
   
