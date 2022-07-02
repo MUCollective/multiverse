@@ -18,7 +18,7 @@ a wrapper around the function"><!-- mathjax --><script src="https://cdnjs.cloudf
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@ a wrapper around the function</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">inside</span><span class="op">(</span><span class="va">multiverse</span>, <span class="va">.expr</span>, .label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">inside</span><span class="op">(</span><span class="va">multiverse</span>, <span class="va">.expr</span>, .label <span class="op">=</span> <span class="cn">NULL</span>, .execute_default <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -107,6 +107,10 @@ Since it accepts a single argument, chunks of code can be passed using `{}`. See
 <dd><p>It is extracted automatically from the code block of type <code>multiverse</code>
 when run in an RMarkdown document. This should be used only within an RMarkdown document. 
 Defaults to NULL.</p></dd>
+
+
+<dt>.execute_default</dt>
+<dd><p>Should the default multiverse be executed as part of this call?</p></dd>
 
 </dl></div>
     <div id="value">
@@ -140,55 +144,55 @@ within the function from where <code>inside()</code> is called.</p></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="va">M.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># using `inside` to declare multiverse code</span></span>
-<span class="r-in"><span class="fu">inside</span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span>
-<span class="r-in">  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="va">x.mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span>, trim <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="va">trim_values</span>,</span>
-<span class="r-in">    <span class="st">"trim_none"</span> <span class="op">~</span> <span class="fl">0</span>,</span>
-<span class="r-in">    <span class="st">"trim_1pc"</span> <span class="op">~</span> <span class="fl">0.05</span>,</span>
-<span class="r-in">    <span class="st">"trim_5pc"</span> <span class="op">~</span> <span class="fl">0.025</span>,</span>
-<span class="r-in">    <span class="st">"trim_10pc"</span> <span class="op">~</span> <span class="fl">0.05</span></span>
-<span class="r-in">  <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># using the assignment operator to declare multiverse code</span></span>
-<span class="r-in"><span class="fu">inside</span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">inside</span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span>, trim <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="va">trim_values</span>,</span>
-<span class="r-in">    <span class="st">"trim_none"</span> <span class="op">~</span> <span class="fl">0</span>,</span>
-<span class="r-in">    <span class="st">"trim_1pc"</span> <span class="op">~</span> <span class="fl">0.05</span>,</span>
-<span class="r-in">    <span class="st">"trim_5pc"</span> <span class="op">~</span> <span class="fl">0.025</span>,</span>
-<span class="r-in">    <span class="st">"trim_10pc"</span> <span class="op">~</span> <span class="fl">0.05</span></span>
-<span class="r-in">  <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># declaring multiple options for a data processing step (calculating a new variable)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">durante</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">durante</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">inside</span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span>
-<span class="r-in">  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,</span>
-<span class="r-in">                                   <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,</span>
-<span class="r-in">                                   <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,</span>
-<span class="r-in">                                   <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span></span>
-<span class="r-in">  <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">M.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using `inside` to declare multiverse code</span></span></span>
+<span class="r-in"><span><span class="fu">inside</span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">x.mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span>, trim <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">trim_values</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_none"</span> <span class="op">~</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_1pc"</span> <span class="op">~</span> <span class="fl">0.05</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_5pc"</span> <span class="op">~</span> <span class="fl">0.025</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_10pc"</span> <span class="op">~</span> <span class="fl">0.05</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using the assignment operator to declare multiverse code</span></span></span>
+<span class="r-in"><span><span class="fu">inside</span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">inside</span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span>, trim <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">trim_values</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_none"</span> <span class="op">~</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_1pc"</span> <span class="op">~</span> <span class="fl">0.05</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_5pc"</span> <span class="op">~</span> <span class="fl">0.025</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_10pc"</span> <span class="op">~</span> <span class="fl">0.05</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># declaring multiple options for a data processing step (calculating a new variable)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">durante</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">durante</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">inside</span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,</span></span>
+<span class="r-in"><span>                                   <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,</span></span>
+<span class="r-in"><span>                                   <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,</span></span>
+<span class="r-in"><span>                                   <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -203,7 +207,7 @@ within the function from where <code>inside()</code> is called.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

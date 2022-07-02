@@ -1,4 +1,4 @@
-# multiverse 0.6.0
+# multiverse 0.6.1
 
 ### Bug Fixes
 - Fix for #107. Parallel execution of the multiverse (i.e. when cores >= 2 as an argument to `execute_multiverse`) resulted in creation of new environments and execution in these new environments, which are different from the ones that are stored in the multiverse object and returned by `expand`. Fixed implementation so that all the bindings from the environments were copied to the stored environments, and the resultant variable bindings can be accessed through `expand` (thanks, @markromanmiller, #108).

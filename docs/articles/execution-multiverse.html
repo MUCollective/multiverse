@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -108,7 +108,7 @@ and Parallel</h1>
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma</h4>
             
-            <h4 data-toc-skip class="date">2022-06-17</h4>
+            <h4 data-toc-skip class="date">2022-07-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/execution-multiverse.Rmd" class="external-link"><code>vignettes/execution-multiverse.Rmd</code></a></small>
       <div class="hidden name"><code>execution-multiverse.Rmd</code></div>
@@ -144,31 +144,31 @@ in the vignette <a href="hurricane.html">hurricane</a>. If you are
 already familiar with this dataset and analysis, please feel free to
 skip this section, and continue from the next section</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hurricane</span><span class="op">)</span>
-
-<span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># rename some variables</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>
-      year <span class="op">=</span> <span class="va">Year</span>,
-      name <span class="op">=</span> <span class="va">Name</span>,
-      dam <span class="op">=</span> <span class="va">NDAM</span>,
-      death <span class="op">=</span> <span class="va">alldeaths</span>,
-      female <span class="op">=</span> <span class="va">Gender_MF</span>,
-      masfem <span class="op">=</span> <span class="va">MasFem</span>,
-      category <span class="op">=</span> <span class="va">Category</span>,
-      pressure <span class="op">=</span> <span class="va">Minpressure_Updated_2014</span>,
-      wind <span class="op">=</span> <span class="va">HighestWindSpeed</span>
-  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># create new variables</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
-      post <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">year</span><span class="op">&gt;</span><span class="fl">1979</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
-      zcat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">category</span><span class="op">)</span><span class="op">)</span>,
-      zpressure <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">pressure</span><span class="op">)</span>,
-      zwind <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">wind</span><span class="op">)</span><span class="op">)</span>,
-      z3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="op">(</span><span class="va">zpressure</span> <span class="op">+</span> <span class="va">zcat</span> <span class="op">+</span> <span class="va">zwind</span><span class="op">)</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span>
-  <span class="op">)</span>
-
-<span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hurricane</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># rename some variables</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
+<span>      year <span class="op">=</span> <span class="va">Year</span>,</span>
+<span>      name <span class="op">=</span> <span class="va">Name</span>,</span>
+<span>      dam <span class="op">=</span> <span class="va">NDAM</span>,</span>
+<span>      death <span class="op">=</span> <span class="va">alldeaths</span>,</span>
+<span>      female <span class="op">=</span> <span class="va">Gender_MF</span>,</span>
+<span>      masfem <span class="op">=</span> <span class="va">MasFem</span>,</span>
+<span>      category <span class="op">=</span> <span class="va">Category</span>,</span>
+<span>      pressure <span class="op">=</span> <span class="va">Minpressure_Updated_2014</span>,</span>
+<span>      wind <span class="op">=</span> <span class="va">HighestWindSpeed</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># create new variables</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      post <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">year</span><span class="op">&gt;</span><span class="fl">1979</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>      zcat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">category</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      zpressure <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">pressure</span><span class="op">)</span>,</span>
+<span>      zwind <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">wind</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      z3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="op">(</span><span class="va">zpressure</span> <span class="op">+</span> <span class="va">zcat</span> <span class="op">+</span> <span class="va">zwind</span><span class="op">)</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>We implement the same analysis as in the
 <code>vignette(hurricane)</code>. Below we briefly outline the steps
 involved.</p>
@@ -176,20 +176,20 @@ involved.</p>
 to exclude outliers based on extreme observations of death and
 damages.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">death_outliers</span>, 
-        <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,
-        <span class="st">"most_extreme_deaths"</span> <span class="op">~</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span>,
-        <span class="st">"most_extreme_two_deaths"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Katrina"</span>, <span class="st">"Audrey"</span><span class="op">)</span><span class="op">)</span>
-    <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">damage_outliers</span>,
-        <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,
-        <span class="st">"most_extreme_one_damage"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sandy"</span><span class="op">)</span><span class="op">)</span>,
-        <span class="st">"most_extreme_two_damage"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sandy"</span>, <span class="st">"Andrew"</span><span class="op">)</span><span class="op">)</span>,
-        <span class="st">"most_extreme_three_damage"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sandy"</span>, <span class="st">"Andrew"</span>, <span class="st">"Donna"</span><span class="op">)</span><span class="op">)</span>
-    <span class="op">)</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
+<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">death_outliers</span>, </span>
+<span>        <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
+<span>        <span class="st">"most_extreme_deaths"</span> <span class="op">~</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span>,</span>
+<span>        <span class="st">"most_extreme_two_deaths"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Katrina"</span>, <span class="st">"Audrey"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">damage_outliers</span>,</span>
+<span>        <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
+<span>        <span class="st">"most_extreme_one_damage"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sandy"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        <span class="st">"most_extreme_two_damage"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sandy"</span>, <span class="st">"Andrew"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        <span class="st">"most_extreme_three_damage"</span> <span class="op">~</span> <span class="op">!</span> <span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sandy"</span>, <span class="st">"Andrew"</span>, <span class="st">"Donna"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>Identifying independent variables: How is femininity of the name of a
 hurricane operationalised? Simonsohn et al. identify two distinct ways.
 First, using the 11 point scale that was used in the original analysis;
@@ -199,19 +199,19 @@ caused by a hurricane follows a long tailed, positive only valued
 distribution. The decision involved is whether or not to transform
 <code>damages</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
-        femininity <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">femininity_calculation</span>,
-          <span class="st">"masfem"</span> <span class="op">~</span> <span class="va">masfem</span>,
-          <span class="st">"female"</span> <span class="op">~</span> <span class="va">female</span>
-        <span class="op">)</span>,
-        damage <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">damage_transform</span>,
-          <span class="st">"no_transform"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/identity.html" class="external-link">identity</a></span><span class="op">(</span><span class="va">dam</span><span class="op">)</span>,
-          <span class="st">"log_transform"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">dam</span><span class="op">)</span>
-        <span class="op">)</span>
-    <span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
+<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>        femininity <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">femininity_calculation</span>,</span>
+<span>          <span class="st">"masfem"</span> <span class="op">~</span> <span class="va">masfem</span>,</span>
+<span>          <span class="st">"female"</span> <span class="op">~</span> <span class="va">female</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        damage <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">damage_transform</span>,</span>
+<span>          <span class="st">"no_transform"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/identity.html" class="external-link">identity</a></span><span class="op">(</span><span class="va">dam</span><span class="op">)</span>,</span>
+<span>          <span class="st">"log_transform"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">dam</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>Alternative specifications of regression model: The next step is to
 fit the model. We can use either a log-linear model or a poisson model
 for the step. Both are reasonable alternatives for this dataset. We also
@@ -219,24 +219,24 @@ have to make a choice on whether we want to include an interaction
 between <code>femininity</code> and <code>damage</code>. This results in
 the following specification:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span>
-  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"linear"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">death</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="st">"poisson"</span> <span class="op">~</span> <span class="va">death</span><span class="op">)</span> <span class="op">~</span> 
-            <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">main_interaction</span>,
-                <span class="st">"no"</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">+</span> <span class="va">damage</span>,
-                <span class="st">"yes"</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">damage</span>
-            <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">other_predictors</span>,
-                <span class="st">"none"</span> <span class="op">~</span> <span class="cn">NULL</span>,
-                <span class="st">"pressure"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zpressure</span>,
-                <span class="st">"wind"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zwind</span>,
-                <span class="st">"category"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zcat</span>,
-                <span class="st">"all"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">z3</span>,
-                <span class="st">"all_no_interaction"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span> <span class="op">~</span> <span class="va">z3</span>
-            <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">covariates</span>, <span class="st">"1"</span> <span class="op">~</span> <span class="cn">NULL</span>, <span class="st">"2"</span> <span class="op">~</span> <span class="va">year</span><span class="op">:</span><span class="va">damage</span>, <span class="st">"3"</span> <span class="op">~</span> <span class="va">post</span><span class="op">:</span><span class="va">damage</span><span class="op">)</span>, 
-            family <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"linear"</span> <span class="op">~</span> <span class="st">"gaussian"</span>, <span class="st">"poisson"</span> <span class="op">~</span> <span class="st">"poisson"</span><span class="op">)</span>,  
-            data <span class="op">=</span> <span class="va">df</span><span class="op">)</span>
-  
-  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
+<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"linear"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">death</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="st">"poisson"</span> <span class="op">~</span> <span class="va">death</span><span class="op">)</span> <span class="op">~</span> </span>
+<span>            <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">main_interaction</span>,</span>
+<span>                <span class="st">"no"</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">+</span> <span class="va">damage</span>,</span>
+<span>                <span class="st">"yes"</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">damage</span></span>
+<span>            <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">other_predictors</span>,</span>
+<span>                <span class="st">"none"</span> <span class="op">~</span> <span class="cn">NULL</span>,</span>
+<span>                <span class="st">"pressure"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zpressure</span>,</span>
+<span>                <span class="st">"wind"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zwind</span>,</span>
+<span>                <span class="st">"category"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zcat</span>,</span>
+<span>                <span class="st">"all"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">z3</span>,</span>
+<span>                <span class="st">"all_no_interaction"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span> <span class="op">~</span> <span class="va">z3</span></span>
+<span>            <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">covariates</span>, <span class="st">"1"</span> <span class="op">~</span> <span class="cn">NULL</span>, <span class="st">"2"</span> <span class="op">~</span> <span class="va">year</span><span class="op">:</span><span class="va">damage</span>, <span class="st">"3"</span> <span class="op">~</span> <span class="va">post</span><span class="op">:</span><span class="va">damage</span><span class="op">)</span>, </span>
+<span>            family <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"linear"</span> <span class="op">~</span> <span class="st">"gaussian"</span>, <span class="st">"poisson"</span> <span class="op">~</span> <span class="st">"poisson"</span><span class="op">)</span>,  </span>
+<span>            data <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="execution">Execution<a class="anchor" aria-label="anchor" href="#execution"></a>
@@ -249,7 +249,7 @@ computation sequentially, on one’s current machine. This is the default
 strategy, which can be used by simply calling
 <code><a href="../reference/execute.html">execute_multiverse()</a></code> on the current multiverse object.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span></code></pre></div>
 <p>However, some studies have created multiverse analyses with thousands
 or even millions of unique specifications (universes). In such cases,
 the optimisation to avoid redundant computation that we have built into
@@ -269,9 +269,9 @@ on both unix and non-unix based systems is to use a
 (in parallel) in separate R sessions running in the background on the
 same machine:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">plan</span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fu">availableCores</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">plan</span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span> <span class="co"># explicitly closes multisession workers by switching plan </span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">plan</span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fu">availableCores</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">plan</span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span> <span class="co"># explicitly closes multisession workers by switching plan </span></span></code></pre></div>
 <p>Note: this vignette uses the <code><a href="../reference/inside.html">inside()</a></code> syntax to
 implement a multiverse. However, futures can be used with multiverse
 code blocks as well, and the steps involved in setup of asynchronous
@@ -306,18 +306,18 @@ function which supports this behavior, such a behavior can be easily
 achieved using the following workflow using the <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply()</a></code>
 functions.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">N</span> <span class="op">=</span> <span class="fl">5</span>
-<span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/execute.html">execute_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">N</span> <span class="op">=</span> <span class="fl">5</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/execute.html">execute_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, the same result can be obtained using the
 <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">N</span>, <span class="op">~</span> <span class="fu"><a href="../reference/execute.html">execute_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">.</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">N</span>, <span class="op">~</span> <span class="fu"><a href="../reference/execute.html">execute_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">.</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>If we want to perform this operation in parallel, we could use
 <code><a href="https://future.apply.futureverse.org/reference/future_lapply.html" class="external-link">future.apply::future_lapply()</a></code> as follows:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">plan</span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fu">availableCores</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu">future.apply</span><span class="fu">::</span><span class="fu"><a href="https://future.apply.futureverse.org/reference/future_lapply.html" class="external-link">future_lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/execute.html">execute_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="fu">plan</span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">plan</span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fu">availableCores</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">future.apply</span><span class="fu">::</span><span class="fu"><a href="https://future.apply.futureverse.org/reference/future_lapply.html" class="external-link">future_lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/execute.html">execute_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">plan</span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span></span></code></pre></div>
 <p>For a detailed description on asynchronous resolution of futures and
 how to set up clusters, please refer to the documentation of the
 <code>future</code> library.</p>
@@ -341,7 +341,7 @@ how to set up clusters, please refer to the documentation of the
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

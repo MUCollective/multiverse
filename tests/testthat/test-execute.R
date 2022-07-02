@@ -154,7 +154,6 @@ test_that("`execute_universe` executes the correct universe", {
   expect_true(env_has(expand(M)$.results[[3]], "x"))
   expect_equal(env_get(expand(M)$.results[[3]], "x"), 3)
   expect_false(env_has(expand(M)$.results[[2]], "x"))
-  
 })
 
 test_that("test 1/N: `execute_universe` executes the correct universe with multiple levels", {

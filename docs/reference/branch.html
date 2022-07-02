@@ -18,7 +18,7 @@ in the analysis."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -122,8 +122,8 @@ create a complete multiverse analysis.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘dplyr’</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
@@ -132,99 +132,99 @@ create a complete multiverse analysis.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, setequal, union</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Example 1: declaring multiple options for a data processing step </span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">30</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Say that you have a variable, x. You want to discretise this variable into two ordinal </span></span>
-<span class="r-in"><span class="co"># categories — high (if x &gt;= 30) and low (if x &lt; 30). However, another researcher might argue </span></span>
-<span class="r-in"><span class="co"># for discretising this variable into three ordinal categories — high (if x &gt;= 40), </span></span>
-<span class="r-in"><span class="co"># medium (if 20 &lt;= x &lt; 40), and low (if x &lt; 20).</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M.1</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># create a new multiverse object</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">=</span> <span class="fu">branch</span><span class="op">(</span><span class="va">discretisation</span>, </span>
-<span class="r-in">        <span class="st">"two_levels"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&lt;</span> <span class="fl">30</span>, <span class="st">"low"</span>, <span class="st">"high"</span><span class="op">)</span>,</span>
-<span class="r-in">        <span class="st">"three_levels"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&lt;</span> <span class="fl">20</span>, <span class="st">"low"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">40</span>, <span class="st">"high"</span>, <span class="st">"medium"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Example 2: using branch with tidyverse and `%&gt;%`</span></span>
-<span class="r-in"><span class="co"># Let’s say that we have some data which indicates the amount of time spent by a user</span></span>
-<span class="r-in"><span class="co"># in four different conditions which are indexed 1, 2, 3 and 4</span></span>
-<span class="r-in"><span class="co"># (the modality column in the following dataset). </span></span>
-<span class="r-in"><span class="co"># We will first load the data and convert the column into factor from integer.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"userlogs"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">data.userlogs.raw</span> <span class="op">=</span> <span class="va">userlogs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">modality</span><span class="op">)</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span> <span class="va">modality</span> <span class="op">)</span></span>
-<span class="r-in">    </span>
-<span class="r-in"><span class="va">M.2</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># create a new multiverse object</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">df</span> <span class="op">=</span> <span class="va">data.userlogs.raw</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">modality</span>, <span class="va">duration</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> duration <span class="op">=</span> <span class="fu">branch</span><span class="op">(</span> <span class="va">data_transform</span>, </span>
-<span class="r-in">                            <span class="st">"none"</span> <span class="op">~</span> <span class="va">duration</span>,</span>
-<span class="r-in">                            <span class="st">"log"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span>                             </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Example 3: using branch with tidyverse and `%&gt;%`</span></span>
-<span class="r-in"><span class="co"># Consider a scenario where there are more than one alternatives to</span></span>
-<span class="r-in"><span class="co"># identifying and removing outliers</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hurricane"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M.3</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># here, we perform a `filter` operation in the multiverse</span></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.3</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">df.filtered</span> <span class="op">=</span> <span class="va">hurricane</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">branch</span><span class="op">(</span><span class="va">death_outliers</span>,</span>
-<span class="r-in">                   <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">                   <span class="st">"most_extreme"</span> <span class="op">~</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span>,</span>
-<span class="r-in">                   <span class="st">"two_most_extreme"</span> <span class="op">~</span> <span class="op">!</span><span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Katrina"</span>, <span class="st">"Audrey"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Example 4: using branch as a function</span></span>
-<span class="r-in"><span class="co"># An alternate way of implementing the `branch()` function from Example 2 may be:</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M.4</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.4</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">duration_transform</span> <span class="op">=</span> <span class="fu">branch</span><span class="op">(</span><span class="va">data_trans</span>,</span>
-<span class="r-in">        <span class="st">"log-transformed"</span> <span class="op">~</span> <span class="va">log</span>,</span>
-<span class="r-in">        <span class="st">"un-transformed"</span> <span class="op">~</span> <span class="va">identity</span></span>
-<span class="r-in">    <span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="va">duration</span> <span class="op">=</span> <span class="fu">duration_transform</span><span class="op">(</span><span class="va">data.userlogs.raw</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Example 5: continuous option values for a parameter</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M.5</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.5</span>, <span class="op">{</span></span>
-<span class="r-in">  <span class="fu">branch</span><span class="op">(</span><span class="va">foo</span>, <span class="st">"option1"</span> <span class="op">~</span> <span class="fl">1</span>, .options <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M.6</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># alternatively, we could specify how we want the vector to be expanded</span></span>
-<span class="r-in"><span class="co"># for continuous parameters</span></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.6</span>, <span class="op">{</span></span>
-<span class="r-in">  <span class="fu">branch</span><span class="op">(</span><span class="va">foo</span>, <span class="st">"option1"</span> <span class="op">~</span> <span class="fl">1</span>, .options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 1: declaring multiple options for a data processing step </span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">30</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Say that you have a variable, x. You want to discretise this variable into two ordinal </span></span></span>
+<span class="r-in"><span><span class="co"># categories — high (if x &gt;= 30) and low (if x &lt; 30). However, another researcher might argue </span></span></span>
+<span class="r-in"><span><span class="co"># for discretising this variable into three ordinal categories — high (if x &gt;= 40), </span></span></span>
+<span class="r-in"><span><span class="co"># medium (if 20 &lt;= x &lt; 40), and low (if x &lt; 20).</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M.1</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># create a new multiverse object</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">=</span> <span class="fu">branch</span><span class="op">(</span><span class="va">discretisation</span>, </span></span>
+<span class="r-in"><span>        <span class="st">"two_levels"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&lt;</span> <span class="fl">30</span>, <span class="st">"low"</span>, <span class="st">"high"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"three_levels"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&lt;</span> <span class="fl">20</span>, <span class="st">"low"</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">40</span>, <span class="st">"high"</span>, <span class="st">"medium"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 2: using branch with tidyverse and `%&gt;%`</span></span></span>
+<span class="r-in"><span><span class="co"># Let’s say that we have some data which indicates the amount of time spent by a user</span></span></span>
+<span class="r-in"><span><span class="co"># in four different conditions which are indexed 1, 2, 3 and 4</span></span></span>
+<span class="r-in"><span><span class="co"># (the modality column in the following dataset). </span></span></span>
+<span class="r-in"><span><span class="co"># We will first load the data and convert the column into factor from integer.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"userlogs"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">data.userlogs.raw</span> <span class="op">=</span> <span class="va">userlogs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">modality</span><span class="op">)</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span> <span class="va">modality</span> <span class="op">)</span></span></span>
+<span class="r-in"><span>    </span></span>
+<span class="r-in"><span><span class="va">M.2</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># create a new multiverse object</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">df</span> <span class="op">=</span> <span class="va">data.userlogs.raw</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">modality</span>, <span class="va">duration</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> duration <span class="op">=</span> <span class="fu">branch</span><span class="op">(</span> <span class="va">data_transform</span>, </span></span>
+<span class="r-in"><span>                            <span class="st">"none"</span> <span class="op">~</span> <span class="va">duration</span>,</span></span>
+<span class="r-in"><span>                            <span class="st">"log"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span>                             </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 3: using branch with tidyverse and `%&gt;%`</span></span></span>
+<span class="r-in"><span><span class="co"># Consider a scenario where there are more than one alternatives to</span></span></span>
+<span class="r-in"><span><span class="co"># identifying and removing outliers</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hurricane"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M.3</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># here, we perform a `filter` operation in the multiverse</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.3</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">df.filtered</span> <span class="op">=</span> <span class="va">hurricane</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">branch</span><span class="op">(</span><span class="va">death_outliers</span>,</span></span>
+<span class="r-in"><span>                   <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                   <span class="st">"most_extreme"</span> <span class="op">~</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span>,</span></span>
+<span class="r-in"><span>                   <span class="st">"two_most_extreme"</span> <span class="op">~</span> <span class="op">!</span><span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Katrina"</span>, <span class="st">"Audrey"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 4: using branch as a function</span></span></span>
+<span class="r-in"><span><span class="co"># An alternate way of implementing the `branch()` function from Example 2 may be:</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M.4</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.4</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">duration_transform</span> <span class="op">=</span> <span class="fu">branch</span><span class="op">(</span><span class="va">data_trans</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"log-transformed"</span> <span class="op">~</span> <span class="va">log</span>,</span></span>
+<span class="r-in"><span>        <span class="st">"un-transformed"</span> <span class="op">~</span> <span class="va">identity</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="va">duration</span> <span class="op">=</span> <span class="fu">duration_transform</span><span class="op">(</span><span class="va">data.userlogs.raw</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 5: continuous option values for a parameter</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M.5</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.5</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu">branch</span><span class="op">(</span><span class="va">foo</span>, <span class="st">"option1"</span> <span class="op">~</span> <span class="fl">1</span>, .options <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M.6</span> <span class="op">=</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># alternatively, we could specify how we want the vector to be expanded</span></span></span>
+<span class="r-in"><span><span class="co"># for continuous parameters</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.6</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu">branch</span><span class="op">(</span><span class="va">foo</span>, <span class="st">"option1"</span> <span class="op">~</span> <span class="fl">1</span>, .options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -239,7 +239,7 @@ create a complete multiverse analysis.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

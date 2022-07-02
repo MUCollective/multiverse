@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -82,14 +82,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.6.0" id="multiverse-060">multiverse 0.6.0<a class="anchor" aria-label="anchor" href="#multiverse-060"></a></h2>
+<h2 class="page-header" data-toc-text="0.6.1" id="multiverse-061">multiverse 0.6.1<a class="anchor" aria-label="anchor" href="#multiverse-061"></a></h2>
 <div class="section level4">
-<h4 id="bug-fixes-0-6-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-6-0"></a></h4>
+<h4 id="bug-fixes-0-6-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-6-1"></a></h4>
 <ul><li>Fix for <a href="https://github.com/MUCollective/multiverse/issues/107" class="external-link">#107</a>. Parallel execution of the multiverse (i.e. when cores &gt;= 2 as an argument to <code>execute_multiverse</code>) resulted in creation of new environments and execution in these new environments, which are different from the ones that are stored in the multiverse object and returned by <code>expand</code>. Fixed implementation so that all the bindings from the environments were copied to the stored environments, and the resultant variable bindings can be accessed through <code>expand</code> (thanks, <a href="https://github.com/markromanmiller" class="external-link">@markromanmiller</a>, <a href="https://github.com/MUCollective/multiverse/issues/108" class="external-link">#108</a>).</li>
 <li>Throw errors when empty options are declared (eg. trailing commas) inside <code>branch</code> statements</li>
 </ul></div>
 <div class="section level4">
-<h4 id="minor-changes-0-6-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-6-0"></a></h4>
+<h4 id="minor-changes-0-6-1">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-6-1"></a></h4>
 <ul><li>Improved support for parallel processing using <code>future</code> as backend. Users can set up parallel execution workflows on both unix and non-unix systems using <code>future</code>. Multiverses can be executed in parallel on a local machine or concurrently on a cluster.</li>
 <li>Support for displaying progress of execution using <code>txtProgressBar</code>. Use argument <code>progress = TRUE</code> for the function <code><a href="../reference/execute.html">execute_multiverse()</a></code>.</li>
 <li>
@@ -118,7 +118,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

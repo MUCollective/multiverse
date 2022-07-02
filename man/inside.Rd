@@ -4,7 +4,7 @@
 \alias{inside}
 \title{Pass code into the multiverse}
 \usage{
-inside(multiverse, .expr, .label = NULL, .execute_default = T)
+inside(multiverse, .expr, .label = NULL, .execute_default = TRUE)
 }
 \arguments{
 \item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}}

@@ -18,7 +18,7 @@ using either the %when% operator or the branch_assert function."><!-- mathjax --
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -111,81 +111,81 @@ conditional on the values of certain other parameters.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="va">M.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># There are different ways to specifying conditions</span></span>
-<span class="r-in"><span class="co"># One way is to use the %when% operator</span></span>
-<span class="r-in"><span class="co"># the %when% operator can be specified after the option name</span></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span>
-<span class="r-in">            <span class="st">"constant"</span> <span class="op">~</span> <span class="fl">5</span>,</span>
-<span class="r-in">            <span class="st">"linear"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span>
-<span class="r-in">            <span class="st">"sum"</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">~</span> <span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">)</span></span>
-<span class="r-in">        <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># or it can be specified after the expression for computing the option value</span></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span>
-<span class="r-in">            <span class="st">"constant"</span> <span class="op">~</span> <span class="fl">5</span>,</span>
-<span class="r-in">            <span class="st">"linear"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span>
-<span class="r-in">            <span class="st">"sum"</span> <span class="op">~</span> <span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in">        <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># an advantage of the '%when' operator is that it can also be used when the</span></span>
-<span class="r-in"><span class="co"># option names are not specified for branches.</span></span>
-<span class="r-in"><span class="co"># when option names are not specified for branches, option names are assigned to</span></span>
-<span class="r-in"><span class="co"># the branches. For character, logical or numeric expressions, option names are of the</span></span>
-<span class="r-in"><span class="co"># same type (i.e. character, logical or numeric expressions respectively)</span></span>
-<span class="r-in"><span class="co"># For expressions of type symbol or call, options names are characters strings</span></span>
-<span class="r-in"><span class="co"># containing the expression.</span></span>
-<span class="r-in"><span class="co"># see the next two examples:</span></span>
-<span class="r-in"><span class="va">M.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span>
-<span class="r-in"> <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span>
-<span class="r-in">          <span class="fl">5</span>,</span>
-<span class="r-in">          <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span>
-<span class="r-in">          <span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in">   <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M.3</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.3</span>, <span class="op">{</span></span>
-<span class="r-in"> <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_x</span>,</span>
-<span class="r-in">       <span class="cn">TRUE</span>,</span>
-<span class="r-in">       <span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span> <span class="op">|</span> <span class="va">x</span> <span class="op">&lt;</span> <span class="fl">6</span></span>
-<span class="r-in">   <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span>
-<span class="r-in">          <span class="fl">5</span>,</span>
-<span class="r-in">          <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span>
-<span class="r-in">          <span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_x</span> <span class="op">==</span> <span class="st">'x &gt; 2 | x &lt; 6'</span><span class="op">)</span></span>
-<span class="r-in">   <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># or it can be specified after the expression for computing the option value</span></span>
-<span class="r-in"><span class="va">M.4</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.4</span>, <span class="op">{</span></span>
-<span class="r-in">    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span>
-<span class="r-in">            <span class="st">"constant"</span> <span class="op">~</span> <span class="fl">5</span>,</span>
-<span class="r-in">            <span class="st">"linear"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span>
-<span class="r-in">            <span class="st">"sum"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span>
-<span class="r-in">        <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">        <span class="fu">branch_assert</span><span class="op">(</span> <span class="va">values_z</span> <span class="op">!=</span> <span class="st">"sum"</span> <span class="op">|</span> <span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span> <span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">M.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># There are different ways to specifying conditions</span></span></span>
+<span class="r-in"><span><span class="co"># One way is to use the %when% operator</span></span></span>
+<span class="r-in"><span><span class="co"># the %when% operator can be specified after the option name</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"constant"</span> <span class="op">~</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"linear"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"sum"</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">~</span> <span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># or it can be specified after the expression for computing the option value</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.1</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"constant"</span> <span class="op">~</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"linear"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"sum"</span> <span class="op">~</span> <span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># an advantage of the '%when' operator is that it can also be used when the</span></span></span>
+<span class="r-in"><span><span class="co"># option names are not specified for branches.</span></span></span>
+<span class="r-in"><span><span class="co"># when option names are not specified for branches, option names are assigned to</span></span></span>
+<span class="r-in"><span><span class="co"># the branches. For character, logical or numeric expressions, option names are of the</span></span></span>
+<span class="r-in"><span><span class="co"># same type (i.e. character, logical or numeric expressions respectively)</span></span></span>
+<span class="r-in"><span><span class="co"># For expressions of type symbol or call, options names are characters strings</span></span></span>
+<span class="r-in"><span><span class="co"># containing the expression.</span></span></span>
+<span class="r-in"><span><span class="co"># see the next two examples:</span></span></span>
+<span class="r-in"><span><span class="va">M.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.2</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span> <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span></span>
+<span class="r-in"><span>          <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>          <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>          <span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M.3</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.3</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span> <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_x</span>,</span></span>
+<span class="r-in"><span>       <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>       <span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span> <span class="op">|</span> <span class="va">x</span> <span class="op">&lt;</span> <span class="fl">6</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span></span>
+<span class="r-in"><span>          <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>          <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>          <span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">%when%</span> <span class="op">(</span><span class="va">values_x</span> <span class="op">==</span> <span class="st">'x &gt; 2 | x &lt; 6'</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># or it can be specified after the expression for computing the option value</span></span></span>
+<span class="r-in"><span><span class="va">M.4</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M.4</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> y <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span> <span class="va">values_y</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span> <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> z <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span><span class="va">values_z</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"constant"</span> <span class="op">~</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"linear"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"sum"</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span></span>
+<span class="r-in"><span>        <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>        <span class="fu">branch_assert</span><span class="op">(</span> <span class="va">values_z</span> <span class="op">!=</span> <span class="st">"sum"</span> <span class="op">|</span> <span class="va">values_y</span> <span class="op">==</span> <span class="cn">TRUE</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -200,7 +200,7 @@ conditional on the values of certain other parameters.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

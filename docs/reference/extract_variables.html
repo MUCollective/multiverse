@@ -18,7 +18,7 @@ in a tidy format."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiverse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -89,13 +89,13 @@ in a tidy format.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">extract_variables</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, .results <span class="op">=</span> <span class="va">.results</span><span class="op">)</span>
-
-<span class="co"># S3 method for multiverse</span>
-<span class="fu">extract_variables</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, .results <span class="op">=</span> <span class="va">.results</span><span class="op">)</span>
-
-<span class="co"># S3 method for data.frame</span>
-<span class="fu">extract_variables</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, .results <span class="op">=</span> <span class="va">.results</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_variables</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, .results <span class="op">=</span> <span class="va">.results</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for multiverse</span></span>
+<span><span class="fu">extract_variables</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, .results <span class="op">=</span> <span class="va">.results</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for data.frame</span></span>
+<span><span class="fu">extract_variables</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, .results <span class="op">=</span> <span class="va">.results</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -127,26 +127,26 @@ then they a column of type data frame (or tibble) would be created (which is a s
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
-<span class="r-in">  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="va">x.mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span>, trim <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="va">trim_values</span>,</span>
-<span class="r-in">    <span class="st">"trim_none"</span> <span class="op">~</span> <span class="fl">0</span>,</span>
-<span class="r-in">    <span class="st">"trim_1pc"</span> <span class="op">~</span> <span class="fl">0.05</span>,</span>
-<span class="r-in">    <span class="st">"trim_5pc"</span> <span class="op">~</span> <span class="fl">0.025</span>,</span>
-<span class="r-in">    <span class="st">"trim_10pc"</span> <span class="op">~</span> <span class="fl">0.05</span></span>
-<span class="r-in">  <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Extracts the relevant variable from the multiverse</span></span>
-<span class="r-in"><span class="va">M</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">extract_variables</span><span class="op">(</span><span class="va">x.mean</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">x.mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span>, trim <span class="op">=</span> <span class="fu"><a href="branch.html">branch</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">trim_values</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_none"</span> <span class="op">~</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_1pc"</span> <span class="op">~</span> <span class="fl">0.05</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_5pc"</span> <span class="op">~</span> <span class="fl">0.025</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"trim_10pc"</span> <span class="op">~</span> <span class="fl">0.05</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extracts the relevant variable from the multiverse</span></span></span>
+<span class="r-in"><span><span class="va">M</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">extract_variables</span><span class="op">(</span><span class="va">x.mean</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .universe trim_values .parameter_assignm… .code        .results .errors x.mean</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -154,11 +154,11 @@ then they a column of type data frame (or tibble) would be created (which is a s
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         2 trim_1pc    <span style="color: #949494;">&lt;named list [1]&gt;</span>    &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;     <span style="color: #BB0000;">NA</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>         3 trim_5pc    <span style="color: #949494;">&lt;named list [1]&gt;</span>    &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;     <span style="color: #BB0000;">NA</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>         4 trim_10pc   <span style="color: #949494;">&lt;named list [1]&gt;</span>    &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;     <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># if you want to filter the multiverse before extracting variables from it</span></span>
-<span class="r-in"><span class="co"># you ca first create the table and manipulate it before extracting variables</span></span>
-<span class="r-in"><span class="fu"><a href="accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">extract_variables</span><span class="op">(</span><span class="va">x.mean</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># if you want to filter the multiverse before extracting variables from it</span></span></span>
+<span class="r-in"><span><span class="co"># you ca first create the table and manipulate it before extracting variables</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">extract_variables</span><span class="op">(</span><span class="va">x.mean</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .universe trim_values .parameter_assignm… .code        .results .errors x.mean</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -166,8 +166,8 @@ then they a column of type data frame (or tibble) would be created (which is a s
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         2 trim_1pc    <span style="color: #949494;">&lt;named list [1]&gt;</span>    &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;     <span style="color: #BB0000;">NA</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>         3 trim_5pc    <span style="color: #949494;">&lt;named list [1]&gt;</span>    &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;     <span style="color: #BB0000;">NA</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>         4 trim_10pc   <span style="color: #949494;">&lt;named list [1]&gt;</span>    &lt;named list&gt; <span style="color: #949494;">&lt;env&gt;</span>    &lt;lgl&gt;     <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -182,7 +182,7 @@ then they a column of type data frame (or tibble) would be created (which is a s
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
