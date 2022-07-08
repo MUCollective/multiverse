@@ -36,7 +36,7 @@ contains the following slots:
   \item parameters: This slot contains a named list of lists. It contains each parameter defined in the
   code using the `branch()` function, and the options defined for each parameter (as a list).
 
-  \item conditions (NOT IMPLEMENTED): This slot contain a list of conditions: if any of the
+  \item conditions: This slot contain a list of conditions: if any of the
   parameter values are conditional on a specific value of another parameter, these can be defined in the code
   using `branch_assert()` or `branch_exclude()`.
 

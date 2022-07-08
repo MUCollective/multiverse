@@ -7,31 +7,34 @@
 #' where the multiverse object was declared in.
 #'
 #' @details To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
-#' The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
+#' The \code{inside()} functions allows us to do this. Use \code{inside()} to pass any code to the specified multiverse,
 #' which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-#' use the `branch()` function. See \code{\link{branch}} for more
-#' details on how to declare multiple analysis options.
-#'
-#' The `inside` function only stores the code, and does not execute any code at this step. To execute, we
-#' provide separate functions. See \code{\link{execute}} for executing the code.
-#'
-#' Instead of using the `inside()` function, an alternate implementation of the multiverse is using
-#' the assignment operator, `<-`. See examples below.
+#' use the \code{branch()} function. 
 #' 
-#' **Note:** the `inside()` function can only access variables which can be accessed at the same level as the multiverse
-#' object. Since `inside()` is merely an interface to add analysis to the multiverse object, even if it is being called 
-#' by another function, it is actually manipulating the multiverse object, which will have a different parent environment
-#' from where `inside()` is called, and hence not have access to variables which might be accessible in the environment 
-#' within the function from where `inside()` is called.
+#' @seealso \code{branch()} for more details on how to declare multiple analysis options.
 #'
-#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using `multiverse()`
+#' The \code{inside} function only stores the code, and does not execute any code at this step. To execute, we
+#' provide separate functions. See \code{execute()} for executing the code.
+#'
+#' Instead of using the \code{inside()} function, an alternate implementation of the multiverse is using
+#' the assignment operator, `<-` (please refer to examples below).
+#' 
+#' \emph{Note}: the \code{inside()} function can only access variables which can be accessed at the same level as the multiverse
+#' object. Since \code{inside()} is merely an interface to add analysis to the multiverse object, even if it is being called 
+#' by another function, it is actually manipulating the multiverse object, which will have a different parent environment
+#' from where \code{inside()} is called, and hence not have access to variables which might be accessible in the environment 
+#' within the function from where \code{inside()} is called.
+#'
+#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}
 #'
 #' @param .expr R syntax. All the operations that the user wants to perform within the multiverse can be passed.
-#' Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.
+#' Since it accepts a single argument, chunks of code can be passed using `\{\}`. See example for details.
 #' 
-#' @param .label It is extracted automatically from the code block of type `multiverse`
+#' @param .label It is extracted automatically from the code block of type \code{multiverse}
 #' when run in an RMarkdown document. This should be used only within an RMarkdown document. 
 #' Defaults to NULL.
+#' 
+#' @param .execute_default Should the default multiverse be executed as part of this call?
 #'
 #' @return a multiverse object
 #'
@@ -91,7 +94,7 @@
 #'
 #' @name inside
 #' @export
-inside <- function(multiverse, .expr, .label = NULL) {
+inside <- function(multiverse, .expr, .label = NULL, .execute_default = TRUE) {
   .code = enexpr(.expr)
   
   add_and_parse_code(multiverse, .code, .label)
@@ -100,7 +103,9 @@ inside <- function(multiverse, .expr, .label = NULL) {
   
   # direct calls to inside() by the user result in execution of the
   # default universe in the global environment.
-  execute_universe(multiverse)
+  if (.execute_default) {
+    execute_universe(multiverse)
+  }
 }
 
 add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
@@ -128,15 +133,14 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   # there is no code declared in the multiverse
   if (is_null(m_obj$code)) {
     # code block is not named, it is just appended to a unnamed list -> inside() declaration
-    if (is.null(.name)) .c = list(.expr) 
-    
-    # code block is named, it is just appended to a named list
+    if (is.null(.name)) {
+      .c = list(.expr)
+    } # code block is named, it is just appended to a named list
     else {
       .c = list()
       .c[[.name]] = .expr
     }
-    
-    .expr <- list(.expr)
+    .expr <- .c
   } else {
     # there is code already declared in the multiverse
     if (is.null(.name)) .c = append(m_obj$code[1:.loc], .expr)
@@ -146,15 +150,33 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
       .c[[.name]] = .expr
       
       #.expr needs to be changed so that we recompute everything that occurs subsequently
-      .expr = .c[which(names(.c) == .name)]
+      .expr = .c[which(names(.c) == .name):length(.c)]
       .name = names(.c)[which(names(.c) == .name)]
     }
   }
   
-  mapply(parse_multiverse, .expr, .name, MoreArgs = list(.multiverse = multiverse, .code = .c))
+  mapply(parse_multiverse, .expr, names(.expr), MoreArgs = list(.multiverse = multiverse, .code = .c))
   
   m_obj$code <- .c
-  m_obj$unchanged_until <- length(.c) - length(.name)
+  
+  # case 1: if code is being added to the end, 
+  # unchanged_until should be the length of the list
+  #
+  # case 2: if a previous element, n, in the code list
+  #  is being edited, unchanged until should be n - 1
+  
+  if (tail(names(.c), n = 1) == .name) {
+    # case 1
+    m_obj$unchanged_until = length(.c) - 1
+  } else {
+    # case 2:
+    # `which` returns the index of the code block which has changed
+    # we substract one to indicate what has been unchanged
+    .p_idx = which( names(.c) == .name ) - 1
+    if (.p_idx == 0) m_obj$unchanged_until = NA
+    else m_obj$unchanged_until = .p_idx
+  }
+  # m_obj$unchanged_until <- length(.c) - length(.name)
 }
 
 # expand use of .options argument in branch calls

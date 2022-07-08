@@ -149,7 +149,7 @@ df <- df_durante  %>%
 ```
 ````
 
-**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multiverse. However, we can implement the exact same mulitverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
+**Note**: in this vignette we used the script-oriented `inside()` function for implementing the multiverse. However, we can implement the exact same multiverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
 
 As the condition implies, the parameter `menstrual_calcaultion` (which is for calculating the variable `NextMenstrualCalculation`) cannot take the value of "mc_option1" when we filter `cycle_length` using "cl_option3". Similarly, `menstrual_calcaultion` cannot take the value of "mc_option2" when we filter `cycle_length` using "cl_option2". In the multiverse table below, you can see that those two parameter combinations are absent (universes indexed 3 and 5.
 

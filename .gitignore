@@ -8,7 +8,12 @@
 # excludes all top level Rmd files
 /*.Rmd
 
+# revdep reports
+revdep/.*
+
 # ignore all nonstandard data types
 data/*.rds
 data/*.csv
 data/vis_correlation_all_judgements.rda$
+/doc/
+/Meta/

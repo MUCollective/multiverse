@@ -5,20 +5,20 @@
 #' 
 #' @details In a typical analysis, the user will declare variables and objects inside the multiverse object. 
 #' However, it might be difficult to access the variables and objects, hence we provide convenient wrappers
-#' in the form of `extract_variables()`.
+#' in the form of \code{extract_variables()}.
 #' 
 #' If the user wants to extract one or more literals (strings, integers, doubles or logicals of length 1)
 #' then each variables is separated out into its own column. If the user wants to extract one or more vectors (or lists)
 #' then each such variable will be extracted in its own list column. If the user wants to extract one or more dataframe 
 #' then they a column of type data frame (or tibble) would be created (which is a special instance of a list column).
 #' 
-#' @param x either a multiverse object or a dataframe (created using \code{\link{expand}}) from a multiverse object.
+#' @param x either a multiverse object or a dataframe (created using \code{expand()}) from a multiverse object.
 #' See usage.
 #' 
 #' @param ... one or more variable (or object) names to be extracted from the multiverse object. The names can be quoted or unquoted.
 #' 
 #' @param .results (Optional) if the .results column which stores the environments for each unique analysis has been changed, 
-#' specify the new name of the column. Defaults to `.results`
+#' specify the new name of the column. Defaults to \code{.results}
 #' 
 #' @examples
 #' \donttest{

@@ -14,6 +14,7 @@
 ^README_files$
 ^docs$
 ^figure$
+^revdep$
 
 # all non-relevant data files
 ^data/*\.rds$
@@ -27,6 +28,10 @@
 
 # exclude some vignettes for CRAN
 ^vignettes/dance.Rmd$
+^vignettes/_multiverse-export-json.Rmd$
 
 # exclude CRAN comments file
 ^cran-comments.md$
+^doc$
+^Meta$
+^CRAN-SUBMISSION$

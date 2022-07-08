@@ -2,7 +2,6 @@
 context("multiverse")
 
 library(dplyr)
-library(lubridate)
 library(purrr)
 library(tidyr)
 
@@ -44,8 +43,8 @@ make_data <- function(nrow = 500) {
         Relationship = sample(1:4, nrow, replace = TRUE),
         Sure1 = sample(1:9, nrow, replace = TRUE),
         Sure2 = sample(1:9, nrow, replace = TRUE),
-        StartDateofLastPeriod = make_date(2012, sample(4:5, nrow, TRUE), sample(1:22, nrow, TRUE)),
-        DateTesting = make_date(2012, 5, sample(21:26, nrow, TRUE))
+        StartDateofLastPeriod = as.Date(ISOdate(2012, sample(4:5, nrow, TRUE), sample(1:22, nrow, TRUE))),
+        DateTesting = as.Date(ISOdate(2012, 5, sample(21:26, nrow, TRUE)))
     ) %>%
     mutate(
         StartDateofPeriodBeforeLast = StartDateofLastPeriod - sample(20:28, nrow, TRUE),
@@ -133,7 +132,8 @@ test_that("accessor functions retrieve the multiverse table", {
   ref_df = ref_df %>%
     mutate(
       .parameter_assignment = param.assgn,
-      .code = map(.parameter_assignment, ~ get_code(ref_expr, .x))
+      .code = map(.parameter_assignment, ~ get_code(ref_expr, .x)),
+      .errors = list(NA)
     ) %>%
     as_tibble()
 

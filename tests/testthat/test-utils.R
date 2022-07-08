@@ -37,3 +37,39 @@ test_that("`create_name_from_expr()` returns correct output", {
   expect_equal(create_name_from_expr(quote(1)), 1)
   expect_equal(create_name_from_expr(quote(2)), 2)
 })
+
+test_that("`get_code_universe() returns correct output", {
+  M = multiverse()
+  
+  inside(M, {
+    x = branch(values_x, 0, 1, 2)
+    y = branch(values_y, "true", "false")
+  })
+  
+  inside(M, {
+    z = branch(values_z, 13, 500)
+  })
+  
+  m_dict_list = attr(M, "multiverse")$multiverse_diction$as_list()
+  
+  expect_equal(
+    get_code_universe(m_dict_list, 1, 1),
+    list(
+      `1` = quote({ 
+        x = 0  
+        y = "true"
+      })
+    ))
+  
+  expect_equal(
+    get_code_universe(m_dict_list, 2, 2),
+    list(
+      `1` = quote({ 
+        x = 0  
+        y = "true"
+      }),
+      `2` = quote({ 
+        z = 500
+      })
+    ))
+})

@@ -1,13 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://mucollective.github.io/multiverse/404.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/branch.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/conditions.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/dance.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/durante-multiverse-analysis.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/execution-multiverse.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/frequentist-multiverse-analysis.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/hurricane.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/visualising-multiverse.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/authors.html</loc>
+  </url>
+  <url>
     <loc>http://mucollective.github.io/multiverse/index.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/news/index.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/accessors.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/branch.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/reference/conditionals.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/durante.html</loc>
@@ -23,6 +68,9 @@
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/hurricane.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/reference/index.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/inside.html</loc>
@@ -47,32 +95,5 @@
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/vis_correlation.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/branch.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/conditions.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/dance.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/durante-multiverse-analysis.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/frequentist-multiverse-analysis.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/hurricane.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/multiverse-export-json.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/visualising-multiverse.html</loc>
   </url>
 </urlset>

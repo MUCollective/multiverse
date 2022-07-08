@@ -1,0 +1,187 @@
+---
+title: "Execution of multiverse analysis --- Sequential and Parallel"
+author: "Abhraneel Sarma"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Execution of multiverse analysis --- Sequential and Parallel}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr)
+library(dplyr)
+library(future)
+library(multiverse)
+```
+
+## Introduction
+
+As some user-specificed multiverses can be quite large, it is only natural that we should make use of the rich parallel processing resources that are widely available. `multiverse` makes use of futures using the [future](https://cran.r-project.org/package=future) library, which "provides a very simple and uniform way of evaluating R expressions asynchronously...". This allows both the user and us (as the creators of this library) greater flexibility in supporting how execution and parallel execution may be supported. How and when evaluation takes place depends on the strategy chosen by the user of executing the multiverse. These strategies include sequential execution in the current R session, or asynchronous parallel execution on the current machine or on a compute cluster.
+
+In this document, we show how you can execute each of the distinct analyses in your specified multiverse.
+
+
+## Data and analysis
+
+We will use the hurricane dataset that has been discussed in greater detail in the [README](https://mucollective.github.io/multiverse/) as well as in the vignette [hurricane](hurricane.html). If you are already familiar with this dataset and analysis, please feel free to skip this section, and continue from the next section
+
+```{r}
+data(hurricane)
+
+hurricane_data <- hurricane %>%
+  # rename some variables
+  rename(
+      year = Year,
+      name = Name,
+      dam = NDAM,
+      death = alldeaths,
+      female = Gender_MF,
+      masfem = MasFem,
+      category = Category,
+      pressure = Minpressure_Updated_2014,
+      wind = HighestWindSpeed
+  ) %>%
+  # create new variables
+  mutate(
+      post = ifelse(year>1979, 1, 0),
+      zcat = as.numeric(scale(category)),
+      zpressure = -scale(pressure),
+      zwind = as.numeric(scale(wind)),
+      z3 = as.numeric((zpressure + zcat + zwind) / 3)
+  )
+
+M = multiverse()
+```
+
+We implement the same analysis as in the `vignette(hurricane)`. Below we briefly outline the steps involved.
+
+Outlier exclusion: We implement different alternative choices on how to exclude outliers based on extreme observations of death and damages.
+
+```{r}
+inside(M, {
+  df <- hurricane_data %>%
+    filter(branch(death_outliers, 
+        "no_exclusion" ~ TRUE,
+        "most_extreme_deaths" ~ name != "Katrina",
+        "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
+    )) %>%
+    filter(branch(damage_outliers,
+        "no_exclusion" ~ TRUE,
+        "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
+        "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
+        "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
+    ))
+})
+```
+
+Identifying independent variables: How is femininity of the name of a hurricane operationalised? Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.
+
+Data transformations: The dollar amount in `damages` caused by a hurricane follows a long tailed, positive only valued distribution. The decision involved is whether or not to transform `damages`.
+
+```{r}
+inside(M, {
+  df <- df %>%
+    mutate(
+        femininity = branch(femininity_calculation,
+          "masfem" ~ masfem,
+          "female" ~ female
+        ),
+        damage = branch(damage_transform,
+          "no_transform" ~ identity(dam),
+          "log_transform" ~ log(dam)
+        )
+    )
+})
+```
+
+
+Alternative specifications of regression model: The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
+
+
+```{r}
+inside(M, {
+  fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+            branch(main_interaction,
+                "no" ~ femininity + damage,
+                "yes" ~ femininity * damage
+            ) + branch(other_predictors,
+                "none" ~ NULL,
+                "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+                "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+                "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+                "all" %when% (main_interaction == "yes") ~ femininity * z3,
+                "all_no_interaction" %when% (main_interaction == "no") ~ z3
+            ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
+            family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+            data = df)
+  
+  res <- broom::tidy(fit)
+})
+```
+
+
+## Execution
+
+### Sequential
+
+The most simple execution strategy would be to perform each computation sequentially, on one's current machine. This is the default strategy, which can be used by simply calling `execute_multiverse()` on the current multiverse object.
+
+```{r, eval = FALSE}
+execute_multiverse(M)
+```
+
+However, some studies have created multiverse analyses with thousands or even millions of unique specifications (universes). In such cases, the optimisation to avoid redundant computation that we have built into our solution for execution is insufficient, and sequential execution fails to make use of the embarrassingly abundant parallel processing resources.
+
+
+### Parallel: separate R sessions
+
+To process multiverses in parallel, we make use of the [future](https://cran.r-project.org/package=future) library. `future` allows the user to declare different strategies for resolving futures asynchronously and in parallel using `future::plan()`. The most general approach, which would work on both unix and non-unix based systems is to use a `multisession` future, which resolves futures asynchronously (in parallel) in separate R sessions running in the background on the same machine:
+
+```{r, eval = FALSE}
+plan(multisession, workers = availableCores())
+execute_multiverse(M, parallel = TRUE)
+plan(sequential) # explicitly closes multisession workers by switching plan 
+```
+
+Note: this vignette uses the `inside()` syntax to implement a multiverse. However, futures can be used with multiverse code blocks as well, and the steps involved in setup of asynchronous futures and execution would remain the same.
+
+### Parallel: separate forked processes
+
+This strategy is similar to the mc\*apply suite of functions in the `parallel` library. It resolves futures "asynchronously (in parallel) in separate forked R processes running in the background on the same machine". However, this functionality is not supported on Windows (non-unix based system). Thus, we recommend using `multisession` instead.
+
+### Parallel: compute clusters
+
+`Future` also supports resolution in separate R sessions running on a compute cluster. "A cluster future is a future that uses cluster evaluation, which means that its value is computed and resolved in parallel in another process." 
+
+## What if I want to execute only a subset of the specifications?
+
+For debugging purposes or otherwise, one might wonder if it is possible to execute only a small subset of `N` universes from the larger specified multiverse. Although we do not provide a specific function which supports this behavior, such a behavior can be easily achieved using the following workflow using the `lapply()` functions.
+
+```{r, eval = FALSE}
+N = 5
+lapply(1:5, function(x) execute_universe(M, x))
+```
+
+Alternatively, the same result can be obtained using the `purrr::map()` function:
+
+```{r, eval = FALSE}
+purrr::map(1:N, ~ execute_universe(M, .))
+```
+
+If we want to perform this operation in parallel, we could use `future.apply::future_lapply()` as follows:
+
+```{r, eval = FALSE}
+plan(multisession, workers = availableCores())
+future.apply::future_lapply(1:5, function(x) execute_universe(M, x))
+plan(sequential)
+```
+
+For a detailed description on asynchronous resolution of futures and how to set up clusters, please refer to the documentation of the `future` library.
+

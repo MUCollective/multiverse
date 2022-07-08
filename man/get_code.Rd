@@ -7,8 +7,7 @@
 get_code(.code, .assgn = NULL)
 }
 \arguments{
-\item{.code}{Code that is passed to the multiverse. This is not stripped of calls such as `branch_assert`,
-which can be done using the `remove_branch_assert` function.}
+\item{.code}{Code that is passed to the multiverse. This is not stripped of calls such as \code{branch_assert()}.}
 
 \item{.assgn}{A list containing the assignments for each defined parameter in the multiverse}
 }

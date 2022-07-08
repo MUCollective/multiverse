@@ -88,7 +88,7 @@ test_that("`add_and_parse_code` parses the code", {
   add_and_parse_code(M, an_expr)
 
   M_tbl = expand(M)
-  expect_equal( dim(M_tbl), c(4, 5) )
+  expect_equal( dim(M_tbl), c(4, 6) )
   expect_equal( length(parameters(M)), 1 )
   expect_equal( length(parameters(M)$value_y), 4 )
   expect_equal( M_tbl$.universe, 1:4 )
@@ -98,7 +98,7 @@ test_that("`add_and_parse_code` parses the code", {
   )
 })
 
-test_that("`inside` executes the default analysis", {
+test_that("`inside` executes the default analysis by default", {
   an_expr = expr({
     x = data.frame(x = 1:10) %>%
       mutate( y = branch( value_y, 0, 3, x + 1, x^2))
@@ -111,6 +111,17 @@ test_that("`inside` executes the default analysis", {
   df.ref =  data.frame(x = 1:10) %>%  mutate( y = 0 )
 
   expect_equal( as.list(df), as.list(df.ref) )
+})
+
+test_that("`inside` does not execute the default analysis when specified as such", {
+  an_expr = expr({
+    x = data.frame(x = 1:10) %>%
+      mutate( y = branch( value_y, 0, 3, x + 1, x^2))
+  })
+  
+  M = multiverse()
+  inside(M, !!an_expr, .execute_default = F)
+  expect_error(M$x, "object 'x' not found")
 })
 
 test_that("`expand_branch_options()`: continuous parameters defined in the multiverse are evaluated", {
@@ -159,4 +170,46 @@ test_that("inside cannot access variables which is not accessible from the envir
   }
   
   expect_warning(myfun())
+})
+
+
+test_that("inside: unchanged_until and exec_until are correct", {
+  M <- multiverse()
+
+  # unchanged_until should be undefined at the beginning
+  expect_equal(attr(M, "multiverse")$unchanged_until, NA)
+
+  inside(M, {
+    x <- branch(value_x, 0, 5, 14)
+    z <- branch(value_z, 2, 3)
+  })
+
+  inside(M, {
+    y = branch(value_y, 2, 7)
+  })
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, 1) # we've added two code blocks to the multiverse
+
+  inside(M, {
+    x <- branch(value_x, 3, 6, 9)
+    z <- branch(value_z, 3, 4)
+  }, .label = "1") # we've changed the first code block
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, NA)
+
+  inside(M, {
+    w = branch(value_w, 0, 1)
+  })
+
+  inside(M, {
+    a = branch(value_a, "true", "false")
+  })
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, 3)
+
+  inside(M, {
+    y = branch(value_y, 2, 7)
+  }, .label = "2") # we've changed the second code block now
+
+  expect_equal(attr(M, "multiverse")$unchanged_until, 1)
 })

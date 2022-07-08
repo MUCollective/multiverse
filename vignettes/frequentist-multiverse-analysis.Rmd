@@ -25,7 +25,6 @@ library(purrr)
 library(broom)
 library(gganimate)
 library(multiverse)
-library(boot)
 ```
 
 
@@ -34,7 +33,7 @@ M = multiverse()
 ```
 
 
-```{r, chunk-setup, include=FALSE, eval=FALSE}
+```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
   eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
@@ -42,6 +41,7 @@ knitr::opts_chunk$set(
   fig.height = 4
 )
 ```
+
 
 ## Multiverse case study #2
 
@@ -116,7 +116,7 @@ M = multiverse()
 ```
 
 
-Now we define the parameters we want to consider in the multiverse: confidence interval method (`ci_method`) and data transformation method (`data_transform`). We also define a parameter for confidence level, as the choice of a 95% confidence level is arbitrary and we can choose to instead present our results with alternate confidence levels. Here we vary between: 50%, 75%, 89%, 85%, 99%, 99.9%. Thus our multiverse consists of: 2 $\times$ 2 $\times$ 7 different analysis combinations.
+Now we define the parameters we want to consider in the multiverse: confidence interval method (`ci_method`) and data transformation method (`data_transform`). We also define a parameter for confidence level, as the choice of a 95% confidence level is arbitrary and we can choose to instead present our results with alternate confidence levels. Here we vary between: 50%, 89%, 95%, and 99.9%. Thus our multiverse consists of: 2 $\times$ 2 $\times$ 7 different analysis combinations.
 
 #### Note 
 In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
@@ -135,10 +135,8 @@ data_transform <- branch(data_transform,
 conf_level <-  branch(conf_level,
     "50%" ~ 0.5,
     "67" ~ 0.67,
-    "89" ~ 0.89,
     "95%" ~ 0.95,
-    "99%" ~ 0.99,
-    "99.9%" ~ 0.999
+    "99%" ~ 0.99
 )
 ```
 
@@ -157,11 +155,9 @@ data_transform <- branch(data_transform,
 
 conf_level <-  branch(conf_level,
     "50%" ~ 0.5,
-    "67" ~ 0.67,
     "89" ~ 0.89,
     "95%" ~ 0.95,
-    "99%" ~ 0.99,
-    "99.9%" ~ 0.999
+    "99%" ~ 0.99
 )
 ```
 ````
@@ -381,18 +377,19 @@ df.results.diff %>%
 
 A value lower than 1 (i.e., on the left side of the dark line) means the condition on the left is faster than the condition on the right. The confidence intervals are not corrected for multiplicity. The results from this study appear to be relatively robust and consistent across all the possible combinations that we have tried.
 
-```{r, fig.width = 9, fig.height = 4}
+```{r}
 p <- df.results.diff %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = modality)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = modality), height = 0) +
-  transition_manual( .universe )
+  transition_manual( .universe ) +
+  theme_minimal()
 
 animate(p, nframes = 28,  fps = 4)
 ```
 
-Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 indicates a statistically significant difference at the α = .05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the familywise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.
+Correction for multiplicity can be another analysis option in the multiverse analysis. Since the individual confidence level is 95%, an interval that does not contain the value 1 indicates a statistically significant difference at the α = .05 level. The probability of getting at least one such interval if all 3 population means were zero (i.e., the family-wise error rate) is α=.14. Likewise, the simultaneous confidence level is 86%, meaning that if we replicate our experiment over and over, we should expect the 3 confidence intervals to capture all 3 population means 86% of the time.
 
 ## Conclusion
 

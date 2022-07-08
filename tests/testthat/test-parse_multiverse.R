@@ -6,7 +6,6 @@ library(rlang)
 library(tidyr)
 library(dplyr)
 library(purrr)
-library(lubridate)
 
 set.seed(123)
 make_data <- function(nrow = 500) {
@@ -14,8 +13,8 @@ make_data <- function(nrow = 500) {
     Relationship = sample(1:4, nrow, replace = TRUE),
     Sure1 = sample(1:9, nrow, replace = TRUE),
     Sure2 = sample(1:9, nrow, replace = TRUE),
-    StartDateofLastPeriod = make_date(2012, sample(4:5, nrow, TRUE), sample(1:22, nrow, TRUE)),
-    DateTesting = make_date(2012, 5, sample(21:26, nrow, TRUE))
+    StartDateofLastPeriod = as.Date(ISOdate(2012, sample(4:5, nrow, TRUE), sample(1:22, nrow, TRUE))),
+    DateTesting = as.Date(ISOdate(2012, 5, sample(21:26, nrow, TRUE)))
   ) %>%
     mutate(
       StartDateofPeriodBeforeLast = StartDateofLastPeriod - sample(20:28, nrow, TRUE),
@@ -316,7 +315,7 @@ test_that("`parse_multiverse` returns the complete parameter table", {
       ))
   }))
 
-  p_tbl_df = expand(M) %>% select(-.code, -.results)
+  p_tbl_df = expand(M) %>% select(-.code, -.results, -.errors)
   
   params.list <- list(
     menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3"),
@@ -344,7 +343,8 @@ test_that("`parse_multiverse` creates an empty data.frame for the 'multiverse_tb
   p_tbl_df.ref = tibble::tibble(
     .universe = 1,
     .parameter_assignment = list( list() ),
-    .code = list( list(`1` = quote({df <- data.frame(x = 1:10)})) )
+    .code = list( list(`1` = quote({df <- data.frame(x = 1:10)})) ),
+    .errors = NA
   )
 
   M = multiverse()
@@ -385,7 +385,7 @@ test_that("`parse_multiverse` works when conditions are specified", {
       )
   }))
 
-  p_tbl_df = expand(M) %>% select( -.parameter_assignment, -.code, -.results )
+  p_tbl_df = expand(M) %>% select( -.parameter_assignment, -.code, -.results, -.errors )
   expect_equal( as.list(p_tbl_df), as.list(p_tbl_df.ref) )
 })
 

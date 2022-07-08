@@ -15,7 +15,7 @@ vignette: >
 
 ## Introduction
 
-In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualise the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualising them can be difficult. We will show how our package can be used to create the visualisations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2694998), as well as using other uncertainty visualisation approaches.
+In this document, we show how you can extract results from the multiverse after performing a multiverse analysis. We also show some ways to visualise the results of a multiverse analysis. Because, a multiverse analysis consists of the results from hundreds or thousands of analysis, visualising them can be difficult. We will show how our package can be used to create the visualisations by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://doi.org/10.1177/1745691616658637) and Simonsohn et al. in [Specification curve: Descriptive and inferential statistics on all reasonable specifications](http://dx.doi.org/10.2139/ssrn.2694998), as well as using other uncertainty visualisation approaches.
 
 
 ```{r, setup, message=FALSE, warning=FALSE}
@@ -179,7 +179,7 @@ We can then use various R packages to visualise the results. Below, we show some
 ### Animating the coefficients of the model from each multiverse
 One way to visualise over the multiverse is to animate over the results from each universe in the multiverse. This approach, inspired by the concept of Hypothetical Outcome plots was described by Dragicevic et al. in [Increasing the Transparency of Research Papers with Explorable Multiverse Analyses](https://dl.acm.org/doi/10.1145/3290605.3300295). This approach allows us to quickly see the robustness of a result --- if a particular result is consistent across all analysis paths or idiosyncratic to a specific analysis path.
 
-```{r, message = FALSE, fig.width = 6, fig.height = 4}
+```{r, message = FALSE, fig.width = 6, fig.height = 4, eval = FALSE}
 p <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
@@ -192,10 +192,13 @@ p <- expand(M) %>%
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  theme_minimal() +
   transition_manual( .universe )
 
 animate(p, nframes = 210, fps = 2)
 ```
+
+![Animation of linear regression coefficients](../man/figures/durante-regression.gif)
 
 ### Histogram of p-values of the Fertility × Relationship status interaction
 Another approach would be to summarise the results. Steegen et al. which depicts a histogram of p values of the Fertility × Relationship status interaction on religiosity for the multiverse of 210 data sets in Study 2 (`summary_RelComp`), on fiscal and social political attitudes for the multiverse of 210 data sets in Study 2 (`summary_FiscConsComp` and `summary_SocConsComp`), and on voting and donation preferences for the multiverse of 210 data sets in Study 2 (`summary_Donate` and `summary_Vote`). The dashed line indicates p = 0.05.

@@ -1,7 +1,7 @@
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg?branch=dev)](https://github.com/MUCollective/multiverse/actions)
-[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://codecov.io/gh/MUCollective/multiverse)
+[![R-CMD-check](https://github.com/MUCollective/multiverse/workflows/R-CMD-check/badge.svg)](https://github.com/MUCollective/multiverse/actions)
+[![codecov](https://codecov.io/gh/MUCollective/multiverse/branch/master/graph/badge.svg?token=LsJtjiw42J)](https://app.codecov.io/gh/MUCollective/multiverse)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/multiverse)](https://cran.r-project.org/package=multiverse)
 ![Download
@@ -31,11 +31,9 @@ neatly wrapped within a larger analysis in R.
 
 For more background on what a *multiverse analysis* is, please refer to
 the works of Steegen et al., who first put forth the concept of
-[multiverse
-analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637),
-and Simonsohn et al., who put forth a similar notion called the
-[Specification curve
-analysis](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1314&context=marketing_papers).
+[multiverse analysis](https://doi.org/10.1177/1745691616658637), and
+Simonsohn et al., who put forth a similar notion called the
+[Specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998).
 
 The `multiverse` documentation predominantly follows the tidyverse
 syntax.
@@ -70,14 +68,14 @@ further information on:
 
 We also implement a series of end-to-end multiverse implementations
 using this package to demonstrate how it might be used (which can be
-found in the
-[vignettes](https://mucollective.github.io/multiverse/articles/)):
+found in the package
+[vignettes](https://mucollective.github.io/multiverse/)):
 
 -   Steegen et al.’s [original multiverse
-    analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637)
-    of the paper [The fluctuating female vote: Politics, religion, and
-    the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can
-    also be found **below**.
+    analysis](https://doi.org/10.1177/1745691616658637) of the paper
+    [The fluctuating female vote: Politics, religion, and the ovulatory
+    cycle](https://doi.org/10.1177/0956797612466416); can also be found
+    **below**.
 -   Simonsohn et al.’s [specification curve
     analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper
     [Female hurricanes are deadlier than male
@@ -292,7 +290,7 @@ facilitates this through some boilerplate code:
     a dedicated code chunk, and is more consistent with the interactive
     programming interface of RStudio.
 -   the `inside()` function: allows users to declare multiverse code in
-    RScripts (or withn regular R code blocks).
+    RScripts (or within regular R code blocks).
 
 **Note** that the `inside` function is more suited for a script-style
 implementation. When using the interactive programming interface of
@@ -312,7 +310,9 @@ details on using the multiverse code blocks with RMarkdown). A
 `multiverse` package, to implement the multiverse analyses. This allows
 you to write more concise code and is more consistent with the
 interactive programming interface of RStudio. Below we show how code can
-be implemented using the *multiverse code block:*
+be implemented using the *multiverse code block:* (***Note: if you are
+using an RScript or the R console, please skip to the next section as
+executing the code below will throw an error***)
 
     ```{multiverse default-m-1, inside = M}
     # here we just create the variable `df` in the multiverse
@@ -334,8 +334,8 @@ detail in the next section. When this code is written and executed
 inside a *multiverse code block*, it allows the multiverse library to
 process and compile it to three different analyses.
 
-We provide the ability to declare multiverse code block as an *Addin* in
-RStudio. Users can click on *Addins* toolbar menu in RStudio (see the
+We provide the ability to declare multiverse code block as an *AddIn* in
+RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the
 image below). This would create a multiverse code block at the location
 of the cursor in the document.
 
@@ -345,7 +345,7 @@ Alternately, users can insert a multiverse code block using a keyboard
 shortcut. Users can create a keyboard shortcut to declare a multiverse
 code block inside a RMarkdown document through the following steps:
 
--   Tools > Addins > Browse Addins… > Keyboard Shortcuts
+-   Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one
     result with “Insert multiverse code chunk” as the name.
 -   Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or
@@ -496,12 +496,12 @@ parameters(M)
 
 ``` r
 expand(M)
-#> # A tibble: 3 × 5
-#>   .universe death_outliers   .parameter_assignment .code            .results
-#>       <int> <chr>            <list>                <list>           <list>  
-#> 1         1 no_exclusion     <named list [1]>      <named list [1]> <env>   
-#> 2         2 most_extreme     <named list [1]>      <named list [1]> <env>   
-#> 3         3 two_most_extreme <named list [1]>      <named list [1]> <env>
+#> # A tibble: 3 × 6
+#>   .universe death_outliers   .parameter_assignment .code        .results .errors
+#>       <int> <chr>            <list>                <list>       <list>   <list> 
+#> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
+#> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
+#> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>
 ```
 
 1.  `code`, which is the code that the user passes to the multiverse to
@@ -532,12 +532,13 @@ code(M)
 
 ``` r
 extract_variables(M, df.filtered)
-#> # A tibble: 3 × 6
-#>   .universe death_outliers   .parameter_assignm… .code     .results df.filtered 
-#>       <int> <chr>            <list>              <list>    <list>   <list>      
-#> 1         1 no_exclusion     <named list [1]>    <named l… <env>    <df [92 × 1…
-#> 2         2 most_extreme     <named list [1]>    <named l… <env>    <df [92 × 1…
-#> 3         3 two_most_extreme <named list [1]>    <named l… <env>    <df [92 × 1…
+#> # A tibble: 3 × 7
+#>   .universe death_outliers   .parameter_assignment .code        .results .errors
+#>       <int> <chr>            <list>                <list>       <list>   <list> 
+#> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
+#> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
+#> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
+#> # … with 1 more variable: df.filtered <list>
 ```
 
 ## Building up a complete analysis
@@ -678,7 +679,7 @@ analysis option at each decision point. The default analysis is executed
 in the current active R environment (i.e. the same environment that
 regular R code blocks are executed in — the R Global Environment). Thus,
 the result of the default analysis is always accessible to the user. The
-output of an executed code chunk (text or visualization) is displayed
+output of an executed code chunk (text or visualisation) is displayed
 immediately below it, mimicking notebook code chunks
 
     ```{multiverse label = default-m-3, inside = M}
@@ -725,12 +726,12 @@ analysts and to aid debugging.
 ## Executing the entire multiverse
 
 To execute all unique analysis paths in the multiverse, an analyst can
-call `execute_multiverse(M)` . We support local parallelization with an
+call `execute_multiverse(M)`. We support local parallelisation with an
 optional cores argument indicating the number of cpu cores to use. The
 multiverse object can also be easily adapted to use with existing
 parallel computing packages in R, such as
-[future](https://cran.r-project.org/web/packages/future/index.html), to
-run analyses across computing clusters.
+[future](https://CRAN.R-project.org/package=future), to run analyses
+across computing clusters.
 
 ## Debugging and Diagnosing Errors
 

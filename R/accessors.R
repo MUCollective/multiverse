@@ -1,8 +1,8 @@
 #' Accessing contents of the multiverse object
 #'
 #' @description A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
-#' Variables from the analysis that is being performed within the multiverse can be accessed using the `$`.
-#' Object variables such as the `code`, the `expanded parameter options table`, the `parameters` and the `conditions` can be accessed using respective functions
+#' Variables from the analysis that is being performed within the multiverse can be accessed using the \code{$}.
+#' Object variables such as the \code{code}, the \code{expanded parameter options table}, the \code{parameters} and the \code{conditions} can be accessed using respective functions
 
 #' @name accessors
 #' @param multiverse Object of class multiverse
@@ -16,7 +16,7 @@
   .idx = 1
   m_obj = attr(multiverse, "multiverse")
   .env <- unlist(unname(tail(attr(multiverse, "multiverse")$multiverse_diction$as_list(), n = 1)), recursive = FALSE)[[1]]$env
-  
+
   get(as.character(name), .env)
 }
 
@@ -68,12 +68,14 @@ expand.multiverse <- function(multiverse) {
     } else {
       .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
     }
+    .error = NA
     df <- tibble(.universe = seq(1:n))
   } else {
     df <- filter(df, eval(all_conditions))
     n <- nrow(df)
     param.assgn =  lapply(seq_len(n), function(i) lapply(df, "[[", i))
     .code = lapply(seq_len(n), get_code_universe, .m_list = .m_list, .level = length(.m_list))
+    .error = lapply(seq_len(n), get_error_universe, .m_list = .m_list, .level = length(.m_list))
     .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
   }
   
@@ -81,7 +83,8 @@ expand.multiverse <- function(multiverse) {
                       .universe = 1:nrow(df), 
                       .parameter_assignment = param.assgn, 
                       .code = .code, 
-                      .results = .res
+                      .results = .res,
+                      .errors = .error
                     ), .universe, everything())
 }
 
@@ -140,7 +143,7 @@ parameters <- function(multiverse) {
 parameters.default <- function(multiverse) {
   stop(
     "Objects of type ", deparse(class(multiverse)), " do not have method `parameters`. \n",
-    "Please use objects of type `multiverse."
+    "Please use objects of type `multiverse`."
   )
 }
 
@@ -161,14 +164,16 @@ conditions <- function(multiverse) {
 conditions.default <- function(multiverse) {
   stop(
     "Objects of type ", deparse(class(multiverse)), " do not have method `conditions`. \n",
-    "Please use objects of type `multiverse."
+    "Please use objects of type `multiverse`."
   )
 }
 
 #' @rdname accessors
+#' @export
 conditions.multiverse <- function(multiverse) {
   attr(multiverse, "multiverse")[['conditions']]
 }
+
 
 #' @rdname accessors
 #' @param idx index of the universe in the multiverse (corresponds to the row in the table)
