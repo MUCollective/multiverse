@@ -1,12 +1,13 @@
 ## Submission comments
+This is a re-submission of v0.6.0 which was rejected due to failing R CMD check with _R_CHECK_DEPENDS_ONLY_=true.
 This submission contains minor bug fixes, and improves support for the use of {future} for parallel computation
 
 ## Test environments
-* Windows (winbuilder), R-devel (unstable) (2022-06-16 r82498)
-* Windows (winbuilder), R-release 4.2.0 (2022-04-22)
+* Windows (winbuilder), R-devel (unstable) (2022-06-30 r82540)
+* Windows (winbuilder), R-release 4.2.1 (2022-06-23)
 * Windows (winbuilder), R-oldrelease 4.1.3 (2022-03-10)
-* MacOs (local), R-release 4.2.0 (2022-04-22)
-* Ubuntu 16.04 (github), R-release 4.2.0 (2022-04-22)
+* MacOs (github), R-release 4.2.1 (2022-06-23)
+* Ubuntu 16.04 (github), R-release 4.2.1 (2022-06-23)
 
 ## R CMD check results
 0 errors | 0 warnings | 1 notes
