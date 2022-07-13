@@ -5,7 +5,7 @@
 \alias{multiverse-package}
 \title{'Explorable Multiverse' Data Analysis and Reports in R}
 \description{
-`multiverse` is an R package that aims to make it easy to declare 'multiverse-style'
+\code{multiverse} is an R package that aims to make it easy to declare 'multiverse-style'
 analysis in R and R notebooks. The 'multiverse' package allows users to 
 concisely and flexibly declare alternate ways of performing an analysis step 
 in order to show how fragile or robust their findings are.
@@ -23,10 +23,10 @@ to declare custom control flows and multiple nested 'if-else' blocks. The `multi
 aims to simplify the process of composing 'multiverse' analysis using a flexible and concise
 syntax.
 
-To get started with the multiverse package please refer to `vignette("branch.Rmd")`, 
-`vignette("conditions.Rmd")` and `vignette("multiverse-in-rmd.Rmd")`.
+To get started with the multiverse package please refer to \code{vignette("branch")}`, 
+\code{vignette("conditions")} and \code{vignette("multiverse-in-rmd")}.
 For example implementations of analysis using the multiverse package, see the case studies
-`vignette("durante-multiverse-analysis")` and `vignette("hurricane")`.
+\code{vignette("durante-multiverse-analysis")} and \code{vignette("hurricane")}.
 }
 \references{
 Steegen, Sara, Francis Tuerlinckx, Andrew Gelman, and Wolf Vanpaemel. (2016). 

@@ -4,17 +4,19 @@
 \alias{inside}
 \title{Pass code into the multiverse}
 \usage{
-inside(multiverse, .expr, .label = NULL)
+inside(multiverse, .expr, .label = NULL, .execute_default = TRUE)
 }
 \arguments{
-\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using `multiverse()`}
+\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}}
 
 \item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed.
-Since it accepts a single argument, chunks of code can be passed using `{}`. See example for details.}
+Since it accepts a single argument, chunks of code can be passed using `\{\}`. See example for details.}
 
-\item{.label}{It is extracted automatically from the code block of type `multiverse`
+\item{.label}{It is extracted automatically from the code block of type \code{multiverse}
 when run in an RMarkdown document. This should be used only within an RMarkdown document. 
 Defaults to NULL.}
+
+\item{.execute_default}{Should the default multiverse be executed as part of this call?}
 }
 \value{
 a multiverse object
@@ -28,22 +30,9 @@ The inside function can only access variables which can be accessed at the same 
 where the multiverse object was declared in.
 
 To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
-The `inside()` functions allows us to do this. Use `inside()` to pass any code to the specified multiverse,
+The \code{inside()} functions allows us to do this. Use \code{inside()} to pass any code to the specified multiverse,
 which is captured as an expression. To define multiple analysis options in the code passed to the multiverse,
-use the `branch()` function. See \code{\link{branch}} for more
-details on how to declare multiple analysis options.
-
-The `inside` function only stores the code, and does not execute any code at this step. To execute, we
-provide separate functions. See \code{\link{execute}} for executing the code.
-
-Instead of using the `inside()` function, an alternate implementation of the multiverse is using
-the assignment operator, `<-`. See examples below.
-
-**Note:** the `inside()` function can only access variables which can be accessed at the same level as the multiverse
-object. Since `inside()` is merely an interface to add analysis to the multiverse object, even if it is being called 
-by another function, it is actually manipulating the multiverse object, which will have a different parent environment
-from where `inside()` is called, and hence not have access to variables which might be accessible in the environment 
-within the function from where `inside()` is called.
+use the \code{branch()} function.
 }
 \examples{
 \donttest{
@@ -95,4 +84,19 @@ inside(M.1, {
 
 }
 
+}
+\seealso{
+\code{branch()} for more details on how to declare multiple analysis options.
+
+The \code{inside} function only stores the code, and does not execute any code at this step. To execute, we
+provide separate functions. See \code{execute()} for executing the code.
+
+Instead of using the \code{inside()} function, an alternate implementation of the multiverse is using
+the assignment operator, `<-` (please refer to examples below).
+
+\emph{Note}: the \code{inside()} function can only access variables which can be accessed at the same level as the multiverse
+object. Since \code{inside()} is merely an interface to add analysis to the multiverse object, even if it is being called 
+by another function, it is actually manipulating the multiverse object, which will have a different parent environment
+from where \code{inside()} is called, and hence not have access to variables which might be accessible in the environment 
+within the function from where \code{inside()} is called.
 }

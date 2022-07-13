@@ -16,21 +16,6 @@ vignette: >
 ---
 
 
-```{r setup, include=FALSE}
-library(dplyr)
-library(modelr)
-library(tidyr)
-library(ggplot2)
-library(tidybayes)
-library(multiverse)
-```
-
-
-```{r, include=FALSE}
-M = multiverse()
-```
-
-
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -38,6 +23,16 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+```
+
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(modelr)
+library(tidyr)
+library(ggplot2)
+library(tidybayes)
+library(multiverse)
 ```
 
 
@@ -93,7 +88,7 @@ fit <- glm(death ~ masfem * dam + masfem * zpressure, data = df, family = "poiss
 
 To implement a multiverse analysis, we first need to create the multiverse object:
 
-```{r, eval = FALSE}
+```{r}
 M <- multiverse()
 ```
 
@@ -103,22 +98,6 @@ In their implementation, Simonsohn et al. describe a principled method of exclud
 
 #### Note 
 In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
-
-```{multiverse default-m-1, inside = M, echo = FALSE}
-df <- hurricane_data %>%
-    filter(branch(death_outliers, 
-        "no_exclusion" ~ TRUE,
-        "most_extreme_deaths" ~ name != "Katrina",
-        "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
-    )) %>%
-    filter(branch(damage_outliers,
-        "no_exclusion" ~ TRUE,
-        "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
-        "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
-        "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
-    ))
-```
-
 
 ````
 ```{multiverse default-m-1, inside = M}`r ''`
@@ -139,26 +118,11 @@ df <- hurricane_data %>%
 
 ### Identifying independent variables
 
-The next decision involves identifying the appropriate dependent variable for the primary effect --- how do we operationalise femininity of the name of a hurricane. Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.
+The next decision involves identifying the appropriate independent variable for the primary effect --- how do we operationalise femininity of the name of a hurricane. Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.
 
 The other decision involved is whether or not to transform `damages`, another independent variable. damages follow a long tailed, positive only valued distribution.
 
 We implement these two decisions in our multiverse as follows:
-
-```{multiverse label = default-m-2, inside = M, echo = FALSE}
-df <- df %>%
-    mutate(
-        femininity = branch(femininity_calculation,
-          "masfem" ~ masfem,
-          "female" ~ female
-        ),
-        damage = branch(damage_transform,
-          "no_transform" ~ identity(dam),
-          "log_transform" ~ log(dam)
-        )
-    )
-```
-
 
 ````
 ```{multiverse label = default-m-2, inside = M}`r ''`
@@ -176,33 +140,8 @@ df <- df %>%
 ```
 ````
 
-```{multiverse default-m-9, inside = M}
-df
-```
-
 ### Declaring alternative specifications of regression model
 The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
-
-```{multiverse label = default-m-3, inside = M, echo = FALSE}
-fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
-          branch(main_interaction,
-              "no" ~ femininity + damage,
-              "yes" ~ femininity * damage
-          ) + branch(other_predictors,
-              "none" ~ NULL,
-              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-              "all" %when% (main_interaction == "yes") ~ femininity * z3,
-              "all_no_interaction" %when% (main_interaction == "no") ~ z3
-          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
-          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
-          data = df)
-```
-
-```{r}
-broom::tidy(fit)
-```
 
 
 ````
@@ -221,41 +160,10 @@ fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
           ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
           family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
           data = df)
-
-broom::tidy(fit)
 ```
 ````
 
 Once we have implemented the analysis model in our multiverse, the corresponding step will be applied to each analysis path. To interpret the results, we first estimate a prediction interval corresponding to each analysis path. 
-
-```{r}
-execute_multiverse(M)
-```
-
-
-```{multiverse label = default-m-4, inside = M, echo = FALSE}
-pred <- predict(fit, se.fit = TRUE, type = "response")
-
-pred2expectation <- function(mu, sigma) {
-    branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
-}
-
-disagg_fit <- df  %>%
-    mutate(
-        fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
-        se.fit = pred$se.fit,
-        deg_f = df.residual(fit),                         # get degrees of freedom
-        sigma = sigma(fit),                               # get residual standard deviation
-        se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
-    )
-
-# aggregate fitted effect of female storm name
-expectation <- disagg_fit %>%
-    mutate(expected_deaths = pred2expectation(fitted, sigma)) %>% 
-    group_by(female) %>%
-    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") %>% 
-    compare_levels(mean_deaths, by = female)
-```
 
 ````
 ```{multiverse label = default-m-4, inside = M}`r ''`
@@ -283,6 +191,77 @@ expectation <- disagg_fit %>%
 ```
 ````
 
+
+```{r, echo = FALSE}
+# when building package vignettes this creates a
+# smaller hurricane.R file in the ./inst/doc/ directory
+# otherwise we may get a NOTE saying installed package 
+# size is greater than 5Mb
+inside(M, {
+  df <- hurricane_data %>%
+    filter(branch(death_outliers, 
+        "no_exclusion" ~ TRUE,
+        "most_extreme_deaths" ~ name != "Katrina",
+        "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
+    )) %>%
+    filter(branch(damage_outliers,
+        "no_exclusion" ~ TRUE,
+        "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
+        "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
+        "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
+    ))
+  
+  df <- df %>%
+    mutate(
+        femininity = branch(femininity_calculation,
+          "masfem" ~ masfem,
+          "female" ~ female
+        ),
+        damage = branch(damage_transform,
+          "no_transform" ~ identity(dam),
+          "log_transform" ~ log(dam)
+        )
+    )
+  
+  fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+          branch(main_interaction,
+              "no" ~ femininity + damage,
+              "yes" ~ femininity * damage
+          ) + branch(other_predictors,
+              "none" ~ NULL,
+              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+              "all" %when% (main_interaction == "yes") ~ femininity * z3,
+              "all_no_interaction" %when% (main_interaction == "no") ~ z3
+          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
+          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+          data = df)
+  
+  pred <- predict(fit, se.fit = TRUE, type = "response")
+
+  pred2expectation <- function(mu, sigma) {
+      branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
+  }
+  
+  disagg_fit <- df  %>%
+      mutate(
+          fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
+          se.fit = pred$se.fit,
+          deg_f = df.residual(fit),                         # get degrees of freedom
+          sigma = sigma(fit),                               # get residual standard deviation
+          se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
+      )
+  
+  # aggregate fitted effect of female storm name
+  expectation <- disagg_fit %>%
+      mutate(expected_deaths = pred2expectation(fitted, sigma)) %>% 
+      group_by(female) %>%
+      summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") %>% 
+      compare_levels(mean_deaths, by = female)
+})
+```
+
 ### Execution and Results
 
 After we've specified our multiverse analysis, we would like to execute the entire multiverse, and view the results. Below, we plot the mean difference point estimate for expected deaths when a hurricane has a more feminine name, for each unique analysis path. We find that based on these arbitrary specifications of the multiverse, there is perhaps no relation between `femininity` of the name of a hurricane and the number of deaths that it causes, as some models predict a lower number of deaths, and some predict much higher.
@@ -302,3 +281,5 @@ mean_deaths %>%
   theme_minimal() +
   labs(x = "universe", y = "Mean difference in expected deaths")
 ```
+
+

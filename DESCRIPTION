@@ -1,11 +1,12 @@
 Package: multiverse
-Version: 0.5.1
-Date: 2022-2-17
+Version: 0.6.1
+Date: 2022-7-2
 Title: 'Explorable Multiverse' Data Analysis and Reports
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
-        person("Michael", "Moon", role = "aut", email = "moon@utstat.toronto.edu"),
         person("Matthew", "Kay", role = "aut", email = "mjskay@northwestern.edu"),
+        person("Michael", "Moon", role = "ctb", email = "moon@utstat.toronto.edu"),
+        person("Mark", "Miller", role = "ctb", email = "725mrm@gmail.com"),
         person("Alex", "Kale", role = "ctb", email = "kalea@uw.edu"),
         person("Nathan", "Taback", role = "ctb", email = "nathan.taback@utoronto.ca"),
         person("Fanny", "Chevalier", role = "ctb", email = "fanny@dgp.toronto.edu"),
@@ -24,7 +25,7 @@ Description: Implement 'multiverse' style analyses (Steegen S., Tuerlinckx F, Ge
     analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks.
 License: GPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Depends:
     R (>= 3.5.0),
     knitr (>= 1.3.2)
@@ -42,12 +43,12 @@ Imports:
     collections,
     evaluate,
     rstudioapi,
-    berryFunctions
+    berryFunctions,
+    future.apply
 Suggests:
     ggplot2 (>= 3.0.0),
     testthat (>= 2.1.0),
     highr,
-    lubridate,
     rmarkdown,
     covr,
     broom,
@@ -61,7 +62,8 @@ Suggests:
     png,
     stringi,
     modelr,
-    styler
+    styler,
+    future
 VignetteBuilder: 
     knitr
 Language: en-US

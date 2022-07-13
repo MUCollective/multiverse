@@ -75,6 +75,13 @@ The following items were responses to fiscal political attitudes items (on a sca
 
 The following items were responses to social political attitudes items (on a scale of 1 - 7):
 \emph{Abortion}, \emph{Marriage}, \emph{StemCell}, \emph{Marijuana}, \emph{RestrictAbortion}
+
+In addition, the values of \emph{StartDateofLastPeriod}, \emph{StartDateofPeriodBeforeLast} 
+and \emph{StartDateNext} are missing for WorkerID 15 and 16. This impacts the calculation of 
+\emph{CycleDay} variable in the dataset. Steegen et al. "reconstructed this variable
+for their analysis after fixing some coding errors". To ensure that their results were identical
+to Durante et al.'s, they used the processed variable Cycle Day from the original data file 
+(11 and 18 for WorkerIDs 15 and 16, respectively).
 }
 \references{
 Kristina M Durante, Ashley Rae and Vladas Griskevicius. (2013).

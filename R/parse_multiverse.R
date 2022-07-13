@@ -4,8 +4,8 @@ globalVariables(c(".universe", ".parameter_assignment"))
 
 #' Parse the multiverse syntax to identify branches
 #'
-#' In a multiverse, the user can define different values that a parameter can take using the `branch` call.
-#' The `parse_multiverse` identifies the `branch` calls defined in the analysis syntax and parses them into a list of
+#' In a multiverse, the user can define different values that a parameter can take using the \code{branch()} call.
+#' The \code{parse_multiverse()} identifies the \code{branch()} calls defined in the analysis syntax and parses them into a list of
 #' parameters and the corresponding values that each parameter can take. This function is called automatically 
 #' and not exported.
 #'
@@ -18,7 +18,7 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' @param .label The label of the code block or inside call which was used to pass the 
 #' code being parsed into the multiverse
 #'
-#' @return The `parse_multiverse` function returns a list of lists. the list of parameters and the list of conditions.
+#' @return \code{parse_multiverse()} returns a list of lists. the list of parameters and the list of conditions.
 #' The list of parameters is a named list which defines all the values that each defined parameter can take.
 #' The list of conditions defines, if any of the parameter values are conditional on a specific value of another
 #' parameter, the condition.
@@ -60,6 +60,7 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   # the user is editing pre-declared parameters. We need to recompute
   # everything after that point
   .names_in_m <- unlist(m_obj$multiverse_diction$keys())
+  
   if (.label %in% .names_in_m) {
     if ( which(names(.code) == .label) < length(.code)) {
       .code = .code[-((which(names(.code) == .label)+1):length(.code))]
@@ -69,7 +70,6 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
     new_params = get_parameter_conditions_list( unname(.expr) )$parameters
     m_obj$parameter_set <- setdiff(m_obj$parameter_set, names(new_params))
   }
-  # print(m_obj$parameter_set)
   
   # multiverse_diction is an ordered dictionary with keys corresponding to the names of the code blocks (.label)
   # calculates the previous row in the multiverse dictionary
@@ -86,21 +86,20 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
     }
   }
   
-  # extracts the parameters and conditions declared as lists of lists
   parameter_conditions_list <- get_parameter_conditions_list( unname(.code) )
   parameters = parameter_conditions_list$parameters
   conditions = parameter_conditions_list$conditions
   
   .expr <- list(.expr)
   names(.expr) <- .label
-  
+
   q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), conditions, .parent_key)
-  
+
   # stores parameters and conditions in the multiverse object
   m_obj$parameters <- parameters
   m_obj$conditions <- conditions
   m_obj$parameter_set <- names(parameters)
-  
+
   invisible( m_obj$multiverse_diction$set(.label, q) )
 }
 
@@ -116,7 +115,6 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
   }
   
   new_params <- setdiff(names(.param_options), .m_obj$parameter_set)
-  #parameter_set <- c(.m_obj$parameter_set, setdiff(names(.param_options), .m_obj$parameter_set))
   
   ## take a parameter set from the previous level and a parameter set from the current level, do a set diff
   ## do the expand_grid of the set of new parameters
@@ -130,14 +128,13 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
       .p <- lapply(df, "[[", i)
       
       list(
-        env = new.env(parent = .super_env), 
+        env = new.env(parent = .super_env),
         parent = 0,
         parameter_assignment = .p, 
         code = get_code(.expr, .p)
       )
     })
   } else {
-    # lapply(.m_obj$multiverse_diction$get(.parent_block), `[[`, "env")
     parents <- .m_obj$multiverse_diction$get(.parent_block)
     
     q <- lapply(seq_along(parents), function(i, dat) {
@@ -155,15 +152,13 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
         df <- filter(df, eval(all_conditions))
       }
       
-      # print(parents[[i]]$parameter_assignment)
-      
       n <- ifelse(nrow(df), nrow(df), 1)
       
       lapply(seq_len(n), function(j) {
         .p <- lapply(df, "[[", j)
         
         list(
-          env = new.env(parent = parents[[i]]$env), 
+          env = new.env(parent = parents[[i]]$env),
           parent = i,
           parameter_assignment = .p, 
           code = get_code(.expr, .p)
@@ -173,10 +168,6 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
     
     unlist(q, recursive = FALSE)
   }
-  
-  # gets the environments from the previous code block in the multiverse
-  # these will be the parents for the new environments created from the execution
-  # of a new code block.
 }
 
 
@@ -305,6 +296,9 @@ combine_parameter_conditions <- function(l1, l2) {
 }
 
 get_option_name <- function(x) {
+ # if an option is empty
+  if(x == "") stop("options cannot be empty. make sure your branch statement does not have empty options")
+  
   # when option names are specified
   if (is.call(x) && x[[1]] == "~") {
     if (is.call( f_lhs(x) ) && f_lhs(x)[[1]] == "%when%" ) {

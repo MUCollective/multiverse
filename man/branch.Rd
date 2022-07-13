@@ -4,31 +4,32 @@
 \alias{branch}
 \title{Define multiple analysis paths for a step in the multiverse}
 \arguments{
-\item{parameter}{A string to identify the branch. Each branch is characterised using a parameter which takes
-different options.}
+\item{parameter}{A string to identify the branch. Each branch is characterised using a
+parameter which takes different options.}
 
 \item{...}{Different options for completing a particular step in the analysis. Each option is
 declared as <option_name> ~ <option_calculation>. See examples for more details.}
 
-\item{.options}{Declare a continuous value as the option of a parameter using a sequence (see examples for details), 
-and the expanded sequence will be included as options for that parameter in the multiverse.}
+\item{.options}{Declare a continuous value as the option of a parameter using a sequence 
+(see examples for details), and the expanded sequence will be included as options for that
+parameter in the multiverse.}
 }
 \description{
-The `branch()` function allows the user to define multiple analysis options for a particular step
+The \code{branch} function allows the user to define multiple analysis options for a particular step
 in the analysis.
 }
 \details{
-For every step in the analysis, there may be more than one analysis option. We use `branch()`
-to declare these different analysis options. Each branch is characterised by a parameter. The first
-argument passed into the branch is the parameter.
+For every step in the analysis, there may be more than one analysis option. 
+We use \code{branch} to declare these different analysis options. Each branch is
+characterised by a parameter. The first argument passed into the branch is the parameter.
 
-All the other arguments passed into branch are the different analysis options corresponding to 
-that parameter (that particular step in the analysis process). Naturally, at least two or more 
-options should be declared. Thus, the branch function will provide a warning
+All the other arguments passed into branch are the different analysis options corresponding 
+to that parameter (that particular step in the analysis process). Naturally, at least two 
+or more options should be declared. Thus, the branch function will provide a warning
 if the total number arguments passed is less than three.
 
-Please refer to the `vignette(branch)` for more details on how to use this function to create a 
-complete multiverse analysis.
+Please refer to \code{vignette("branch")} for more details on how to use this function to 
+create a complete multiverse analysis.
 }
 \examples{
 \donttest{
@@ -76,7 +77,8 @@ inside(M.2, {
 
 
 # Example 3: using branch with tidyverse and `\%>\%`
-# Consider a scenario where there are more than one alternatives to identifying and removing outliers
+# Consider a scenario where there are more than one alternatives to
+# identifying and removing outliers
 
 data("hurricane")
 

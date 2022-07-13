@@ -1,0 +1,154 @@
+---
+title: "Integrating tangle.js with the output on multiverse notebook analysis"
+output: html_document
+---
+
+
+```{r}
+devtools::load_all(".")
+```
+
+
+```{css, echo=FALSE}
+.main-container {
+  margin-top: 48px;
+}
+p {
+  font-size: 64px;
+}
+#asdf {
+  margin-top: -16px;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+span:active {
+  user-select: none;
+}
+```
+
+<script src="./Tangle.js"></script>
+<link rel="stylesheet" href="TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="TangleKit/mootools.js"></script>
+<script type="text/javascript" src="TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="TangleKit/TangleKit.js"></script>
+<script>
+  let comboExists = (curr, combos) => {
+    curr = JSON.stringify(curr);
+    for (let combo of combos) {
+      if (curr == JSON.stringify(combo)) return true;
+    }
+    return false;
+  }
+
+  Tangle.classes.Iterate = {
+    initialize: function(element, options, tangle, variable) {
+      element.addEvent("click", (event) => {
+        let choices = tangle.getValue("choices");
+        let combos = tangle.getValue("combos");
+        console.log(choices)
+        console.log(combos)
+        let keys = Object.keys(choices);
+        let curr = {}
+        for (let key of keys) {
+          curr[key] = tangle.getValue(key)
+        }
+        let it = 0;
+        do {
+          if (options.i === choices[variable].length-1)
+            options.i = 0;
+          else
+            options.i++;
+          curr[variable] = choices[variable][options.i];
+        } while (!(comboExists(curr, combos)) && it++ < 4);
+        tangle.setValue(variable, choices[variable][options.i]);
+      })
+    },
+    update: function(element, value) {
+      element.textContent = value;
+    }
+  }
+
+  function setup() {
+    <!-- depending on implementation, i think i might have to create the <span class="Iterate"> here, since it's kind of hard-coded right now. -->
+    <!-- if i were to do this, i also have to do the this.data stuff here. -->
+    var t = new Tangle(
+      document.getElementById("asdf"),
+      {
+        initialize: function() {
+          const pre = document.querySelectorAll("pre.multiverse");
+          this.choices = {};
+          this.combos = [];
+          for (let e of pre) {
+            let paramOption = {};
+            for (let className of e.classList) {
+              if (className.includes("---")) {
+                let split = className.split("---");
+                paramOption[split[0]] = split[1];
+                if (split[0] in this.choices) this.choices[split[0]].add(split[1]);
+                else this.choices[split[0]] = new Set([split[1]]);
+              }
+            }
+            this.combos.push(paramOption);
+          }
+          this.combos = new Set(this.combos);
+          this.keys = Object.keys(this.choices);
+          for (let k of this.keys) {
+            this.choices[k] = [...this.choices[k]];
+            this[k] = this.choices[k][0];
+          }
+        },
+        update: function() {
+        }
+      }
+    )
+  }
+  document.body.onload = setup;
+</script>
+
+
+<p id="asdf">
+  <span class="Iterate TKSwitch" data-var="a" data-i=0></span>
+	<span class="Iterate TKSwitch" data-var="b" data-i=0></span>
+	<span class="Iterate TKSwitch" data-var="c" data-i=0></span>
+</p>
+<div id="insert"></div>
+
+
+```{r}
+M = multiverse()
+```
+
+
+```{multiverse default-m-1, inside = M}
+a = branch(a, 
+           "1" ~ 1, 
+           "2" ~ 2, 
+           "3" ~ 3
+          )
+b = branch(b, 
+           "x" %when% (a != 1) ~ "x", 
+           "y" ~ "y", 
+           "z" ~ "z"
+          )
+c = branch(c, 
+           "4" ~ 4, 
+           "5"%when% (b != "z") ~ 5
+          )
+```
+
+<!-- 
+∄(a==2 <=> b==y), ((c==4 && a==1) <=> b==x), (b==z <=> c==5)
+<pre class='multiverse a---2 b---x c---4'>2x4</pre>
+<pre class='multiverse a---3 b---x c---4'>3x4</pre>
+<pre class='multiverse a---1 b---y c---4'>1y4</pre>
+<pre class='multiverse a---3 b---y c---4'>3y4</pre>
+<pre class='multiverse a---1 b---z c---4'>1z4</pre>
+<pre class='multiverse a---2 b---z c---4'>2z4</pre>
+<pre class='multiverse a---3 b---z c---4'>3z4</pre>
+<pre class='multiverse a---1 b---x c---5'>1x5</pre>
+<pre class='multiverse a---2 b---x c---5'>2x5</pre>
+<pre class='multiverse a---3 b---x c---5'>3x5</pre>
+<pre class='multiverse a---1 b---y c---5'>1y5</pre>
+<pre class='multiverse a---3 b---y c---5'>3y5</pre>  -->

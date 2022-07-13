@@ -6,23 +6,25 @@
 \alias{execute_universe}
 \title{Execute parts of, or the entire multiverse}
 \usage{
-execute_multiverse(multiverse, cores = getOption("mc.cores", 1L))
+execute_multiverse(multiverse, parallel = FALSE, progress = FALSE)
 
 execute_universe(multiverse, .universe = 1)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
 
-\item{cores}{Indicates the number of cores to use. This will execute the entire multiverse in parallel. 
-Defaults to NULL (running in a single core)}
+\item{parallel}{Indicates whether to execute the multiverse analysis in parallel. If TRUE, multiverse makes use of
+\code{future::future} as backend to support parallel processing. Requires configuration of \code{future::plan}. Defaults to FALSE.}
+
+\item{progress}{Indicates whether to include a progress bar for each step of the execution. Defaults to FALSE.}
 
 \item{.universe}{Indicate which universe to execute, if the user wants to execute a specific combination
-of the parameters using `execute_universe`. Defaults to NULL, which will execute the first (default) analysis.}
+of the parameters using \code{execute_universe()}. Defaults to NULL, which will execute the first (default) analysis.}
 }
 \description{
 These are functions which allow the user to execute parts or whole of the multiverse.
-The user can choose to either execute the default analysis using the \code{\link{execute_universe}}, or a part or
-whole of the multiverse using the \code{\link{execute_multiverse}}.
+The user can choose to either execute the default analysis using the \code{execute_universe()}, or the
+whole of the multiverse using the \code{execute_multiverse()}.
 }
 \details{
 Each single analysis within the multiverse lives in a separate environment. 

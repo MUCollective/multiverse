@@ -1,6 +1,6 @@
 ---
 title: "Example multiverse implementation: Effect of fertility on religiosity and political attitudes"
-author: "Abhraneel Sarma"
+author: "Abhraneel Sarma, Northwestern University"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -15,7 +15,7 @@ vignette: >
 
 ## Multiverse case study #1
 
-In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://journals.sagepub.com/doi/pdf/10.1177/1745691616658637).
+In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Steegen et al. in [Increasing Transparency Through a Multiverse Analysis](https://doi.org/10.1177/1745691616658637).
 
 ## Introduction
 
@@ -32,11 +32,6 @@ library(broom)
 library(gganimate)
 library(cowplot)
 library(multiverse)
-```
-
-
-```{r, include=FALSE}
-M = multiverse()
 ```
 
 
@@ -89,6 +84,7 @@ one_universe = data.raw.study2 %>%
   mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
   mutate(
     CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+    CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
     CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
   ) %>%
   mutate(
@@ -123,7 +119,7 @@ Below, we describe how our package allows you to conduct a multiverse analysis w
 
 The first step is to define a *new multiverse*. We will use the multiverse object to create a set of universes, each representing a different way of analysing our data.
 
-```{r, eval = FALSE}
+```{r}
 M <- multiverse()
 ```
 
@@ -218,13 +214,14 @@ Besides calculating the onset of the next menstruation cycle, there are other va
 ```{r}
 inside(M, {
   df <- df %>%
-      mutate(Relationship = branch( relationship_status, 
+      mutate(RelationshipStatus = branch( relationship_status, 
         "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
         "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
         "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
       ) %>%
       mutate(
         CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+        CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
         CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
       ) %>%
       filter( branch(cycle_length, 
@@ -300,7 +297,7 @@ Specifying these conditions allows us to exclude inconsistent combinations from 
 M = multiverse()
 
 inside(M, {
-  df <- data.raw.study2  %>%
+  df <- data.raw.study2 %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
     dplyr::filter( branch(cycle_length,
         "cl_option1" ~ TRUE,
@@ -318,6 +315,7 @@ inside(M, {
     )  %>%
     mutate(
       CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+      CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
       CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
     ) %>%
     mutate( Fertility = branch( fertile,
@@ -340,11 +338,6 @@ After excluding the inconsistent choice combinations, $270 − 2 \times (5 \time
 ```{r}
 expand(M) %>% nrow()
 ```
-
-```{r}
-expand(M)$.code[[59]]
-```
-
 
 Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
 
@@ -390,11 +383,12 @@ expand(M) %>%
   head( 10 )
 ```
 
+
 We then take this data frame and plot the results as a confidence interval and point estimate using `ggplot2`. As you can see, this is similar to how you would plot a point estimate and confidence intervals for a regular analysis. We then use `gganimate` to animate through the results of each universe to quickly get an overview of the robustness of the results.
 
 Note: we discuss extracting results from the multiverse and visualising them in more detail in `vignette(visualising-multiverse)`
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 p <- expand(M) %>%
   extract_variables(summary_RelComp) %>%
   unnest( cols = c(summary_RelComp) ) %>%
@@ -410,7 +404,8 @@ p <- expand(M) %>%
   theme_minimal() +
   transition_manual( .universe )
 
-animate(p, nframes = 210, fps = 2)
+animate(p, nframes = 210, fps = 4, res = 72)
 ```
 
+![Animation of linear regression coefficients](../man/figures/durante-regression.gif)
 
