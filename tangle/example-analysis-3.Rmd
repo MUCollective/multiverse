@@ -111,6 +111,7 @@ mean(df.filtered$femininity)
 ```{multiverse default-m-5, inside = M}
 hist(df.filtered$femininity)
 hist(df.filtered$damage)
+head(df.filtered)
 ```
 
 

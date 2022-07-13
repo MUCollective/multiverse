@@ -75,7 +75,7 @@ Tangle.classes.Iterate = {
         else
           options.i++;
         curr[variable] = choices[variable][options.i];
-      } while (!(comboExists(curr, combos)) && it-- > 0);
+      } while (!(comboExists(curr, combos)) && it-- > 0);==
       
       tangle.setValue(variable, choices[variable][options.i]);
     })
@@ -86,10 +86,10 @@ Tangle.classes.Iterate = {
 }
 
 function setup() {
-  let elem = $("p#multiverse-params").get(0);
+  // let elem = $("p#multiverse-params").get(0); // probably not gonna be used, but just in case
   
   let t = new Tangle(
-    elem,
+    $(document)[0],
     {
       initialize: function() {
         const pre = $("pre.multiverse").get();
@@ -119,8 +119,27 @@ function setup() {
         for (let k of this.keys) {
           universe[k] = this[k];
         }
-        $("pre.multiverse").hide();
-        $("." + Object.entries(universe).map(d => d.join('---')).join('.')).show();
+        /*
+          When dealing with possible figures following each "pre" tag, the
+          following code, specifically referring to the .each functions, assumes
+          that there exists another "pre" tag (regardless if it is displayed or
+          not) after the "pre" tag that is to be displayed. As a visual,
+          
+          <pre class="r multiverse ...">...</pre> <-- to be displayed
+          ...                                     <-- figs that may (not) exist
+          <pre ...>...</pre>                      <-- next "pre" tag
+        */
+        // TODO: change to find succeeding <p> tags
+        let preMV = $("pre.multiverse");
+        preMV.hide();
+        preMV.each(
+          (i,e) => { $(e).nextUntil('pre').hide(); }
+        );
+        let pre = $("." + Object.entries(universe).map(d => d.join('---')).join('.'));
+        pre.show();
+        pre.each(
+          (i,e) => { $(e).nextUntil('pre').show(); }
+        );
       }
     }
   )
@@ -154,6 +173,10 @@ const load = () => {
   // creates a tangle widget for each parameter in the declared multiverse
   for (let i of parameters) {
       $("p#multiverse-params").append(`<span class="Iterate TKSwitch" data-var=${i} data-i=0></span><br>`)
+  }
+  // replaces <mv param="[param name here]"></mv> with the tangle widget
+  for (let e of $("mv")) {
+      e.replaceWith($(`<span class="Iterate TKSwitch" data-var=${e.getAttribute("param")} data-i=0></span>`)[0])
   }
   // adds classes for <pre> tags where parameters are missings
   for (let e of pre) {
