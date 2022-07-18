@@ -75,7 +75,7 @@ Tangle.classes.Iterate = {
         else
           options.i++;
         curr[variable] = choices[variable][options.i];
-      } while (!(comboExists(curr, combos)) && it-- > 0);==
+      } while (!(comboExists(curr, combos)) && it-- > 0);
       
       tangle.setValue(variable, choices[variable][options.i]);
     })
@@ -86,7 +86,7 @@ Tangle.classes.Iterate = {
 }
 
 function setup() {
-  // let elem = $("p#multiverse-params").get(0); // probably not gonna be used, but just in case
+  let elem = $("p#multiverse-params").get(0); // probably not gonna be used, but just in case
   
   let t = new Tangle(
     $(document)[0],
