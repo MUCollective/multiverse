@@ -27,22 +27,58 @@ $("div.main-container").append('<div class="multiverse-navbar"><p id="multiverse
     ]
 */
 let choices, combos;
+let tangleObj;
 
 /*
   comboExists checks if curr is in combos
 
   PARAMETERS:
   curr:Object
-  combos:Array[Object]
   
-  RETURNS: curr in combos ? true : false
+  RETURNS: curr is in combos ? true : false
 */
-let comboExists = (curr, combos) => {
+// since combos is a global variable, i feel like it's not needed in the params
+let comboExists = curr => {
   curr = JSON.stringify(curr);
   for (let combo of combos) {
     if (curr == JSON.stringify(combo)) return true;
   }
   return false;
+}
+
+/*
+  Changes the currently set options of each parameter to what is specified in the
+  input `spec`, if `spec` is a valid combination.
+  
+  PARAMETERS:
+  spec:Object (the values must be a string)
+*/
+const setActiveSpecification = spec => {
+  if (comboExists(spec)) {
+    /*
+      Finds the index of the desired option as found in choices, and updates each
+      variable with the name a parameter in the initialized tangle object, which
+      then calls its update function.
+    */
+    let comboIdx = {};
+    for (let param of Object.keys(choices)) {
+      comboIdx[param] = choices[param].findIndex(e => e==spec[param]);
+      tangleObj.setValue(param, spec[param]);
+    }
+    
+    /*
+      Implicit assumption that all tangle widgets relate to each other with the
+      same parameters, i.e. all elements with the ".Iterate" class are a Tangle
+      widget that have the same set of parameters and associated options
+      
+      Updates each tangle widget with its accordingly changed values.
+    */
+    for (let mv of $('.Iterate')) {
+      let param = mv.getAttribute("data-var");
+      mv.setAttribute("data-i", comboIdx[param]);
+      mv.textContent = param + ": " + spec[param];
+    }
+  }
 }
 
 Tangle.classes.Iterate = {
@@ -54,8 +90,6 @@ Tangle.classes.Iterate = {
   */
   initialize: function(element, options, tangle, variable) {
     element.addEvent("click", (event) => {
-      choices = tangle.getValue("choices");
-      combos = tangle.getValue("combos");
       let keys = Object.keys(choices);
       
       // curr takes the current combination of option names of each parameter
@@ -64,20 +98,18 @@ Tangle.classes.Iterate = {
         curr[key] = tangle.getValue(key)
       }
       
-      // in each iteration, curr[variable] is set to the (options.i+1)th element in choices[variable]
-      // - if option+1 > the length of choices[variable], then choose the 0th element.
-      // after this change, if curr is in combos, then done. else, next iteration.
-      // `it` is set to choices[variable].length because if it iterates through the whole list with no change, then iterations should stop
-      let it = choices[variable].length;
-      do {
-        if (options.i === choices[variable].length-1)
-          options.i = 0;
-        else
-          options.i++;
-        curr[variable] = choices[variable][options.i];
-      } while (!(comboExists(curr, combos)) && it-- > 0);
+      // this is used instead of options.i in order for setActiveSpecification to work
+      let i = element.getAttribute("data-i");
       
-      tangle.setValue(variable, choices[variable][options.i]);
+      // gets next available option in current param given the other params' options
+      for (let it = 0; it < choices[variable].length; it++) {
+        if (++i === choices[variable].length)
+          i = 0;
+        curr[variable] = choices[variable][i];
+        if (comboExists(curr)) break;
+      }
+      element.setAttribute("data-i", i);
+      tangle.setValue(variable, choices[variable][i]);
     })
   },
   update: function(element, value) {
@@ -86,10 +118,9 @@ Tangle.classes.Iterate = {
 }
 
 function setup() {
-  // let elem = $("p#multiverse-params").get(0); // probably not gonna be used, but just in case
   
   let t = new Tangle(
-    $(document)[0],
+    document,
     {
       initialize: function() {
         const pre = $("pre.multiverse").get();
@@ -107,12 +138,14 @@ function setup() {
           }
           this.combos.push(paramOption);
         }
-        this.combos = new Set(this.combos);
+        //this.combos = new Set(this.combos);
         this.keys = Object.keys(this.choices);
         for (let k of this.keys) {
           this.choices[k] = [...this.choices[k]];
           this[k] = this.choices[k][0];
         }
+        choices = this.choices;
+        combos  = this.combos;
       },
       update: function() {
         let universe = {}
@@ -142,7 +175,8 @@ function setup() {
         );
       }
     }
-  )
+  );
+  tangleObj = t;
 }
 
 // given a specification of the multiverse
