@@ -1,9 +1,171 @@
-#' @importFrom knitr knit_global
-#' @importFrom knitr knit_engines
+#' @import knitr
 #' @importFrom utils head
 #' @importFrom utils tail
 #' @importFrom formatR tidy_source
-#' 
+
+
+m.eng_r = function(options, env = knit_global()) {
+  # eval chunks (in an empty envir if cache)
+  obj.before = ls(env, all.names = TRUE)  # global objects before chunk
+  
+  keep = options$fig.keep
+  keep.idx = NULL
+  if (is.logical(keep)) keep = which(keep)
+  if (is.numeric(keep)) {
+    keep.idx = keep
+    keep = "index"
+  }
+  
+  if (keep.pars <- opts_knit$get('global.par')) on.exit({
+    opts_knit$set(global.pars = par(no.readonly = TRUE))
+  }, add = TRUE)
+  
+  tmp.fig = tempfile(); on.exit(unlink(tmp.fig), add = TRUE)
+  # open a device to record plots if not using a global device or no device is
+  # open, and close this device if we don't want to use a global device
+  if (!opts_knit$get('global.device') || is.null(dev.list())) {
+    knitr:::chunk_device(options, keep != 'none', tmp.fig)
+    dv = dev.cur()
+    if (!opts_knit$get('global.device')) on.exit(dev.off(dv), add = TRUE)
+    knitr:::showtext(options)  # showtext support
+  }
+  # preserve par() settings from the last code chunk
+  if (keep.pars) par2(opts_knit$get('global.pars'))
+  
+  res.before = knitr:::run_hooks(before = TRUE, options, env) # run 'before' hooks
+  
+  code = options$code
+  echo = options$echo  # tidy code if echo
+  if (!isFALSE(echo) && !isFALSE(options$tidy) && length(code)) {
+    tidy.method = if (isTRUE(options$tidy)) 'formatR' else options$tidy
+    if (is.character(tidy.method)) tidy.method = switch(
+      tidy.method,
+      formatR = function(code, ...) {
+        if (!loadable('formatR')) stop2(
+          'The formatR package is required by the chunk option tidy = TRUE but ',
+          'not installed; tidy = TRUE will be ignored.'
+        )
+        formatR::tidy_source(text = code, output = FALSE, ...)$text.tidy
+      },
+      styler = function(code, ...) unclass(styler::style_text(text = code, ...))
+    )
+    res = try_silent(do.call(tidy.method, c(list(code), options$tidy.opts)))
+    
+    if (!inherits(res, 'try-error')) code = res else warning(
+      "Failed to tidy R code in chunk '", options$label, "'. Reason:\n", res
+    )
+  }
+  # only evaluate certain lines
+  if (is.numeric(ev <- options$eval)) {
+    # group source code into syntactically complete expressions
+    if (isFALSE(options$tidy)) code = sapply(xfun::split_source(code), one_string)
+    iss = seq_along(code)
+    code = comment_out(code, '##', setdiff(iss, iss[ev]), newline = FALSE)
+  }
+  # guess plot file type if it is NULL
+  if (keep != 'none') options$fig.ext = knitr:::dev2ext(options)
+  
+  cache.exists = knitr:::cache$exists(options$hash, options$cache.lazy)
+  evaluate = knit_hooks$get('evaluate')
+  # return code with class 'source' if not eval chunks
+  res = if (knitr:::is_blank(code)) list() else if (isFALSE(ev)) {
+    knitr:::as.source(code)
+  } else if (cache.exists && isFALSE(options$cache.rebuild)) {
+    fix_evaluate(cache$output(options$hash, 'list'), options$cache == 1)
+  } else knitr:::in_input_dir(
+    evaluate(
+      code, envir = env, new_device = FALSE,
+      keep_warning = !isFALSE(options$warning),
+      keep_message = !isFALSE(options$message),
+      stop_on_error = if (is.numeric(options$error)) options$error else {
+        if (options$error && options$include) 0L else 2L
+      },
+      output_handler = knitr:::knit_handlers(options$render, options)
+    )
+  )
+  if (options$cache %in% 1:2 && (!cache.exists || isTRUE(options$cache.rebuild))) {
+    # make a copy for cache=1,2; when cache=2, we do not really need plots
+    res.orig = if (options$cache == 2) remove_plot(res, keep == 'high') else res
+  }
+  
+  # eval other options after the chunk
+  if (!isFALSE(ev))
+    for (o in opts_knit$get('eval.after'))
+      options[o] = list(knitr:::eval_lang(options[[o]], env))
+  
+  # remove some components according options
+  if (isFALSE(echo)) {
+    res = Filter(Negate(evaluate::is.source), res)
+  } else if (is.numeric(echo)) {
+    # choose expressions to echo using a numeric vector
+    res = if (isFALSE(ev)) {
+      knitr:::as.source(code[echo])
+    } else {
+      knitr:::filter_evaluate(res, echo, evaluate::is.source)
+    }
+  }
+  if (options$results == 'hide') res = Filter(Negate(is.character), res)
+  if (options$results == 'hold') {
+    i = vapply(res, is.character, logical(1))
+    if (any(i)) res = c(res[!i], merge_character(res[i]))
+  }
+  res = knitr:::filter_evaluate(res, options$warning, evaluate::is.warning)
+  res = knitr:::filter_evaluate(res, options$message, evaluate::is.message)
+  
+  # rearrange locations of figures
+  res = knitr:::rearrange_figs(res, keep, keep.idx, options$fig.show)
+  
+  # number of plots in this chunk
+  if (is.null(options$fig.num))
+    options$fig.num = if (length(res)) sum(sapply(res, function(x) {
+      if (inherits(x, 'knit_image_paths')) return(length(x))
+      if (knitr:::is_plot_output(x)) return(1)
+      0
+    })) else 0L
+  
+  # # merge neighbor elements of the same class into one element
+  for (cls in c('source', 'message', 'warning')) res = knitr:::merge_class(res, cls)
+  
+  if (isTRUE(options$fig.beforecode)) res = fig_before_code(res)
+  
+  # on.exit({
+  #   plot_counter(reset = TRUE)
+  #   shot_counter(reset = TRUE)
+  #   opts_knit$delete('plot_files')
+  # }, add = TRUE)  # restore plot number
+  
+  output = unlist(sew(res, options)) # wrap all results together
+  res.after = knitr:::run_hooks(before = FALSE, options, env) # run 'after' hooks
+  
+  output = paste(c(res.before, output, res.after), collapse = '')  # insert hook results
+  output = knit_hooks$get('chunk')(output, options)
+  
+  if (options$cache > 0) {
+    # if cache.vars has been specifically provided, only cache these vars and no
+    # need to look for objects in globalenv()
+    obj.new = if (is.null(options$cache.vars)) setdiff(ls(globalenv(), all.names = TRUE), obj.before)
+    copy_env(globalenv(), env, obj.new)
+    objs = if (isFALSE(ev) || length(code) == 0) character(0) else
+      options$cache.vars %n% codetools::findLocalsList(parse_only(code))
+    # make sure all objects to be saved exist in env
+    objs = intersect(c(objs, obj.new), ls(env, all.names = TRUE))
+    if (options$autodep) {
+      # you shall manually specify global object names if find_symbols() is not reliable
+      cache$objects(
+        objs, cache_globals(options$cache.globals, code), options$label,
+        options$cache.path
+      )
+      dep_auto()
+    }
+    if (options$cache < 3) {
+      if (options$cache.rebuild || !cache.exists) block_cache(options, res.orig, objs)
+    } else block_cache(options, output, objs)
+  }
+  
+  if (options$include) output else if (is.null(s <- options$indent)) '' else s
+}
+
+
 multiverse_engine <- function(options) {
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 
                                    "a multiverse code block using the `inside` argument")
@@ -97,7 +259,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     options$dev = 'png'
     multiverse_options = options
     
-    eng_r = knit_engines$get("R")
+    # eng_r = knit_engines$get("R")
     
     options_list <- lapply(1:size(.multiverse), function(x) {
       temp_options <- options
@@ -121,7 +283,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
           temp_options$class.output = paste0("multiverse universe ", class_name, "")
       }
 
-      eng_r(temp_options, temp_env)
+      m.eng_r(temp_options, temp_env)
     })
     
     # preserves the original declaration of the multiverse code block
@@ -129,7 +291,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     multiverse_options$eval = FALSE
     multiverse_options$class.source = "multiverse-spec"
     multiverse_options$class.output = "multiverse-spec"
-    unlist(append(options_list, eng_r(multiverse_options)))
+    unlist(append(options_list, m.eng_r(multiverse_options)))
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     

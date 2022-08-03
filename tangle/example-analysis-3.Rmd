@@ -8,35 +8,46 @@ output:
   pdf_document: default
 ---
 
-```{r setup, include=FALSE} 
+```{r setup} 
 library(dplyr)
 library(tidyr)
 library(purrr)
-library(htmltools)
 devtools::load_all(".")
+
+knit_as_emar()
 ```
 
 
-```{r, include = FALSE} 
-includeScript("https://code.jquery.com/jquery-3.6.0.min.js")
-includeScript(system.file("js/Tangle.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/mootools.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/sprintf.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/BVTouchable.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/TangleKit.js", package="multiverse"))
-includeScript(system.file("js/custom.js", package="multiverse"))
+```{r, include = FALSE}
+###### this does not let us create a wrapper function as easily so
+###### the user will have to declare the entire block of code below:
+
+# includeScript("https://code.jquery.com/jquery-3.6.0.min.js")
+# includeScript(system.file("js/Tangle.js", package="multiverse"))
+# includeScript(system.file("js/TangleKit/mootools.js", package="multiverse"))
+# includeScript(system.file("js/TangleKit/sprintf.js", package="multiverse"))
+# includeScript(system.file("js/TangleKit/BVTouchable.js", package="multiverse"))
+# includeScript(system.file("js/TangleKit/TangleKit.js", package="multiverse"))
+# includeScript(system.file("js/custom.js", package="multiverse"))
+
+###### on the other hand, htmltools::tags allows us to create a wrapper function like so
+###### which can be exported by the multiverse package:
+create_interactive_multiverse_doc = function () {
+  htmltools::tagList(
+    htmltools::tags$script(src = "https://code.jquery.com/jquery-3.6.0.min.js"),
+    htmltools::tags$script(src = system.file("js/Tangle.js", package="multiverse")),
+    htmltools::tags$script(src = system.file("js/TangleKit/mootools.js", package="multiverse")),
+    htmltools::tags$script(src = system.file("js/TangleKit/sprintf.js", package="multiverse")),
+    htmltools::tags$script(src = system.file("js/TangleKit/BVTouchable.js", package="multiverse")),
+    htmltools::tags$script(src = system.file("js/TangleKit/TangleKit.js", package="multiverse")),
+    htmltools::tags$script(src = system.file("js/custom.js", package="multiverse"))
+  )
+}
+
+create_interactive_multiverse_doc()
 ```
 
 
-```{r, echo = FALSE} 
-includeScript("https://code.jquery.com/jquery-3.6.0.min.js")
-includeScript("./Tangle.js")
-includeScript("./TangleKit/mootools.js")
-includeScript("./TangleKit/sprintf.js")
-includeScript("./TangleKit/BVTouchable.js")
-includeScript("./TangleKit/TangleKit.js")
-includeScript("./custom.js")
-```
 
 ## Multiverse case study #4
 

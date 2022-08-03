@@ -15,7 +15,7 @@ vignette: >
 
 
 ```{r, chunk-setup, include=FALSE}
-opts_chunk$set(
+knitr::opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
   fig.height = 4,
@@ -25,14 +25,7 @@ opts_chunk$set(
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  fig.path = "README_files/"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -104,6 +97,35 @@ df <- data.raw.study2 %>%
 ```
 
 
+```{multiverse default-m-2, inside = M}
+df <- data.raw.study2 %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+    dplyr::filter( branch(cycle_length,
+        "cl_option1" ~ TRUE,
+        "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+        "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+    )) %>%
+    mutate(NextMenstrualOnset = branch(menstrual_calculation,
+        "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+        "mc_option3" ~ StartDateNext)
+    )  %>%
+    mutate(
+      CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+      CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
+      CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+    ) %>%
+    mutate( Fertility = branch( fertile,
+        "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
+        "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
+        "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
+        "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+        "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+    )) %>%
+    mutate(RelationshipStatus = ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship'))
+```
+
+
 ### Model #2: Effect of Fertility and Relationship status on Religiosity
 The authors compute a composite score of Religiosity by calculating the average of the three Religiosity items.
 
@@ -154,6 +176,6 @@ expand(M) %>%
   # filter(.universe == 1) %>%
   # unnest(c(cdf.x, cdf.y))
   nest(results = c(term:cdf.y)) %>%
-  write_json('../../multiverse-vis/static/data/data2.json', pretty = TRUE)
+  write_json('../../multiverse-vis-svelte/static/data/data2.json', pretty = TRUE)
 ```
 

@@ -1,8 +1,44 @@
 $("div.main-container").append('<div class="multiverse-navbar"><p id="multiverse-params"></p></div>')
 
 
+/*
+  choices is an Object where the keys are the parameter names and the value is a list of its option names
+  
+    choices = {
+      param-1 : [option1_param1, option2_param1, ...],
+      param-2 : [option1_param2, option2_param2, ...],
+      ...
+    }
+  
+  combos is a list of Objects. It contains all combinations of option names that are available in the dataset
+    
+    combos = [
+      {
+        param-1 : option1_param1,
+        param-2 : option1_param2,
+        ...
+      },
+      {
+        param-1 : option2_param1,
+        param-2 : option2_param2,
+        ...
+      },
+      ...
+    ]
+*/
 let choices, combos;
-let comboExists = (curr, combos) => {
+let tangleObj;
+
+/*
+  comboExists checks if curr is in combos
+
+  PARAMETERS:
+  curr:Object
+  
+  RETURNS: curr is in combos ? true : false
+*/
+// since combos is a global variable, i feel like it's not needed in the params
+let comboExists = curr => {
   curr = JSON.stringify(curr);
   for (let combo of combos) {
     if (curr == JSON.stringify(combo)) return true;
@@ -10,25 +46,71 @@ let comboExists = (curr, combos) => {
   return false;
 }
 
+/*
+  Changes the currently set options of each parameter to what is specified in the
+  input `spec`, if `spec` is a valid combination.
+  
+  PARAMETERS:
+  spec: Object of the form {'param1_name': 'option_name', 'param2_name': 'option_name', ... } (the values must be a string);
+  all parameters declared in the multiverse must be specified.
+*/
+const setActiveSpecification = spec => {
+  if (comboExists(spec)) {
+    /*
+      Finds the index of the desired option as found in choices, and updates each
+      variable with the name a parameter in the initialized tangle object, which
+      then calls its update function.
+    */
+    let comboIdx = {};
+    for (let param of Object.keys(choices)) {
+      comboIdx[param] = choices[param].findIndex(e => e==spec[param]);
+      tangleObj.setValue(param, spec[param]);
+    }
+    
+    /*
+      Implicit assumption that all tangle widgets relate to each other with the
+      same parameters, i.e. all elements with the ".Iterate" class are a Tangle
+      widget that have the same set of parameters and associated options
+      
+      Updates each tangle widget with its accordingly changed values.
+    */
+    for (let mv of $('.Iterate')) {
+      let param = mv.getAttribute("data-var");
+      mv.setAttribute("data-i", comboIdx[param]);
+      mv.textContent = param + ": " + spec[param];
+    }
+  }
+}
+
 Tangle.classes.Iterate = {
+  /*
+    element - the HTML element that was clicked
+    options - the data contained in the HTML element itself
+    tangle - used to get this.<variable-name> in the Tangle instance as initialized in setup()
+    variable - the parameter name that was clicked
+  */
   initialize: function(element, options, tangle, variable) {
     element.addEvent("click", (event) => {
-      choices = tangle.getValue("choices");
-      combos = tangle.getValue("combos");
       let keys = Object.keys(choices);
+      
+      // curr takes the current combination of option names of each parameter
       let curr = {}
       for (let key of keys) {
         curr[key] = tangle.getValue(key)
       }
-      let it = 0;
-      do {
-        if (options.i === choices[variable].length-1)
-          options.i = 0;
-        else
-          options.i++;
-        curr[variable] = choices[variable][options.i];
-      } while (!(comboExists(curr, combos)) && it++ < 4);
-      tangle.setValue(variable, choices[variable][options.i]);
+      
+      // this is used instead of options.i in order for setActiveSpecification to work
+      let i = element.getAttribute("data-i");
+      
+      // gets next available option in current param given the other params' options
+      for (let it = 0; it < choices[variable].length; it++) {
+        if (++i === choices[variable].length)
+          i = 0;
+        curr[variable] = choices[variable][i];
+        if (comboExists(curr)) break;
+      }
+      element.setAttribute("data-i", i);
+      tangle.setValue(variable, choices[variable][i]);
     })
   },
   update: function(element, value) {
@@ -37,10 +119,9 @@ Tangle.classes.Iterate = {
 }
 
 function setup() {
-  let elem = $("p#multiverse-params").get(0);
   
   let t = new Tangle(
-    elem,
+    document,
     {
       initialize: function() {
         const pre = $("pre.multiverse").get();
@@ -58,23 +139,45 @@ function setup() {
           }
           this.combos.push(paramOption);
         }
-        this.combos = new Set(this.combos);
+        //this.combos = new Set(this.combos);
         this.keys = Object.keys(this.choices);
         for (let k of this.keys) {
           this.choices[k] = [...this.choices[k]];
           this[k] = this.choices[k][0];
         }
+        choices = this.choices;
+        combos  = this.combos;
       },
       update: function() {
         let universe = {}
         for (let k of this.keys) {
           universe[k] = this[k];
         }
-        $("pre.multiverse").hide();
-        $("." + Object.entries(universe).map(d => d.join('---')).join('.')).show();
+        /*
+          When dealing with possible figures following each "pre" tag, the
+          following code, specifically referring to the .each functions, assumes
+          that there exists another "pre" tag (regardless if it is displayed or
+          not) after the "pre" tag that is to be displayed. As a visual,
+          
+          <pre class="r multiverse ...">...</pre> <-- to be displayed
+          ...                                     <-- figs that may (not) exist
+          <pre ...>...</pre>                      <-- next "pre" tag
+        */
+        // TODO: change to find succeeding <p> tags
+        let preMV = $("pre.multiverse");
+        preMV.hide();
+        preMV.each(
+          (i,e) => { $(e).nextUntil('pre').hide(); }
+        );
+        let pre = $("." + Object.entries(universe).map(d => d.join('---')).join('.'));
+        pre.show();
+        pre.each(
+          (i,e) => { $(e).nextUntil('pre').show(); }
+        );
       }
     }
-  )
+  );
+  tangleObj = t;
 }
 
 // given a specification of the multiverse
@@ -105,6 +208,10 @@ const load = () => {
   // creates a tangle widget for each parameter in the declared multiverse
   for (let i of parameters) {
       $("p#multiverse-params").append(`<span class="Iterate TKSwitch" data-var=${i} data-i=0></span><br>`)
+  }
+  // replaces <mv param="[param name here]"></mv> with the tangle widget
+  for (let e of $("mv")) {
+      e.replaceWith($(`<span class="Iterate TKSwitch" data-var=${e.getAttribute("param")} data-i=0></span>`)[0])
   }
   // adds classes for <pre> tags where parameters are missings
   for (let e of pre) {

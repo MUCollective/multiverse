@@ -44,7 +44,8 @@ Imports:
     evaluate,
     rstudioapi,
     berryFunctions,
-    future.apply
+    future.apply,
+    htmltools
 Suggests:
     ggplot2 (>= 3.0.0),
     testthat (>= 2.1.0),
