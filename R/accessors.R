@@ -3,13 +3,17 @@
 #' @description A multiverse object contains several \strong{Object variables}. These can be accessed using convenient functions.
 #' Variables from the analysis that is being performed within the multiverse can be accessed using the \code{$}.
 #' Object variables such as the \code{code}, the \code{expanded parameter options table}, the \code{parameters} and the \code{conditions} can be accessed using respective functions
-
+#' 
 #' @name accessors
 #' @param multiverse Object of class multiverse
 #' @param name a variable name
 #' @param value a new value to be assigned
+#' @param .pretty A binary argument whether `code()` should prettify the output using the tidyverse style guide. defaults to TRUE.
 #'
-#'@importFrom dplyr select
+#' @importFrom dplyr select
+#' @importFrom styler style_text
+#' @importFrom styler create_style_guide
+#' @importFrom tibble lst
 #'
 #' @export
 `$.multiverse` <- function(multiverse, name) {
@@ -62,7 +66,7 @@ expand.multiverse <- function(multiverse) {
   if (nrow(df) == 0) {
     n <- 1
     param.assgn =  list(list())
-    .code = list(code(multiverse))
+    .code = list(code(multiverse, FALSE))
     if (length(.m_list) == 0) {
       .res = list(list())
     } else {
@@ -113,13 +117,13 @@ size.multiverse <- function(multiverse) {
 
 #' @rdname accessors
 #' @export
-code <- function(multiverse) {
+code <- function(multiverse, .pretty = TRUE) {
   UseMethod("code")
 }
 
 #' @rdname accessors
 #' @export
-code.default <- function(multiverse) {
+code.default <- function(multiverse, .pretty = TRUE) {
   stop(
     "Objects of type ", deparse(class(multiverse)), " do not have method `code`. \n",
     "Please use objects of type `multiverse."
@@ -128,8 +132,14 @@ code.default <- function(multiverse) {
 
 #' @rdname accessors
 #' @export
-code.multiverse <- function(multiverse) {
-  attr(multiverse, "multiverse")[['code']]
+code.multiverse <- function(multiverse, .pretty = TRUE) {
+  .c = attr(multiverse, "multiverse")[['code']]
+  if (.pretty) {
+    lapply(.c, style_multiverse_code)
+  }
+  else {
+    return (.c)
+  }
 }
 
 #' @rdname accessors
@@ -179,13 +189,13 @@ conditions.multiverse <- function(multiverse) {
 #' @param idx index of the universe in the multiverse (corresponds to the row in the table)
 #' @export
 extract_variable_from_universe <- function(multiverse, idx, name) {
-  name = enquo(name)
+  name = as_name(enquo(name))
+  
   stopifnot( is.multiverse(multiverse) )
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   env_list <- lapply(m_diction$get(unlist(tail(m_diction$keys(), n = 1))), `[[`, "env")
   
-  #m_tbl$.results[[idx]][[quo_text(name)]]
-  get(quo_text(name), env_list[[idx]])
+  get(name, env_list[[idx]])
 }
 
 
