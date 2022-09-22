@@ -1,0 +1,128 @@
+---
+title: "temp"
+author: "Abhraneel Sarma"
+date: "2/19/2022"
+output:
+  html_document:
+    css: ../inst/css/styles.css
+  pdf_document: default
+---
+
+```{r setup} 
+# library(dplyr)
+# library(tidyr)
+# library(ggplot2)
+# library(purrr)
+# library(broom)
+# library(gganimate)
+# library(cowplot)
+# devtools::load_all(".")
+
+# knit_as_emar()
+```
+
+```{r}
+library(rlang)
+library(dplyr)
+```
+
+
+## Multiverse case study
+
+```{r}
+data("durante")
+
+data.raw.study2 <- durante %>%
+  mutate(
+    Abortion = abs(7 - Abortion) + 1,
+    StemCell = abs(7 - StemCell) + 1,
+    Marijuana = abs(7 - Marijuana) + 1,
+    RichTax = abs(7 - RichTax) + 1,
+    StLiving = abs(7 - StLiving) + 1,
+    Profit = abs(7 - Profit) + 1,
+    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
+    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana,
+    RelComp = round((Rel1 + Rel2 + Rel3)/3, 2)
+  )
+```
+
+
+## Multiverse Analysis
+
+To implement a multiverse analysis, we first need to create the `js parameter('masfem')` object <damage_transform/>:
+
+```{r}
+M = multiverse()
+```
+
+```{multiverse outlier-removal-1, inside = M}
+df = data.raw.study2 %>%
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+  filter( branch(cycle_length,
+      "cl_option1" ~ TRUE,
+      "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+      "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+  ))
+```
+
+```{multiverse outlier-removal-2, inside = M}
+df = df %>%
+    dplyr::filter( branch(certainty,
+        "cer_option1" ~ TRUE,
+        "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+    ))
+```
+
+```{multiverse cycle-length-calc, inside = M}
+df = df %>%
+    mutate(NextMenstrualOnset = branch(menstrual_calculation,
+        "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+        "mc_option3" ~ StartDateNext)
+    )  %>%
+    mutate(
+      CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+      CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
+      CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+    )
+```
+
+```{multiverse fertility-calc, inside = M}
+df = df %>%
+    mutate( Fertility = branch( fertile,
+        "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
+        "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
+        "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
+        "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+        "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+    ))
+```
+
+```{multiverse relationship-calc, inside = M}
+df = df %>%
+    mutate(RelationshipStatus = branch(relationship_status,
+        "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+        "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+        "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+    )
+```
+
+```{r}
+code(M, FALSE)
+```
+
+
+
+```{multiverse default-m-2, inside = M}
+fit_RelComp <- lm( RelComp ~ Fertility * RelationshipStatus, data = df )
+
+summary_RelComp <- fit_RelComp %>% 
+    broom::tidy( conf.int = TRUE )
+```
+
+
+```{multiverse default-m-3, inside = M}
+hist(summary_RelComp$estimate)
+```
+
+
