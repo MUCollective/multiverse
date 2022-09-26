@@ -175,7 +175,7 @@ test_that("syntax tree without branches is correctly returned", {
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   }))
 
-  expect_equal(code(M.no_branch), an_expr)
+  expect_equal(code(M.no_branch, FALSE), an_expr)
 })
 
 test_that("syntax tree for each universe is computed correctly", {
@@ -302,7 +302,7 @@ test_that("syntax tree with branches is correctly returned when a parameter is a
     fertile = "fer_option4"
   )
 
-  u.expr = lapply(code(M), get_parameter_code, param.assgn)
+  u.expr = lapply(code(M, FALSE), get_parameter_code, param.assgn)
 
   u.expr.ref = list(`1` = quote({
     df <- test_df  %>%

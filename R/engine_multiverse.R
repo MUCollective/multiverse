@@ -259,39 +259,47 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     options$dev = 'png'
     multiverse_options = options
     
-    # eng_r = knit_engines$get("R")
-    
-    options_list <- lapply(1:size(.multiverse), function(x) {
-      temp_options <- options
-      temp_options$code = tidy_source(text = map_chr(
-        tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1),
-        ~ gsub(pattern = " ", replacement = "", x = .)
-      ))$text.tidy
-
-      temp_env = expand(.multiverse)[[".results"]][[x]]
-      
-      .assignment = expand(M)[[".parameter_assignment"]][[x]]
-      class_name = paste(names(.assignment), .assignment, sep="---", collapse=" ")
-
-      # assuming default is the first universe, we add a class `default` to the relevant HTML elements
-      # conditional should be changed to use the default universe argument
-      if (x == 1) {
-          temp_options$class.source = paste0("multiverse universe ", class_name, " default")
-          temp_options$class.output = paste0("multiverse universe ", class_name, " default")
-      } else {
-          temp_options$class.source = paste0("multiverse universe ", class_name, "")
-          temp_options$class.output = paste0("multiverse universe ", class_name, "")
-      }
-
-      m.eng_r(temp_options, temp_env)
-    })
+    eng_r = knit_engines$get("R")
     
     # preserves the original declaration of the multiverse code block
     # i.e. with the branch syntax which specifies alternative analyses
     multiverse_options$eval = FALSE
     multiverse_options$class.source = "multiverse-spec"
     multiverse_options$class.output = "multiverse-spec"
-    unlist(append(options_list, m.eng_r(multiverse_options)))
+    
+    # if global setting is asis, do not show universe code
+    # i.e. we do not want tangle stuff
+    # just output multiverse code as is
+    if (getOption("multiverse_code_blocks", 1) == "asis") {
+      return(eng_r(multiverse_options))
+    } else {
+      # if (options$eval != FALSE) {
+      options_list <- lapply(1:size(.multiverse), function(x) {
+        temp_options <- options
+        temp_options$code = tidy_source(text = map_chr(
+          tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1),
+          ~ gsub(pattern = " ", replacement = "", x = .)
+        ))$text.tidy
+        
+        temp_env = expand(.multiverse)[[".results"]][[x]]
+        
+        .assignment = expand(M)[[".parameter_assignment"]][[x]]
+        class_name = paste(names(.assignment), .assignment, sep="---", collapse=" ")
+        
+        # assuming default is the first universe, we add a class `default` to the relevant HTML elements
+        # conditional should be changed to use the default universe argument
+        if (x == 1) {
+          temp_options$class.source = paste0("multiverse universe ", class_name, " default")
+          temp_options$class.output = paste0("multiverse universe ", class_name, " default")
+        } else {
+          temp_options$class.source = paste0("multiverse universe ", class_name, "")
+          temp_options$class.output = paste0("multiverse universe ", class_name, "")
+        }
+        
+        m.eng_r(temp_options, temp_env)
+      })
+      unlist(append(options_list, m.eng_r(multiverse_options)))
+    }
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
