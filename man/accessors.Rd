@@ -38,11 +38,11 @@ size(multiverse)
 
 \method{size}{multiverse}(multiverse)
 
-code(multiverse)
+code(multiverse, .pretty = TRUE)
 
-\method{code}{default}(multiverse)
+\method{code}{default}(multiverse, .pretty = TRUE)
 
-\method{code}{multiverse}(multiverse)
+\method{code}{multiverse}(multiverse, .pretty = TRUE)
 
 parameters(multiverse)
 
@@ -64,6 +64,8 @@ extract_variable_from_universe(multiverse, idx, name)
 \item{name}{a variable name}
 
 \item{value}{a new value to be assigned}
+
+\item{.pretty}{A binary argument whether `code()` should prettify the output using the tidyverse style guide. defaults to TRUE.}
 
 \item{idx}{index of the universe in the multiverse (corresponds to the row in the table)}
 }
