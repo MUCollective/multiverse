@@ -1,3 +1,6 @@
+#' @importFrom dplyr lead
+#' @importFrom dplyr lag
+
 setClassUnion("listORnumeric", c("list", "numeric"))
 
 expr_type <- function(x) {

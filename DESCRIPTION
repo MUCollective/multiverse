@@ -1,6 +1,6 @@
 Package: multiverse
-Version: 0.6.1
-Date: 2022-7-2
+Version: 0.6.1.1
+Date: 2022-9-28
 Title: 'Explorable Multiverse' Data Analysis and Reports
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
@@ -44,7 +44,10 @@ Imports:
     evaluate,
     rstudioapi,
     berryFunctions,
-    future.apply
+    furrr,
+    distributional,
+    jsonlite, 
+    styler
 Suggests:
     ggplot2 (>= 3.0.0),
     testthat (>= 2.1.0),
@@ -62,7 +65,6 @@ Suggests:
     png,
     stringi,
     modelr,
-    styler,
     future
 VignetteBuilder: 
     knitr

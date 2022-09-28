@@ -175,11 +175,11 @@ Alternatively, the same result can be obtained using the `purrr::map()` function
 purrr::map(1:N, ~ execute_universe(M, .))
 ```
 
-If we want to perform this operation in parallel, we could use `future.apply::future_lapply()` as follows:
+If we want to perform this operation in parallel, we could use `furrr::future_map()` as follows:
 
 ```{r, eval = FALSE}
 plan(multisession, workers = availableCores())
-future.apply::future_lapply(1:5, function(x) execute_universe(M, x))
+furrr::future_map(1:5, function(x) execute_universe(M, x))
 plan(sequential)
 ```
 

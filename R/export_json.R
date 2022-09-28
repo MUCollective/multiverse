@@ -1,3 +1,5 @@
+globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
+
 #' Exporting results from a multiverse analysis to JSON
 #'
 #' @description export to json
@@ -19,9 +21,14 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
+#' @importFrom dplyr rename
 #' @importFrom tidyr unnest_wider
 #' @importFrom stats quantile
 #' @importFrom distributional cdf
+#' @importFrom distributional dist_normal
+#' @importFrom purrr map2
+#' @importFrom tidyr nest
+#' @importFrom tidyselect starts_with
 
 #' @rdname export_json
 #' @export
@@ -58,14 +65,17 @@ export_dist_2_json = function(x, term, dist, filename) {
   
   x = rename(select(rename(x, universe = .universe), -starts_with(".")), .universe = universe)
   
-  .res_df = group_by(x, !!term) %>%
-    mutate(limits = map(!!dist, get_limits)) %>%
-    unnest_wider(limits) %>%
-    mutate(
-      cdf.x = map2(.min, .max, ~ seq(.x, .y, length.out = 101)),
-      cdf.y = map2(!!dist, cdf.x, ~ unlist(cdf(.x, .y)))
-    ) %>%
-    select(- !!dist, -.min, -.max)
+  .res_df = mutate(group_by(x, !!term), limits = map(!!dist, get_limits))
+  .res_df = unnest_wider(.res_df, limits)
+  
+  .res_df = 
+    select(
+      mutate(.res_df,
+        cdf.x = map2(.min, .max, ~ seq(.x, .y, length.out = 101)),
+        cdf.y = map2(!!dist, cdf.x, ~ unlist(cdf(.x, .y)))
+      ), 
+      - !!dist, -.min, -.max
+    )
   
   .res_df = nest(.res_df,  results = c(term:cdf.y))
   
