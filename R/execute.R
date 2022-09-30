@@ -45,13 +45,22 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom furrr future_map
+#' @importFrom furrr future_map2
 #' @importFrom berryFunctions tryStack
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #' 
 #' @name execute
 #' @export
-execute_multiverse <- function(multiverse, parallel = FALSE, progress = FALSE) {
+execute_multiverse = function(multiverse, parallel = FALSE, progress = FALSE) {
+  if (getOption("tree", 1)) {
+    execute_tree(multiverse, parallel, progress)
+  } else {
+    invisible( execute_linear(multiverse, parallel, progress) )
+  }
+}
+
+execute_tree <- function(multiverse, parallel, progress) {
   m_obj <- attr(multiverse, "multiverse")
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
   
@@ -72,11 +81,29 @@ execute_multiverse <- function(multiverse, parallel = FALSE, progress = FALSE) {
   # we execute each step in sequence from top to bottom
   .res <- mapply(exec_all, .m_list, cumulative_l, MoreArgs = list(progressbar = pb, steps = steps, in_parallel = parallel))
   
-  
   # update multiverse diction with new elements
   m_diction$update(ordered_dict(.res))
   
   m_obj$exec_all_until <- length(m_diction$as_list())
+}
+
+
+# execute linear
+# As an alternative to the tree-based hierarchical structure, we provide a simple linear execution framework
+# which avoids redundant computation but makes it significantly easier to perform execution in parallel
+execute_linear <- function(multiverse, parallel, progress) {
+  m_tbl = expand(multiverse)
+  .code_list = m_tbl[['.code']]
+  .env_list = m_tbl[['.results']]
+  if (parallel) {
+    future_map2(.code_list, .env_list, execute_linear_universe, .progress = progress) 
+  } else {
+    mapply(execute_linear_universe, .code_list, .env_list)
+  }
+}
+
+execute_linear_universe <- function(.c, .new_env) {
+  invisible( lapply(.c, eval, envir = .new_env) )
 }
 
 # executes all the options resulting from decisions declared within a single code 
@@ -127,7 +154,6 @@ exec_all <- function(list_block_exprs, current, progressbar, steps, in_parallel)
 execute_each <- function(i, code, env_list, pb, curr, n) {
   .c = code[[i]]
   .e = env_list[[i]]
-  # .env = new.env()
   .error_stack = tryStack(lapply(.c, eval, envir = .e), silent = TRUE)
   
   if (!is.null(pb)) {
@@ -142,10 +168,6 @@ execute_each <- function(i, code, env_list, pb, curr, n) {
 #' @export
 execute_universe <- function(multiverse, .universe = 1) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
-  # .level = attr(multiverse, "multiverse")$unchanged_until
-  # .level = attr(multiverse, "multiverse")$exec_all_until
-  # if (is.na(.level)) .level = 0
-  # we probably don't want to use cached execution when executing a single universe
   
   .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
   .to_exec = seq_len(m_diction$size()) #tail(seq_len(m_diction$size()), n = m_diction$size() - .level)

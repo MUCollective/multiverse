@@ -99,7 +99,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     
     eng_r = knit_engines$get("R")
     
-    if (getOption("multiverse_code_blocks") == "asis") {
+    if (getOption("multiverse_code_blocks", 1) == "asis") {
       return(eng_r(options))
     }
 

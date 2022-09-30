@@ -51,23 +51,6 @@ inside(M.1, {
   ))
 })
 
-M.2 <- multiverse()
-
-# using the assignment operator to declare multiverse code
-inside(M.2, {
-    data <- rnorm(100, 50, 20)
-}) 
-
-inside(M.2, {
-    mean <- mean(data, trim = branch(
-    trim_values,
-    "trim_none" ~ 0,
-    "trim_1pc" ~ 0.05,
-    "trim_5pc" ~ 0.025,
-    "trim_10pc" ~ 0.05
-  ))
-})
-
 # declaring multiple options for a data processing step (calculating a new variable)
 data(durante)
 df <- durante

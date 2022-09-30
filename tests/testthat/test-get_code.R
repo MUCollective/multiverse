@@ -1,6 +1,4 @@
 # Tests to check if the single universe syntax tree can be extracted from the multiverse
-context("get_code")
-
 library(dplyr)
 
 set.seed(123)

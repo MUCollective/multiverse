@@ -1,5 +1,4 @@
 # Tests for multiverse object
-context("multiverse")
 
 library(dplyr)
 library(purrr)

@@ -1,5 +1,3 @@
-context("utils")
-
 test_that("`expr_type()` returns correct output", {
   expect_equal(expr_type("a"), "constant")
   expect_equal(expr_type(expr(a)), "symbol")

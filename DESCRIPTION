@@ -50,7 +50,7 @@ Imports:
     styler
 Suggests:
     ggplot2 (>= 3.0.0),
-    testthat (>= 2.1.0),
+    testthat (>= 3.0.0),
     highr,
     rmarkdown,
     covr,
@@ -71,3 +71,4 @@ VignetteBuilder:
 Language: en-US
 BugReports: https://github.com/MUCollective/multiverse/issues/new
 URL: https://mucollective.github.io/multiverse/, https://github.com/mucollective/multiverse/
+Config/testthat/edition: 3

@@ -1,5 +1,3 @@
-context("print")
-
 test_that("`print()` returns correct output", {
   M <- multiverse()
   inside(M, {

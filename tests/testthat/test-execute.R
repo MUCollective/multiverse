@@ -1,5 +1,3 @@
-context("execute")
-
 library(future)
 library(tidyr)
 
@@ -45,6 +43,24 @@ test_that("`execute_multiverse` executes all the analyses across two inside bloc
   expect_equal(extract_variable_from_universe(M, 6, z), values_z[[6]])
 })
 
+test_that("`execute_linear` executes all the analyses across two inside blocks", {
+  M <- multiverse()
+  inside(M, {x <- branch(value_x, 0, 5, 14)} )
+  
+  inside(M, {
+    y <- branch(value_y, 1, 2)
+    
+    z <- x * y
+  } )
+  
+  execute_linear(M, FALSE, FALSE)
+  expect_equal(extract_variable_from_universe(M, 1, z), values_z[[1]])
+  expect_equal(extract_variable_from_universe(M, 2, z), values_z[[2]])
+  expect_equal(extract_variable_from_universe(M, 3, z), values_z[[3]])
+  expect_equal(extract_variable_from_universe(M, 4, z), values_z[[4]])
+  expect_equal(extract_variable_from_universe(M, 5, z), values_z[[5]])
+  expect_equal(extract_variable_from_universe(M, 6, z), values_z[[6]])
+})
 
 test_that("parallel computation is supported", {
   M_cores_2.1 <- multiverse()
@@ -228,4 +244,26 @@ test_that("multiverse sends warning message and continues to execute when warnin
   
   expect_warning(execute_multiverse(M))
   expect_true(env_has(expand(M)$.results[[2]], "x"))
+})
+
+test_that("multiverses created with `tree = FALSE` executes all analyses correctly", {
+  options("tree" = FALSE)
+  
+  M <- multiverse()
+  inside(M, {x <- branch(value_x, 0, 5, 14)}, .execute_default = FALSE )
+  inside(M, {
+    y <- branch(value_y, 1, 2)
+    
+    z <- x * y
+  }, .execute_default = FALSE)
+  
+  execute_multiverse(M, FALSE, FALSE)
+  expect_equal(extract_variable_from_universe(M, 1, z), values_z[[1]])
+  expect_equal(extract_variable_from_universe(M, 2, z), values_z[[2]])
+  expect_equal(extract_variable_from_universe(M, 3, z), values_z[[3]])
+  expect_equal(extract_variable_from_universe(M, 4, z), values_z[[4]])
+  expect_equal(extract_variable_from_universe(M, 5, z), values_z[[5]])
+  expect_equal(extract_variable_from_universe(M, 6, z), values_z[[6]])
+  
+  options("tree" = TRUE)
 })

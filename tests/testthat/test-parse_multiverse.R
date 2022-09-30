@@ -1,6 +1,5 @@
 # Tests for succesfully parsing the expressions passed into the multiverse
 # to identify parameters and branches (values for each parameter)
-context("parse_multiverse")
 
 library(rlang)
 library(tidyr)
@@ -128,9 +127,10 @@ test_that("`get_parameter_conditions` returns an empty list when input expressio
     df <- test_df %>%
       mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   })
-
+  
+  
   a_list.no_branch = expect_warning(flatten(get_parameter_conditions(an_expr)))
-  expect_equal(a_list.no_branch, list())
+  expect_equal(get_parameter_conditions(an_expr), list(parameters = list(), conditions = list()))
 })
 
 test_that("`get_parameter_conditions` returns the correct output (list) when input expression has a single branch", {

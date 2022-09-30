@@ -24,6 +24,45 @@ of each regression coefficient parameter}
 
 \item{filename}{filename on disk (as a character string)}
 }
+\value{
+a data frame or a JSON file
+}
 \description{
-export to json
+Exports the results of the multiverse analysis to JSON in a format which is compatible with the multiverse visualisation tool
+}
+\examples{
+\donttest{
+library(dplyr)
+library(tidyr)
+
+M = multiverse()
+
+inside(M, {
+  df = tibble(
+    x = rnorm(100),
+    y = x * 0.5 + rnorm(100, 0, 2)
+ )
+ 
+ # alternatives to remove outlier
+ df.filtered = df \%>\%
+   filter(
+     branch(outlier_exclusion,
+        "2SD" ~ abs(y - mean(y)) > 2*sd(y),
+        "3SD" ~ abs(y - mean(y)) > 3*sd(y)
+     )
+ )
+  
+  fit = lm(y ~ x, data = df)
+  res = broom::tidy(fit)
+})
+
+execute_multiverse(M)
+
+multiverse::expand(M) \%>\%
+  extract_variables(res) \%>\%
+  unnest(res) \%>\%
+  export_2_json(term, estimate, std.error) 
+} 
+
+
 }

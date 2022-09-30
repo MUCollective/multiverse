@@ -1,5 +1,3 @@
-context("accessors")
-
 library(dplyr)
 library(tidyr)
 

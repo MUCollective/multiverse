@@ -1,6 +1,5 @@
 # Tests to verify if expressions can be passed to the multiverse
 # and if passed expressions are stored properly
-context("inside")
 
 library(rlang)
 library(purrr)

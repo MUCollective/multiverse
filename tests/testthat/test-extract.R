@@ -1,5 +1,3 @@
-context("extract")
-
 library(dplyr)
 library(tidyr)
 

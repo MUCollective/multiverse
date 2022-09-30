@@ -127,8 +127,14 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
     lapply(seq_len(n), function(i) {
       .p <- lapply(df, "[[", i)
       
+      if (getOption("tree", 1)) {
+        .env = new.env(parent = .super_env)
+      } else {
+        .env = new.env(parent = globalenv())
+      }
+      
       list(
-        env = new.env(parent = .super_env),
+        env = .env,
         parent = 0,
         parameter_assignment = .p, 
         code = get_code(.expr, .p)
@@ -157,8 +163,14 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
       lapply(seq_len(n), function(j) {
         .p <- lapply(df, "[[", j)
         
+        if (getOption("tree", 1)) {
+          .env = new.env(parent = parents[[i]]$env)
+        } else {
+          .env = new.env(parent = globalenv())
+        }
+        
         list(
-          env = new.env(parent = parents[[i]]$env),
+          env = .env,
           parent = i,
           parameter_assignment = .p, 
           code = get_code(.expr, .p)
