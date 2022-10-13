@@ -43,9 +43,9 @@
 #'   execute_multiverse()
 #' }
 #'
+#' @importFrom rlang new_environment
 #' @importFrom dplyr mutate
 #' @importFrom furrr future_map
-#' @importFrom furrr future_map2
 #' @importFrom berryFunctions tryStack
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
@@ -56,7 +56,7 @@ execute_multiverse = function(multiverse, parallel = FALSE, progress = FALSE) {
   if (getOption("tree", 1)) {
     execute_tree(multiverse, parallel, progress)
   } else {
-    invisible( execute_linear(multiverse, parallel, progress) )
+    execute_linear(multiverse, parallel, progress)
   }
 }
 
@@ -83,7 +83,7 @@ execute_tree <- function(multiverse, parallel, progress) {
   
   # update multiverse diction with new elements
   m_diction$update(ordered_dict(.res))
-  
+
   m_obj$exec_all_until <- length(m_diction$as_list())
 }
 
@@ -92,18 +92,47 @@ execute_tree <- function(multiverse, parallel, progress) {
 # As an alternative to the tree-based hierarchical structure, we provide a simple linear execution framework
 # which avoids redundant computation but makes it significantly easier to perform execution in parallel
 execute_linear <- function(multiverse, parallel, progress) {
+  m_diction = attr(multiverse, "multiverse")$multiverse_diction
   m_tbl = expand(multiverse)
   .code_list = m_tbl[['.code']]
   .env_list = m_tbl[['.results']]
+  
   if (parallel) {
-    future_map2(.code_list, .env_list, execute_linear_universe, .progress = progress) 
+    if (!requireNamespace("furrr", quietly = TRUE)) {
+      warning("Package furrr is required to perform parallel execution.")
+      app = lapply
+    } else {
+      app = future_map
+    }
   } else {
-    mapply(execute_linear_universe, .code_list, .env_list)
+    app = lapply
   }
+  
+  .res <- app(seq_along(.code_list), execute_linear_universe, .code_list, .env_list)
+  
+  handle_results_and_envs(.res, .env_list)
+  .error_messages = handle_errors(.res)
+  
+  .m_list = tail(attr(multiverse, "multiverse")$multiverse_diction$as_list(), 1)[[1]]
+ 
+  # save the errors to `list_block_exprs` (current level of m_list)
+  # return the updated `list_block_exprs`
+  .diction_res = list(
+    mapply(function(x, y) {x$error = y; return(list(x))}, .m_list, .error_messages)
+  )
+  names(.diction_res) = length(m_diction$as_list())
+  
+  m_diction$update(ordered_dict(.diction_res))
+  attr(multiverse, "multiverse")$exec_all_until <- length(m_diction$as_list())
 }
 
-execute_linear_universe <- function(.c, .new_env) {
-  invisible( lapply(.c, eval, envir = .new_env) )
+# returns a named list of length 2 comprising of
+# a environment and a error_stack object
+execute_linear_universe <- function(i, code, env_list) {
+  .c = code[[i]]
+  .e = env_list[[i]]
+  .error_stack = tryStack( invisible(lapply(.c, eval, envir = .e)), silent = TRUE)
+  list(env = .e, ts = .error_stack)
 }
 
 # executes all the options resulting from decisions declared within a single code 
@@ -129,26 +158,42 @@ exec_all <- function(list_block_exprs, current, progressbar, steps, in_parallel)
   
   .res <- app(seq_along(.code_list), execute_each, .code_list, .env_list, progressbar, current, steps)
   
-  .error_messages = lapply(.res, function(x) x$ts)
-  .res_envs = lapply(.res, function(x) x$env)
-  
-  # updates the old environments in the dictionary with the new environments
-  mapply(function(old_env, new_env) {list2env(as.list(new_env), envir = old_env)}, .env_list, .res_envs)
-  
-  lapply(seq_along(.res), function(i, x) {
-    if (is(x[[i]], "try-error"))  {
-      warning("error in universe ", i)
-      cat(x[[i]], "\n\n")
-    }
-  }, x = .error_messages)
-  
-  .error_messages = lapply(.error_messages, function(x) { ifelse(is(x, "try-error"), x, NA) })
+  handle_results_and_envs(.res, .env_list)
+  .error_messages = handle_errors(.res)
   
   # save the errors to `list_block_exprs` (current level of m_list)
   # return the updated `list_block_exprs`
   list(
     mapply(function(x, y) {x$error = y; return(list(x))}, list_block_exprs, .error_messages)
   )
+}
+
+# input: .res, .env_list
+# output: NULL
+handle_results_and_envs = function(.res, .env_list) {
+  # creates a list of result environments
+  .res_envs = lapply(.res, function(x) x$env)
+  
+  # updates the old environments in the dictionary with the new environments
+  mapply(function(old_env, new_env) {list2env(as.list(new_env), envir = old_env)}, .env_list, .res_envs)
+}
+
+handle_errors = function(.res, .indices = NULL) {
+  # creates a list of error messages
+  .error_messages = lapply(.res, function(x) x$ts)
+  
+  if (is.null(.indices)) .indices = seq_along(.res)
+  
+  # prints the error messages
+  lapply(seq_along(.res), function(i, x) {
+    if (is(x[[i]], "try-error"))  {
+      warning("error in universe ", .indices[[i]])
+      cat("\n", x[[i]], "\n\n")
+    }
+  }, x = .error_messages)
+  
+  # returns the error messages (for multiverse table)
+  lapply(.error_messages, function(x) { ifelse(is(x, "try-error"), x, NA) })
 }
 
 execute_each <- function(i, code, env_list, pb, curr, n) {
@@ -163,42 +208,39 @@ execute_each <- function(i, code, env_list, pb, curr, n) {
   list(env = .e, ts = .error_stack)
 }
 
-
 #' @rdname execute
 #' @export
-execute_universe <- function(multiverse, .universe = 1) {
+execute_universe = function(multiverse, .universe = 1, parallel = FALSE) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
-  
-  .order = get_exec_order(m_diction, .universe, length(m_diction$keys()))
-  .to_exec = seq_len(m_diction$size()) #tail(seq_len(m_diction$size()), n = m_diction$size() - .level)
-  
-  .m_list <- m_diction$as_list()[.to_exec]
-  
-  .res <- mapply(exec_in_order, .m_list, .to_exec, MoreArgs = list(.universes = .order))
-}
 
-execute_code_from_universe <- function(.c, .env = globalenv()) {
-  tryStack(lapply(.c, eval, envir = .env), silent = TRUE)
-}
-
-# for a universe, get the indices which need to be executed
-get_exec_order <- function(.m_diction, .uni, .level) {
-  if (.level > 1){
-    .p <- .m_diction$get(.m_diction$keys()[[.level]])[[.uni]]$parent
-    c(get_exec_order(.m_diction, .p, .level - 1), .uni)
+  m_tbl = expand(multiverse)
+  .code_list = m_tbl[[".code"]]
+  .env_list = m_tbl[[".results"]]
+  
+  if ((length(.universe) > 1) & parallel) {
+    app = future_map
   } else {
-    .uni
+    app = lapply
   }
-}
-
-exec_in_order <- function(.universe_list, .universes, .i) {
-  x <- .universe_list[[ .universes[[.i]] ]]
   
-  .exec_res <- execute_code_from_universe(x$code, x$env)
-  if (is(.exec_res, "try-error"))  warning("error in default universe", "\n", .exec_res)
-  else if (is(.exec_res, "warning"))  warning("warning in default universe", "\n", .exec_res)
+  .res = app(.universe, execute_linear_universe, .code_list, .env_list)
+  .res_envs = lapply(.res, function(x) x$env)
+  # .errors = lapply(.res, function(x) x$ts)
+  .errors = lapply(seq_along(.env_list), function(x, y, i) { if(x %in% i) y$ts else NULL  }, .res, .universe)
+
+  mapply(function(old_env, new_env) {list2env(as.list(new_env), envir = old_env)}, .env_list[.universe], .res_envs)
+  .error_messages = handle_errors(.res, .universe)
+
+  .m_list = tail(attr(multiverse, "multiverse")$multiverse_diction$as_list(), 1)[[1]]
+
+  # # save the errors to `list_block_exprs` (current level of m_list)
+  # # return the updated `list_block_exprs`
+  # .diction_res = list(
+  #   mapply(function(x, y) {x$error = y; return(list(x))}, .m_list, .error_messages)
+  # )
+  # names(.diction_res) = length(m_diction$as_list())
+  # 
+  # m_diction$update(ordered_dict(.diction_res))
+  # attr(multiverse, "multiverse")$exec_all_until <- 0
 }
-
-
-
 

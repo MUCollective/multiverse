@@ -87,7 +87,7 @@ inside <- function(multiverse, .expr, .label = NULL, .execute_default = TRUE) {
   # direct calls to inside() by the user result in execution of the
   # default universe in the global environment.
   if (.execute_default) {
-    execute_universe(multiverse)
+    invisible( execute_universe(multiverse) )
   }
 }
 

@@ -13,6 +13,9 @@ test_that("basic retrieval with `$` returns correct output", {
     x = 5
     y = "a"
   })
+  inside(M, {
+    z = 2
+  })
   expect_equal(M$x, 5)
   expect_equal(M$y, "a")
 })

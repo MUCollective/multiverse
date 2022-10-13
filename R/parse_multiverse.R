@@ -92,14 +92,14 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   
   .expr <- list(.expr)
   names(.expr) <- .label
-
+  
   q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), conditions, .parent_key)
-
+  
   # stores parameters and conditions in the multiverse object
   m_obj$parameters <- parameters
   m_obj$conditions <- conditions
   m_obj$parameter_set <- names(parameters)
-
+  
   invisible( m_obj$multiverse_diction$set(.label, q) )
 }
 
@@ -145,6 +145,9 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
     
     q <- lapply(seq_along(parents), function(i, dat) {
       if (length(new_params) == 0) {
+        
+        # print(parents)
+        # print(class( parents[[i]]) )
         # implies no new parameters have been declared.
         # so number of child environments should be the same as the number of parent environments
         df <- data.frame(parents[[i]]$parameter_assignment)
@@ -308,7 +311,7 @@ combine_parameter_conditions <- function(l1, l2) {
 }
 
 get_option_name <- function(x) {
- # if an option is empty
+  # if an option is empty
   if(x == "") stop("options cannot be empty. make sure your branch statement does not have empty options")
   
   # when option names are specified
@@ -331,7 +334,3 @@ get_option_name <- function(x) {
     create_name_from_expr(x, TRUE)
   }
 }
-
-
-
-

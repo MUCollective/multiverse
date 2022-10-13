@@ -8,7 +8,7 @@
 \usage{
 execute_multiverse(multiverse, parallel = FALSE, progress = FALSE)
 
-execute_universe(multiverse, .universe = 1)
+execute_universe(multiverse, .universe = 1, parallel = FALSE)
 }
 \arguments{
 \item{multiverse}{The multiverse object}
