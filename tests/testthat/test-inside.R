@@ -171,6 +171,64 @@ test_that("inside cannot access variables which is not accessible from the envir
   expect_warning(myfun())
 })
 
+test_that("multiverse with labels are correctly created and execution does not impact", {
+  M <- multiverse()
+  
+  inside(M, {
+    df <- tibble(x = 1:5)
+    df <- df %>%
+      mutate(y = branch(times,
+                        "2" ~ x*2,
+                        "3" ~ x*3,
+                        "4" ~ x*4
+      ))
+  }, .label = "b1")
+  
+  inside(M, {
+    df <- df %>%
+      mutate(z = branch(exp,
+                        "2" %when% (times != "3") ~ x^2,
+                        "3" ~ x^3,
+                        "4" ~ x^4
+      ))
+  }, .label = "b2")
+  
+  m_list = attr(M, "multiverse")$multiverse_diction$as_list()
+  expect_equal(names(m_list), c("b1", "b2"))
+  
+  execute_multiverse(M)
+  expect_equal(names(m_list), c("b1", "b2"))
+})
+
+test_that("multiverse with labels are correctly created and execution does not impact #2", {
+  M <- multiverse()
+  
+  inside(M, {
+    df <- tibble(x = 1:5)
+    df <- df %>%
+      mutate(y = branch(times,
+                        "2" ~ x*2,
+                        "3" ~ x*3,
+                        "4" ~ x*4
+      ))
+  }, .label = "b1", .execute_default = FALSE)
+  
+  inside(M, {
+    df <- df %>%
+      mutate(z = branch(exp,
+                        "2" %when% (times != "3") ~ x^2,
+                        "3" ~ x^3,
+                        "4" ~ x^4
+      ))
+  }, .label = "b2", .execute_default = FALSE)
+  
+  m_list = attr(M, "multiverse")$multiverse_diction$as_list()
+  expect_equal(names(m_list), c("b1", "b2"))
+  
+  execute_multiverse(M)
+  expect_equal(names(m_list), c("b1", "b2"))
+})
+
 
 test_that("inside: unchanged_until and exec_until are correct", {
   M <- multiverse()

@@ -187,7 +187,7 @@ handle_errors = function(.res, .indices = NULL) {
   # prints the error messages
   lapply(seq_along(.res), function(i, x) {
     if (is(x[[i]], "try-error"))  {
-      warning("error in universe ", .indices[[i]])
+      warning("error in universe ", i)
       cat("\n", x[[i]], "\n\n")
     }
   }, x = .error_messages)
@@ -210,7 +210,7 @@ execute_each <- function(i, code, env_list, pb, curr, n) {
 
 #' @rdname execute
 #' @export
-execute_universe = function(multiverse, .universe = 1, parallel = FALSE) {
+execute_universe = function(multiverse, .universe = 1, parallel = FALSE, progress = FALSE) {
   m_diction = attr(multiverse, "multiverse")$multiverse_diction
 
   m_tbl = expand(multiverse)
@@ -218,29 +218,41 @@ execute_universe = function(multiverse, .universe = 1, parallel = FALSE) {
   .env_list = m_tbl[[".results"]]
   
   if ((length(.universe) > 1) & parallel) {
-    app = future_map
+    .res = future_map(.universe, execute_linear_universe, .code_list, .env_list, .progress = progress)
   } else {
-    app = lapply
+    .res = lapply(.universe, execute_linear_universe, .code_list, .env_list)
   }
   
-  .res = app(.universe, execute_linear_universe, .code_list, .env_list)
   .res_envs = lapply(.res, function(x) x$env)
   # .errors = lapply(.res, function(x) x$ts)
-  .errors = lapply(seq_along(.env_list), function(x, y, i) { if(x %in% i) y$ts else NULL  }, .res, .universe)
+  .errors = lapply(seq_along(.env_list), 
+                   function(x, y, i) { 
+                     if(x %in% i) y[[1]]$ts else NULL  
+                   }, .res, .universe)
 
   mapply(function(old_env, new_env) {list2env(as.list(new_env), envir = old_env)}, .env_list[.universe], .res_envs)
-  .error_messages = handle_errors(.res, .universe)
+  
+  # prints the error messages
+  lapply(seq_along(.errors), function(i, x) {
+    if (is(x[[i]], "try-error"))  {
+      warning("error in universe ", i)
+      cat("\n", x[[i]], "\n\n")
+    }
+  }, x = .errors)
+  
+  # returns the error messages (for multiverse table)
+  .error_messages = lapply(.errors, function(x) { ifelse(is(x, "try-error"), x, NA) })
 
-  .m_list = tail(attr(multiverse, "multiverse")$multiverse_diction$as_list(), 1)[[1]]
+  .m_list = tail(attr(multiverse, "multiverse")$multiverse_diction$as_list(), 1)
 
   # # save the errors to `list_block_exprs` (current level of m_list)
   # # return the updated `list_block_exprs`
-  # .diction_res = list(
-  #   mapply(function(x, y) {x$error = y; return(list(x))}, .m_list, .error_messages)
-  # )
-  # names(.diction_res) = length(m_diction$as_list())
-  # 
-  # m_diction$update(ordered_dict(.diction_res))
-  # attr(multiverse, "multiverse")$exec_all_until <- 0
+  .diction_res = list(
+    mapply(function(x, y) {x$error = y; return(list(x))}, .m_list[[1]], .error_messages)
+  )
+  names(.diction_res) = names(.m_list)
+
+  m_diction$update(ordered_dict(.diction_res))
+  attr(multiverse, "multiverse")$exec_all_until <- 0
 }
 
