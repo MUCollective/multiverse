@@ -23,7 +23,6 @@
 #'
 # wrapper function for get_parameter_code
 get_code <- function(.code, .assgn = NULL) {
-  # print(.code)
   lapply(.code, get_parameter_code, .assgn)
 }
 

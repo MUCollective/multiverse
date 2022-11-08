@@ -1,5 +1,7 @@
 #' @importFrom dplyr lead
 #' @importFrom dplyr lag
+#' @importFrom styler create_style_guide
+#' @importFrom styler style_text
 
 setClassUnion("listORnumeric", c("list", "numeric"))
 
@@ -57,52 +59,4 @@ get_error_universe <- function(.m_list, .uni, .level) {
     error = .m_list[[.level]][[.uni]]$error
     c(get_error_universe(.m_list, .p, .level - 1), ifelse(is.null(error), NA, error))
   }
-}
-
-
-# functions for properly formatting code
-# entered into the multiverse for printing
-add_newline_after_branch_options = function(pd_flat) {
-  if (pd_flat$text[[1]] == 'branch') {
-    option_after <- pd_flat$token == "','"
-    if (!any(option_after)) {
-      return(pd_flat)
-    }
-    pd_flat$newlines[option_after] <- 1L
-    pd_flat$lag_newlines[lag(option_after)] <- 1L
-  }
-  return(pd_flat)
-}
-
-add_newline_around_branch_parens = function(pd_flat) {
-  if (pd_flat$text[[1]] == 'branch') {
-    open_paren <- pd_flat$token == "'('"
-    close_paren <- pd_flat$token == "')'"
-    if (! (any(open_paren) | any(close_paren))) {
-      return(pd_flat)
-    }
-    pd_flat$newlines[open_paren] <- 1L
-    pd_flat$newlines[lead(close_paren)] <- 1L
-    
-    pd_flat$lag_newlines[lag(open_paren)] <- 1L
-    pd_flat$lag_newlines[close_paren] <- 1L
-  }
-  return(pd_flat)
-}
-
-multiverse_branch_style <- function() {
-  styler::create_style_guide(
-    line_break = tibble::lst(add_newline_after_branch_options, add_newline_around_branch_parens),
-    style_guide_name = "multiverse-style",
-    style_guide_version = "some-version"
-  )
-}
-
-style_multiverse_code = function(x) {
-  styler::style_text(
-    styler::style_text(
-      paste0(deparse(x[[2]]), collapse = ""),
-      transformers = multiverse_branch_style()
-    )
-  )
 }
