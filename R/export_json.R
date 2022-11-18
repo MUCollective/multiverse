@@ -143,3 +143,65 @@ get_limits = function(dist) {
   
   list(.min = .lower_limit, .max = .upper_limit)
 }
+
+#' @rdname export_json
+#' @export
+export_code_json <- function(multiverse, filename) {
+  .expr = attr(M, "multiverse")[["code"]]
+  .c = lapply(unname(.expr), function(x) as.list(extract_code_skeleton(x)))
+  
+  .c = lapply(.c, style_multiverse_code)
+  
+  .parameters = unlist(lapply(unname(.expr), extract_parameters), recursive = FALSE)
+  
+  if (!missing(filename)) {
+    write_json(
+      list(code = unlist(.c), parameters = .parameters),
+      filename,
+      pretty = TRUE
+    )
+  } else {
+    return(list(code = unlist(.c), parameters = .parameters))
+  }
+}
+
+extract_code_skeleton = function(.expr) {
+  if (!is_missing(.expr)) {
+    .expr = rm_branch_assert(.expr)
+    
+    if (is.call(.expr) ) {
+      # Recursive cases
+      if (.expr[[1]] == quote(branch)) {
+        .expr[1:2]
+      } else {
+        as.call(lapply(.expr, extract_code_skeleton))
+      }
+    } else {
+      # Base case: constants and symbols
+      .expr
+    }
+  } else {
+    .expr
+  }
+}
+
+extract_parameters = function(.expr) {
+  .expr = unname(.expr)
+  
+  if (!is_missing(.expr)) {
+    if (is.call(.expr) ) {
+      # Recursive cases
+      if (.expr[[1]] == quote(branch)) {
+        # .option = list(as.list(lapply(tail(.expr, n = length(.expr) - 2), function(x) deparse(x))))
+        .option = lapply(tail(.expr, n = length(.expr) - 2), function(x) style_text(paste0(deparse(x), collapse = "")))
+        list_option = list(unlist(.option))
+        names(list_option) = quo_text(.expr[[2]])
+        
+        return(list_option)
+      } else {
+        ls = unlist(lapply(.expr, extract_parameters), recursive = FALSE)
+        if (!is.null(ls)) ls
+      }
+    }
+  }
+}

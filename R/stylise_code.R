@@ -31,6 +31,7 @@ style_multiverse_code = function(x) {
 # entered into the multiverse for printing
 add_newline_after_branch_options = function(pd_flat) {
   if (pd_flat$text[[1]] == 'branch') {
+    # print(pd_flat)
     option_after <- pd_flat$token == "','"
     if (!any(option_after)) {
       return(pd_flat)
@@ -41,24 +42,25 @@ add_newline_after_branch_options = function(pd_flat) {
   return(pd_flat)
 }
 
-add_newline_around_branch_parens = function(pd_flat) {
-  if (pd_flat$text[[1]] == 'branch') {
-    open_paren <- pd_flat$token == "'('"
-    close_paren <- pd_flat$token == "')'"
-    if (! (any(open_paren) | any(close_paren))) {
-      return(pd_flat)
-    }
-    pd_flat$newlines[open_paren] <- 1L
-    pd_flat$newlines[lead(close_paren)] <- 1L
-    
-    pd_flat$lag_newlines[lag(open_paren)] <- 1L
-    pd_flat$lag_newlines[close_paren] <- 1L
-  }
-  return(pd_flat)
-}
+# add_newline_around_branch_parens = function(pd_flat) {
+#   if (pd_flat$text[[1]] == 'branch') {
+#     open_paren <- pd_flat$token == "'('"
+#     close_paren <- pd_flat$token == "')'"
+#     if (! (any(open_paren) | any(close_paren))) {
+#       return(pd_flat)
+#     }
+#     pd_flat$newlines[open_paren] <- 1L
+#     pd_flat$newlines[lead(close_paren)] <- 1L
+#     
+#     pd_flat$lag_newlines[lag(open_paren)] <- 1L
+#     pd_flat$lag_newlines[close_paren] <- 1L
+#   }
+#   return(pd_flat)
+# }
 
 ## break long line functions
 break_long_fun_arguments = function(pd_flat) {
+  # print(pd_flat)
   is_call <- pd_flat$token_before[2] == "SYMBOL_FUNCTION_CALL"
   if (! is.na(is_call) & is_call) {
     if (sum(nchar(pd_flat$text)) > 80) {
@@ -77,10 +79,9 @@ multiverse_branch_style <- function() {
   create_style_guide(
     line_break = tibble::lst(
       add_newline_after_branch_options, 
-      add_newline_around_branch_parens,
       break_long_fun_arguments
     ),
     style_guide_name = "multiverse-style",
-    style_guide_version = "some-version"
+    style_guide_version = "version-0.1"
   )
 }
