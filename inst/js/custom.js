@@ -29,6 +29,18 @@ $("div.main-container").append('<div class="multiverse-navbar"><p id="multiverse
 let choices, combos;
 let tangleObj;
 
+function sortOnKeys(dict) {
+    let sorted = Object.keys(dict);
+    sorted.sort();
+
+    let tempDict = {};
+    for(let i = 0; i < sorted.length; i++) {
+        tempDict[sorted[i]] = dict[sorted[i]];
+    }
+
+    return tempDict;
+}
+
 /*
   comboExists checks if curr is in combos
 
@@ -39,9 +51,10 @@ let tangleObj;
 */
 // since combos is a global variable, i feel like it's not needed in the params
 let comboExists = curr => {
-  curr = JSON.stringify(curr);
+  // sort current specication based on parameter names:
+  sortedCurr = sortOnKeys(curr)
   for (let combo of combos) {
-    if (curr == JSON.stringify(combo)) return true;
+    if (JSON.stringify(sortedCurr) == JSON.stringify(sortOnKeys(combo))) return true;
   }
   return false;
 }
@@ -79,6 +92,8 @@ const setActiveSpecification = spec => {
       mv.setAttribute("data-i", comboIdx[param]);
       mv.textContent = param + ": " + spec[param];
     }
+  } else {
+    console.log('combo does not exists')
   }
 }
 
@@ -114,6 +129,7 @@ Tangle.classes.Iterate = {
     })
   },
   update: function(element, value) {
+    
     element.textContent = element.getAttribute("data-var") + ": " +value;
   }
 }
