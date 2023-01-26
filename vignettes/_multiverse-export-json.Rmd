@@ -12,33 +12,14 @@ vignette: >
   %\VignetteIndexEntry{Exporting the output of a multiverse to JSON for visualisation tools}
   %\usepackage[UTF-8]{inputenc}
 ---
-
-
-```{r, chunk-setup, include=FALSE}
-opts_chunk$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
-)
-```
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
-opts_knit$set(
-  echo = TRUE,
-  fig.width = 6, 
-  fig.height = 4,
-  fig.path = "README_files/"
-)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(purrr)
 library(broom)
-library(multiverse)
 library(jsonlite)
 ```
 
@@ -67,15 +48,16 @@ M = multiverse()
 ```
 
 
+
 ```{multiverse default-m-1, inside = M}
 df <- data.raw.study2 %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
-    dplyr::filter( branch(cycle_length,
+    filter( branch(cycle_length,
         "cl_option1" ~ TRUE,
         "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
         "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
     )) %>%
-    dplyr::filter( branch(certainty,
+    filter( branch(certainty,
         "cer_option1" ~ TRUE,
         "cer_option2" ~ Sure1 > 6 | Sure2 > 6
     )) %>%
@@ -135,6 +117,12 @@ execute_multiverse(M)
 
 
 ```{r}
+export_code_json(M, "../../multiverse-vis/static/data/code.json")
+```
+
+
+
+```{r}
 expand(M) %>%
   extract_variables(summary_RelComp) %>%
   select(-.code, -.results, -.errors) %>%
@@ -189,21 +177,15 @@ inside(M, {
 })
 ```
 
-```{r}
-code(M)
-```
+
 
 
 
 ```{r}
+export_code_json(M, "../../multiverse-vis/static/data/code.json")
 
-
-export_code(code(M, FALSE))
+unlist(lapply(unname(code(M, FALSE)), extract_parameters), recursive = FALSE)
 ```
 
-
-```{r}
-code(M, FALSE)
-```
 
 

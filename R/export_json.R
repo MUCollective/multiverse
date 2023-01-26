@@ -55,10 +55,11 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' @importFrom jsonlite write_json
 #' @importFrom rlang enquo
 #' @importFrom rlang quo
+#' @importFrom rlang quo_text
+#' @importFrom rlang is_missing
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
 #' @importFrom dplyr group_by
-#' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom tidyr unnest_wider
 #' @importFrom stats quantile
@@ -67,7 +68,6 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' @importFrom purrr map2
 #' @importFrom tidyr nest
 #' @importFrom tidyselect starts_with
-#'
 #'
 #' @rdname export_json
 #' @export

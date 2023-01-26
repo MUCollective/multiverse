@@ -42,22 +42,6 @@ add_newline_after_branch_options = function(pd_flat) {
   return(pd_flat)
 }
 
-# add_newline_around_branch_parens = function(pd_flat) {
-#   if (pd_flat$text[[1]] == 'branch') {
-#     open_paren <- pd_flat$token == "'('"
-#     close_paren <- pd_flat$token == "')'"
-#     if (! (any(open_paren) | any(close_paren))) {
-#       return(pd_flat)
-#     }
-#     pd_flat$newlines[open_paren] <- 1L
-#     pd_flat$newlines[lead(close_paren)] <- 1L
-#     
-#     pd_flat$lag_newlines[lag(open_paren)] <- 1L
-#     pd_flat$lag_newlines[close_paren] <- 1L
-#   }
-#   return(pd_flat)
-# }
-
 ## break long line functions
 break_long_fun_arguments = function(pd_flat) {
   # print(pd_flat)

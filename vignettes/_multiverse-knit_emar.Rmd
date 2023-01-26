@@ -1,0 +1,127 @@
+---
+title: "Exporting the output of a multiverse to JSON for visualisation tools"
+author: "Abhraneel Sarma"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Exporting the output of a multiverse to JSON for visualisation tools}
+  %\usepackage[UTF-8]{inputenc}
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(broom)
+library(jsonlite)
+devtools::load_all(".")
+```
+
+## Introduction
+Steegen and colleagues [1] introduced the concept of multiverse analysis, which they illustrated by re-analyzing data from a 2013 paper by Durante and colleagues [2] entitled “The fluctuating female vote: Politics, religion, and the ovulatory cycle”. In this paper, we reproduce a small part of Steegen et al.’s multiverse analysis of Durante et al.’s study using explorable explanations. The data processing options can be selected interactively, which allows us to show the interaction plot reported in Durante et al. in addition to the p-value
+
+
+## Analysis
+The default analysis below reflects the choices made by Durante et al. [2]. Other options reflect alternatives considered by Steegen et al. [1]. Much of the text below is copied from Steegen et al. [1], in order to give an idea of what their article could have looked liked had they used explorable explanations. We first begin by loading the data used in the analysis and transforming six variables (`Abortion`, `StemCell`, ..., `Profit`) and creating three new variables (`FiscConsComp`, `SocConsComp`, `RelComp`).
+
+```{r cars}
+data("durante")
+
+data.raw.study2 <- durante %>%
+  mutate(
+    Abortion = abs(7 - Abortion) + 1,
+    StemCell = abs(7 - StemCell) + 1,
+    Marijuana = abs(7 - Marijuana) + 1,
+    RichTax = abs(7 - RichTax) + 1,
+    StLiving = abs(7 - StLiving) + 1,
+    Profit = abs(7 - Profit) + 1,
+    FiscConsComp = FreeMarket + PrivSocialSec + RichTax + StLiving + Profit,
+    SocConsComp = Marriage + RestrictAbortion + Abortion + StemCell + Marijuana
+  )
+
+M = multiverse()
+```
+
+
+## Fertility
+Durante et al. classify women into a high or low fertility group based on cycle day. There are different reasonable ways of estimating a woman’s next menstrual onset, which is an intermediate step in determining cycle day. The perform this calculation in two ways 
+
+```{multiverse default-m-1, inside = M}
+df <- data.raw.study2 %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+    filter( branch(cycle_length,
+        "cl_option1" ~ TRUE,
+        "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+        "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+    ))
+```
+
+
+```{multiverse default-m-3, inside = M}
+df <- df %>%
+    filter( branch(certainty,
+        "cer_option1" ~ TRUE,
+        "cer_option2" ~ Sure1 > 6 | Sure2 > 6
+    ))
+```
+
+```{multiverse default-m-4, inside = M}
+df <- df %>%
+    mutate(NextMenstrualOnset = branch(menstrual_calculation,
+        "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
+        "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
+        "mc_option3" ~ StartDateNext)
+    )  %>%
+    mutate(
+      CycleDay = 28 - (NextMenstrualOnset - DateTesting),
+      CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
+      CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
+    )
+``` 
+
+```{multiverse default-m-5, inside = M}
+df <- df %>%
+    mutate( Fertility = branch( fertile,
+        "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
+        "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
+        "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
+        "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
+        "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
+    ))
+```
+
+
+```{multiverse default-m-6, inside = M}
+df <- df %>%
+    mutate(RelationshipStatus = branch(relationship_status,
+        "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
+        "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
+        "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
+    )
+```
+
+
+```{multiverse default-m-5, inside = M}
+fit_RelComp <- lm(RelComp ~ 0 + Fertility * RelationshipStatus, data = df)
+p_val = round(summary(fit_RelComp)$coefficients[4, 4], 3)
+if (p_val < 0.05) p_val = paste0(p_val, "*")
+broom::augment(fit_RelComp, interval = "confidence") %>%
+    group_by(Fertility, RelationshipStatus) %>%
+    mutate(RelationshipStatus = ifelse(RelationshipStatus == "Relationship", "InRelationship",
+        "Single")) %>%
+    summarise(.fitted = mean(.fitted), .upper = mean(.upper), .lower = mean(.lower),
+        .groups = "drop") %>%
+    ggplot(aes(x = RelationshipStatus, y = .fitted, fill = Fertility)) + geom_bar(stat = "identity",
+    position = position_dodge2(preserve = "single"), width = 0.5) + geom_linerange(aes(ymin = .lower,
+    ymax = .upper), position = position_dodge(width = 0.5)) + geom_text(label = paste0("Interaction:",
+    p_val), x = 1.5, y = 7.5, colour = "#666666") + labs(x = "RelationshipStatus",
+    y = "ReligiosityCompositeScore") + ylim(c(0, 8.1)) + theme_minimal()
+```
+
