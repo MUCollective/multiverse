@@ -93,7 +93,7 @@ const setActiveSpecification = spec => {
       mv.textContent = param + ": " + spec[param];
     }
   } else {
-    console.log('combo does not exists')
+    console.log('specification does not exists')
   }
 }
 
