@@ -18,13 +18,15 @@
 #' 
 #' @rdname stylise_code
 #' @export
-style_multiverse_code = function(x) {
-  style_text(
+style_multiverse_code = function(.code) {
+  lapply(.code[2:length(.code)], function(x) {
     style_text(
-      paste0(deparse(x[[2]]), collapse = ""),
-      transformers = multiverse_branch_style()
+      style_text(
+        paste0(deparse(x), collapse = ""),
+        transformers = multiverse_branch_style()
+      )
     )
-  )
+  })
 }
 
 # functions for properly formatting code

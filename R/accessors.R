@@ -135,7 +135,7 @@ code.default <- function(multiverse, .pretty = TRUE) {
 code.multiverse <- function(multiverse, .pretty = TRUE) {
   .c = attr(multiverse, "multiverse")[['code']]
   if (.pretty) {
-    lapply(.c, style_multiverse_code)
+    unlist(unname(lapply(.c, style_multiverse_code)), recursive = FALSE)
   }
   else {
     return (.c)
