@@ -2,6 +2,7 @@
 #' @importFrom dplyr lag
 #' @importFrom styler create_style_guide
 #' @importFrom styler style_text
+#' @importFrom rlang expr_text
 
 setClassUnion("listORnumeric", c("list", "numeric"))
 

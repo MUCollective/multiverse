@@ -23,28 +23,17 @@ globalVariables(c(".universe", ".parameter_assignment"))
 #' The list of conditions defines, if any of the parameter values are conditional on a specific value of another
 #' parameter, the condition.
 #'
-#' @importFrom purrr map
-#' @importFrom purrr map_dbl
 #' @importFrom purrr reduce
-#' @importFrom purrr safely
 #' @importFrom magrittr %>%
-#' @importFrom dplyr mutate
-#' @importFrom dplyr mutate_all
-#' @importFrom dplyr tibble
-#' @importFrom dplyr everything
 #' @importFrom dplyr filter
-#' @importFrom tibble tibble
-#' @importFrom tibble as_tibble
 #' @importFrom purrr compact
-#' @importFrom purrr map_chr
 #' @importFrom rlang parse_expr
-#' @importFrom rlang expr_deparse
 #' @importFrom rlang is_call
 #' @importFrom rlang is_empty
-#' @importFrom rlang expr_text
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
-#' @importFrom utils modifyList
+#' @importFrom rlang expr
+#' @importFrom rlang is_symbol
 #' @importFrom utils globalVariables
 #' @importFrom methods is
 #' 

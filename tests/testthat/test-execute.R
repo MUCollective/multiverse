@@ -1,6 +1,7 @@
 library(future)
 library(tidyr)
 library(dplyr)
+library(rlang)
 
 values_x = exprs("a", 0, 5, 10, 14)
 values_y = exprs("b", 2, 1, 4, 3)

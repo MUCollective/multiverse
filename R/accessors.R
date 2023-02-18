@@ -13,7 +13,10 @@
 #' @importFrom dplyr select
 #' @importFrom styler style_text
 #' @importFrom styler create_style_guide
-#' @importFrom tibble lst
+#' @importFrom rlang expr
+#' @importFrom tibble as_tibble
+#' @importFrom tidyselect everything
+#' @importFrom rlang as_name
 #'
 #' @export
 `$.multiverse` <- function(multiverse, name) {

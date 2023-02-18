@@ -8,7 +8,7 @@
 #' primarily intended for internal use to stylise the output based on the tidyverse style guide
 #' and custom rules necessary for multiverse.
 #'
-#' @param x a quoted (or unevaluated) expression surrounded; usually the expression within 
+#' @param .code a quoted (or unevaluated) expression surrounded; usually the expression within 
 #' a single multiverse code block or inside function.
 #'
 #' @return an object of class vertical

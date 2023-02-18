@@ -48,8 +48,9 @@
 #'   extract_variables(x.mean)
 #' }
 #' 
-#' @importFrom tidyselect vars_pull
 #' @importFrom tidyr unnest_wider
+#' @importFrom rlang enquos
+#' @importFrom rlang as_name
 #'
 #' @export
 extract_variables <- function(x, ..., .results = .results) {

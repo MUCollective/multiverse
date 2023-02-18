@@ -27,7 +27,7 @@ test_that("new multiverse object is initialised properly", {
 test_that("accessor functions work on newly initialised object", {
   m_tbl <- expand(M)
   
-  expect_equal(code(M), list())
+  expect_equal(code(M), NULL)
   expect_warning( expect_mapequal( parameters(M), list()) )
   expect_warning( expect_mapequal( conditions(M), list()) )
   expect_true( is.data.frame(m_tbl) )

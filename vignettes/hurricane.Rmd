@@ -38,7 +38,7 @@ library(multiverse)
 
 ## Multiverse case study #4
 
-In this document we re-implement the specification curve analysis by Simonsohn et al. [http://dx.doi.org/10.2139/ssrn.2694998] using the Multiverse library. \doi
+In this document we re-implement the specification curve analysis by Simonsohn et al. [http://dx.doi.org/10.2139/ssrn.2694998] using the Multiverse library.
 
 
 ## Introduction

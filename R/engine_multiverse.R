@@ -3,6 +3,8 @@
 #' @importFrom utils head
 #' @importFrom utils tail
 #' @importFrom formatR tidy_source
+#' @importFrom purrr map_chr
+#' @importFrom rlang is_condition
 #' 
 multiverse_engine <- function(options) {
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 

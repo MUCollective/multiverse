@@ -71,9 +71,11 @@
 #'
 #' }
 #'
-#' @import rlang
-#' @importFrom magrittr %>%
-#' @importFrom magrittr inset2
+#' @importFrom rlang is_call
+#' @importFrom rlang enexpr
+#' @importFrom rlang is_null
+#' @importFrom magrittr inset
+#' @importFrom purrr map
 #'
 #' @name inside
 #' @export
@@ -174,7 +176,7 @@ expand_branch_options <- function(.expr) {
       }
       return(.new_expr)
     } else {
-      as.call(map(.expr, ~ expand_branch_options(.x)))
+      as.call(map(as.list(.expr), ~ expand_branch_options(.x)))
     }
   } else {
     .expr

@@ -59,6 +59,7 @@ Multiverse <- R6Class("Multiverse",
 #'
 #' @name multiverse
 #' @importFrom rlang env
+#' @importFrom rlang caller_env
 #' @importFrom R6 R6Class
 #' @importFrom tibble tibble
 #' @importFrom collections ordered_dict

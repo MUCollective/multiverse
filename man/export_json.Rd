@@ -3,11 +3,14 @@
 \name{export_2_json}
 \alias{export_2_json}
 \alias{export_dist_2_json}
+\alias{export_code_json}
 \title{Exporting results from a multiverse analysis to JSON}
 \usage{
 export_2_json(x, term, mean, sd, dist, filename)
 
 export_dist_2_json(x, term, dist, filename)
+
+export_code_json(x, filename)
 }
 \arguments{
 \item{x}{a tidy tibble or data frame which contains summary statistics or distributional information 

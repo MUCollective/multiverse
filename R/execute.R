@@ -43,8 +43,6 @@
 #'   execute_multiverse()
 #' }
 #'
-#' @importFrom rlang new_environment
-#' @importFrom dplyr mutate
 #' @importFrom furrr future_map
 #' @importFrom berryFunctions tryStack
 #' @importFrom utils txtProgressBar

@@ -1,0 +1,290 @@
+---
+title: "Example multiverse implementation: Female hurricanes are deadlier than male hurricanes"
+author: 
+  - Abhraneel Sarma, Northwestern University
+  - Alex Kale, University of Washington
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    css: ../inst/css/styles.css
+  pdf_document: default
+---
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE, results = "hide"}
+library(dplyr)
+library(modelr)
+library(tidyr)
+library(ggplot2)
+library(tidybayes)
+# library(multiverse)
+devtools::load_all(".")
+```
+
+
+```{r}
+knit_as_emar()
+```
+
+
+## Introduction
+
+In this exploratory multiverse analysis report, we implement a specification curve analysis, to answer the research question: **whether hurricanes with more feminine names have caused more deaths compared to hurricanes with more masculine names**. The original paper found that **hurricanes with more feminine names did cause more deaths**. However, this paper led to an intense debate about the proper way to analyse the underlying data, providing an opportunity to assess the extent to which the actual outcome is sensitive to arbitrary decisions in the data analysis process.
+
+A specification curve analysis is in principle similar to a multiverse analysis, where all alternate specifications of a particular analysis asking the same research question are explored. In their study, Simonsohn et al. explore the robustness of the analysis by Jung et al. [https://doi.org/10.1073/pnas.1402786111], which investigated whether hurricanes with female sounding names are more deadlier than hurricanes with more male sounding names. We first begin by loading the dataset which is provided by the library. We then rename some of the variables and perform some data transformations which standardises some of the variables (mean = 0 and standard deviation = 1).
+
+```{r}
+data("hurricane")
+
+# read and process data
+hurricane_data <- hurricane %>%
+    # rename some variables
+    rename(
+        year = Year,
+        name = Name,
+        dam = NDAM,
+        death = alldeaths,
+        female = Gender_MF,
+        masfem = MasFem,
+        category = Category,
+        pressure = Minpressure_Updated_2014,
+        wind = HighestWindSpeed
+    ) %>%
+    # create new variables
+    mutate(
+        post = ifelse(year>1979, 1, 0),
+        zdam = scale(dam),
+        zcat = as.numeric(scale(category)),
+        zpressure = -scale(pressure),
+        zwind = as.numeric(scale(wind)),
+        z3 = as.numeric((zpressure + zcat + zwind) / 3)
+    )
+```
+
+## Original analysis
+
+Before we implement the multiverse analysis, we illustrate an implementation of the original analysis by Jung et al. [https://doi.org/10.1073/pnas.1402786111]. The original analysis used a negative binomial model, which is suitable for overdispersed count data. Due to some issues with model fit with the `MASS::glm.nb` function (see Note 3: https://github.com/uwdata/boba/tree/master/example/hurricane), we instead use the simpler poisson regression model which will ensure that none of the models fail while fitting.
+
+In the original analysis, Jung et al. exclude two hurricanes which caused the highest number of deaths (Katrina and Audrey) as outliers. They transform the variable used the interactions between the 11-point femininity rating and both damages and zpressure respectively, as seen below:
+
+
+```{r}
+df <- hurricane_data %>%
+    filter( name != "Katrina" & name != "Audrey" )
+
+fit <- glm(death ~ masfem * zdam + masfem * zpressure, data = df, family = "poisson")
+
+summary(fit)
+```
+
+The results above indicate that the femininity of the name of the hurricane (`masfem`) does have a statistically significant effect on deaths. Below, we visualise the expected number of deaths as the femininity of the name of the hurricane increases. From this, it seems to suggest that the most feminine hurricane will likely lead to 0.5 extra deaths on average.
+
+```{r, warning = FALSE}
+data_grid(df, masfem = seq(1, 11, by = 0.2), zdam, zpressure) %>%
+  broom::augment(fit, newdata = ., se_fit = TRUE) %>%
+  ggplot(aes(x = masfem, y = .fitted)) +
+  stat_lineribbon() +
+  scale_fill_brewer() +
+  scale_x_continuous(breaks = seq(1, 11, by = 2)) +
+  theme_minimal() +
+  labs(x = "masculine-feminine rating (11 point likert scale)", y = "expected number of deaths")
+```
+
+
+## Multiverse Analysis
+
+To implement a multiverse analysis, we first need to create the multiverse object:
+
+```{r}
+M <- multiverse()
+```
+
+### Excluding outliers
+
+In the original analysis, the authors exclude two most extreme observations based on the number of deaths. However, this appears to be an arbitrary choice, especially considering the use of a negative binomial regression model, which accounts for long-tailed distribution of the outcome variable (`death`). In their implementation, Simonsohn et al. describe a principled method of excluding outliers based on extreme observations of death and damages. They consider it reasonable to exclude up two most extreme hurricanes in terms of death, and upto three most extreme hurricanes in terms of damages. We implement these decisions in our `multiverse` using the following two parameters:
+
+- <mv param="death_outliers"/>
+- <mv param="damage_outliers"/>
+
+```{multiverse default-m-1, inside = M}
+df <- hurricane_data %>%
+    filter(branch(death_outliers, 
+        "no_exclusion" ~ TRUE,
+        "one_most_extreme_deaths" ~ name != "Katrina",
+        "two_most_extreme_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
+    )) %>%
+    filter(branch(damage_outliers,
+        "no_exclusion" ~ TRUE,
+        "one_most_extreme_damage" ~ ! (name %in% c("Sandy")),
+        "two_most_extreme_damage" ~ ! (name %in% c("Sandy", "Andrew")),
+        "three_most_extreme_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
+    ))
+```
+
+### Identifying independent variables
+
+The next decision involves identifying the appropriate independent variable for the primary effect --- how do we operationalise femininity of the name of a hurricane. Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale. In our multiverse, this decision is parameterised by: <mv param="femininity_calculation"/>
+
+```{multiverse label = default-m-2, inside = M}
+df <- df %>%
+    mutate(
+        femininity = branch(femininity_calculation,
+          "masfem" ~ masfem,
+          "female" ~ female
+    ))
+```
+
+The `damages` follow a long tailed, positive only valued distribution. Thus, the other decision involved is whether or not to transform `damages`, another independent variable: <mv param="damage_transform"/>
+
+```{multiverse default-m-3, inside = M}
+df = df %>%
+  mutate(,
+        damage = branch(damage_transform,
+          "no_transform" ~ identity(dam),
+          "log_transform" ~ log(dam)
+  ))
+```
+
+
+### Declaring alternative specifications of regression model
+The next step is to fit the model. We use a linear model for our analysis, and log-transform the outcome variable deaths because it is a long-tailed distribution. Our first decision involves whether we want to include an interaction between `femininity` and `damage`, which is given by <mv param="main_interaction"/> (for the sake of simplicity, we omit the zpressure covariates from this multiverse analysis).
+
+Another decisions involves whether we should control for the year in which the hurricane occured, as hurricane detection and preparedness provisions may likely to have improved over the years. In addition, there's a discontinuity in 1979, as prior to 1979 all hurricanes had male names. This manifests as a decisions with three options: not controlling for year, controlling for the interaction between year and damage, and controlling for interaction between whether the hurricane was post 1979 (`post`) and damage. These decisions are given by <mv param="control_year"/>
+
+```{multiverse label = default-m-4, inside = M}
+fit <- lm(log(death + 1) ~ 
+          branch(main_interaction,
+              "main" ~ femininity + damage,
+              # "with_damage_and_z3" ~ femininity * damage + femininity * z3,
+              # "with_damage_and_zcat" ~ femininity * damage + femininity * zcat,
+              # "with_damage_and_zwind" ~ femininity * damage + femininity * zwind,
+              # "with_damage_and_zpressure" ~ femininity * damage + femininity * zpressure,
+              "with_damage" ~ femininity * damage
+          ) + branch(control_year, "none" ~ NULL, "year_x_damage" ~ year:damage, "post1979_x_damage" ~ post:damage), 
+          data = df)
+
+summary(fit)
+```
+
+We first visualise the model's coefficients as confidence intervals:
+
+```{multiverse default-m-5, inside = M}
+broom::tidy(fit, conf.int = TRUE) %>%
+  ggplot() +
+  geom_pointrange(aes(x = estimate, y = term, xmin = conf.low, xmax = conf.high, color = (p.value < 0.05))) +
+  theme_minimal() +
+  labs(y ="Coefficient", x = "Mean point estimate and 95% Confidence Interval")
+```
+
+Next, we predict the expected number of deaths and a 50% prediction interval as a function of the femininity of the name
+
+```{multiverse label = default-m-6, inside = M, warning = FALSE}
+data_grid(df, femininity, damage, nesting(post, year)) %>%
+  broom::augment(fit, newdata = .) %>%
+  mutate(.fitted = exp(.fitted) - 1) %>%
+  ggplot() +
+  ggdist::stat_lineribbon(aes(x = femininity, y = .fitted), .width = c(0.5)) +
+  scale_fill_brewer() +
+  theme_minimal()
+```
+
+### Execution and Results
+
+Next, we attempt to make sense of the multiverse analysis as a whole, using a specification curve. We first create a new datastructure `new_hurricane_data`, and estimate the average expected number of deaths and standard error. To make comparable point estimates for the continuous and discrete measures of `femininity`, we compute the average value of the former for the two possible values of the latter, and compute as the effect size the difference in predicted deaths for both values. Thus, `mean_deaths` are marginal effects computed at sample means.
+
+```{multiverse label = default-m-7, inside = M}
+# used for multiverse vis
+masfem_levels = summarise(group_by(df, female), mean = mean(femininity))$mean
+new_hurricane_data = data_grid(df, 
+                               femininity = masfem_levels, 
+                               damage = c(2000, 4000), 
+                               # nesting(zcat, zwind, zpressure, z3), 
+                               nesting(post, year)) %>%
+    mutate(
+        damage = branch(damage_transform,
+          "no_transform" ~ identity(damage),
+          "log_transform" ~ log(damage)
+        )
+    )
+
+model.coef = broom::tidy(fit, conf.int = TRUE) %>%
+  filter(term == "femininity") 
+
+# aggregate fitted effect of female storm name
+expectation = new_hurricane_data %>%
+  broom::augment(fit, newdata = ., se_fit = TRUE) %>%
+  mutate(.fitted = exp(.fitted) - 1) %>%
+  mutate(.id = row_number(), femininity = as.numeric(factor(femininity)) - 1) %>%
+  group_by(femininity) %>%
+  summarise(.fitted = mean(.fitted), .se = mean(.se.fit), .groups = "drop_last") %>%
+  pivot_wider(names_from = femininity, values_from = c(.fitted, .se)) %>%
+  mutate(mean_deaths = .fitted_1 - .fitted_0, .se = sqrt(.se_1^2 + .se_0^2)) %>%
+  select(mean_deaths, .se)
+
+deg_freedom.model = df.residual(fit)
+```
+
+After we've specified our multiverse analysis, we would like to execute the entire multiverse, and view the results.
+
+```{r, fig.height=3, fig.width = 8, eval = FALSE}
+execute_multiverse(M)
+```
+
+Below, we plot the mean difference point estimate for expected deaths when a hurricane has a more feminine name, for each unique analysis path. We find that based on these arbitrary specifications of the multiverse, there is perhaps no relation between `femininity` of the name of a hurricane and the number of deaths that it causes, as some models predict a lower number of deaths, and some predict much higher.
+
+```{r, fig.width = 12, fig.height = 7, warning = FALSE}
+data.spec_curve = extract_variables(M, expectation, model.coef, deg_freedom.model) %>%
+  unnest(c(expectation, model.coef)) %>%
+  select( .universe, !! names(parameters(M)), mean_deaths, estimate, .se, p.value, deg_freedom.model) %>%
+  arrange( mean_deaths ) %>%
+  mutate( 
+    .universe = 1:nrow(.),
+    effect = ifelse(p.value < 0.05, ifelse(estimate < 0, "negative", "positive"), "not significant")
+  )
+
+p1 <- data.spec_curve %>%
+  gather( "parameter_name", "parameter_option", !! names(parameters(M)) ) %>%
+  mutate( parameter_name = factor(stringr::str_replace(parameter_name, "_", "\n"))  ) %>%
+  ggplot() +
+  geom_point( aes(x = .universe, y = parameter_option, color = effect), size = 1 ) +
+  labs( x = "universe #", y = "option included in the analysis specification") + 
+  facet_grid(parameter_name ~ ., space="free_y", scales="free_y", switch="y")+ 
+  scale_colour_manual(values=c("#FF684B", "#999999", "#6E52EB")) +
+  theme_minimal() +
+  theme(strip.placement = "outside",
+        strip.background = element_rect(fill=NA,colour=NA),
+        panel.spacing.x=unit(0.15,"cm"), 
+        strip.text.y = element_text(angle = 180, face="bold", size=10), 
+        panel.spacing = unit(0.25, "lines")
+      )
+
+p2 <- data.spec_curve %>%
+  mutate(
+    conf.low = purrr::pmap_dbl(list(mean_deaths, .se, deg_freedom.model), ~ gamlss.dist::qTF(0.025, ..1, ..2, ..3)),
+    conf.high = purrr::pmap_dbl(list(mean_deaths, .se, deg_freedom.model), ~ gamlss.dist::qTF(0.975, ..1, ..2, ..3))
+  ) %>%
+  ggplot() +
+  ggdist::geom_pointinterval(aes(x = .universe, y = mean_deaths, ymin = conf.low, ymax = conf.high, color = effect)) +
+  labs(x = "", y = "effect size") + 
+  theme_minimal() +
+  scale_colour_manual(values=c("#FF684B", "#999999", "#6E52EB"))
+
+cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 3))
+```
+
+
+```{r, eval = FALSE, include = FALSE}
+# used for multiverse vis
+export_code_json(M, "hurricane-code.json")
+
+extract_variables(M, expectation, model.coef) %>%
+  unnest(c(expectation, model.coef)) %>%
+  select(-c(term, statistic:conf.high)) %>%
+  rename(excess_deaths.estimate = mean_deaths, excess_deaths.se = .se, coef_femininity.estimate = estimate, coef_femininity.se = std.error) %>%
+  pivot_longer(
+    cols = c(starts_with('excess_deaths'), starts_with('coef_femininity')),
+    names_to = c("term", ".value"),
+    names_pattern = "([a-z_]+)\\.([a-z]+)"
+  ) %>%
+  export_results_json(term, estimate, se, filename = "hurricane-data.json")
+```
+

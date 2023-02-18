@@ -146,8 +146,8 @@ get_limits = function(dist) {
 
 #' @rdname export_json
 #' @export
-export_code_json <- function(multiverse, filename) {
-  .expr = attr(M, "multiverse")[["code"]]
+export_code_json <- function(x, filename) {
+  .expr = attr(x, "multiverse")[["code"]]
   .c = lapply(unname(.expr), function(x) as.list(extract_code_skeleton(x)))
   
   .c = lapply(.c, style_multiverse_code)

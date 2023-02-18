@@ -16,9 +16,7 @@
 #' @param .assgn A list containing the assignments for each defined parameter in the multiverse
 #'
 #' @importFrom rlang f_rhs
-#' @importFrom rlang f_lhs
 #' @importFrom rlang is_missing 
-#' @importFrom magrittr %>%
 #' @importFrom magrittr extract2
 #'
 # wrapper function for get_parameter_code
