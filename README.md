@@ -40,8 +40,14 @@ syntax.
 
 ## Installation
 
-You can install the latest development version from GitHub with these R
-commands:
+You can install the package from CRAN:
+
+``` r
+install.packages("multiverse")
+```
+
+To install the latest development version from GitHub, you can use these
+R commands:
 
 ``` r
 install.packages("devtools")
@@ -304,7 +310,7 @@ languages have dedicated code blocks. We extend this by providing
 [*multiverse code
 blocks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html)
 which can be used instead of the regular `r` code block to write code
-inside a multiverse object (see \\link{multiverse-in-rmd} for more
+inside a multiverse object (see \link{multiverse-in-rmd} for more
 details on using the multiverse code blocks with RMarkdown). A
 *multiverse code block* is a custom engine designed to work with the
 `multiverse` package, to implement the multiverse analyses. This allows
@@ -352,7 +358,7 @@ code block inside a RMarkdown document through the following steps:
     Ctrl+Shift+Alt+M (on Windows).
 -   Click “Apply” and exit the dialog box
 
-Please refer to \\link{multiverse-in-rmd} for more details on using the
+Please refer to \link{multiverse-in-rmd} for more details on using the
 multiverse code blocks with RMarkdown. The vignette also contains
 information on steps for debugging some of the common problems in
 assigning keyboard shortcuts.
@@ -533,12 +539,13 @@ code(M)
 ``` r
 extract_variables(M, df.filtered)
 #> # A tibble: 3 × 7
-#>   .universe death_outliers   .parameter_assignment .code        .results .errors
-#>       <int> <chr>            <list>                <list>       <list>   <list> 
-#> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
-#> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
-#> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
-#> # … with 1 more variable: df.filtered <list>
+#>   .universe death_outliers   .parameter_a…¹ .code        .resu…² .errors df.fi…³
+#>       <int> <chr>            <list>         <list>       <list>  <list>  <list> 
+#> 1         1 no_exclusion     <named list>   <named list> <env>   <lgl>   <df>   
+#> 2         2 most_extreme     <named list>   <named list> <env>   <lgl>   <df>   
+#> 3         3 two_most_extreme <named list>   <named list> <env>   <lgl>   <df>   
+#> # … with abbreviated variable names ¹​.parameter_assignment, ²​.results,
+#> #   ³​df.filtered
 ```
 
 ## Building up a complete analysis
@@ -706,16 +713,15 @@ corresponding to the default analysis can be accessed directly in R:
 
 ``` r
 broom::tidy(fit)
-#> # A tibble: 7 × 5
-#>   term              estimate std.error statistic  p.value
-#>   <chr>                <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 (Intercept)       -3.59      0.451      -7.97  1.53e-15
-#> 2 femininity        -0.146     0.504      -0.290 7.71e- 1
-#> 3 damage             0.772     0.0517     14.9   1.97e-50
-#> 4 z3                -0.481     0.0886     -5.43  5.69e- 8
-#> 5 femininity:damage  0.00719   0.0563      0.128 8.98e- 1
-#> 6 femininity:z3      0.484     0.0938      5.17  2.38e- 7
-#> 7 damage:post       -0.0386    0.00515    -7.48  7.27e-14
+#> # A tibble: 6 × 5
+#>   term               estimate   std.error statistic   p.value
+#>   <chr>                 <dbl>       <dbl>     <dbl>     <dbl>
+#> 1 (Intercept)      2.10       0.0918          22.9  1.12e-115
+#> 2 masfem           0.0465     0.0123           3.77 1.63e-  4
+#> 3 dam              0.0000195  0.00000338       5.77 8.10e-  9
+#> 4 zpressure        0.144      0.106            1.35 1.76e-  1
+#> 5 masfem:dam       0.00000110 0.000000421      2.61 8.94e-  3
+#> 6 masfem:zpressure 0.0266     0.0132           2.02 4.33e-  2
 ```
 
 Analysts can change which analysis path is executed by default. Inline

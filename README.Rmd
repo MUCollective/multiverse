@@ -43,7 +43,13 @@ The `multiverse` documentation predominantly follows the tidyverse syntax.
 
 ## Installation
 
-You can install the latest development version from GitHub with these R commands:
+You can install the package from CRAN:
+
+```{r, eval = FALSE}
+install.packages("multiverse")
+```
+
+To install the latest development version from GitHub, you can use these R commands:
 
 ```{r, eval = FALSE}
 install.packages("devtools")
