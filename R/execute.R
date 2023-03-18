@@ -44,7 +44,7 @@
 #' }
 #'
 #' @importFrom dplyr mutate
-#' @importFrom future.apply future_lapply
+#' @importFrom furrr future_map
 #' @importFrom berryFunctions tryStack
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
@@ -90,11 +90,11 @@ exec_all <- function(list_block_exprs, current, progressbar, steps, in_parallel)
   # contain the result of the evaluated expression
   # as well as the error stack
   if (in_parallel) {
-    if (!requireNamespace("future.apply", quietly = TRUE)) {
+    if (!requireNamespace("furrr", quietly = TRUE)) {
       warning("")
       app = lapply
     } else {
-      app = future_lapply
+      app = future_map
     }
   } else {
     app = lapply

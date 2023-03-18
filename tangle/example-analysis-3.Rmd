@@ -8,35 +8,15 @@ output:
   pdf_document: default
 ---
 
-```{r setup, include=FALSE} 
+```{r setup} 
 library(dplyr)
 library(tidyr)
 library(purrr)
-library(htmltools)
 devtools::load_all(".")
+
+knit_as_emar()
 ```
 
-
-```{r, include = FALSE} 
-includeScript("https://code.jquery.com/jquery-3.6.0.min.js")
-includeScript(system.file("js/Tangle.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/mootools.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/sprintf.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/BVTouchable.js", package="multiverse"))
-includeScript(system.file("js/TangleKit/TangleKit.js", package="multiverse"))
-includeScript(system.file("js/custom.js", package="multiverse"))
-```
-
-
-```{r, echo = FALSE} 
-includeScript("https://code.jquery.com/jquery-3.6.0.min.js")
-includeScript("./Tangle.js")
-includeScript("./TangleKit/mootools.js")
-includeScript("./TangleKit/sprintf.js")
-includeScript("./TangleKit/BVTouchable.js")
-includeScript("./TangleKit/TangleKit.js")
-includeScript("./custom.js")
-```
 
 ## Multiverse case study #4
 
@@ -108,15 +88,69 @@ mean(df.filtered$femininity)
 ```
 
 
-```{multiverse default-m-5, inside = M}
+```{multiverse default-m-3, inside = M}
 hist(df.filtered$femininity)
 hist(df.filtered$damage)
 head(df.filtered)
 ```
 
 
+```{multiverse default-m-4, inside = M}
+fit <- glm(death ~ masfem * dam + masfem * zpressure, data = df, family = "poisson")
+
+fit.summary = broom::tidy(fit)
+```
+
+
 ```{r}
 expand(M)
 ```
+
+
+```{r}
+# don't need this when compiling as package compiles everything
+# execute_multiverse(M)
+```
+
+
+```{r, eval = FALSE}
+extract_results_json = function (multiverse, summary_obj, filename) {
+  if (!is.multiverse(multiverse)) stop(deparse(multiverse), " needs to be an object of class multiverse")
+  
+  summary_obj = as_name(enquo(summary_obj))
+  .summary_obj_default = extract_variable_from_universe(multiverse, 1, summary_obj)
+  
+  if (!tibble::is_tibble(.summary_obj_default)) stop(summary_obj, " declared inside the multiverse analysis needs to be an object of class tibble or data.frame; please create ", summary_obj, " using broom::tidy or an analogous function")
+  
+  if (!all(c("term", "estimate", "std.error") %in% names(.summary_obj_default))) stop(summary_obj, " declared inside the multiverse analysis needs to contain the following columns: `term`, `estimate` and `std.error`")
+  
+  ## ISSUE: if the summary_obj has a distributional object
+  
+  expand(multiverse) %>%
+    extract_variables(!!sym(summary_obj)) %>%
+    select(-.code, -.results, -.errors) %>%
+    rename(results = summary_obj) %>%
+    unnest(results) %>%
+    mutate(
+      # do we want to perform any text processing on the output of broom::tidy?
+      # I think we want the user to do these modifications instead of trying to do this on our own??
+      # term = ifelse(term == "(Intercept)", 'Intercept', term)
+      min = estimate - 5*std.error,
+      max = estimate + 5*std.error
+    ) %>%
+    group_by(term) %>%
+    mutate(min = min(min), max = max(max)) %>%
+    mutate(
+    cdf.x = pmap(list(min, max, estimate, std.error), ~ seq(..1, ..2, length.out = 101)),
+    cdf.y = pmap(list(cdf.x, estimate, std.error), ~ pnorm(..1, ..2, ..3))
+    ) %>%
+    nest(results = c(term:cdf.y)) %>%
+    jsonlite::write_json(filename, pretty = TRUE)
+}
+
+extract_results_json(M, fit.summary, 'data2.json')
+```
+
+
 
 

@@ -51,7 +51,8 @@ let comboExists = curr => {
   input `spec`, if `spec` is a valid combination.
   
   PARAMETERS:
-  spec:Object (the values must be a string)
+  spec: Object of the form {'param1_name': 'option_name', 'param2_name': 'option_name', ... } (the values must be a string);
+  all parameters declared in the multiverse must be specified.
 */
 const setActiveSpecification = spec => {
   if (comboExists(spec)) {

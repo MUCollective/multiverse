@@ -48,33 +48,6 @@ c = branch(c,
           )
 ```
 
-<!-- ∄(a==2 <=> b==y), ((c==4 && a==1) <=> b==x), (b==z <=> c==5)  -->
-<!-- <pre class='multiverse a---2 b---x c---4'>2x4</pre> -->
-<!-- <p>1<b></b></p> -->
-<!-- <pre class='multiverse a---3 b---x c---4'>3x4</pre> -->
-<!-- <p>2<b></b></p> -->
-<!-- <pre class='multiverse a---1 b---y c---4'>1y4</pre> -->
-<!-- <p>3<b></b></p> -->
-<!-- <pre class='multiverse a---3 b---y c---4'>3y4</pre> -->
-<!-- <p>4<b></b></p> -->
-<!-- <pre class='multiverse a---1 b---z c---4'>1z4</pre> -->
-<!-- <p>5<b></b></p> -->
-<!-- <pre class='multiverse a---2 b---z c---4'>2z4</pre> -->
-<!-- <p>6<b></b></p> -->
-<!-- <pre class='multiverse a---3 b---z c---4'>3z4</pre> -->
-<!-- <p>7<b></b></p> -->
-<!-- <pre class='multiverse a---1 b---x c---5'>1x5</pre> -->
-<!-- <p>8<b></b></p> -->
-<!-- <pre class='multiverse a---2 b---x c---5'>2x5</pre> -->
-<!-- <p>9<b></b></p> -->
-<!-- <pre class='multiverse a---3 b---x c---5'>3x5</pre> -->
-<!-- <p>10<b></b></p> -->
-<!-- <pre class='multiverse a---1 b---y c---5'>1y5</pre> -->
-<!-- <p>11<b></b></p> -->
-<!-- <pre class='multiverse a---3 b---y c---5'>3y5</pre> -->
-<!-- <p>12<b></b></p> -->
-<!-- <pre style="display:none;"></pre> -->
-
 <mv param="a" />
 <br>
 <mv param="b" />

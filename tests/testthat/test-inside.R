@@ -14,7 +14,7 @@ test_that("inside works on new multiverse object", {
     x = data.frame(x = 1:10)
   })
 
-  expect_equal( code(M), an_expr )
+  expect_equal( code(M, FALSE), an_expr )
 })
 
 test_that("multiple lines of code can be passed to inside", {
@@ -32,7 +32,7 @@ test_that("multiple lines of code can be passed to inside", {
     y = data.frame(y = 11:20)
   })
 
-  expect_equal( code(M), some_exprs)
+  expect_equal( code(M, FALSE), some_exprs)
 })
 
 test_that("multiple lines of code can be passed to inside in a single block", {
@@ -49,7 +49,7 @@ test_that("multiple lines of code can be passed to inside in a single block", {
     y <- data.frame(y = 11:20)
   })
   
-  expect_equal( code(M), some_exprs)
+  expect_equal( code(M, FALSE), some_exprs)
 })
 
 test_that("throws error when object is not of type `multiverse`", {
@@ -74,8 +74,8 @@ test_that("`add_and_parse_code` stores code as a list of `language`", {
   add_and_parse_code(M, expr.1)
   add_and_parse_code(M, expr.2)
 
-  expect_true( is.list(code(M)) )
-  expect_true( all(map_lgl(code(M), is.language)) )
+  expect_true( is.list(code(M, FALSE)) )
+  expect_true( all(map_lgl(code(M, FALSE), is.language)) )
 })
 
 test_that("`add_and_parse_code` parses the code", {

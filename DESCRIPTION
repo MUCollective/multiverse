@@ -1,5 +1,5 @@
 Package: multiverse
-Version: 0.6.1
+Version: 0.6.2
 Date: 2022-7-2
 Title: 'Explorable Multiverse' Data Analysis and Reports
 Authors@R: c(
@@ -44,7 +44,9 @@ Imports:
     evaluate,
     rstudioapi,
     berryFunctions,
-    future.apply
+    furrr,
+    htmltools,
+    styler
 Suggests:
     ggplot2 (>= 3.0.0),
     testthat (>= 2.1.0),
