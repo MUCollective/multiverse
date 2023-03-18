@@ -229,3 +229,12 @@ const load = () => {
 }
   
 window.onload = load;
+
+window.addEventListener("keydown", e => {
+  if (e.key === "KeyA") {
+    // a random element from `combos`
+    const randCombo = combos[Math.floor( Math.random() * combos.length )];
+
+    tangleObj.setValues(randCombo);
+  }
+});
