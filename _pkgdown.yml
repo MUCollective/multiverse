@@ -2,14 +2,23 @@ url: http://mucollective.github.io/multiverse
 
 
 template:
-  params:
-    bootswatch: lumen
-
+  bootstrap: 5
+  bslib:
+    bg: "#FFFFFF"
+    fg: "#2A2A2A"
+    primary: "#E35F7E"
+    base_font: {google: "Nunito Sans"}
+    heading_font: {google: "Georgia"}
+    
 authors:
   Abhraneel Sarma:
     href: http://abhsarma.github.io
   Matthew Kay:
     href: http://www.mjskay.com
+  Mark Miller:
+    href: https://markromanmiller.com/
+  Michael Jonghoo Moon:
+    href: https://micbon.com/
 
 reference:
 - title: Package overview
@@ -49,6 +58,7 @@ reference:
   contents:
   - parse_multiverse
   - get_code
+  - style_multiverse_code
 
 - title: Datasets
   desc:  Datasets that have been used in previous and current examples of multiverse analysis

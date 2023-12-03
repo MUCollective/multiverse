@@ -1,7 +1,7 @@
 Package: multiverse
-Version: 0.6.1.2
+Version: 0.6.2.1
 Date: 2022-10-13
-Title: 'Explorable Multiverse' Data Analysis and Reports
+Title: Multiverse: Create 'multiverse analysis' in R
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
         person("Matthew", "Kay", role = "aut", email = "mjskay@northwestern.edu"),
@@ -16,16 +16,20 @@ Authors@R: c(
     )
 Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
 Description: Implement 'multiverse' style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016)
-    <doi:10.1177/1745691616658637>, (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) <doi:10.1145/3290605.3300295> 
-    to show the robustness of statistical inference. 'Multiverse analysis' is a philosophy of 
-    statistical reporting where paper authors report the outcomes of many different statistical 
-    analyses in order to show how fragile or robust their findings are. 
-    The 'multiverse' package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) <doi:10.31219/osf.io/yfbwm>
-    allows users to concisely and flexibly implement 'multiverse-style' 
-    analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks.
+    <doi:10.1177/1745691616658637> to show the robustness of statistical inference. 
+    'Multiverse analysis' is a philosophy of statistical reporting where paper authors 
+    report the outcomes of many different statistical analyses in order to show how 
+    fragile or robust their findings are. The 'multiverse' package 
+    (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) 
+    <doi:10.31219/osf.io/yfbwm> allows users to concisely and flexibly implement 'multiverse-style' 
+    analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. 
+    Users can also create 'Explorable Multiverse Analysis Reports' (EMARs) 
+    (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) <doi:10.1145/3290605.3300295>,
+     a new approach to statistical reporting where readers of research papers can explore alternative 
+     analysis options by interacting with the paper itself.
 License: GPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Depends:
     R (>= 3.5.0),
     knitr (>= 1.3.2)
@@ -45,8 +49,6 @@ Imports:
     rstudioapi,
     berryFunctions,
     furrr,
-    distributional,
-    jsonlite, 
     styler
 Suggests:
     ggplot2 (>= 3.0.0),

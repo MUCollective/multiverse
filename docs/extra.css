@@ -1,7 +1,15 @@
-h1 {
-	/*font-size: 12px;*/
-	font-size: 32px;
-  	font-weight: bold;
+.navbar {
+  height: 80px !important;
+  background-color: #F6F6F6 !important;
+}
+
+.row>main, .row>aside {
+  margin-top: 48px !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 4rem !important;
+  font-weight: 700 !important;
 }
 
 .contents h4 {
@@ -33,5 +41,25 @@ div.sourceCode {
 }
 
 a {
-	color: #2196f3;
+	color: #E35F7E;
+	text-decoration: none;
+}
+
+a:hover,
+a:focus, 
+a:active {
+	color: #CC3F60;
+	text-decoration: underline;
+}
+
+div.sourceCode > button {
+  padding: 6px 12px !important;
+}
+
+div.sourceCode > button > i {
+  color: #FFFFFF !important;
+}
+
+pre {
+  border: 1px solid #dee2e6 !important;
 }
