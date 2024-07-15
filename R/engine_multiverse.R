@@ -130,11 +130,6 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
-    # first and last elements of `code` are "{" and "}" so we have to strip them.
-    # (otherwise only the last thing would be printed as the entire expression would
-    # only return one object)
-    code = .code[-c(1, length(.code))]
-    
     # when not knitting (i.e. interactive mode) we just use evaluate()
     # to evaluate the various pieces of code in the code chunk and return
     # the output strings from each line of code.
@@ -149,9 +144,8 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # only output character vectors and conditions (warnings, etc) values (not plots or
     # source code) here, as everything else (e.g. graphics, messages) will have already
     # been output during evaluate()
-    outputs[sapply(outputs, function(x) is.character(x) || is_condition(x))]
+    Filter(function(x) is.character(x) || is_condition(x), outputs)
   }
 }
 
 knitr::knit_engines$set(multiverse = multiverse_engine)
-
