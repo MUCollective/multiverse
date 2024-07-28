@@ -133,8 +133,10 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # when not knitting (i.e. interactive mode) we just use evaluate()
     # to evaluate the various pieces of code in the code chunk and return
     # the output strings from each line of code.
+    code = .code[-c(1, length(.code))]
+      
     outputs = evaluate::evaluate(
-      .code, 
+      code, 
       # must have new_device = FALSE otherwise plots don't seem to be written to
       # the graphics device inside rmarkdown in RStudio
       new_device = FALSE,
