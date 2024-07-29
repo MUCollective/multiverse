@@ -35,7 +35,7 @@ We will use the hurricane dataset that has been discussed in greater detail in t
 ```{r}
 data(hurricane)
 
-hurricane_data <- hurricane %>%
+hurricane_data <- hurricane |>
   # rename some variables
   rename(
       year = Year,
@@ -47,7 +47,7 @@ hurricane_data <- hurricane %>%
       category = Category,
       pressure = Minpressure_Updated_2014,
       wind = HighestWindSpeed
-  ) %>%
+  ) |>
   # create new variables
   mutate(
       post = ifelse(year>1979, 1, 0),
@@ -66,12 +66,12 @@ Outlier exclusion: We implement different alternative choices on how to exclude 
 
 ```{r}
 inside(M, {
-  df <- hurricane_data %>%
+  df <- hurricane_data |>
     filter(branch(death_outliers, 
         "no_exclusion" ~ TRUE,
         "most_extreme_deaths" ~ name != "Katrina",
         "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
-    )) %>%
+    )) |>
     filter(branch(damage_outliers,
         "no_exclusion" ~ TRUE,
         "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
@@ -87,7 +87,7 @@ Data transformations: The dollar amount in `damages` caused by a hurricane follo
 
 ```{r}
 inside(M, {
-  df <- df %>%
+  df <- df |>
     mutate(
         femininity = branch(femininity_calculation,
           "masfem" ~ masfem,

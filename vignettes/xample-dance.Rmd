@@ -62,25 +62,25 @@ First, we will quickly show what the original data, and the plots created using 
 
 ```{r, data}
 data("vis_correlation")
-df <- vis_correlation %>% 
-  group_by( vis, rbase, approach, sign ) %>%
-  select(-c(condition, visandsign, participant)) %>%
-  summarise( jnd = list(jnd) ) %>%
+df <- vis_correlation |> 
+  group_by( vis, rbase, approach, sign ) |>
+  select(-c(condition, visandsign, participant)) |>
+  summarise( jnd = list(jnd) ) |>
   mutate( 
     median = map_dbl(jnd, ~median(.x)),
     mads = map_dbl(jnd, ~mad(.x, constant = 1)),
     jnd_limit = 3 * mads
-  ) %>% 
+  ) |> 
   ungroup()
 ```
 
 
 ```{r, data-proc-errorbars}
-df.error_bar <- df %>%
-  unnest( cols = c(jnd) ) %>%
-  filter( abs(jnd - median) <= jnd_limit ) %>%
-  group_by( vis, rbase, approach, sign ) %>%
-  summarise( jnd = list(jnd) ) %>%
+df.error_bar <- df |>
+  unnest( cols = c(jnd) ) |>
+  filter( abs(jnd - median) <= jnd_limit ) |>
+  group_by( vis, rbase, approach, sign ) |>
+  summarise( jnd = list(jnd) ) |>
   mutate(
     sd = map_dbl(jnd, ~sd(.x)/sqrt(length(.x))),
     mean = map_dbl(jnd, ~mean(.x))
@@ -92,13 +92,14 @@ df.error_bar <- df %>%
 The following figure shows the mean JND for each of the 216 conditions, each displayed as a dot. We show JND as a function of correlation *r* for both above (light points) and below (dark points) approaches.
 
 ```{r, fig.height = 8, fig.width = 8}
-df.error_bar %>%
+df.error_bar |>
   ggplot() +
   geom_errorbar(aes(x = rbase, ymin = (mean - sd), ymax = mean + sd, color = approach), width = 0.025) +
   geom_point( aes(x = rbase, y = mean, color = approach )) +
   geom_hline( yintercept = 0.45, linetype = "dashed", alpha = 0.25) +
   geom_abline( slope = -1, intercept = 1, linetype = "dashed", alpha = 0.25) +
-  facet_wrap(vis ~ sign, ncol = 4)
+  facet_wrap(vis ~ sign, ncol = 4) +
+  theme_minimal()
 ```
 
 ### Regression results
@@ -111,13 +112,13 @@ The next figure we show the regression lines for all conditions, as well as the 
 filter_outliers <- function(x, median, limit) {
   return( x[abs(x - median) <= limit] )
 }
-df.corr <- df %>%
+df.corr <- df |>
   # the following visualizations were excluded from the analysis
   filter( 
     !((vis == "donut" | vis == "stackedarea" | vis == "stackedline" | vis == "stackedbar") & (sign == 1)) & 
       !((vis == "radar" | vis == "line") & (sign == -1)) 
-  ) %>%
-  mutate( jnd = pmap(list(jnd, median, jnd_limit), filter_outliers) ) %>%
+  ) |>
+  mutate( jnd = pmap(list(jnd, median, jnd_limit), filter_outliers) ) |>
   mutate( 
     mean_jnd = map_dbl(jnd, mean),
     n = map_dbl(jnd, length)
@@ -128,27 +129,27 @@ df.corr <- df %>%
 * fit the linear model using jnd as the outcome variable, and (computed) rbase metric as the predictor
 
 ```{r, data-proc-regression-2}
-rbase_adj_coef <- df.corr %>%
-  group_by( vis, sign, rbase ) %>%
-  summarise( jnd = list(jnd), mean_jnd = list(mean_jnd), n = list(n), approach = list(approach) ) %>%
-  mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) %>%
-  mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) %>%
-  unnest(cols = c(jnd, mean_jnd, approach) ) %>%
+rbase_adj_coef <- df.corr |>
+  group_by( vis, sign, rbase ) |>
+  summarise( jnd = list(jnd), mean_jnd = list(mean_jnd), n = list(n), approach = list(approach) ) |>
+  mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) |>
+  mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) |>
+  unnest(cols = c(jnd, mean_jnd, approach) ) |>
   magrittr::extract2("rbase_adj_coef")
-df.corr_fitted <- df.corr %>%
-  tibble::add_column( rbase_adj_coef = rbase_adj_coef ) %>%
+df.corr_fitted <- df.corr |>
+  tibble::add_column( rbase_adj_coef = rbase_adj_coef ) |>
   mutate( 
     multiplier = ifelse(approach == "above", 1, -1),
     rbase = rbase + 0.5 * multiplier * rbase_adj_coef
-  ) %>%
-  group_by( vis, sign ) %>%
-  summarise( mean_jnd = list(mean_jnd), rbase = list(rbase), .groups = "drop_last" ) %>%
+  ) |>
+  group_by( vis, sign ) |>
+  summarise( mean_jnd = list(mean_jnd), rbase = list(rbase), .groups = "drop_last" ) |>
   mutate( 
     fit = map2(rbase, mean_jnd, ~as.list(coef(lm(.y ~ .x)))),
     sign = factor(ifelse(sign == 1, "positive", "negative"), levels = c("positive", "negative"))
-  ) %>%
-  unnest_wider( col = c(fit) ) %>%
-  rename( intercept = `(Intercept)`, coef = .x ) %>%
+  ) |>
+  unnest_wider( col = c(fit) ) |>
+  rename( intercept = `(Intercept)`, coef = .x ) |>
   mutate(
     x = 0, 
     xend = 1,
@@ -162,12 +163,13 @@ df.corr_fitted <- df.corr %>%
 These results are consistent with the paper’s main findings: *using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots*
 
 ```{r, regression-vis, fig.width = 8, fig.height = 5}
-df.corr_fitted %>%
+df.corr_fitted |>
   ggplot() +
   geom_segment( aes( x=x, y=y, xend=xend, yend=yend, color = vis, linetype = sign) ) +
   coord_cartesian( xlim = c(0, 1), ylim = c(0, 0.6) ) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.1)) +
-  scale_x_continuous( breaks = seq(0, 1, by = 0.2))
+  scale_x_continuous( breaks = seq(0, 1, by = 0.2)) +
+  theme_minimal()
 ```
 
 ## Implementation in multiverse
@@ -185,15 +187,15 @@ M = multiverse()
 inside(M, {
   set.seed(branch(seed, .options = 1:n))
   
-  data.i = vis_correlation %>%
-    group_by(rbase, sign, vis, approach) %>%
-    summarise( jnd = list(jnd), .groups = "drop_last" ) %>%
+  data.i = vis_correlation |>
+    group_by(rbase, sign, vis, approach) |>
+    summarise( jnd = list(jnd), .groups = "drop_last" ) |>
     mutate( 
       sample_size = map_dbl(jnd, length ),
       bootstrap_samples = map2(jnd, sample_size, ~ sample( .x, size = .y, replace = TRUE))
-    ) %>%
-    select(-jnd) %>%
-    unnest( cols = c(bootstrap_samples)) %>%
+    ) |>
+    select(-jnd) |>
+    unnest( cols = c(bootstrap_samples)) |>
     rename( jnd = bootstrap_samples )
 })
 ```
@@ -203,63 +205,63 @@ The subsequent steps are very similar to a single dataset analysis.
 
 ```{r}
 inside(M, {
-  df.i <- data.i %>% 
-    group_by( vis, rbase, approach, sign ) %>%
-    summarise( jnd = list(jnd), .groups = "drop_last" ) %>%
+  df.i <- data.i |> 
+    group_by( vis, rbase, approach, sign ) |>
+    summarise( jnd = list(jnd), .groups = "drop_last" ) |>
     mutate( 
       median = map_dbl(jnd, ~median(.x)),
       mads = map_dbl(jnd, ~mad(.x, constant = 1)),
       jnd_limit = 3 * mads
-    ) %>% 
+    ) |> 
     ungroup()
   
-  df.error_bar.i <- df.i %>%
-    unnest( cols = c(jnd) ) %>%
-    filter( abs(jnd - median) <= jnd_limit ) %>%
-    group_by( vis, rbase, approach, sign ) %>%
-    summarise( jnd = list(jnd), .groups = "drop_last" ) %>%
+  df.error_bar.i <- df.i |>
+    unnest( cols = c(jnd) ) |>
+    filter( abs(jnd - median) <= jnd_limit ) |>
+    group_by( vis, rbase, approach, sign ) |>
+    summarise( jnd = list(jnd), .groups = "drop_last" ) |>
     mutate(
       sd = map_dbl(jnd, ~sd(.x)/sqrt(length(.x))),
       mean = map_dbl(jnd, ~mean(.x))
     )
   
-  df.corr.i <- df.i %>%
+  df.corr.i <- df.i |>
       # the following visualizations were excluded from the analysis
       filter( 
         !((vis == "donut" | vis == "stackedarea" | vis == "stackedline" | vis == "stackedbar") & (sign == 1)) &
           !((vis == "radar" | vis == "line") & (sign == -1)) 
-      ) %>%
-      mutate( jnd = pmap(list(jnd, median, jnd_limit), filter_outliers) ) %>%
+      ) |>
+      mutate( jnd = pmap(list(jnd, median, jnd_limit), filter_outliers) ) |>
       mutate( 
         mean_jnd = map_dbl(jnd, mean),
         n = map_dbl(jnd, length)
       )
   
-  rbase_adj_coef.i <- df.corr.i %>%
-      group_by( vis, sign, rbase ) %>%
+  rbase_adj_coef.i <- df.corr.i |>
+      group_by( vis, sign, rbase ) |>
       summarise( 
         jnd = list(jnd), mean_jnd = list(mean_jnd), n = list(n), approach = list(approach), 
         .groups = "drop_last" 
-      ) %>%
-      mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) %>%
-      mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) %>%
-      unnest(cols = c(jnd, mean_jnd, approach) ) %>%
+      ) |>
+      mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) |>
+      mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) |>
+      unnest(cols = c(jnd, mean_jnd, approach) ) |>
       magrittr::extract2("rbase_adj_coef")
   
-  df.corr_fitted.i <- df.corr.i %>%
-      tibble::add_column( rbase_adj_coef = rbase_adj_coef ) %>%
+  df.corr_fitted.i <- df.corr.i |>
+      tibble::add_column( rbase_adj_coef = rbase_adj_coef ) |>
       mutate( 
           multiplier = ifelse(approach == "above", 1, -1),
           rbase = rbase + 0.5 * multiplier * rbase_adj_coef
-      ) %>%
-      group_by( vis, sign ) %>%
-      summarise( mean_jnd = list(mean_jnd), rbase = list(rbase), .groups = "drop_last" ) %>%
+      ) |>
+      group_by( vis, sign ) |>
+      summarise( mean_jnd = list(mean_jnd), rbase = list(rbase), .groups = "drop_last" ) |>
       mutate( 
           fit = map2(rbase, mean_jnd, ~as.list(coef(lm(.y ~ .x)))),
           sign = factor(ifelse(sign == 1, "positive", "negative"), levels = c("positive", "negative"))
-      ) %>%
-      unnest_wider( col = c(fit) ) %>%
-      rename( intercept = `(Intercept)`, coef = .x ) %>%
+      ) |>
+      unnest_wider( col = c(fit) ) |>
+      rename( intercept = `(Intercept)`, coef = .x ) |>
       mutate(
           x = 0, 
           xend = 1,
@@ -284,37 +286,38 @@ Once we have the results stored from each unique analysis from our defined multi
 > The following plots shows the mean JND for each of the 216 conditions as a point estimate with the corresponding error bars communicating inferential uncertainty. As inferential information is already conveyed by the way of error bars, the dance is somewhat redundant. However, showing the dance still has educational value, as researchers tend to grossly overestimate the reliability and the replicability of inferential statistics such as p-values [5] and confidence intervals [4]. One might notice that the error bars are jumping more wildly than in a regular dance of 95% confidence intervals [5, 4]. This is because the error bars are standard errors, which are approximately twice as short as 95% CIs. Although in the original article this was clearly stated in the Figure caption, the dance might make it less likely for the reader to miss this important information.
 
 ```{r, vis-errorbars-above, fig.width = 8, fig.height = 5}
-p.above <- expand(M) %>%
-  mutate(data = map(.results, "df.error_bar.i")) %>%
-  unnest( cols = c(data) ) %>%
-  filter( sign == 1 ) %>%
+p.above <- expand(M) |>
+  mutate(data = map(.results, "df.error_bar.i")) |>
+  unnest( cols = c(data) ) |>
+  filter( sign == 1 ) |>
   ggplot() +
   geom_errorbar(aes(x = rbase, ymin = (mean - sd), ymax = mean + sd, color = approach), width = 0.025) +
   geom_point( aes(x = rbase, y = mean, color = approach )) +
   geom_hline( yintercept = 0.45, linetype = "dashed", alpha = 0.25) +
   geom_abline( slope = -1, intercept = 1, linetype = "dashed", alpha = 0.25) +
   facet_wrap( ~ vis, nrow = 2) +
+  theme_minimal() +
   transition_manual(.universe)
 
-animate(p.above, nframes = n, fps = 3, width = 840, height = 320)
+animate(p.above, nframes = n, fps = 3, width = 840, height = 320, units = "px")
 ```
 
 
-
 ```{r, vis-errorbars-below}
-p.below <- expand(M) %>%
-  mutate(data = map(.results, "df.error_bar.i")) %>%
-  unnest( cols = c(data) ) %>%
-  filter( sign == -1 ) %>%
+p.below <- expand(M) |>
+  mutate(data = map(.results, "df.error_bar.i")) |>
+  unnest( cols = c(data) ) |>
+  filter( sign == -1 ) |>
   ggplot() +
   geom_errorbar(aes(x = rbase, ymin = (mean - sd), ymax = mean + sd, color = approach), width = 0.025) +
   geom_point( aes(x = rbase, y = mean, color = approach )) +
   geom_hline( yintercept = 0.45, linetype = "dashed", alpha = 0.25) +
   geom_abline( slope = -1, intercept = 1, linetype = "dashed", alpha = 0.25) +
   facet_wrap( ~ vis, nrow = 2) +
+  theme_minimal() +
   transition_manual(.universe)
 
-animate(p.below, nframes = n, fps = 3, width = 840, height = 320)
+animate(p.below, nframes = n, fps = 3, width = 840, height = 320, units = "px")
 ```
 
 The following figure shows the regression lines for all conditions.
@@ -324,16 +327,19 @@ The following figure shows the regression lines for all conditions.
 > It is possible, and common practice, to display a 95% confidence interval around a regression line by plotting a confidence limit curve on each side of the line. Such visual representations can greatly facilitate inference but can also easily produce cluttered plots. Although it may have been possible to add 95% confidence intervals to following figure, doing so would have likely rendered it illegible.
 
 ```{r, vis-regression-lines}
-p.fitted_lines <- expand(M) %>%
-  mutate(data = map(.results, "df.corr_fitted.i")) %>%
-  unnest( cols = c(data) ) %>%
+p.fitted_lines <- expand(M) |>
+  mutate(data = map(.results, "df.corr_fitted.i")) |>
+  unnest( cols = c(data) ) |>
   ggplot() +
   geom_segment( aes( x=x, y=y, xend=xend, yend=yend, color = vis, linetype = sign) ) +
   coord_cartesian( xlim = c(0, 1), ylim = c(0, 0.6) ) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.1)) +
   scale_x_continuous( breaks = seq(0, 1, by = 0.2)) +
+  theme_minimal() +
   transition_manual(.universe)
-animate(p.fitted_lines, nframes = n, fps = 3, width = 840, height = 480)
+
+animate(p.fitted_lines, nframes = n, fps = 3, width = 840, height = 480, units = "px")
 ```
 
 > The figure is consistent with Harrison et al.’s main findings: ”using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots”. The statistical dance gives credence to these conclusions, while at the same time providing a faithful illustration of the uncertainty behind the estimates. The reader is free to linger on the figure and go beyond the authors’ own summary of findings by examining other comparisons and drawing their own conclusions. All necessary information on effect sizes and inferential statistics is seamlessly combined into this single animated figure, and it would take pages and pages of text to fully describe it.
+

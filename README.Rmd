@@ -31,6 +31,7 @@ library(ggdist)
 library(multiverse)
 ```
 
+
 # Multiverse: An R package for creating multiverse analysis
 
 In any end-to-end analysis there likely exists points in the analysis where researchers have to make a decision between two or more equally defensible choices (e.g., different ways of excluding outliers, different data transformations). In a multiverse analysis, researchers identify all the possible decision points for an analysis, determine alternative analysis steps at each decision point, implements them all, and then report the outcomes of all analyses resulting from all possible choice combinations.
@@ -96,7 +97,7 @@ We first load the raw data and store it as a tibble. The data is provided with t
 
 ```{r data}
 data("hurricane")
-hurricane_data <- hurricane %>%
+hurricane_data <- hurricane |>
     # rename some variables
     rename(
         year = Year,
@@ -108,7 +109,7 @@ hurricane_data <- hurricane %>%
         category = Category,
         pressure = Minpressure_Updated_2014,
         wind = HighestWindSpeed
-    ) %>%
+    ) |>
     # create new variables
     # which are relevant later on
     mutate(
@@ -123,7 +124,7 @@ hurricane_data <- hurricane %>%
 The data look like this:
 
 ```{r, data-preview}
-hurricane_data %>%
+hurricane_data |>
   head()
 ```
 
@@ -134,8 +135,8 @@ The original analysis removed the two hurricanes with the highest death toll as 
 The following code block contains the steps involved in implementing the original analysis:
 
 ```{r single_analysis}
-df.filtered = hurricane_data %>% 
-  filter(name != "Katrina" & name != "Audrey") %>%
+df.filtered = hurricane_data |> 
+  filter(name != "Katrina" & name != "Audrey") |>
   mutate(zpressure = -scale(pressure))
 
 fit = glm(
@@ -148,8 +149,8 @@ fit = glm(
 The result below indicates that there is a small but positive effect of `masfem` (femininity of the name of a hurricane) on `deaths`, when controlled for damages. This appears to support the original hypothesis.
 
 ```{r, one_universe_result, fig.align = 'center', eval = FALSE}
-tidy(fit) %>%
-  filter(term != "(Intercept)") %>%
+tidy(fit) |>
+  filter(term != "(Intercept)") |>
   ggplot() +
   geom_vline(xintercept = 0, color = "red") +
   geom_pointinterval(aes(x = estimate, y = term, xmin = estimate + qnorm(0.025)*std.error, xmax = estimate + qnorm(0.975)*std.error)) +
@@ -200,7 +201,7 @@ RMarkdown [supports languages other than R](https://bookdown.org/yihui/rmarkdown
     df = hurricane_data
 
     # here, we perform a `filter` operation in the multiverse
-    df.filtered = df %>%
+    df.filtered = df |>
       filter(branch(death_outliers,
           "no_exclusion" ~ TRUE,
           "most_extreme" ~ name != "Katrina",
@@ -236,13 +237,13 @@ Note that `inside()` is primarily designed for script style programming. If a us
 
 ```{r add_to_multiverse, eval = FALSE}
 # here we just create the variable `df` in the multiverse
-inside(M, df = hurricane_data)
+inside(M, { df = hurricane_data })
 
 # here, we perform two `mutate` operations in the multiverse.
 # although they could have been chained, this illustrates 
 # how multiple variables can be declared together using the `{}`
 inside(M, {
-  df.filtered = df %>%
+  df.filtered = df |>
     filter(branch(death_outliers,
         "no_exclusion" ~ TRUE,
         "most_extreme" ~ name != "Katrina",
@@ -258,7 +259,7 @@ In the rest of this vignette, we will use **multiverse code blocks** to specify 
 After you've specified the appropriate boilerplate which is necessary to use the `multiverse` DSL, the next step is to define our possible alternate analysis paths. The multiverse package includes functions that aim to make it easy to declare multiple alternate choices at each analysis decision point. We do this by enabling analysts to declare code using syntax which is as close to that of a single universe analysis as possible. Consider these first few lines from the transformation code in the single analysis above:
 
 ```{r}
-df.filtered = hurricane_data %>% 
+df.filtered = hurricane_data |> 
   filter(name != "Katrina" & name != "Audrey")
 ```
 
@@ -277,7 +278,7 @@ Putting it all together, a decision point in a multiverse analysis can thus be d
 df = hurricane_data
 
 # here, we perform a `filter` operation in the multiverse
-df.filtered = df %>%
+df.filtered = df |>
   filter(branch(death_outliers,
       "no_exclusion" ~ TRUE,
       "most_extreme" ~ name != "Katrina",
@@ -290,7 +291,7 @@ df.filtered = df %>%
     df = hurricane_data
 
     # here, we perform a `filter` operation in the multiverse
-    df.filtered = df %>%
+    df.filtered = df |>
       filter(branch(death_outliers,
           "no_exclusion" ~ TRUE,
           "most_extreme" ~ name != "Katrina",
@@ -348,7 +349,7 @@ Subsequent branch calls will progressively expand the multiverse, by enumerating
 This would result in $3 \times 2 \times 2 = 12$ analysis paths.
 
 ```{multiverse label = variable_definitions, inside = M, echo = FALSE}
-df.filtered <- df.filtered %>%
+df.filtered <- df.filtered |>
     mutate(
         femininity = branch(femininity_calculation,
           "masfem" ~ masfem,
@@ -362,7 +363,7 @@ df.filtered <- df.filtered %>%
 ```
 
     ```{multiverse label = variable_definitions, inside = M}`r ''`
-        df.filtered <- df.filtered %>%
+        df.filtered <- df.filtered |>
             mutate(
                 femininity = branch(femininity_calculation,
                   "masfem" ~ masfem,
@@ -381,7 +382,7 @@ The next step in this multiverse analysis is to estimate the effect of `feminini
 
 One way of implementing this regression analysis may be a poisson model with the number of deaths caused by the hurricane as the response variable. Recall that this is specified as:
 
-```{r}
+```{r, eval = FALSE}
 fit = glm(death ~ masfem * dam + masfem * zpressure, data = df.filtered, family = "poisson")
 ```
 
@@ -463,10 +464,19 @@ fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
           data = df.filtered)
 ```
 
-The following code chunk illustrates this behavior. Even though the variable `fit` was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:
+During interactive use (i.e. when running code chunks individually in RMarkdown), the following code chunk illustrates this behavior. Even though the variable `fit` was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:
+
+```{r, eval = isFALSE(getOption('knitr.in.progress'))}
+broom::tidy(fit)
+```
+
+Note: this behavior is not permitted when a notebook is being knit—rendered to HTML (or some other format) using `knitr`. This is because we cannot control how code is executed when knitting, and we want to avoid providing the user with a surprising result. Instead, we through an error. If your code is running perfectly fine in a script file or markdown notebook, and only throwing an error when knitting with a message similar to `! object 'fit' not found`, this is likely because you are trying to access objects declared within a multiverse code block using an R code block. Please see [*debugging*](https://mucollective.github.io/multiverse/articles/debugging-multiverse.html) for more information on this.
+
+Instead, if we want to output the results of the default (or any particular) analysis while **knitting**, we should instead use:
 
 ```{r}
-broom::tidy(fit)
+extract_variable_from_universe(M, 1, fit) |> 
+  broom::tidy()
 ```
 
 Analysts can change which analysis path is executed by default. Inline code output of a single analysis path (and the ability to select that path) is meant to support the familiar trial and error workflow of data analysts and to aid debugging.

@@ -17,7 +17,6 @@ vignette: >
 library(knitr)
 library(dplyr)
 library(tidyr)
-library(ggplot2)
 library(purrr)
 library(broom)
 library(gganimate)
@@ -46,7 +45,7 @@ We will be using the same data as the vignette: *A complete implementation of a 
 ```{r data}
 data("durante")
 
-df_durante <- durante %>%
+df_durante <- durante |>
   mutate(
     Abortion = abs(7 - Abortion) + 1,
     StemCell = abs(7 - StemCell) + 1,
@@ -70,7 +69,7 @@ We should be able to express these conditions in the multiverse. We can do this 
 There are two ways in which you can specify the `%when%` operator. The first is to specify it at the end of the branch. This will work even if you omit the branch option name.
 
 ```{r, eval = FALSE}
-df <- df %>%
+df <- df |>
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
         "mc_option1" ~ (StartDateofLastPeriod + ComputedCycleLength) %when% (cycle_length != "cl_option3"),
         "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
@@ -81,7 +80,7 @@ df <- df %>%
 The other is to specify it at the head of the branch, right after the option name:
 
 ```{r, eval = FALSE}
-df %>%
+df |>
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
         "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
         "mc_option2" %when% (cycle_length != "cl_option2") ~ (StartDateofLastPeriod + ReportedCycleLength),
@@ -98,13 +97,13 @@ We can write the complete analysis by specifying the condition with the %when% o
 M = multiverse()
 
 inside(M, {
-  df.1 <- df_durante  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+  df.1 <- df_durante  |>
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |>
       dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-      )) %>%
+      )) |>
       mutate(NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
           "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -115,15 +114,14 @@ inside(M, {
 
 In `multiverse code chunks` conditionals can be declared in pretty much the same way:
 
-
 ```{multiverse default-m-1, inside = M, echo = FALSE}
-df <- df_durante  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+df <- df_durante  |>
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |>
       dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-      )) %>%
+      )) |>
       mutate(NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
           "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -134,13 +132,13 @@ df <- df_durante  %>%
 
 ````
 ```{multiverse default-m-1, inside = M}`r ''`
-df <- df_durante  %>%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+df <- df_durante  |>
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |>
       dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-      )) %>%
+      )) |>
       mutate(NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
           "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -165,8 +163,8 @@ For eg: the above logical operations can be specified as: `branch_assert((menstr
 Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
 
 ```{r, eval = FALSE}
-df %>%
-    branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+df |>
+    branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) |>
     branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
 ```
 
@@ -176,19 +174,19 @@ Using the `branch_assert()`, we can perform the exact same analysis:
 M = multiverse()
 
 inside(M, {
-    df.2 <- df_durante  %>%
-        mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+    df.2 <- df_durante  |>
+        mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |>
         filter( branch(cycle_length,
             "cl_option1" ~ TRUE,
             "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
             "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-        )) %>%
+        )) |>
         mutate(NextMenstrualOnset = branch(menstrual_calculation,
             "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
             "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
             "mc_option3" ~ StartDateNext)
-        ) %>%
-        branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+        ) |>
+        branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) |>
         branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
 })
 ```
@@ -210,33 +208,33 @@ M = multiverse()
 
 
 ```{multiverse default-m-2, inside = M, echo = FALSE}
-df <- df_durante  %>%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+df <- df_durante  |>
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |>
   dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-  )) %>%
+  )) |>
   dplyr::filter( branch(certainty,
           "cer_option1" ~ TRUE,
           "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-  )) %>%
+  )) |>
   mutate(NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
           "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
           "mc_option3" ~ StartDateNext)
-  )  %>%
+  )  |>
   mutate(
     CycleDay = 28 - (NextMenstrualOnset - DateTesting),
     CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-  ) %>%
+  ) |>
   mutate( Fertility = branch( fertile,
           "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
           "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
           "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
           "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
           "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
-  )) %>%
+  )) |>
   mutate(RelationshipStatus = branch(relationship_status,
           "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
           "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
@@ -248,33 +246,33 @@ df <- df_durante  %>%
 
 ````
 ```{multiverse default-m-2, inside = M, echo = FALSE}`r ''`
-df <- df_durante  %>%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+df <- df_durante  |>
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |>
   dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
           "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
           "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-  )) %>%
+  )) |>
   dplyr::filter( branch(certainty,
           "cer_option1" ~ TRUE,
           "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-  )) %>%
+  )) |>
   mutate(NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
           "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
           "mc_option3" ~ StartDateNext)
-  )  %>%
+  )  |>
   mutate(
     CycleDay = 28 - (NextMenstrualOnset - DateTesting),
     CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-  ) %>%
+  ) |>
   mutate( Fertility = branch( fertile,
           "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
           "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
           "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
           "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
           "fer_option45" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
-  )) %>%
+  )) |>
   mutate(RelationshipStatus = branch(relationship_status,
           "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
           "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
@@ -286,7 +284,7 @@ df <- df_durante  %>%
 After excluding the inconsistent choice combinations, $270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210$ choice combinations remain:
 
 ```{r, df-conditions-assert}
-expand(M) %>% nrow()
+expand(M) |> nrow()
 ```
 
 Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
