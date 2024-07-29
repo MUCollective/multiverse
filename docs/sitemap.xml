@@ -13,19 +13,10 @@
     <loc>http://mucollective.github.io/multiverse/articles/conditions.html</loc>
   </url>
   <url>
-    <loc>http://mucollective.github.io/multiverse/articles/dance.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/durante-multiverse-analysis.html</loc>
-  </url>
-  <url>
     <loc>http://mucollective.github.io/multiverse/articles/execution-multiverse.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/frequentist-multiverse-analysis.html</loc>
-  </url>
-  <url>
-    <loc>http://mucollective.github.io/multiverse/articles/hurricane.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/index.html</loc>
@@ -35,6 +26,15 @@
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/articles/visualising-multiverse.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/xample-dance.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/xample-durante.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/articles/xample-hurricane.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/authors.html</loc>
@@ -61,6 +61,9 @@
     <loc>http://mucollective.github.io/multiverse/reference/execute.html</loc>
   </url>
   <url>
+    <loc>http://mucollective.github.io/multiverse/reference/export_json.html</loc>
+  </url>
+  <url>
     <loc>http://mucollective.github.io/multiverse/reference/extract_variables.html</loc>
   </url>
   <url>
@@ -74,6 +77,9 @@
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/inside.html</loc>
+  </url>
+  <url>
+    <loc>http://mucollective.github.io/multiverse/reference/knit_as_emar.html</loc>
   </url>
   <url>
     <loc>http://mucollective.github.io/multiverse/reference/mulitiverse_code_block.html</loc>

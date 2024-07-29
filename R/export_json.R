@@ -5,7 +5,7 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' @description Exports the results of the multiverse analysis to JSON in a format which is compatible with the multiverse visualisation tool
 #' 
 #' 
-#' @name export_2_json
+#' @name export_json
 #' @param x a tidy tibble or data frame which contains summary statistics or distributional information 
 #' of each regression coefficient parameter 
 #' @param term column in the data frame, x, which contains the name of the coefficients

@@ -23,7 +23,7 @@ devtools::load_all(".")
 
 ```{r}
 knit_as_emar()
-```
+``` 
 
 
 ## Introduction

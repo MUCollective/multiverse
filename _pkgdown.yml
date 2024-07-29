@@ -53,6 +53,12 @@ reference:
   - execute_universe
   - execute_multiverse
   
+- title: Exporting results
+  desc: Export the results of the multiverse. Some of the functions are designed to export the code, dataset, and results in a JSON format which is compatible with Milliways, an interactive visualisation tool for multiverse analysis
+  contents:
+  - knit_as_emar
+  - export_json
+  
 - title: Multiverse internals
   desc: Internals functions for processing the multiverse
   contents:
