@@ -81,14 +81,14 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   
   .expr <- list(.expr)
   names(.expr) <- .label
-  
+
   q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), conditions, .parent_key)
-  
+
   # stores parameters and conditions in the multiverse object
   m_obj$parameters <- parameters
   m_obj$conditions <- conditions
   m_obj$parameter_set <- names(parameters)
-  
+
   invisible( m_obj$multiverse_diction$set(.label, q) )
 }
 

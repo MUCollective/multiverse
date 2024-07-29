@@ -1,3 +1,5 @@
+context("execute")
+
 library(future)
 library(tidyr)
 library(dplyr)

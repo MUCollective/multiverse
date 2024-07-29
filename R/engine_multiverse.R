@@ -136,7 +136,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     code = .code[-c(1, length(.code))]
       
     outputs = evaluate::evaluate(
-      code, 
+      code,
       # must have new_device = FALSE otherwise plots don't seem to be written to
       # the graphics device inside rmarkdown in RStudio
       new_device = FALSE,

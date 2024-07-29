@@ -1,17 +1,17 @@
-pandoc: 3.1.1
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   branch: branch.html
   conditions: conditions.html
-  dance: dance.html
-  durante-multiverse-analysis: durante-multiverse-analysis.html
   execution-multiverse: execution-multiverse.html
   frequentist-multiverse-analysis: frequentist-multiverse-analysis.html
-  hurricane: hurricane.html
   multiverse-in-rmd: multiverse-in-rmd.html
   visualising-multiverse: visualising-multiverse.html
-last_built: 2023-11-25T19:56Z
+  xample-dance: xample-dance.html
+  xample-durante: xample-durante.html
+  xample-hurricane: xample-hurricane.html
+last_built: 2024-07-29T17:16Z
 urls:
   reference: http://mucollective.github.io/multiverse/reference
   article: http://mucollective.github.io/multiverse/articles

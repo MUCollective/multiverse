@@ -276,12 +276,6 @@ data.
 ``` r
 #load the library
 library(multiverse)
-#> Loading required package: knitr
-#> 
-#> Attaching package: 'multiverse'
-#> The following object is masked from 'package:tidyr':
-#> 
-#>     expand
 
 #create multiverse object
 M = multiverse()
@@ -721,17 +715,19 @@ immediately below it, mimicking notebook code chunks
               data = df)
     ```
 
-The following code chunk (should) illustrate this behavior. Even though
-the variable `fit` was defined in a multiverse code block, since the
-default analysis is executed in the active R environment, the version
-corresponding to the default analysis can be accessed directly in R:
+During interactive use (i.e. when running code chunks individually in
+RMarkdown), the following code chunk illustrates this behavior. Even
+though the variable `fit` was defined in a multiverse code block, since
+the default analysis is executed in the active R environment, the
+version corresponding to the default analysis can be accessed directly
+in R:
 
 ``` r
 broom::tidy(fit)
 ```
 
-Note: *should* because this behavior is not permitted when a notebook is
-being compiled to HTML (or some other format) using `knitr`. This is
+Note: this behavior is not permitted when a notebook is being
+knit—rendered to HTML (or some other format) using `knitr`. This is
 because we cannot control how code is executed when knitting, and we
 want to avoid providing the user with a surprising result. Instead, we
 through an error. If your code is running perfectly fine in a script
@@ -743,7 +739,7 @@ using an R code block. Please see
 for more information on this.
 
 Instead, if we want to output the results of the default (or any
-particular) analysis while **knitting**, we should use:
+particular) analysis while **knitting**, we should instead use:
 
 ``` r
 extract_variable_from_universe(M, 1, fit) |> 

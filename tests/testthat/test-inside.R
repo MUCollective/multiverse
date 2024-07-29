@@ -47,7 +47,7 @@ test_that("multiple lines of code can be passed to inside in a single block", {
     x <- data.frame(x = 1:10)
     y <- data.frame(y = 11:20)
   })
-  
+
   expect_equal( attr(M, 'multiverse')[['code']], some_exprs)
 })
 
@@ -228,7 +228,6 @@ test_that("multiverse with labels are correctly created and execution does not i
   execute_multiverse(M)
   expect_equal(names(m_list), c("b1", "b2"))
 })
-
 
 test_that("inside: unchanged_until and exec_until are correct", {
   M <- multiverse()

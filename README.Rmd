@@ -31,7 +31,6 @@ library(ggdist)
 library(multiverse)
 ```
 
-
 # Multiverse: An R package for creating multiverse analysis
 
 In any end-to-end analysis there likely exists points in the analysis where researchers have to make a decision between two or more equally defensible choices (e.g., different ways of excluding outliers, different data transformations). In a multiverse analysis, researchers identify all the possible decision points for an analysis, determine alternative analysis steps at each decision point, implements them all, and then report the outcomes of all analyses resulting from all possible choice combinations.

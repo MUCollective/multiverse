@@ -25,7 +25,7 @@
 #' from where \code{inside()} is called, and hence not have access to variables which might be accessible in the environment 
 #' within the function from where \code{inside()} is called.
 #'
-#' @param multiverse A multive[])rse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}
+#' @param multiverse A multiverse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}
 #'
 #' @param .expr R syntax. All the operations that the user wants to perform within the multiverse can be passed.
 #' Since it accepts a single argument, chunks of code can be passed using `\{\}`. See example for details.

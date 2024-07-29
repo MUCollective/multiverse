@@ -16,6 +16,8 @@ vignette: >
 ---
 
 
+
+
 ```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
 library(dplyr)
@@ -112,6 +114,7 @@ The next figure we show the regression lines for all conditions, as well as the 
 filter_outliers <- function(x, median, limit) {
   return( x[abs(x - median) <= limit] )
 }
+
 df.corr <- df |>
   # the following visualizations were excluded from the analysis
   filter( 
@@ -136,6 +139,7 @@ rbase_adj_coef <- df.corr |>
   mutate( rbase_adj_coef = map2_dbl(mean_jnd, n, ~ sum(.x * .y) / sum(.y)) ) |>
   unnest(cols = c(jnd, mean_jnd, approach) ) |>
   magrittr::extract2("rbase_adj_coef")
+
 df.corr_fitted <- df.corr |>
   tibble::add_column( rbase_adj_coef = rbase_adj_coef ) |>
   mutate( 
@@ -193,6 +197,7 @@ inside(M, {
     mutate( 
       sample_size = map_dbl(jnd, length ),
       bootstrap_samples = map2(jnd, sample_size, ~ sample( .x, size = .y, replace = TRUE))
+
     ) |>
     select(-jnd) |>
     unnest( cols = c(bootstrap_samples)) |>
@@ -342,4 +347,3 @@ animate(p.fitted_lines, nframes = n, fps = 3, width = 840, height = 480, units =
 ```
 
 > The figure is consistent with Harrison et al.’s main findings: ”using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots”. The statistical dance gives credence to these conclusions, while at the same time providing a faithful illustration of the uncertainty behind the estimates. The reader is free to linger on the figure and go beyond the authors’ own summary of findings by examining other comparisons and drawing their own conclusions. All necessary information on effect sizes and inferential statistics is seamlessly combined into this single animated figure, and it would take pages and pages of text to fully describe it.
-

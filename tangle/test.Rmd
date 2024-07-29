@@ -1,0 +1,55 @@
+---
+title: "Integrating tangle.js with the output on multiverse notebook analysis"
+output:
+  html_document:
+    css: ../inst/css/styles.css
+---
+
+```{r}
+devtools::load_all(".")
+```
+
+<script src="./Tangle.js"></script>
+<link rel="stylesheet" href="TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="TangleKit/mootools.js"></script>
+<script type="text/javascript" src="TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="TangleKit/TangleKit.js"></script>
+<script type="text/javascript" src="./custom.js"></script>
+
+<mv param="a" />
+<br>
+<mv param="b" />
+<br>
+<mv param="c" />
+
+```{r}
+M = multiverse()
+```
+
+```{multiverse default-m-1, inside = M}
+aa = branch(a, 
+           "1" ~ 1, 
+           "2" ~ 2, 
+           "3" ~ 3,
+           "4" ~ 4,
+           "5" ~ 5,
+           "6" ~ 6,
+           "7" ~ 7
+          )
+b = branch(b, 
+           "x" %when% (a != 1) ~ "x", 
+           "y" ~ "y", 
+           "z" ~ "z"
+          )
+c = branch(c, 
+           "4" ~ 4, 
+           "5"%when% (b != "z") ~ 5
+          )
+```
+
+<mv param="a" />
+<br>
+<mv param="b" />
+<br>
+<mv param="c" />

@@ -1,0 +1,123 @@
+---
+title: "temp"
+author: "Abhraneel Sarma"
+date: "2/19/2022"
+output:
+  html_document:
+    css: ../inst/css/styles.css
+  pdf_document: default
+---
+
+```{r setup, include=FALSE} 
+library(dplyr)
+library(tidyr)
+library(purrr)
+devtools::load_all(".")
+```
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="./Tangle.js"></script>
+<link rel="stylesheet" href="TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="TangleKit/mootools.js"></script>
+<script type="text/javascript" src="TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="TangleKit/TangleKit.js"></script>
+<script src="./custom.js"></script>
+
+## Multiverse case study #4
+
+```{r}
+data("hurricane")
+
+hurricane_data <- hurricane %>%
+    # rename some variables
+    rename(
+        year = Year,
+        name = Name,
+        dam = NDAM,
+        death = alldeaths,
+        female = Gender_MF,
+        masfem = MasFem,
+        category = Category,
+        pressure = Minpressure_Updated_2014,
+        wind = HighestWindSpeed
+    ) %>%
+    # create new variables
+    mutate(
+        post = ifelse(year>1979, 1, 0),
+        zcat = as.numeric(scale(category)),
+        zpressure = -scale(pressure),
+        zwind = as.numeric(scale(wind)),
+        z3 = as.numeric((zpressure + zcat + zwind) / 3)
+    )
+```
+
+
+## Multiverse Analysis
+
+To implement a multiverse analysis, we first need to create the `js parameter('masfem')` object:
+
+```{r}
+M = multiverse()
+```
+
+
+```{multiverse default-m-1, inside = M}
+df <- hurricane_data %>%
+    filter(branch(death_outliers, 
+        "no_exclusion" ~ TRUE,
+        "most_extreme_deaths" ~ name != "Katrina",
+        "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
+    )) %>%
+    filter(branch(damage_outliers,
+        "no_exclusion" ~ TRUE,
+        "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
+        "most_extreme_two_damage" ~ ! (name %in% c("Sandy", "Andrew")),
+        "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
+    ))
+```
+
+
+
+```{multiverse label = default-m-2, inside = M}
+df <- df %>%
+    mutate(
+        femininity = branch(femininity_calculation,
+          "masfem" ~ masfem,
+          "female" ~ female
+        ),
+        damage = branch(damage_transform,
+          "no_transform" ~ identity(dam),
+          "log_transform" ~ log(dam)
+        )
+    )
+```
+
+
+```{multiverse label = default-m-3, inside = M}
+fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+          branch(main_interaction,
+              "no" ~ femininity + damage,
+              "yes" ~ femininity * damage
+          ) + branch(other_predictors,
+              "none" ~ NULL,
+              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+              "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+              "all" %when% (main_interaction == "yes") ~ femininity * z3,
+              "all_no_interaction" %when% (main_interaction == "no") ~ z3
+          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
+          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+          data = df)
+```
+
+
+```{multiverse default-m-4, inside = M}
+broom::tidy(fit)
+```
+
+
+```{r}
+
+```
+
