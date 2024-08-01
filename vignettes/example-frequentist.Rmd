@@ -1,9 +1,9 @@
 ---
 title: "Example multiverse implementation: Re-evaluating the efficiency of physical visualizations"
 author: 
-  - Pierre Dragicevic, Inria
-  - Yvonne Jansen, CNRS & Sorbonne Universite
-  - Abhraneel Sarma, Northwestern University
+  - Pierre Dragicevic
+  - Yvonne Jansen
+  - Abhraneel Sarma
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -28,11 +28,6 @@ library(multiverse)
 ```
 
 
-```{r, include=FALSE}
-M = multiverse()
-```
-
-
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -40,6 +35,7 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 
@@ -111,7 +107,7 @@ tCI <- function(observations, conf.level) {
 
 Next we initialise the multiverse object within which this analysis will take place.
 
-```{r, eval = FALSE}
+```{r}
 M = multiverse()
 ```
 

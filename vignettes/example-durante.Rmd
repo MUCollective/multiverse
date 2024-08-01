@@ -1,6 +1,6 @@
 ---
 title: "Example multiverse implementation: Effect of fertility on religiosity and political attitudes"
-author: "Abhraneel Sarma, Northwestern University"
+author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -42,6 +42,7 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 ## The data
@@ -406,8 +407,7 @@ p <- expand(M) %>%
   theme_minimal() +
   transition_manual( .universe )
 
-animate(p, nframes = 210, fps = 4, res = 72)
+animate(p, nframes = 210, fps = 4, res = 150)
 ```
 
-![Animation of linear regression coefficients](../man/figures/durante-regression.gif)
 

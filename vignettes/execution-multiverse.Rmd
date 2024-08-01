@@ -1,5 +1,5 @@
 ---
-title: "Execution of multiverse analysis --- Sequential and Parallel"
+title: "Execution of multiverse analysis: Sequential and Parallel"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: 
@@ -9,7 +9,7 @@ params:
   EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Execution of multiverse analysis --- Sequential and Parallel}
+  %\VignetteIndexEntry{Execution of multiverse analysis: Sequential and Parallel}
   %\usepackage[UTF-8]{inputenc}
 ---
 

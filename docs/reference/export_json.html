@@ -26,13 +26,13 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="../articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -65,17 +65,19 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">export_2_json</span><span class="op">(</span><span class="va">x</span>, <span class="va">term</span>, <span class="va">mean</span>, <span class="va">sd</span>, <span class="va">dist</span>, <span class="va">filename</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">export_results_json</span><span class="op">(</span><span class="va">x</span>, <span class="va">term</span>, <span class="va">mean</span>, <span class="va">sd</span>, <span class="va">dist</span>, <span class="va">filename</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">export_dist_2_json</span><span class="op">(</span><span class="va">x</span>, <span class="va">term</span>, <span class="va">dist</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span><span class="fu">export_results_dist_json</span><span class="op">(</span><span class="va">x</span>, <span class="va">term</span>, <span class="va">dist</span>, <span class="va">filename</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">export_code_json</span><span class="op">(</span><span class="va">x</span>, <span class="va">filename</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">export_code_json</span><span class="op">(</span><span class="va">x</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">export_data_json</span><span class="op">(</span><span class="va">x</span>, <span class="va">filename</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>a tidy tibble or data frame which contains summary statistics or distributional information 
+<dd><p>a tidy tibble or data frame which contains summary statistics or distributional information
 of each regression coefficient parameter</p></dd>
 
 
@@ -92,8 +94,8 @@ of each regression coefficient parameter</p></dd>
 
 
 <dt>dist</dt>
-<dd><p>column in the data frame, x, which contains vectorised distributions---an object of class 
-`distribution` for each coefficient</p></dd>
+<dd><p>column in the data frame, x, which contains vectorised distributions---an object of class
+<code>distribution</code> for each coefficient</p></dd>
 
 
 <dt>filename</dt>
@@ -104,7 +106,48 @@ of each regression coefficient parameter</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>a data frame or a JSON file</p>
+<p>a JSON file or (if a filepath is not specified) a dataframe for the results file and a list for the code file</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    
+<div class="section">
+<h3 id="results-json-file-schema">results JSON file schema<a class="anchor" aria-label="anchor" href="#results-json-file-schema"></a></h3>
+
+
+<p>It consists of a list of objects (where each object corresponds to one analysis in the multiverse).
+Within this object, the results attribute contains a(nother) list of objects corresponding to each outcome variable.
+For e.g., here we have four coefficients (see the results of the regression model), and thus the results attribute will contain four objects.
+Each object has the following attributes:</p><ul><li><p><code>term</code>: name of the outcome variable</p></li>
+<li><p><code>estimate</code>: mean / median point estimate i.e., \(\mathbb{E}(\mu)\) for any parameter \(\mu\).</p></li>
+<li><p><code>std.error</code>: standard error for the point estimate i.e., \(\sqrt{\text{var}(\mu)}\)</p></li>
+<li><p><code>cdf.x</code>: a list of quantiles</p></li>
+<li><p><code>cdf.y</code>: a list of cumulative probability density estimates corresponding to the quantiles</p></li>
+</ul><p>In addition, it also contains the following attributes, but these are not currently used by Milliways:</p><ul><li><p><code>statistic</code></p></li>
+<li><p><code>p.value</code></p></li>
+<li><p><code>conf.low</code></p></li>
+<li><p><code>conf.high</code></p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="code-json-file-schema">code JSON file schema<a class="anchor" aria-label="anchor" href="#code-json-file-schema"></a></h3>
+
+
+<p>It consists of two attributes: <code>code</code> and <code>parameters</code>.
+<code>code</code> is a list of strings consisting of the R and multiverse syntax used to implement the analysis. For readability, we
+use styler to break up the declared code.
+<code>parameters</code> is an object listing the parameter names and the corresponding options for each of the parameters declared in the analysis.</p>
+</div>
+
+<div class="section">
+<h3 id="data-json-file-schema">data JSON file schema<a class="anchor" aria-label="anchor" href="#data-json-file-schema"></a></h3>
+
+
+<p>It consists of a list of objects, each with two attributes: <code>field</code> and <code>values</code>.
+<code>field</code> is the name of a column corresponding to a variable in the dataset.
+<code>values</code> are a list of values for that variable in the dataset.</p>
+</div>
+
     </div>
 
     <div class="section level2">
@@ -144,12 +187,12 @@ of each regression coefficient parameter</p></dd>
 <span class="r-in"><span><span class="fu">multiverse</span><span class="fu">::</span><span class="fu"><a href="accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">export_2_json</span><span class="op">(</span><span class="va">term</span>, <span class="va">estimate</span>, <span class="va">std.error</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>  <span class="fu">export_results_json</span><span class="op">(</span><span class="va">term</span>, <span class="va">estimate</span>, <span class="va">std.error</span><span class="op">)</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .universe outlier_exclusion results           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         1 2SD               <span style="color: #949494;">&lt;gropd_df [2 × 7]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         2 3SD               <span style="color: #949494;">&lt;gropd_df [2 × 7]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         1 2SD               <span style="color: #949494;">&lt;gropd_df [2 × 8]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>         2 3SD               <span style="color: #949494;">&lt;gropd_df [2 × 8]&gt;</span></span>
 <span class="r-in"><span><span class="co"># } </span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>

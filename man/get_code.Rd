@@ -13,7 +13,7 @@ get_code(.code, .assgn = NULL)
 }
 \description{
 Given a particular set of options for each parameter, extracts the code for performing a
-single analysis from the code used to declare the multiverse. This function is called automatically 
+single analysis from the code used to declare the multiverse. This function is called automatically
 and not exported.
 }
 \details{

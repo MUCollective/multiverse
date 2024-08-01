@@ -26,13 +26,13 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="../articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -66,28 +66,28 @@
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This is a custom code block that allows the users to interface directly with a created multiverse object. 
+    <p>This is a custom code block that allows the users to interface directly with a created multiverse object.
 This allows users to implement analysis in RMarkdown without using auxiliary functions such as <code><a href="inside.html">inside()</a></code>. However,
-<code><a href="inside.html">inside()</a></code> is still required to define and execute multiverse analyses in a RScript using this package. 
+<code><a href="inside.html">inside()</a></code> is still required to define and execute multiverse analyses in a RScript using this package.
 See <code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code> for more details.</p>
 <p>In RStudio, you can create a shortcut for this using RStudio AddIns
 (we recommend <code>Cmd + Opt + M</code> in Mac and <code>Ctrl + Alt + M</code> in Windows).
-To add a shortcut, go to Tools &gt; AddIns &gt; Browse AddIns... &gt; Keyboard shortcuts. 
-Search for <em>insert multiverse code chunk</em> and add a keyboard shortcut to this function. 
-Once you have set this up, the keyboard shortcut will create a code block in 
+To add a shortcut, go to Tools &gt; AddIns &gt; Browse AddIns... &gt; Keyboard shortcuts.
+Search for <em>insert multiverse code chunk</em> and add a keyboard shortcut to this function.
+Once you have set this up, the keyboard shortcut will create a code block in
 any RMarkdown document.</p>
     </div>
     <div class="section level2">
     <h2 id="code-block-options">Code Block Options<a class="anchor" aria-label="anchor" href="#code-block-options"></a></h2>
     
 
-<p>The multiverse code blocks require two named arguments:</p><ol><li><p>label: this is a unique identifier for each code block. 
-  If the same label is used for two different code blocks, the code 
-  associated with the previous block in the multiverse will be 
-  overwritten by the subsequent one. If a code block is created using the keyboard
-  shortcut, it will auto-generate a (unique) label</p></li>
+<p>The multiverse code blocks require two named arguments:</p><ol><li><p>label: this is a unique identifier for each code block.
+If the same label is used for two different code blocks, the code
+associated with the previous block in the multiverse will be
+overwritten by the subsequent one. If a code block is created using the keyboard
+shortcut, it will auto-generate a (unique) label</p></li>
 <li><p>inside: the multiverse object this code block will be associated with.
-  Defaults to "M"</p></li>
+Defaults to "M"</p></li>
 </ol></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

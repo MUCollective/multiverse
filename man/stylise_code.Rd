@@ -7,7 +7,7 @@
 style_multiverse_code(.code)
 }
 \arguments{
-\item{.code}{a quoted (or unevaluated) expression surrounded; usually the expression within 
+\item{.code}{a quoted (or unevaluated) expression surrounded; usually the expression within
 a single multiverse code block or inside function.}
 }
 \value{
@@ -17,9 +17,9 @@ an object of class vertical
 Stylises the code declared with a multiverse object according to the tidyverse style guide.
 }
 \details{
-Since multiverse captures unevaluated expressions, the formatting is not preserved. 
+Since multiverse captures unevaluated expressions, the formatting is not preserved.
 However, if we want to view the code that is delcared for a particular multiverse analysis, the
-lack of formatting would lead to difficulty in readability. `style_multiverse_code` is 
+lack of formatting would lead to difficulty in readability. \code{style_multiverse_code} is
 primarily intended for internal use to stylise the output based on the tidyverse style guide
 and custom rules necessary for multiverse.
 }

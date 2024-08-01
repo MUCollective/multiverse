@@ -10,7 +10,7 @@ parameter which takes different options.}
 \item{...}{Different options for completing a particular step in the analysis. Each option is
 declared as <option_name> ~ <option_calculation>. See examples for more details.}
 
-\item{.options}{Declare a continuous value as the option of a parameter using a sequence 
+\item{.options}{Declare a continuous value as the option of a parameter using a sequence
 (see examples for details), and the expanded sequence will be included as options for that
 parameter in the multiverse.}
 }
@@ -19,16 +19,16 @@ The \code{branch} function allows the user to define multiple analysis options f
 in the analysis.
 }
 \details{
-For every step in the analysis, there may be more than one analysis option. 
+For every step in the analysis, there may be more than one analysis option.
 We use \code{branch} to declare these different analysis options. Each branch is
 characterised by a parameter. The first argument passed into the branch is the parameter.
 
-All the other arguments passed into branch are the different analysis options corresponding 
-to that parameter (that particular step in the analysis process). Naturally, at least two 
+All the other arguments passed into branch are the different analysis options corresponding
+to that parameter (that particular step in the analysis process). Naturally, at least two
 or more options should be declared. Thus, the branch function will provide a warning
 if the total number arguments passed is less than three.
 
-Please refer to \code{vignette("branch")} for more details on how to use this function to 
+Please refer to \code{vignette("branch")} for more details on how to use this function to
 create a complete multiverse analysis.
 }
 \examples{

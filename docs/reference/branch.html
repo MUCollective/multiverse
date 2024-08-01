@@ -28,13 +28,13 @@ in the analysis."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="../articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -80,21 +80,21 @@ declared as &lt;option_name&gt; ~ &lt;option_calculation&gt;. See examples for m
 
 
 <dt>.options</dt>
-<dd><p>Declare a continuous value as the option of a parameter using a sequence 
+<dd><p>Declare a continuous value as the option of a parameter using a sequence
 (see examples for details), and the expanded sequence will be included as options for that
 parameter in the multiverse.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>For every step in the analysis, there may be more than one analysis option. 
+    <p>For every step in the analysis, there may be more than one analysis option.
 We use <code>branch</code> to declare these different analysis options. Each branch is
 characterised by a parameter. The first argument passed into the branch is the parameter.</p>
-<p>All the other arguments passed into branch are the different analysis options corresponding 
-to that parameter (that particular step in the analysis process). Naturally, at least two 
+<p>All the other arguments passed into branch are the different analysis options corresponding
+to that parameter (that particular step in the analysis process). Naturally, at least two
 or more options should be declared. Thus, the branch function will provide a warning
 if the total number arguments passed is less than three.</p>
-<p>Please refer to <code><a href="../articles/branch.html">vignette("branch")</a></code> for more details on how to use this function to 
+<p>Please refer to <code><a href="../articles/branch.html">vignette("branch")</a></code> for more details on how to use this function to
 create a complete multiverse analysis.</p>
     </div>
 

@@ -2,19 +2,22 @@
 % Please edit documentation in R/export_json.R
 \name{export_json}
 \alias{export_json}
-\alias{export_2_json}
-\alias{export_dist_2_json}
+\alias{export_results_json}
+\alias{export_results_dist_json}
 \alias{export_code_json}
+\alias{export_data_json}
 \title{Exporting results from a multiverse analysis to JSON}
 \usage{
-export_2_json(x, term, mean, sd, dist, filename)
+export_results_json(x, term, mean, sd, dist, filename)
 
-export_dist_2_json(x, term, dist, filename)
+export_results_dist_json(x, term, dist, filename)
 
 export_code_json(x, filename)
+
+export_data_json(x, filename)
 }
 \arguments{
-\item{x}{a tidy tibble or data frame which contains summary statistics or distributional information 
+\item{x}{a tidy tibble or data frame which contains summary statistics or distributional information
 of each regression coefficient parameter}
 
 \item{term}{column in the data frame, x, which contains the name of the coefficients}
@@ -23,16 +26,55 @@ of each regression coefficient parameter}
 
 \item{sd}{column in the data frame, x, which contains the standard error estimate for each coefficient}
 
-\item{dist}{column in the data frame, x, which contains vectorised distributions---an object of class 
-`distribution` for each coefficient}
+\item{dist}{column in the data frame, x, which contains vectorised distributions---an object of class
+\code{distribution} for each coefficient}
 
 \item{filename}{filename on disk (as a character string)}
 }
 \value{
-a data frame or a JSON file
+a JSON file or (if a filepath is not specified) a dataframe for the results file and a list for the code file
 }
 \description{
 Exports the results of the multiverse analysis to JSON in a format which is compatible with the multiverse visualisation tool
+}
+\details{
+\subsection{results JSON file schema}{
+
+It consists of a list of objects (where each object corresponds to one analysis in the multiverse).
+Within this object, the results attribute contains a(nother) list of objects corresponding to each outcome variable.
+For e.g., here we have four coefficients (see the results of the regression model), and thus the results attribute will contain four objects.
+Each object has the following attributes:
+\itemize{
+\item \code{term}: name of the outcome variable
+\item \code{estimate}: mean / median point estimate i.e., \eqn{\mathbb{E}(\mu)} for any parameter \eqn{\mu}.
+\item \code{std.error}: standard error for the point estimate i.e., \eqn{\sqrt{\text{var}(\mu)}}
+\item \code{cdf.x}: a list of quantiles
+\item \code{cdf.y}: a list of cumulative probability density estimates corresponding to the quantiles
+}
+
+In addition, it also contains the following attributes, but these are not currently used by Milliways:
+\itemize{
+\item \code{statistic}
+\item \code{p.value}
+\item \code{conf.low}
+\item \code{conf.high}
+}
+}
+
+\subsection{code JSON file schema}{
+
+It consists of two attributes: \code{code} and \code{parameters}.
+\code{code} is a list of strings consisting of the R and multiverse syntax used to implement the analysis. For readability, we
+use \link{styler} to break up the declared code.
+\code{parameters} is an object listing the parameter names and the corresponding options for each of the parameters declared in the analysis.
+}
+
+\subsection{data JSON file schema}{
+
+It consists of a list of objects, each with two attributes: \code{field} and \code{values}.
+\code{field} is the name of a column corresponding to a variable in the dataset.
+\code{values} are a list of values for that variable in the dataset.
+}
 }
 \examples{
 \donttest{
@@ -65,7 +107,7 @@ execute_multiverse(M)
 multiverse::expand(M) \%>\%
   extract_variables(res) \%>\%
   unnest(res) \%>\%
-  export_2_json(term, estimate, std.error) 
+  export_results_json(term, estimate, std.error) 
 } 
 
 

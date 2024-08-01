@@ -13,7 +13,7 @@ parse_multiverse(.multiverse, .expr, .code, .label)
 
 \item{.code}{All the code that has been passed to the multiverse}
 
-\item{.label}{The label of the code block or inside call which was used to pass the 
+\item{.label}{The label of the code block or inside call which was used to pass the
 code being parsed into the multiverse}
 }
 \value{
@@ -25,6 +25,6 @@ parameter, the condition.
 \description{
 In a multiverse, the user can define different values that a parameter can take using the \code{branch()} call.
 The \code{parse_multiverse()} identifies the \code{branch()} calls defined in the analysis syntax and parses them into a list of
-parameters and the corresponding values that each parameter can take. This function is called automatically 
+parameters and the corresponding values that each parameter can take. This function is called automatically
 and not exported.
 }

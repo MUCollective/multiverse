@@ -46,13 +46,13 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="../articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -84,14 +84,13 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</h1>
                         <h4 data-toc-skip class="author">Abhraneel
-Sarma, Northwestern University</h4>
-                        <h4 data-toc-skip class="author">Alex Kale,
-University of Washington</h4>
+Sarma</h4>
+                        <h4 data-toc-skip class="author">Alex Kale</h4>
             
-            <h4 data-toc-skip class="date">2024-07-29</h4>
+            <h4 data-toc-skip class="date">2024-08-01</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/xample-hurricane.Rmd" class="external-link"><code>vignettes/xample-hurricane.Rmd</code></a></small>
-      <div class="d-none name"><code>xample-hurricane.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/example-hurricane.Rmd" class="external-link"><code>vignettes/example-hurricane.Rmd</code></a></small>
+      <div class="d-none name"><code>example-hurricane.Rmd</code></div>
     </div>
 
     
@@ -121,7 +120,7 @@ standardises some of the variables (mean = 0 and standard deviation =
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hurricane"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># read and process data</span></span>
-<span><span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op">|&gt;</span></span>
+<span><span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="co"># rename some variables</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
 <span>        year <span class="op">=</span> <span class="va">Year</span>,</span>
@@ -133,7 +132,7 @@ standardises some of the variables (mean = 0 and standard deviation =
 <span>        category <span class="op">=</span> <span class="va">Category</span>,</span>
 <span>        pressure <span class="op">=</span> <span class="va">Minpressure_Updated_2014</span>,</span>
 <span>        wind <span class="op">=</span> <span class="va">HighestWindSpeed</span></span>
-<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="co"># create new variables</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>        post <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">year</span><span class="op">&gt;</span><span class="fl">1979</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -159,7 +158,7 @@ They transform the variable used the interactions between the 11-point
 femininity rating and both damages and zpressure respectively, as seen
 below:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span> <span class="op">&amp;</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Audrey"</span> <span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">death</span> <span class="op">~</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">dam</span> <span class="op">+</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">zpressure</span>, data <span class="op">=</span> <span class="va">df</span>, family <span class="op">=</span> <span class="st">"poisson"</span><span class="op">)</span></span></code></pre></div>
@@ -192,12 +191,12 @@ suited for a script-style implementation. Please refer to the vignettes
 (<code>vignette("complete-multiverse-analysis")</code> and
 <code>vignette("basic-multiverse")</code>) for more details.</p>
 <pre><code>```{multiverse default-m-1, inside = M}
-df &lt;- hurricane_data |&gt;
+df &lt;- hurricane_data %&gt;%
     filter(branch(death_outliers, 
         "no_exclusion" ~ TRUE,
         "most_extreme_deaths" ~ name != "Katrina",
         "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
-    )) |&gt;
+    )) %&gt;%
     filter(branch(damage_outliers,
         "no_exclusion" ~ TRUE,
         "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
@@ -220,7 +219,7 @@ or second using a binary scale.</p>
 long tailed, positive only valued distribution.</p>
 <p>We implement these two decisions in our multiverse as follows:</p>
 <pre><code>```{multiverse label = default-m-2, inside = M}
-df &lt;- df |&gt;
+df &lt;- df %&gt;%
     mutate(
         femininity = branch(femininity_calculation,
           "masfem" ~ masfem,
@@ -268,7 +267,7 @@ pred2expectation &lt;- function(mu, sigma) {
     branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
 }
 
-disagg_fit &lt;- df  |&gt;
+disagg_fit &lt;- df  %&gt;%
     mutate(
         fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
         se.fit = pred$se.fit,
@@ -278,10 +277,10 @@ disagg_fit &lt;- df  |&gt;
     )
 
 # aggregate fitted effect of female storm name
-expectation &lt;- disagg_fit |&gt;
-    mutate(expected_deaths = pred2expectation(fitted, sigma)) |&gt; 
-    group_by(female) |&gt;
-    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") |&gt; 
+expectation &lt;- disagg_fit %&gt;%
+    mutate(expected_deaths = pred2expectation(fitted, sigma)) %&gt;% 
+    group_by(female) %&gt;%
+    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") %&gt;% 
     compare_levels(mean_deaths, by = female)
 ```</code></pre>
 </div>
@@ -299,17 +298,18 @@ number of deaths, and some predict much higher.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/execute.html">execute_multiverse</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">mean_deaths</span> <span class="op">&lt;-</span> <span class="fu">multiverse</span><span class="fu">::</span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">expectation</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">mean_deaths</span> <span class="op">&lt;-</span> <span class="fu">multiverse</span><span class="fu">::</span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">expectation</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">expectation</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">mean_deaths</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">mean_deaths</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">mean_deaths</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">mean_deaths</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">mean_deaths</span>, x <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"universe"</span>, y <span class="op">=</span> <span class="st">"Mean difference in expected deaths"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="example-hurricane_files/figure-html/unnamed-chunk-5-1.png" width="768"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

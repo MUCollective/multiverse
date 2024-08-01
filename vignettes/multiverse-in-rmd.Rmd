@@ -21,11 +21,6 @@ library(purrr)
 library(multiverse)
 ```
 
-```{r, include=FALSE}
-M_inside = multiverse()
-M_block = multiverse()
-```
-
 
 ```{r, chunk-setup, include=FALSE}
 opts_chunk$set(
@@ -34,6 +29,7 @@ opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 

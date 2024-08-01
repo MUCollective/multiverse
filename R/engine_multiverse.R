@@ -114,7 +114,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
         
         temp_options$label = paste0(temp_options$label, "-universe-", x) 
         
-        .assignment = expand(M)[[".parameter_assignment"]][[x]]
+        .assignment = expand(.multiverse)[[".parameter_assignment"]][[x]]
         class_name = paste(names(.assignment), .assignment, sep="---", collapse=" ")
   
         # assuming default is the first universe,

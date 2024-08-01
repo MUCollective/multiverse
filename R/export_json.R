@@ -16,14 +16,16 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' @param filename filename on disk (as a character string)
 #' 
 #' @return a JSON file or (if a filepath is not specified) a dataframe for the results file and a list for the code file
-#' @format ## `results` JSON file schema
+#' 
+#' @details
+#' ## results JSON file schema
 #' It consists of a list of objects (where each object corresponds to one analysis in the multiverse). 
 #' Within this object, the results attribute contains a(nother) list of objects corresponding to each outcome variable. 
 #' For e.g., here we have four coefficients (see the results of the regression model), and thus the results attribute will contain four objects. 
 #' Each object has the following attributes:
 #' - `term`: name of the outcome variable
-#' - `estimate`: mean / median point estimate i.e., $\mathbb{E}(\mu)$ for any parameter $\mu$.
-#' - `std.error`: standard error for the point estimate i.e., $\sqrt{\text{var}(\mu)}$
+#' - `estimate`: mean / median point estimate i.e., \eqn{\mathbb{E}(\mu)} for any parameter \eqn{\mu}.
+#' - `std.error`: standard error for the point estimate i.e., \eqn{\sqrt{\text{var}(\mu)}}
 #' - `cdf.x`: a list of quantiles
 #' - `cdf.y`: a list of cumulative probability density estimates corresponding to the quantiles
 #' 
@@ -34,13 +36,13 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' - `conf.high`
 #' 
 #' 
-#' @format ## `code` JSON file schema
+#' ## code JSON file schema
 #' It consists of two attributes: `code` and `parameters`. 
 #' `code` is a list of strings consisting of the R and multiverse syntax used to implement the analysis. For readability, we
 #' use [styler] to break up the declared code.
 #' `parameters` is an object listing the parameter names and the corresponding options for each of the parameters declared in the analysis.
 #' 
-#' @format ## `data` JSON file schema
+#' ## data JSON file schema
 #' It consists of a list of objects, each with two attributes: `field` and `values`. 
 #' `field` is the name of a column corresponding to a variable in the dataset. 
 #' `values` are a list of values for that variable in the dataset.

@@ -11,8 +11,8 @@ Include the function in your setup code chunk to compile a RMarkdown into an Exp
 }
 \details{
 Explorable Multiverse Analysis Reports are interactive documents which allow the user
-to interactively explor and look at each distinct end-to-end analysis path within a multiverse analysis. 
+to interactively explor and look at each distinct end-to-end analysis path within a multiverse analysis.
 The idea was put forth by Dragicevic et al. (2019) in \doi{10.1145/3290605.3300295}{\emph{Increasing the 
-Transparency of  Research Papers with Explorable Multiverse Analyses}}. 
+Transparency of  Research Papers with Explorable Multiverse Analyses}}.
 Tangle.js is used to provide interactivity and allow the toggle through different specifications.
 }

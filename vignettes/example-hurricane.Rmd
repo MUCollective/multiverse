@@ -1,8 +1,8 @@
 ---
 title: "Example multiverse implementation: Female hurricanes are deadlier than male hurricanes"
 author: 
-  - Abhraneel Sarma, Northwestern University
-  - Alex Kale, University of Washington
+  - Abhraneel Sarma
+  - Alex Kale
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 

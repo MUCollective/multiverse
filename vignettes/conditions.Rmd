@@ -24,12 +24,6 @@ library(cowplot)
 library(multiverse)
 ```
 
-
-```{r, include=FALSE}
-M = multiverse()
-```
-
-
 ```{r, chunk-setup, include=FALSE}
 opts_chunk$set(
   echo = TRUE,
@@ -37,6 +31,7 @@ opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 ## The data

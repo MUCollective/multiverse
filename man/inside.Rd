@@ -10,10 +10,10 @@ inside(multiverse, .expr, .label = NULL, .execute_default = TRUE)
 \item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}}
 
 \item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed.
-Since it accepts a single argument, chunks of code can be passed using `\{\}`. See example for details.}
+Since it accepts a single argument, chunks of code can be passed using \verb{\\\{\\\}}. See example for details.}
 
 \item{.label}{It is extracted automatically from the code block of type \code{multiverse}
-when run in an RMarkdown document. This should be used only within an RMarkdown document. 
+when run in an RMarkdown document. This should be used only within an RMarkdown document.
 Defaults to NULL.}
 
 \item{.execute_default}{Should the default multiverse be executed as part of this call?}
@@ -26,7 +26,7 @@ Add code to the multiverse using the function using a function call, or an assig
 a wrapper around the function
 }
 \details{
-The inside function can only access variables which can be accessed at the same environment 
+The inside function can only access variables which can be accessed at the same environment
 where the multiverse object was declared in.
 
 To perform a multiverse analysis, we will need to write code to be executed within the multiverse.
@@ -75,11 +75,11 @@ The \code{inside} function only stores the code, and does not execute any code a
 provide separate functions. See \code{execute()} for executing the code.
 
 Instead of using the \code{inside()} function, an alternate implementation of the multiverse is using
-the assignment operator, `<-` (please refer to examples below).
+the assignment operator, \verb{<-} (please refer to examples below).
 
 \emph{Note}: the \code{inside()} function can only access variables which can be accessed at the same level as the multiverse
-object. Since \code{inside()} is merely an interface to add analysis to the multiverse object, even if it is being called 
+object. Since \code{inside()} is merely an interface to add analysis to the multiverse object, even if it is being called
 by another function, it is actually manipulating the multiverse object, which will have a different parent environment
-from where \code{inside()} is called, and hence not have access to variables which might be accessible in the environment 
+from where \code{inside()} is called, and hence not have access to variables which might be accessible in the environment
 within the function from where \code{inside()} is called.
 }

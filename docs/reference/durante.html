@@ -38,13 +38,13 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="../articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -85,97 +85,97 @@ multiverse analysis can highlight the robustness of the conclusions reached by t
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
     <p>A data frame with 502 rows and 26 variables:</p><dl><dt>Abortion</dt>
-<dd><p>"Abortion is a women’s [sic] right."</p></dd>
+<dd><p>"Abortion is a women’s sic right."</p></dd>
 
-  <dt>DateTesting</dt>
+<dt>DateTesting</dt>
 <dd><p>Date of participant filling in the questionnaire.</p></dd>
 
-  <dt>Donate</dt>
+<dt>Donate</dt>
 <dd><p>"For the next part of the study we will donate $1 to the presidential
-  campaign of your preferred candidate. Please indicate which candidate’s campaign
-  you would like us to donate $1 to.” Mitt Romney — Barack Obama"</p></dd>
+campaign of your preferred candidate. Please indicate which candidate’s campaign
+you would like us to donate $1 to.” Mitt Romney — Barack Obama"</p></dd>
 
-  <dt>FreeMarket</dt>
+<dt>FreeMarket</dt>
 <dd><p>"In nearly every instance, the free market allocates resources most efficiently."</p></dd>
 
-  <dt>Marijuana</dt>
+<dt>Marijuana</dt>
 <dd><p>"Marijuana should be legal."</p></dd>
 
-  <dt>Marriage</dt>
+<dt>Marriage</dt>
 <dd><p>"Marriage is between a man and a woman."</p></dd>
 
-  <dt>PrivSocialSec</dt>
+<dt>PrivSocialSec</dt>
 <dd><p>"Privatize Social Security." 1 – 7</p></dd>
 
-  <dt>Profit</dt>
+<dt>Profit</dt>
 <dd><p>"Business corporations make too much profit."</p></dd>
 
-  <dt>Rel1</dt>
+<dt>Rel1</dt>
 <dd><p>"How much do you believe in God?"</p></dd>
 
-  <dt>Rel2</dt>
+<dt>Rel2</dt>
 <dd><p>"I see myself as a religiously oriented person."</p></dd>
 
-  <dt>Rel3</dt>
+<dt>Rel3</dt>
 <dd><p>"I believe that God or a Higher Power is responsible for my existence"</p></dd>
 
-  <dt>Relationship</dt>
+<dt>Relationship</dt>
 <dd><p>What is your current romantic relationship status?”
-  (1) not dating/romantically involved with anyone,
-  (2) dating or involved with only one partner,
-  (3) engaged or living with my partner,
-  (4) married, or
-  (5) other. If participants picked response (5), they were prompted to provide a description of their
-  relationship, which was subsequently coded into one of the four options by the
-  original authors. The data here has already been coded into another response option.</p></dd>
+(1) not dating/romantically involved with anyone,
+(2) dating or involved with only one partner,
+(3) engaged or living with my partner,
+(4) married, or
+(5) other. If participants picked response (5), they were prompted to provide a description of their
+relationship, which was subsequently coded into one of the four options by the
+original authors. The data here has already been coded into another response option.</p></dd>
 
-  <dt>ReportedCycleLength</dt>
+<dt>ReportedCycleLength</dt>
 <dd><p>How many days long are your menstrual cycles? (for most
-  women, the range is between 25-35 days) Keep in mind this is the number of
-  days from the start of one menstrual period to the start of the next menstrual
-  period and NOT the length of your menstrual bleeding.</p></dd>
+women, the range is between 25-35 days) Keep in mind this is the number of
+days from the start of one menstrual period to the start of the next menstrual
+period and NOT the length of your menstrual bleeding.</p></dd>
 
-  <dt>RestrictAbortion</dt>
+<dt>RestrictAbortion</dt>
 <dd><p>"Laws should restrict abortion in all or most cases."</p></dd>
 
-  <dt>RichTax</dt>
+<dt>RichTax</dt>
 <dd><p>"The rich should pay a higher tax rate than the middle class."</p></dd>
 
-  <dt>StLiving</dt>
+<dt>StLiving</dt>
 <dd><p>"Government should ensure that all citizens meet a certain minimum standard of living"</p></dd>
 
-  <dt>StartDateNext</dt>
+<dt>StartDateNext</dt>
 <dd><p>Indicates the expected start date of their next menstrual period
-  (the research material does not contain a question about the variable. However,
-  the data file for Study 2 contained this variable.)</p></dd>
+(the research material does not contain a question about the variable. However,
+the data file for Study 2 contained this variable.)</p></dd>
 
-  <dt>StartDateofLastPeriod</dt>
+<dt>StartDateofLastPeriod</dt>
 <dd><p>Please give your best estimate of the date on which
-  you started your last period (please be as precise as possible). This date was
-  probably within the last few weeks. Sometimes thinking of where you were when
-  you started your last period helps. For instance, was it on a weekend?, were you
-  at work, was it during a football game?, etc. Please write the date in
-  mm/dd/yyyy format (e.g., 8/18/2012).</p></dd>
+you started your last period (please be as precise as possible). This date was
+probably within the last few weeks. Sometimes thinking of where you were when
+you started your last period helps. For instance, was it on a weekend?, were you
+at work, was it during a football game?, etc. Please write the date in
+mm/dd/yyyy format (e.g., 8/18/2012).</p></dd>
 
-  <dt>StartDateofPeriodBeforeLast</dt>
+<dt>StartDateofPeriodBeforeLast</dt>
 <dd><p>Please give your best estimate of the date on
-  which you started the period before your last period (please be as precise as
-  possible). Please write the date in mm/dd/yyyy format (e.g., 7/18/2012).”</p></dd>
+which you started the period before your last period (please be as precise as
+possible). Please write the date in mm/dd/yyyy format (e.g., 7/18/2012).”</p></dd>
 
-  <dt>StemCell</dt>
+<dt>StemCell</dt>
 <dd><p>"Stem cell research is moral and can be useful for science."</p></dd>
 
-  <dt>Sure1</dt>
+<dt>Sure1</dt>
 <dd><p>"How sure are you about that date (StartDateofLastPeriod)?"</p></dd>
 
-  <dt>Sure2</dt>
+<dt>Sure2</dt>
 <dd><p>How sure are you about that date (StartDateofPeriodBeforeLast)?</p></dd>
 
-  <dt>Vote</dt>
+<dt>Vote</dt>
 <dd><p>"Imagine walking into the voting booth today. Who would you vote for in the
-  presidential election?” Mitt Romney (republican) – Barack Obama (democrat)"</p></dd>
+presidential election?” Mitt Romney (republican) – Barack Obama (democrat)"</p></dd>
 
-  <dt>WorkerID</dt>
+<dt>WorkerID</dt>
 <dd><p>ID of participant</p></dd>
 
 
@@ -190,21 +190,21 @@ with the following statements"</p>
 <em>RichTax</em>, <em>TooMuchProfit</em>, <em>StandardLiving</em>, <em>FreeMarket</em>, <em>PrivSocialSec</em></p>
 <p>The following items were responses to social political attitudes items (on a scale of 1 - 7):
 <em>Abortion</em>, <em>Marriage</em>, <em>StemCell</em>, <em>Marijuana</em>, <em>RestrictAbortion</em></p>
-<p>In addition, the values of <em>StartDateofLastPeriod</em>, <em>StartDateofPeriodBeforeLast</em> 
-and <em>StartDateNext</em> are missing for WorkerID 15 and 16. This impacts the calculation of 
+<p>In addition, the values of <em>StartDateofLastPeriod</em>, <em>StartDateofPeriodBeforeLast</em>
+and <em>StartDateNext</em> are missing for WorkerID 15 and 16. This impacts the calculation of
 <em>CycleDay</em> variable in the dataset. Steegen et al. "reconstructed this variable
 for their analysis after fixing some coding errors". To ensure that their results were identical
-to Durante et al.'s, they used the processed variable Cycle Day from the original data file 
+to Durante et al.'s, they used the processed variable Cycle Day from the original data file
 (11 and 18 for WorkerIDs 15 and 16, respectively).</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Kristina M Durante, Ashley Rae and Vladas Griskevicius. (2013).
 "The fluctuating female vote: Politics, religion, and the ovulatory cycle."
-*Psychological Science* 24(6), 1007-1016.</p>
+<em>Psychological Science</em> 24(6), 1007-1016.</p>
 <p>Sara Steegen and Francis Tuerlinckx and Andrew Gelman and Wolf Vanpaemel. (2015).
 "Increasing transparency through a multiverse analysis."
-*Perspectives on Psychological Science* 11(5), 702-712.</p>
+<em>Perspectives on Psychological Science</em> 11(5), 702-712.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

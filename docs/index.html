@@ -46,13 +46,13 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -121,7 +121,7 @@
 </h2>
 <p>In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Simohnsohn et al. in <a href="http://dx.doi.org/10.2139/ssrn.2694998" class="external-link">Specification Curve: Descriptive and Inferential Statistics on All Reasonable Specifications</a> where they reanalysed the study titled <a href="https://doi.org/10.1073/pnas.1402786111" class="external-link">Female hurricanes are deadlier than male hurricanes</a>.</p>
 <p>Before we dive into the analysis, it might be helpful to establish a terminology to help describe the steps that go into creating a multiverse analysis. We adopt the “tree of analysis” metaphor (see Figure below): “an analysis proceeds from top to bottom, and each branching represents a choice between different analysis options”.</p>
-<p><img src="articles/figures/00-reporting-strategies.png" width="60%"></p>
+<p><img src="reference/figures/00-reporting-strategies.png" width="60%"></p>
 <p>In this terminology:</p>
 <ul>
 <li>a <em>parameter</em> represents a node in the tree that has more than one child—a point in the analysis where the analyst must decide between reasonable alternatives</li>
@@ -202,7 +202,7 @@
 <figure><img src="reference/figures/universe-summary-1.png" alt="results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors"><figcaption aria-hidden="true">
 results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors
 </figcaption></figure><p>However, the original analysis involved at least four analysis decisions (A-D), and at each decision point (node) alternative choices may have led to a different result. These decisions are highlighted in the figure below:</p>
-<p><img src="articles/figures/00-default-analysis.png" width="90%"></p>
+<p><img src="reference/figures/00-default-analysis.png" width="90%"></p>
 <p>Several subsequent studies, each proposing a different analysis strategy, found no presence of such an effect, suggesting that the original finding may have been a result of a idiosyncratic combination of analysis choices. Data analysis can often involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable option to choose from. A multiverse analysis makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). Below, we use this analysis as an example of how a single analysis can be extended to a multiverse analysis.</p>
 </div>
 </div>
@@ -220,7 +220,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <div class="section level3">
 <h3 id="two-ways-to-building-a-multiverse">Two ways to building a multiverse<a class="anchor" aria-label="anchor" href="#two-ways-to-building-a-multiverse"></a>
 </h3>
-<p>Through the <code>multiverse</code> DSL, users are specifying multiple analysis paths at the same time. The DSL cannot be executed directly in an R environment or R code chunk and needs to be declared, processed and executed in a special environment. To be more precise, <code>multiverse</code> takes the user declared code, parses and rewrites the code into multiple versions of valid R code, each corresponding to an unique analysis path in the multiverse. For more information on this processing step, see vignette(branch)</p>
+<p>Through the <code>multiverse</code> DSL, users are specifying multiple analysis paths at the same time. The DSL cannot be executed directly in an R environment or R code chunk and needs to be declared, processed and executed in a special environment. To be more precise, <code>multiverse</code> takes the user declared code, parses and rewrites the code into multiple versions of valid R code, each corresponding to an unique analysis path in the multiverse. For more information on this processing step, see <code><a href="articles/branch.html">vignette("branch")</a></code></p>
 <p>To get around these limitations, we need to declare this (multiverse DSL) code “inside a multiverse object”. The <code>multiverse</code> package facilitates this through some boilerplate code:</p>
 <ul>
 <li>
@@ -246,7 +246,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>The code within the <code>filter</code> function call is written in the <code>multiverse</code> DSL and cannot be executed directly in R. For now, ignore what the <code>branch</code> function does as we will discuss about this in more detail in the next section. When this code is written and executed inside a <em>multiverse code block</em>, it allows the multiverse library to process and compile it to three different analyses.</p>
 <p>We provide the ability to declare multiverse code block as an <em>AddIn</em> in RStudio. Users can click on <em>AddIns</em> toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.</p>
-<p><img src="articles/figures/01-multiverse-addins.png" width="90%"></p>
+<p><img src="reference/figures/01-multiverse-addins.png" width="90%"></p>
 <p>Alternately, users can insert a multiverse code block using a keyboard shortcut. Users can create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document through the following steps:</p>
 <ul>
 <li>Tools &gt; Addins &gt; Browse Addins… &gt; Keyboard Shortcuts</li>
@@ -299,21 +299,33 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 </ul>
 <p>To create a multiverse that includes these three possible analysis options, we use the <code><a href="reference/branch.html">branch()</a></code> function. The <code><a href="reference/branch.html">branch()</a></code> function accepts three or more arguments. The first argument defines a <em>parameter</em> (here <code>death outliers</code>). The subsequent arguments, which we refer to as <em>options</em>, define the different choices that a researcher can make at that decision node of their analysis; these follow the syntax <code>&lt;option_name&gt; ~ &lt;option_definition&gt;</code>. The <code>&lt;option_name&gt;</code> part is intended to allow naming the branches with meaningful names to help the user keep track of declared options (in the multiverse specification below, “no_exclusion”, “most_extreme”, “two_most_extreme” are used as option names). However, names can be omitted; if omitted, the entire syntax for performing that operation will be treated as the name for that particular option.</p>
 <p>Putting it all together, a decision point in a multiverse analysis can thus be declared as:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse branch_definition, inside = M}</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="at"># here we just create the variable </span><span class="st">`</span>df<span class="st">`</span><span class="at"> in the multiverse</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="at">df = hurricane_data</span></span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="at"># here, we perform a </span><span class="st">`</span>filter<span class="st">`</span><span class="at"> operation in the multiverse</span></span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="at">df.filtered = df |&gt;</span></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="at">  filter(branch(death_outliers,</span></span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="at">      "no_exclusion" ~ TRUE,</span></span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="at">      "most_extreme" ~ name != "Katrina",</span></span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="at">      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))</span></span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="at">))</span></span>
-<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># here we just create the variable `df` in the multiverse</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span></span>
+<span></span>
+<span><span class="co"># here, we perform a `filter` operation in the multiverse</span></span>
+<span><span class="va">df.filtered</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span></span>
+<span>    <span class="va">death_outliers</span>,</span>
+<span>    <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
+<span>    <span class="st">"most_extreme"</span> <span class="op">~</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span>,</span>
+<span>    <span class="st">"two_most_extreme"</span> <span class="op">~</span> <span class="op">!</span><span class="op">(</span><span class="va">name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Katrina"</span>, <span class="st">"Audrey"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse branch_definition, inside = M}</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="at"># here we just create the variable </span><span class="st">`</span>df<span class="st">`</span><span class="at"> in the multiverse</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="at">df = hurricane_data</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="at"># here, we perform a </span><span class="st">`</span>filter<span class="st">`</span><span class="at"> operation in the multiverse</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="at">df.filtered = df |&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="at">  filter(branch(death_outliers,</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="at">      "no_exclusion" ~ TRUE,</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="at">      "most_extreme" ~ name != "Katrina",</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="at">      "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="at">))</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>The <code>multiverse</code> library then takes this user-declared syntax in the multiverse DSL and and compiles it into three separate, executable R expressions as shown in the figure below:</p>
-<p><img src="articles/figures/02-branch.png" width="90%"></p>
-<p>More details on the <code><a href="reference/branch.html">branch()</a></code> function can be found in the corresponding <code>vignette(branch)</code>.</p>
+<p><img src="reference/figures/02-branch.png" width="90%"></p>
+<p>More details on the <code><a href="reference/branch.html">branch()</a></code> function can be found in the corresponding <code><a href="articles/branch.html">vignette("branch")</a></code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -325,7 +337,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <li>
 <code>parameters</code>, which is a list of parameters</li>
 </ol>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/accessors.html">parameters</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $death_outliers</span></span>
 <span><span class="co">#&gt; $death_outliers[[1]]</span></span>
@@ -340,7 +352,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <li><p><code>conditions</code>, which is a list of conditions (we’ll define this later)</p></li>
 <li><p><code>expand</code> returns a table where each row corresponds to a single analysis path (i.e., a single universe). This view provides the user with the information of which choices have resulted in the analysis path, along with the entire unevaluated code expression corresponding to each analysis. Analysts can use this table to explore multiverse specifications with all the tools available in R and RStudio for exploring data tables.</p></li>
 </ol>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 6</span></span>
 <span><span class="co">#&gt;   .universe death_outliers   .parameter_assignment .code        .results .errors</span></span>
@@ -352,7 +364,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <li>
 <code>code</code>, which is the code that the user passes to the multiverse to conduct a multiverse analysis. However, we do not execute this code and it is stored unevaluated. The user can interactively edit and rewrite this code, and can execute it for the current analysis or the entire multiverse using dedicated functions.</li>
 </ol>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/accessors.html">code</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt; df &lt;- hurricane_data</span></span>
@@ -371,7 +383,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <li>
 <code>extract_variables(M, &lt;variable names&gt;)</code> extracts the supplied variable from the results of each analysis path, returning a table similar to the output of <code>expand(M)</code>, but with new columns for each variable that has been extracted. This would allow an analyst to, for example, extract summary statistics or even entire data tables from all universes simultaneously. These columns can easily be turned into long format data tables using the <code>tidyverse</code> packages and then visualized using the <code>ggplot2</code> package</li>
 </ol>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">df.filtered</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 7</span></span>
 <span><span class="co">#&gt;   .universe death_outliers   .parameter_assignment .code        .results .errors</span></span>
@@ -390,39 +402,53 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <li>log transformed the <code>damage</code> variable, as it is a positive only value with a long right-tail</li>
 </ol>
 <p>This would result in 3 × 2 × 2 = 12 analysis paths.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = variable_definitions, inside = M}</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="at">    df.filtered &lt;- df.filtered |&gt;</span></span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="at">        mutate(</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="at">            femininity = branch(femininity_calculation,</span></span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="at">              "masfem" ~ masfem,</span></span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="at">              "female" ~ female</span></span>
-<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="at">            ),</span></span>
-<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="at">            damage = branch(damage_transform,</span></span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="at">              "no_transform" ~ identity(dam),</span></span>
-<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="at">              "log_transform" ~ log(dam)</span></span>
-<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="at">            )</span></span>
-<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="at">        )</span></span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df.filtered</span> <span class="op">&lt;-</span> <span class="va">df.filtered</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    femininity <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span></span>
+<span>      <span class="va">femininity_calculation</span>,</span>
+<span>      <span class="st">"masfem"</span> <span class="op">~</span> <span class="va">masfem</span>,</span>
+<span>      <span class="st">"female"</span> <span class="op">~</span> <span class="va">female</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    damage <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span></span>
+<span>      <span class="va">damage_transform</span>,</span>
+<span>      <span class="st">"no_transform"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/identity.html" class="external-link">identity</a></span><span class="op">(</span><span class="va">dam</span><span class="op">)</span>,</span>
+<span>      <span class="st">"log_transform"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">dam</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = variable_definitions, inside = M}</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="at">    df.filtered &lt;- df.filtered |&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="at">        mutate(</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="at">            femininity = branch(femininity_calculation,</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="at">              "masfem" ~ masfem,</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="at">              "female" ~ female</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="at">            ),</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="at">            damage = branch(damage_transform,</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="at">              "no_transform" ~ identity(dam),</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="at">              "log_transform" ~ log(dam)</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="at">            )</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="at">        )</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>The next step in this multiverse analysis is to estimate the effect of <code>femininity</code> on <code>deaths</code> using linear regression. There are multiple decisions involved at this step. We take this opportunity to introduce certain scenarios that an analyst may encounter while attempting to create a multiverse, that may be difficult to discover but are supported by the library.</p>
 <div class="section level3">
 <h3 id="reusing-analysis-parameters-in-branch">Reusing analysis parameters in <code>branch()</code>
 <a class="anchor" aria-label="anchor" href="#reusing-analysis-parameters-in-branch"></a>
 </h3>
 <p>One way of implementing this regression analysis may be a poisson model with the number of deaths caused by the hurricane as the response variable. Recall that this is specified as:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">death</span> <span class="op">~</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">dam</span> <span class="op">+</span> <span class="va">masfem</span> <span class="op">*</span> <span class="va">zpressure</span>, data <span class="op">=</span> <span class="va">df.filtered</span>, family <span class="op">=</span> <span class="st">"poisson"</span><span class="op">)</span></span></code></pre></div>
 <p>Although this is a reasonable choice for count data, one can also argue for a log-linear regression model instead, as count data such as deaths tend to be approximately log-normally distributed.</p>
 <p>Specifying this in a multiverse analysis may require changes in two different locations in the code: the specification of the <code>deaths</code> dependent variable and the value of the <code>family</code> argument. However, these are not two separate decisions, but rather a consequence of the same analysis parameter: the choice of model. Often, a single analysis parameter will require the analyst to change the code in more than one location. To represent these semantics, multiverse allows us to re-use the same analysis parameter in multiple <code><a href="reference/branch.html">branch()</a></code> statements, so long as each <code><a href="reference/branch.html">branch()</a></code> uses the exact same set of analysis options. In a branch on a previously defined parameter, option names must be the same, but the code for each option can be different. Thus, we represent the consequences of the choice of model with a single analysis parameter: model. We insert two branch() statements using this parameter, one to set the variable transformation and one to set the family.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = variable_definitions, inside = M}</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="at">fit &lt;- glm(branch(model,</span></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="at">        "linear" ~ log(death+1),</span></span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="at">        "poisson" ~ death</span></span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="at">    ) ~ femininity * damage + femininity * zpressure,</span></span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="at">    family = branch(model, </span></span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="at">        "linear" ~ gaussian, </span></span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="at">        "poisson" ~ poisson</span></span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="at">    ), data = df.filtered)</span></span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = variable_definitions, inside = M}</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="at">fit &lt;- glm(branch(model,</span></span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="at">        "linear" ~ log(death+1),</span></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="at">        "poisson" ~ death</span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="at">    ) ~ femininity * damage + femininity * zpressure,</span></span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a><span class="at">    family = branch(model, </span></span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a><span class="at">        "linear" ~ gaussian, </span></span>
+<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a><span class="at">        "poisson" ~ poisson</span></span>
+<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a><span class="at">    ), data = df.filtered)</span></span>
+<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="specifying-conditions-in-the-multiverse-analysis">Specifying conditions in the multiverse analysis<a class="anchor" aria-label="anchor" href="#specifying-conditions-in-the-multiverse-analysis"></a>
@@ -430,49 +456,68 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <p>Another decision that was made at this step was the choice of predictors, which includes the interaction between <code>femininity</code> and <code>damage</code>, and between <code>femininity</code> and <code>zpressure.</code> Here, the predictors <code>damage</code> and <code>zpressure</code> are used as measures of the storm severity, with the interaction between femininity and damage indicating whether the main effect is stronger in more “destructive” or “severe” storms. Yet again, there are other reasonable approaches to study the primary effect which may include <em>no interaction term</em> or only include interactions between femininity and variables such as pressure, wind or category in conjunction with the interaction between femininity and damage.</p>
 <p>In a multiverse analysis, there may arise such dependencies between two or more analysis parameters that make certain analysis paths inconsistent, or even impossible. In other words, the applicability of some analysis options may be conditional on a previous, upstream decision. By default, multiverse assumes all combinations of options are valid. However, it provides a flexible way to specify that an analysis option is incompatible with previously-specified analysis options. These dependencies can be specified using the <code>%when%</code> operator followed by a boolean expression, right after the option name. Here, interaction term between <code>femininity</code> and <code>zpressure</code> only make sense in the presence of the interaction involving <code>damage</code>, so we use a <code>%when%</code> expression in the definition of the <code>other_predictors</code> analysis parameter.</p>
 <p>This results in the following multiverse specification (for now, let’s ignore the previous decision on choice of models):</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = variable_definitions, inside = M}</span></span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="at">fit &lt;- glm(death ~ </span></span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="at">          branch(main_interaction,</span></span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="at">              "no" ~ femininity + damage,</span></span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="at">              "yes" ~ femininity * damage</span></span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="at">          ) + branch(other_predictors,</span></span>
-<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="at">              "none" ~ NULL,</span></span>
-<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="at">              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,</span></span>
-<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="at">              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,</span></span>
-<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="at">              "category" %when% (main_interaction == "yes") ~ femininity * zcat,</span></span>
-<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="at">              "all" %when% (main_interaction == "yes") ~ femininity * z3,</span></span>
-<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="at">              "all_no_interaction" %when% (main_interaction == "no") ~ z3</span></span>
-<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="at">          ), family = "poisson", data = df)</span></span>
-<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
-<p>For more details on how this can be done, as well as other details on conditions, please refer to vignette(conditions).</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = variable_definitions, inside = M}</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="at">fit &lt;- glm(death ~ </span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="at">          branch(main_interaction,</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="at">              "no" ~ femininity + damage,</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="at">              "yes" ~ femininity * damage</span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="at">          ) + branch(other_predictors,</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a><span class="at">              "none" ~ NULL,</span></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a><span class="at">              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,</span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a><span class="at">              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,</span></span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a><span class="at">              "category" %when% (main_interaction == "yes") ~ femininity * zcat,</span></span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a><span class="at">              "all" %when% (main_interaction == "yes") ~ femininity * z3,</span></span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a><span class="at">              "all_no_interaction" %when% (main_interaction == "no") ~ z3</span></span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a><span class="at">          ), family = "poisson", data = df)</span></span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<p>For more details on how this can be done, as well as other details on conditions, please refer to <code><a href="articles/conditions.html">vignette("conditions")</a></code>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="executing-multiverse-code">Executing multiverse code<a class="anchor" aria-label="anchor" href="#executing-multiverse-code"></a>
 </h2>
 <p>As with code chunks in a typical computational notebook, users can execute a multiverse code chunk in the interactive editor in RStudio. When a user executes a single code chunk, multiverse internally transforms the input from that code chunk into one unevaluated expression (R’s internal representation of an abstract syntax tree) for each unique combination of analysis options and immediately executes the default analysis: the analysis path obtained by taking the first analysis option at each decision point. The default analysis is executed in the current active R environment (i.e. the same environment that regular R code blocks are executed in — the R Global Environment). Thus, the result of the default analysis is always accessible to the user. The output of an executed code chunk (text or visualisation) is displayed immediately below it, mimicking notebook code chunks</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = default-m-3, inside = M}</span></span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="at">fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ </span></span>
-<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="at">          branch(main_interaction,</span></span>
-<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="at">              "no" ~ femininity + damage,</span></span>
-<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="at">              "yes" ~ femininity * damage</span></span>
-<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a><span class="at">          ) + branch(other_predictors,</span></span>
-<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a><span class="at">              "none" ~ NULL,</span></span>
-<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a><span class="at">              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,</span></span>
-<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a><span class="at">              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,</span></span>
-<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a><span class="at">              "category" %when% (main_interaction == "yes") ~ femininity * zcat,</span></span>
-<span id="cb20-11"><a href="#cb20-11" tabindex="-1"></a><span class="at">              "all" %when% (main_interaction == "yes") ~ femininity * z3,</span></span>
-<span id="cb20-12"><a href="#cb20-12" tabindex="-1"></a><span class="at">              "all_no_interaction" %when% (main_interaction == "no") ~ z3</span></span>
-<span id="cb20-13"><a href="#cb20-13" tabindex="-1"></a><span class="at">          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), </span></span>
-<span id="cb20-14"><a href="#cb20-14" tabindex="-1"></a><span class="at">          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  </span></span>
-<span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a><span class="at">          data = df)</span></span>
-<span id="cb20-16"><a href="#cb20-16" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = default-m-3, inside = M}</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="at">fit = glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ </span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="at">          branch(main_interaction,</span></span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="at">              "no" ~ femininity + damage,</span></span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="at">              "yes" ~ femininity * damage</span></span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="at">          ) + branch(other_predictors,</span></span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="at">              "none" ~ NULL,</span></span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a><span class="at">              "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,</span></span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="at">              "wind" %when% (main_interaction == "yes") ~ femininity * zwind,</span></span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a><span class="at">              "category" %when% (main_interaction == "yes") ~ femininity * zcat,</span></span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="at">              "all" %when% (main_interaction == "yes") ~ femininity * z3,</span></span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a><span class="at">              "all_no_interaction" %when% (main_interaction == "no") ~ z3</span></span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a><span class="at">          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), </span></span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a><span class="at">          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  </span></span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a><span class="at">          data = df)</span></span>
+<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"linear"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">death</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="st">"poisson"</span> <span class="op">~</span> <span class="va">death</span><span class="op">)</span> <span class="op">~</span></span>
+<span>    <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span></span>
+<span>      <span class="va">main_interaction</span>,</span>
+<span>      <span class="st">"no"</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">+</span> <span class="va">damage</span>,</span>
+<span>      <span class="st">"yes"</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">damage</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span></span>
+<span>      <span class="va">other_predictors</span>,</span>
+<span>      <span class="st">"none"</span> <span class="op">~</span> <span class="cn">NULL</span>,</span>
+<span>      <span class="st">"pressure"</span> <span class="op"><a href="reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zpressure</span>,</span>
+<span>      <span class="st">"wind"</span> <span class="op"><a href="reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zwind</span>,</span>
+<span>      <span class="st">"category"</span> <span class="op"><a href="reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">zcat</span>,</span>
+<span>      <span class="st">"all"</span> <span class="op"><a href="reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op">~</span> <span class="va">femininity</span> <span class="op">*</span> <span class="va">z3</span>,</span>
+<span>      <span class="st">"all_no_interaction"</span> <span class="op"><a href="reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">main_interaction</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span> <span class="op">~</span> <span class="va">z3</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">covariates</span>, <span class="st">"1"</span> <span class="op">~</span> <span class="cn">NULL</span>, <span class="st">"2"</span> <span class="op">~</span> <span class="va">year</span><span class="op">:</span><span class="va">damage</span>, <span class="st">"3"</span> <span class="op">~</span> <span class="va">post</span><span class="op">:</span><span class="va">damage</span><span class="op">)</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"linear"</span> <span class="op">~</span> <span class="st">"gaussian"</span>, <span class="st">"poisson"</span> <span class="op">~</span> <span class="st">"poisson"</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">df.filtered</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>During interactive use (i.e. when running code chunks individually in RMarkdown), the following code chunk illustrates this behavior. Even though the variable <code>fit</code> was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <p>Note: this behavior is not permitted when a notebook is being knit—rendered to HTML (or some other format) using <code>knitr</code>. This is because we cannot control how code is executed when knitting, and we want to avoid providing the user with a surprising result. Instead, we through an error. If your code is running perfectly fine in a script file or markdown notebook, and only throwing an error when knitting with a message similar to <code>! object 'fit' not found</code>, this is likely because you are trying to access objects declared within a multiverse code block using an R code block. Please see <a href="https://mucollective.github.io/multiverse/articles/debugging-multiverse.html" class="external-link"><em>debugging</em></a> for more information on this.</p>
 <p>Instead, if we want to output the results of the default (or any particular) analysis while <strong>knitting</strong>, we should instead use:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/accessors.html">extract_variable_from_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="fl">1</span>, <span class="va">fit</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 6 × 5</span></span>
@@ -495,7 +540,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <h2 id="debugging-and-diagnosing-errors">Debugging and Diagnosing Errors<a class="anchor" aria-label="anchor" href="#debugging-and-diagnosing-errors"></a>
 </h2>
 <p>For the default analysis, as it executes in the R environment, users have access to the same set of debugging utilities that R provides. When the user executes the entire multiverse, the library outputs the error message, a traceback—an object containing the entire call stack that caused the error—and the index of the corresponding analysis path in which the error was encountered. The execution of the remaining analysis paths in the multiverse are not halted if any errors are encountered. The traceback is helpful to identify the location of the error, as often R expressions return unidentifiable error messages. <code>execute_universe(&lt;universe ID&gt;)</code> (universe ID are found in the table output by <code><a href="reference/accessors.html">expand()</a></code>, see below) allows analysts to execute a particular analysis path and reproduce errors encountered in the execution of that specific path.</p>
-<p><img src="articles/figures/06-expand.png" width="90%"></p>
+<p><img src="reference/figures/06-expand.png" width="90%"></p>
 </div>
 <div class="section level2">
 <h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>

@@ -27,8 +27,8 @@ The user can choose to either execute the default analysis using the \code{execu
 whole of the multiverse using the \code{execute_multiverse()}.
 }
 \details{
-Each single analysis within the multiverse lives in a separate environment. 
-We provide convenient functions to access the results for the  default analysis, as well as 
+Each single analysis within the multiverse lives in a separate environment.
+We provide convenient functions to access the results for the  default analysis, as well as
 parts or whole of the multiverse. Each analysis can also be accessed from the multiverse table,
 under the results column.
 }

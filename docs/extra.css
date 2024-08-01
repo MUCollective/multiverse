@@ -7,8 +7,12 @@
   margin-top: 48px !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin-top: 4rem !important;
+h1 {
+  margin-top: 2em !important;
+}
+
+h2, h3, h4, h5, h6 {
+  margin-top: 1em;
   font-weight: 700 !important;
 }
 
@@ -52,6 +56,10 @@ a:active {
 	text-decoration: underline;
 }
 
+.dropdown-item:active {
+  color: #ffffff;
+}
+
 div.sourceCode > button {
   padding: 6px 12px !important;
 }
@@ -62,4 +70,8 @@ div.sourceCode > button > i {
 
 pre {
   border: 1px solid #dee2e6 !important;
+}
+
+.section {
+  margin-top: 3em;
 }

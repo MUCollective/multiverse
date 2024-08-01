@@ -18,9 +18,9 @@ is.multiverse(x)
 \value{
 An empty multiverse object
 
-`TRUE` if the object inherits from the `multiverse` class.
+\code{TRUE} if the object inherits from the \code{multiverse} class.
 
-`TRUE` if the object inherits from the `multiverse` class.
+\code{TRUE} if the object inherits from the \code{multiverse} class.
 }
 \description{
 Constructs a new multiverse object which enables conducting a multiverse analysis
@@ -30,25 +30,25 @@ To perform a multiverse analysis, the user needs to first constructs a new multi
 multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object
 contains the following slots:
 \itemize{
-  \item code: This slot stores the user's code for conducting a multiverse analysis. The user can
-  define multiple analysis pathways at each step in the analysis using the `branch` call. It supports tidyverse syntax.
+\item code: This slot stores the user's code for conducting a multiverse analysis. The user can
+define multiple analysis pathways at each step in the analysis using the \code{branch} call. It supports tidyverse syntax.
 
-  \item parameters: This slot contains a named list of lists. It contains each parameter defined in the
-  code using the `branch()` function, and the options defined for each parameter (as a list).
+\item parameters: This slot contains a named list of lists. It contains each parameter defined in the
+code using the \code{branch()} function, and the options defined for each parameter (as a list).
 
-  \item conditions: This slot contain a list of conditions: if any of the
-  parameter values are conditional on a specific value of another parameter, these can be defined in the code
-  using `branch_assert()` or `branch_exclude()`.
+\item conditions: This slot contain a list of conditions: if any of the
+parameter values are conditional on a specific value of another parameter, these can be defined in the code
+using \code{branch_assert()} or \code{branch_exclude()}.
 
-  \item current_parameter_assignment: This slot is a list which contains a single option
-  assigned for each parameter defined in the `code`.
+\item current_parameter_assignment: This slot is a list which contains a single option
+assigned for each parameter defined in the \code{code}.
 
-  \item multiverse_table: This slot contains a table (in implementation, a tibble which is a
-  rectangular data structure) where each column of the table will be a unique parameter.
-  The table will contains every possible combination of options for each parameter — the number of rows
-  corresponds to the number of different analysis paths. The table also contains, for each row, a list of
-  option assignments for each parameter (`parameter_assignment` column), code for executing that particular
-  analysis (of type `expression`), and environments where each code will be executed.
+\item multiverse_table: This slot contains a table (in implementation, a tibble which is a
+rectangular data structure) where each column of the table will be a unique parameter.
+The table will contains every possible combination of options for each parameter — the number of rows
+corresponds to the number of different analysis paths. The table also contains, for each row, a list of
+option assignments for each parameter (\code{parameter_assignment} column), code for executing that particular
+analysis (of type \code{expression}), and environments where each code will be executed.
 }
 }
 \examples{

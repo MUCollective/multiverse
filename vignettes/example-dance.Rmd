@@ -1,8 +1,8 @@
 ---
 title: "Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse"
 author: 
-  - Pierre Dragicevic, Inria
-  - Abhraneel Sarma, Northwestern University
+  - Pierre Dragicevic
+  - Abhraneel Sarma
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -15,9 +15,6 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-
-
-
 ```{r setup, message=FALSE, warning=FALSE}
 library(knitr)
 library(dplyr)
@@ -29,12 +26,6 @@ library(gganimate)
 library(multiverse)
 ```
 
-
-```{r, include=FALSE}
-M = multiverse()
-```
-
-
 ```{r, chunk-setup, include=FALSE}
 opts_chunk$set(
   echo = TRUE,
@@ -42,6 +33,7 @@ opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 
@@ -186,7 +178,6 @@ In this vignette, we make use of the  \code{inside} function which is more suite
 Our multiverse implementation begins with first generating alternate datasets using bootstrapping, within a multiverse object:
 
 ```{r}
-#data_original <- read.csv("master-alt.csv")
 n = 20
 
 M = multiverse()
@@ -307,7 +298,7 @@ p.above <- expand(M) %>%
   theme_minimal() +
   transition_manual(.universe)
 
-animate(p.above, nframes = n, fps = 3, width = 840, height = 320, units = "px")
+animate(p.above, nframes = n, fps = 3, width = 9, height = 4, res = 300, units = "in")
 ```
 
 
@@ -325,7 +316,7 @@ p.below <- expand(M) %>%
   theme_minimal() +
   transition_manual(.universe)
 
-animate(p.below, nframes = n, fps = 3, width = 840, height = 320, units = "px")
+animate(p.below, nframes = n, fps = 3, width = 9, height = 4, res = 300, units = "in")
 ```
 
 The following figure shows the regression lines for all conditions.
@@ -346,7 +337,7 @@ p.fitted_lines <- expand(M) %>%
   theme_minimal() +
   transition_manual(.universe)
 
-animate(p.fitted_lines, nframes = n, fps = 3, width = 840, height = 480, units = "px")
+animate(p.fitted_lines, nframes = n, fps = 3, width = 9, height = 6, res = 300, units = "in")
 ```
 
 > The figure is consistent with Harrison et al.’s main findings: ”using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots”. The statistical dance gives credence to these conclusions, while at the same time providing a faithful illustration of the uncertainty behind the estimates. The reader is free to linger on the figure and go beyond the authors’ own summary of findings by examining other comparisons and drawing their own conclusions. All necessary information on effect sizes and inferential statistics is seamlessly combined into this single animated figure, and it would take pages and pages of text to fully describe it.

@@ -4,14 +4,14 @@ pkgdown_sha: ~
 articles:
   branch: branch.html
   conditions: conditions.html
+  example-dance: example-dance.html
+  example-durante: example-durante.html
+  example-frequentist: example-frequentist.html
+  example-hurricane: example-hurricane.html
   execution-multiverse: execution-multiverse.html
-  frequentist-multiverse-analysis: frequentist-multiverse-analysis.html
   multiverse-in-rmd: multiverse-in-rmd.html
   visualising-multiverse: visualising-multiverse.html
-  xample-dance: xample-dance.html
-  xample-durante: xample-durante.html
-  xample-hurricane: xample-hurricane.html
-last_built: 2024-07-29T17:23Z
+last_built: 2024-08-01T20:33Z
 urls:
   reference: http://mucollective.github.io/multiverse/reference
   article: http://mucollective.github.io/multiverse/articles

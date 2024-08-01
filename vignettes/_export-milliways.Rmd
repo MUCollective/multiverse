@@ -2,8 +2,15 @@
 title: "Exporting the output of a multiverse to JSON for Milliways, a multiverse visualisation tool"
 author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
-output:
-  html_document
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Exporting the output of a multiverse to JSON for Milliways, a multiverse visualisation tool}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
@@ -16,8 +23,7 @@ library(purrr)
 library(broom)
 library(jsonlite)
 library(distributional)
-# library(multiverse)
-devtools::load_all(".")
+library(multiverse)
 ```
 
 ## Introduction
@@ -41,7 +47,7 @@ Note #2: If you are not compiling the document as an EMAR, the code chunks will 
 
 Note #3: On the use of magrittr pipes (`%>%`) instead of the native R pipe (`|>`). Because `multiverse` rewrites R expressions, when I parse the code declared into individual R scripts, the native R pipe is "evaluated" (i.e. `df |> mutate(...) |> filter(...)` becomes `filter(mutate(df, ...), ...)`); this makes the code readable. Instead I use magrittr pipes which does not "evaluate" the R expressions.
 
-```{r}
+```{r, eval = FALSE}
 knit_as_emar()
 ```
 
@@ -168,6 +174,24 @@ summary_RelComp
 ```
 
 
+## Visualising the Results
+
+```{multiverse default-m-7, inside = M}
+p_val = round(summary(fit_RelComp)$coefficients[4, 4], 3)
+if (p_val < 0.05) p_val = paste0(p_val, "*")
+
+broom::augment(fit_RelComp, interval = "confidence") %>%
+  group_by(Fertility, RelationshipStatus) %>%
+  mutate(RelationshipStatus = ifelse(RelationshipStatus == "Relationship", "InRelationship", "Single")) %>%
+  summarise(.fitted = mean(.fitted), .upper = mean(.upper), .lower = mean(.lower), .groups = "drop") %>%
+  ggplot(aes(x = RelationshipStatus, y = .fitted, fill = Fertility)) + 
+  geom_bar(stat = "identity", position = position_dodge2(preserve = "single"), width = 0.5) + 
+  geom_linerange(aes(ymin = .lower,  ymax = .upper), position = position_dodge(width = 0.5)) + 
+  geom_text(label = paste0("Interaction:", p_val), x = 1.5, y = 7.5, colour = "#666666") + 
+  labs(x = "RelationshipStatus", y = "ReligiosityCompositeScore") + 
+  ylim(c(0, 8.1)) + 
+  theme_minimal()
+```
 
 
 
@@ -202,7 +226,9 @@ expand(M) %>%
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
   )) %>%
-  export_results_json(term, estimate, std.error)
+  export_results_json(term, estimate, std.error) |> 
+  unnest(results) |> 
+  select(.universe, term, estimate, std.error, cdf.x, cdf.y)
 ```
 
 The resultant JSON file consists of a list of objects (where each object corresponds to one analysis in the multiverse). Within this object, the results attribute contains a(nother) list of objects corresponding to each outcome variable. For e.g., here we have four coefficients (see the results of the regression model), and thus the results attribute will contain four objects. Each object has the following attributes:
@@ -252,7 +278,7 @@ The JSON file consists of two attributes: `code` and `parameters`.
 
 This function is used to export the (unmodified) dataset that is used in the analysis, and is a simple wrapper around the `write_json` function.
 
-```{r}
+```{r, eval = FALSE}
  export_data_json(durante, "../../data.json")
 ```
 

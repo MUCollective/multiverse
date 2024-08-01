@@ -22,10 +22,6 @@ library(ggplot2)
 library(multiverse)
 ```
 
-```{r, include=FALSE}
-M = multiverse()
-```
-
 
 ```{r, chunk-setup, include=FALSE}
 opts_chunk$set(
@@ -34,6 +30,7 @@ opts_chunk$set(
   fig.height = 4,
   eval = if (isTRUE(exists("params"))) params$EVAL else FALSE
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 ## Branches in a multiverse analysis

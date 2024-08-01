@@ -30,13 +30,13 @@ Female hurricanes are deadlier than male hurricanes."><!-- mathjax --><script sr
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="../articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -75,45 +75,45 @@ in their study, <a href="https://doi.org/10.1073/pnas.1402786111" class="externa
     <p>A data frame with 502 rows and 26 variables:</p><dl><dt>Year</dt>
 <dd><p>Year in which the hurricane occurred</p></dd>
 
-  <dt>Name</dt>
+<dt>Name</dt>
 <dd><p>Name given to the hurricane</p></dd>
 
-  <dt>MasFem</dt>
-<dd><p>A score of how Masculine or Feminine a hurricane is, 
-  on a scale of 1 - 11  where 1 is the most masculine and 11 is the most 
-  feminine. Each hurricane was rated by 9 independent coders</p></dd>
+<dt>MasFem</dt>
+<dd><p>A score of how Masculine or Feminine a hurricane is,
+on a scale of 1 - 11  where 1 is the most masculine and 11 is the most
+feminine. Each hurricane was rated by 9 independent coders</p></dd>
 
-  <dt>MinPressure_before</dt>
+<dt>MinPressure_before</dt>
 <dd><p>The minimum pressure of hurricanes at the time of landfall in the United States
-   obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html)</p></dd>
+obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html)</p></dd>
 
-  <dt>Minpressure_Updated_2014</dt>
+<dt>Minpressure_Updated_2014</dt>
 <dd><p>The minimum pressure of hurricanes at the time of landfall in the United States
-   obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html)</p></dd>
+obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html)</p></dd>
 
-  <dt>Gender_MF</dt>
+<dt>Gender_MF</dt>
 <dd><p>"Marriage is between a man and a woman."</p></dd>
 
-  <dt>Category</dt>
+<dt>Category</dt>
 <dd><p>Category labels on a scale of 1 - 5, with 5 being the most severe or extreme</p></dd>
 
-  <dt>alldeaths</dt>
-<dd><p>Total number of deaths caused by the hurricane. Information on death tolls 
-  of hurricanes were obtained primarily from monthly weather reports in the digital archive of the 
-  National Oceanic and Atmospheric Administration (www.aoml.noaa.gov/hrd/hurdat/mwr_pdf/)</p></dd>
+<dt>alldeaths</dt>
+<dd><p>Total number of deaths caused by the hurricane. Information on death tolls
+of hurricanes were obtained primarily from monthly weather reports in the digital archive of the
+National Oceanic and Atmospheric Administration (www.aoml.noaa.gov/hrd/hurdat/mwr_pdf/)</p></dd>
 
-  <dt>HighestWindSpeed</dt>
+<dt>HighestWindSpeed</dt>
 <dd><p>The maximum wind speed of hurricanes at the time of landfall in the
-   United States obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html). 
-   This data is only available for storms after 1979</p></dd>
+United States obtained from NOAA (www.aoml.noaa.gov/hrd/hurdat/All_U.S._Hurricanes.html).
+This data is only available for storms after 1979</p></dd>
 
-  <dt>NDAM</dt>
+<dt>NDAM</dt>
 <dd><p>normalized damage (in million $)</p></dd>
 
-  <dt>Source</dt>
+<dt>Source</dt>
 <dd><p>Source from where the data was gathered</p></dd>
 
-  <dt>Elapsed.Yrs</dt>
+<dt>Elapsed.Yrs</dt>
 <dd><p>Time since hurricane</p></dd>
 
 
@@ -121,17 +121,17 @@ in their study, <a href="https://doi.org/10.1073/pnas.1402786111" class="externa
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This dataset was collated by Jung et. al in their study <em>Female hurricanes are deadlier than male hurricanes</em>
-They hypothesised that hurricanes with more feminine names might be perceived as less dangerous and hence lead to 
+They hypothesised that hurricanes with more feminine names might be perceived as less dangerous and hence lead to
 people taking fewer precautionary measures, resulting in more death and damages.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Kiju Jung and Sharon Shavitta and Madhu Viswanathana and Joseph M. Hilbed. (2014).
 "Female hurricanes are deadlier than male hurricanes."
-*Proceedings of the National Academy of Sciences*, 111(24), 8782-8787.</p>
-<p>Yang Liu and Alex Kale and Tim Althoff and Jeff Heer. (2020). 
-Boba: Authoring and Visualizing Multiverse Analyzes. 
-*arXiv preprint* arXiv: 2007.05551 .</p>
+<em>Proceedings of the National Academy of Sciences</em>, 111(24), 8782-8787.</p>
+<p>Yang Liu and Alex Kale and Tim Althoff and Jeff Heer. (2020).
+Boba: Authoring and Visualizing Multiverse Analyzes.
+<em>arXiv preprint</em> arXiv: 2007.05551 .</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

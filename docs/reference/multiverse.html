@@ -26,13 +26,13 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
     <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
+    <a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
+    <a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
+    <a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
+    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis: Sequential and Parallel</a>
     <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
     <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-    <a class="dropdown-item" href="../articles/xample-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/xample-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/xample-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -85,30 +85,30 @@
 <p>An empty multiverse object</p>
 
 
-<p>`TRUE` if the object inherits from the `multiverse` class.</p>
+<p><code>TRUE</code> if the object inherits from the <code>multiverse</code> class.</p>
 
 
-<p>`TRUE` if the object inherits from the `multiverse` class.</p>
+<p><code>TRUE</code> if the object inherits from the <code>multiverse</code> class.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>To perform a multiverse analysis, the user needs to first constructs a new multiverse object. The user can declare
 multiple analysis pathways within this multiverse object, and execute these analyses. The multiverse object
 contains the following slots:</p><ul><li><p>code: This slot stores the user's code for conducting a multiverse analysis. The user can
-  define multiple analysis pathways at each step in the analysis using the `branch` call. It supports tidyverse syntax.</p></li>
+define multiple analysis pathways at each step in the analysis using the <code>branch</code> call. It supports tidyverse syntax.</p></li>
 <li><p>parameters: This slot contains a named list of lists. It contains each parameter defined in the
-  code using the `branch()` function, and the options defined for each parameter (as a list).</p></li>
+code using the <code><a href="branch.html">branch()</a></code> function, and the options defined for each parameter (as a list).</p></li>
 <li><p>conditions: This slot contain a list of conditions: if any of the
-  parameter values are conditional on a specific value of another parameter, these can be defined in the code
-  using `branch_assert()` or `branch_exclude()`.</p></li>
+parameter values are conditional on a specific value of another parameter, these can be defined in the code
+using <code>branch_assert()</code> or <code>branch_exclude()</code>.</p></li>
 <li><p>current_parameter_assignment: This slot is a list which contains a single option
-  assigned for each parameter defined in the `code`.</p></li>
+assigned for each parameter defined in the <code>code</code>.</p></li>
 <li><p>multiverse_table: This slot contains a table (in implementation, a tibble which is a
-  rectangular data structure) where each column of the table will be a unique parameter.
-  The table will contains every possible combination of options for each parameter — the number of rows
-  corresponds to the number of different analysis paths. The table also contains, for each row, a list of
-  option assignments for each parameter (`parameter_assignment` column), code for executing that particular
-  analysis (of type `expression`), and environments where each code will be executed.</p></li>
+rectangular data structure) where each column of the table will be a unique parameter.
+The table will contains every possible combination of options for each parameter — the number of rows
+corresponds to the number of different analysis paths. The table also contains, for each row, a list of
+option assignments for each parameter (<code>parameter_assignment</code> column), code for executing that particular
+analysis (of type <code>expression</code>), and environments where each code will be executed.</p></li>
 </ul></div>
 
     <div class="section level2">

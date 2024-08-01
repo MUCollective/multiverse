@@ -13,8 +13,8 @@
 \item{...}{further arguments passed to or from other methods. Currently ignored.}
 }
 \description{
-prints objects of class multiverse. Provides a quick overview of the multiverse by 
+prints objects of class multiverse. Provides a quick overview of the multiverse by
 listing the parameters and conditions declared, to get an overview of the number of combinations.
-The function outputs upto 20 of the parameters declared along with their option names (upto 5), 
+The function outputs upto 20 of the parameters declared along with their option names (upto 5),
 and upto 10 of the conditions declared.
 }
