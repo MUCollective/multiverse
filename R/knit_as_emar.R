@@ -10,17 +10,22 @@
 #'
 #' @importFrom htmltools tags
 #' @importFrom htmltools tagList
+#' @importFrom htmltools includeCSS
+#' @importFrom knitr opts_chunk
 #' 
 #' @name knit_as_emar
 #' @export
 knit_as_emar <- function() {
-  htmltools::tagList(
-    htmltools::tags$script(src = "https://code.jquery.com/jquery-3.6.0.min.js"),
-    htmltools::tags$script(src = system.file("js/Tangle.js", package="multiverse")),
-    htmltools::tags$script(src = system.file("js/TangleKit/mootools.js", package="multiverse")),
-    htmltools::tags$script(src = system.file("js/TangleKit/sprintf.js", package="multiverse")),
-    htmltools::tags$script(src = system.file("js/TangleKit/BVTouchable.js", package="multiverse")),
-    htmltools::tags$script(src = system.file("js/TangleKit/TangleKit.js", package="multiverse")),
-    htmltools::tags$script(src = system.file("js/custom.js", package="multiverse"))
+  opts_chunk$set(knit_as_emar = TRUE)
+  
+  tagList(
+    tags$link(rel = "stylesheet", type = "text/css", href = system.file("css/styles.css", package="multiverse")),
+    tags$script(src = "https://code.jquery.com/jquery-3.6.0.min.js"),
+    tags$script(src = system.file("js/Tangle.js", package="multiverse")),
+    tags$script(src = system.file("js/TangleKit/mootools.js", package="multiverse")),
+    tags$script(src = system.file("js/TangleKit/sprintf.js", package="multiverse")),
+    tags$script(src = system.file("js/TangleKit/BVTouchable.js", package="multiverse")),
+    tags$script(src = system.file("js/TangleKit/TangleKit.js", package="multiverse")),
+    tags$script(src = system.file("js/custom.js", package="multiverse"))
   )
 }
