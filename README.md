@@ -115,7 +115,7 @@ multiverse analysis. We adopt the “tree of analysis” metaphor (see
 Figure below): “an analysis proceeds from top to bottom, and each
 branching represents a choice between different analysis options”.
 
-<img src="vignettes/figures/00-reporting-strategies.png" width="60%" />
+<img src="man/figures/00-reporting-strategies.png" width="60%" />
 
 In this terminology:
 
@@ -244,7 +244,7 @@ However, the original analysis involved at least four analysis decisions
 led to a different result. These decisions are highlighted in the figure
 below:
 
-<img src="vignettes/figures/00-default-analysis.png" width="90%" />
+<img src="man/figures/00-default-analysis.png" width="90%" />
 
 Several subsequent studies, each proposing a different analysis
 strategy, found no presence of such an effect, suggesting that the
@@ -290,7 +290,7 @@ executed in a special environment. To be more precise, `multiverse`
 takes the user declared code, parses and rewrites the code into multiple
 versions of valid R code, each corresponding to an unique analysis path
 in the multiverse. For more information on this processing step, see
-vignette(branch)
+`vignette("branch")`
 
 To get around these limitations, we need to declare this (multiverse
 DSL) code “inside a multiverse object”. The `multiverse` package
@@ -349,7 +349,7 @@ RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the
 image below). This would create a multiverse code block at the location
 of the cursor in the document.
 
-<img src="vignettes/figures/01-multiverse-addins.png" width="90%" />
+<img src="man/figures/01-multiverse-addins.png" width="90%" />
 
 Alternately, users can insert a multiverse code block using a keyboard
 shortcut. Users can create a keyboard shortcut to declare a multiverse
@@ -447,6 +447,20 @@ that particular option.
 Putting it all together, a decision point in a multiverse analysis can
 thus be declared as:
 
+``` r
+# here we just create the variable `df` in the multiverse
+df <- hurricane_data
+
+# here, we perform a `filter` operation in the multiverse
+df.filtered <- df |>
+  filter(branch(
+    death_outliers,
+    "no_exclusion" ~ TRUE,
+    "most_extreme" ~ name != "Katrina",
+    "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+  ))
+```
+
     ```{multiverse branch_definition, inside = M}
     # here we just create the variable `df` in the multiverse
     df = hurricane_data
@@ -464,10 +478,10 @@ The `multiverse` library then takes this user-declared syntax in the
 multiverse DSL and and compiles it into three separate, executable R
 expressions as shown in the figure below:
 
-<img src="vignettes/figures/02-branch.png" width="90%" />
+<img src="man/figures/02-branch.png" width="90%" />
 
 More details on the `branch()` function can be found in the
-corresponding `vignette(branch)`.
+corresponding `vignette("branch")`.
 
 ## Interfacing with the multiverse
 
@@ -572,6 +586,22 @@ researchers could have:
     value with a long right-tail
 
 This would result in 3 × 2 × 2 = 12 analysis paths.
+
+``` r
+df.filtered <- df.filtered |>
+  mutate(
+    femininity = branch(
+      femininity_calculation,
+      "masfem" ~ masfem,
+      "female" ~ female
+    ),
+    damage = branch(
+      damage_transform,
+      "no_transform" ~ identity(dam),
+      "log_transform" ~ log(dam)
+    )
+  )
+```
 
     ```{multiverse label = variable_definitions, inside = M}
         df.filtered <- df.filtered |>
@@ -680,7 +710,7 @@ ignore the previous decision on choice of models):
     ```
 
 For more details on how this can be done, as well as other details on
-conditions, please refer to vignette(conditions).
+conditions, please refer to `vignette("conditions")`.
 
 ## Executing multiverse code
 
@@ -714,6 +744,27 @@ immediately below it, mimicking notebook code chunks
               family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
               data = df)
     ```
+
+``` r
+fit <- glm(
+  branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
+    branch(
+      main_interaction,
+      "no" ~ femininity + damage,
+      "yes" ~ femininity * damage
+    ) + branch(
+      other_predictors,
+      "none" ~ NULL,
+      "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+      "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+      "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+      "all" %when% (main_interaction == "yes") ~ femininity * z3,
+      "all_no_interaction" %when% (main_interaction == "no") ~ z3
+    ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage),
+  family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),
+  data = df.filtered
+)
+```
 
 During interactive use (i.e. when running code chunks individually in
 RMarkdown), the following code chunk illustrates this behavior. Even
@@ -786,7 +837,7 @@ output by `expand()`, see below) allows analysts to execute a particular
 analysis path and reproduce errors encountered in the execution of that
 specific path.
 
-<img src="vignettes/figures/06-expand.png" width="90%" />
+<img src="man/figures/06-expand.png" width="90%" />
 
 ## Conclusion
 

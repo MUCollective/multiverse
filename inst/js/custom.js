@@ -162,6 +162,7 @@ function setup() {
           this[k] = this.choices[k][0];
         }
         choices = this.choices;
+        console.log(choices)
         combos  = this.combos;
       },
       update: function() {

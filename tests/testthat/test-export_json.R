@@ -1,4 +1,3 @@
-context("export_json")
 library(distributional)
 
 test_that("export_2_json creates correct CDF for estimate + std.error and distributions", {
@@ -76,10 +75,9 @@ test_that("export_dist_2_json creates correct CDF for distributions", {
 
 
 test_that("get_limits esimtates correct finite limits non-normal distributions", {
-  expect_equal(get_limits(dist_gamma(1, 1))[[1]], 0) # lower limit of gamma dist is 0
-  expect_equal(get_limits(dist_gamma(2, 5))[[1]], 0) # lower limit of gamma dist is 0
-  expect_equal(get_limits(dist_beta(2, 2)), c(.min = 0, .max = 1)) # limits of beta dist are [0, 1]
-  expect_equal(get_limits(dist_beta(2, 2)), c(.min = 0, .max = 1)) # limits of beta dist are [0, 1]
+  expect_equal(get_limits(dist_gamma(1, 1))$.min, 0) # lower limit of gamma dist is 0
+  expect_equal(get_limits(dist_gamma(2, 5))$.min, 0) # lower limit of gamma dist is 0
+  expect_equal(get_limits(dist_beta(2, 2)), list(.min = 0, .max = 1)) # limits of beta dist are [0, 1]
   expect_equal(get_limits(dist_exponential(2))[[1]], 0) # lower limit of exponential dist is 0
 })
 
