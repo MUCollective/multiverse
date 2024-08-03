@@ -39,13 +39,20 @@ To visualise the results of a multiverse analysis using Milliways, the user need
 - `data`: a JSON file which contains the dataset used in the multiverse analysis.
 - `analysis`: an HTML file which contains the entire analysis as an Explorable Multiverse Analysis Report (EMAR).
 
-In this document, I outline how to generate each of these files for the multiverse analysis on the Durante dataset (see `vignette("visualising-multiverse")`). Compiling this document will, by itself, result in the creation of the EMAR, provided the following function is declared.
+In this document, I outline how to generate each of these files for the multiverse analysis on the Durante dataset (see `vignette("visualising-multiverse")`). Compiling this document will, by itself, result in the creation of the EMAR, provided:
 
-Note #1: If compiling the document as an EMAR, each code chunk will execute automatically. You do not need to call `execute_multiverse()` to obtain the results unless you want to extract the results and access it from an R code chunk.
+- the `knit_as_emar()` function is declared, and
+- the document YAML (at the top of the markdown file) is set to `output: html_document`
 
-Note #2: If you are not compiling the document as an EMAR, the code chunks will not execute automatically. The only way to obtain the results is to first execute all the universes in the multiverse using `execute_multiverse()` and then accessing the results using an R code chunk.
+The actual EMAR document which is generated from this file (provided the YAML is changed) can be found [here](https://abhsarma.github.io/assets/milliways/durante-EMAR.html).
 
-Note #3: On the use of magrittr pipes (`%>%`) instead of the native R pipe (`|>`). Because `multiverse` rewrites R expressions, when I parse the code declared into individual R scripts, the native R pipe is "evaluated" (i.e. `df |> mutate(...) |> filter(...)` becomes `filter(mutate(df, ...), ...)`); this makes the code readable. Instead I use magrittr pipes which does not "evaluate" the R expressions.
+**Note #1:** Creating an EMAR document is not a perfect process unfortunately, and relies on the HTML tags that `knitr` uses to convert a RMarkdown file to an HTML file. We created the `knit_as_emar()` function assuming users will compile using the default YAML (`output: html_document`) that is generated when a new RMarkdown file is created using RStudio. However, the `knit_as_emar()` function may not be compatible with other output formats, such as this one which uses the `html_vignette` format. I have also marked the multiverse code chunks using a comment to distinguish them from regular R code chunks. However, if you are knitting as an EMAR, the multiverse code chunks will appear with a different background colour to the regular code chunks making them easily distinguishable.
+
+**Note #2:** If compiling the document as an EMAR, each code chunk will execute automatically. You do not need to call `execute_multiverse()` to obtain the results unless you want to extract the results and access it from an R code chunk.
+
+**Note #3:** If you are not compiling the document as an EMAR, the code chunks will not execute automatically. The only way to obtain the results is to first execute all the universes in the multiverse using `execute_multiverse()` and then accessing the results using an R code chunk.
+
+**Note #4:** On the use of magrittr pipes (`%>%`) instead of the native R pipe (`|>`). Because `multiverse` rewrites R expressions, when I parse the code declared into individual R scripts, the native R pipe is "evaluated" (i.e. `df |> mutate(...) |> filter(...)` becomes `filter(mutate(df, ...), ...)`); this makes the code readable. Instead I use magrittr pipes which does not "evaluate" the R expressions.
 
 ```{r, eval = FALSE}
 knit_as_emar()
@@ -78,11 +85,10 @@ M = multiverse()
 
 In their Durante et al. exclude participants based on the length of their menstrual cycle, and only include those whose cycle lengths are between 25 and 35 days. However, according to Steegen et al., due to the flexibility in the data collection, "this exclusion criterion can be instantiated in two reasonable ways, using either a woman’s computed cycle length or a woman’s self-reported typical cycle length."
 
-Note: we can define a tangle widget to allow the user to switch between which operationalisation of the outlier exclusion criteria is used. Please look at the RMarkdown file to see how it is declared.
-
-- <mv param="cycle_length"/>
+**Note #5:** we can define a tangle widget to allow the user to switch between which operationalisation of the outlier exclusion criteria is used using the syntax `<mv param="cycle_length"/>`. Here, `cycle_length` can be replaced with the name of any parameter. In the EMAR document, you can see and interact with the tangle widget. We have removed them in this document as they do not get rendered properly when compiling to a vignette.
 
 ```{multiverse default-m-1, inside = M}
+# multiverse code block
 df <- data.raw.study2 %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
     filter( branch(cycle_length,
@@ -96,9 +102,9 @@ df <- data.raw.study2 %>%
 
 Steegen et al. describe that how certain the participants are in their reported dates can be another justifiable exclusion criteria:
 
-- <mv param="certainty"/>
 
 ```{multiverse default-m-2, inside = M}
+# multiverse code block
 df <- df %>%
     filter( branch(certainty,
         "cer_option1" ~ TRUE,
@@ -110,9 +116,8 @@ df <- df %>%
 
 The flexibility in how the data is collected also allows three reasonable alternatives for estimating a woman’s next menstrual onset, which is an intermediate step in determining cycle day.
 
-- <mv param="menstrual_calculation"/>
-
 ```{multiverse default-m-3, inside = M}
+# multiverse code block
 df <- df %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
         "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
@@ -131,9 +136,8 @@ df <- df %>%
 
 Durante et al. classify women into a high or low fertility group based on cycle day, but this classification can be done in various different reasonable ways:
 
-- <mv param="fertile"/>
-
 ```{multiverse default-m-4, inside = M}
+# multiverse code block
 df <- df %>%
     mutate( Fertility = branch( fertile,
         "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
@@ -149,9 +153,8 @@ df <- df %>%
 The participants in the study described their relationship status as one of the following options: (1) not dating/romantically involved with anyone, (2) dating or involved
 with only one partner, (3) engaged or living with my partner, and (4) married. This allows various different ways of classifying whether a participants is in a relationship or not:
 
-- <mv param="relationship_status"/>
-
 ```{multiverse default-m-5, inside = M}
+# multiverse code block
 df <- df %>%
     mutate(RelationshipStatus = branch(relationship_status,
         "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
@@ -163,7 +166,7 @@ df <- df %>%
 
 ## Regression Model
 
-The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`.
+The authors perform an ANOVA to study the effect of *Fertility*, *Relationship* and their interaction term, on the composite Religiosity score. We fit the linear model using the call: `lm( RelComp ~ Fertility * RelationshipStatus, data = df )` inside our multiverse and save the result to a variable called `fit_RelComp`. We use `broom::tidy` to extract the results of the linear model into a tidy data frame.
 
 ```{multiverse default-m-6, inside = M}
 fit_RelComp <- lm(RelComp ~ Fertility * RelationshipStatus, data = df)
@@ -173,8 +176,16 @@ summary_RelComp <- fit_RelComp %>%
 summary_RelComp
 ```
 
+```{r, echo = FALSE}
+execute_multiverse(M)
+summary_RelComp = extract_variable_from_universe(M, 1, summary_RelComp)
+summary_RelComp
+```
+
 
 ## Visualising the Results
+
+We visualise the results by showing the predicted values of the model. The plot below shows the predicted `Religiosity Score` for each level of `Fertility` (high or low) and `RelationshipStatus` (Single or Relationship):
 
 ```{multiverse default-m-7, inside = M}
 p_val = round(summary(fit_RelComp)$coefficients[4, 4], 3)
@@ -194,6 +205,26 @@ broom::augment(fit_RelComp, interval = "confidence") %>%
 ```
 
 
+```{r, echo = FALSE}
+fit_RelComp = extract_variable_from_universe(M, 1, fit_RelComp)
+
+p_val = round(summary(fit_RelComp)$coefficients[4, 4], 3)
+if (p_val < 0.05) p_val = paste0(p_val, "*")
+
+broom::augment(fit_RelComp, interval = "confidence") %>%
+  group_by(Fertility, RelationshipStatus) %>%
+  mutate(RelationshipStatus = ifelse(RelationshipStatus == "Relationship", "InRelationship", "Single")) %>%
+  summarise(.fitted = mean(.fitted), .upper = mean(.upper), .lower = mean(.lower), .groups = "drop") %>%
+  ggplot(aes(x = RelationshipStatus, y = .fitted, fill = Fertility)) + 
+  geom_bar(stat = "identity", position = position_dodge2(preserve = "single"), width = 0.5) + 
+  geom_linerange(aes(ymin = .lower,  ymax = .upper), position = position_dodge(width = 0.5)) + 
+  geom_text(label = paste0("Interaction:", p_val), x = 1.5, y = 7.5, colour = "#666666") + 
+  labs(x = "RelationshipStatus", y = "ReligiosityCompositeScore") + 
+  ylim(c(0, 8.1)) + 
+  theme_minimal()
+```
+
+**Note #6:** due to the issues with compiling in the RMarkdown vignette output format, we only present the results from the default universe.
 
 ## Exporting the JSON files
 
@@ -279,7 +310,7 @@ The JSON file consists of two attributes: `code` and `parameters`.
 This function is used to export the (unmodified) dataset that is used in the analysis, and is a simple wrapper around the `write_json` function.
 
 ```{r, eval = FALSE}
- export_data_json(durante, "../../data.json")
+ export_data_json(durante, "data.json")
 ```
 
 The JSON file consists of a list of objects, each with two attributes: `field` and `values`. 

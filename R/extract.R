@@ -36,6 +36,8 @@
 #'     "trim_5pc" ~ 0.025,
 #'     "trim_10pc" ~ 0.05
 #'   ))
+#'
+#'   y <- sd(data)
 #' })
 #'
 #' # Extracts the relevant variable from the multiverse
@@ -43,9 +45,14 @@
 #'   extract_variables(x.mean)
 #' 
 #' # if you want to filter the multiverse before extracting variables from it
-#' # you ca first create the table and manipulate it before extracting variables
+#' # you can first create the table and manipulate it before extracting variables
 #' expand(M) %>%
 #'   extract_variables(x.mean)
+#'
+#' # you can extract more than one variable from the multiverse simultaneously
+#' # these variables will be new columns in the dataset
+#' expand(M) %>%
+#'   extract_variables(x.mean, y)
 #' }
 #' 
 #' @importFrom tidyr unnest_wider
@@ -71,8 +78,9 @@ extract_variables.data.frame <- function(x, ..., .results = .results) {
   
   mutate(
     x, extracted = lapply(!!.results, extract_from_env, ...)
-  ) %>%
-    unnest_wider("extracted")
+  ) |> 
+  unnest_longer(extracted) |> 
+  pivot_wider(names_from = extracted_id, values_from = extracted)
 }
 
 extract_from_env <- function(.env, ...) {
