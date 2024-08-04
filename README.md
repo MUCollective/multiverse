@@ -358,8 +358,9 @@ code block inside a RMarkdown document through the following steps:
 -   Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one
     result with “Insert multiverse code chunk” as the name.
--   Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or
-    Ctrl+Shift+Alt+M (on Windows).
+-   Click on the Shortcut field and press Cmd+Shift+M (on Mac OS) or
+    Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended
+    shortcuts, but you should feel free to use whatever you prefer.
 -   Click “Apply” and exit the dialog box
 
 Please refer to \link{multiverse-in-rmd} for more details on using the
@@ -568,7 +569,7 @@ extract_variables(M, df.filtered)
 #> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
 #> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
 #> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
-#> # ℹ 1 more variable: df.filtered <list>
+#> # ℹ 1 more variable: df.filtered <named list>
 ```
 
 ## Building up a complete analysis

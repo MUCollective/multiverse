@@ -422,7 +422,7 @@ bootstrapped_ci <- function(x, y) {
 Instead of defining parameters locally in the code, where we want the code to differ, we can also just define it upfront by assigning it to a variable and use the variable in your code. For example, in the next example, we declare *two different branches* for data transformation, data modeling and data presentation respectively. We also define any necessary functions along the way.
 
 ```{multiverse h-9, inside = M, echo = FALSE}
-data_trans <- branch(data_trans,
+transform_fun <- branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
   )
@@ -435,7 +435,7 @@ fit <- branch(bootstrap,
 ci <- 0.95
 
 df <- data.userlogs.raw  %>%
-    mutate( duration = data_trans(duration) ) %>% 
+    mutate( duration = transform_fun(duration) ) %>% 
     mutate( modality.f = factor(modality) ) %>%
     group_by(subject, modality.f, modalityname) %>% 
     summarise( duration = mean(duration), .groups = "drop" ) %>%
@@ -452,7 +452,7 @@ df <- df %>%
 
 ````
 ```{multiverse default-m-9, inside = M}`r ''`
-data_trans <- branch(data_trans,
+transform_fun <- branch(data_trans,
     "log-transformed" ~ log,
     "un-transformed" ~ identity
   )
@@ -465,7 +465,7 @@ fit <- branch(bootstrap,
 ci <- 0.95
 
 df <- data.userlogs.raw  %>%
-  mutate( duration = data_trans(duration) ) %>% 
+  mutate( duration = transform_fun(duration) ) %>% 
   mutate( modality.f = factor(modality) ) %>%
   group_by(subject, modality.f, modalityname) %>% 
   summarise( duration = mean(duration), .groups = "drop" ) %>%
@@ -560,7 +560,7 @@ fit <- branch(model
 
 This is a more verbose way of specifying the same decision and requires the user to repeat code which may *potentially* introduce errors, but it might be easier to read.
 
-## Example 6: Declaring continuous variables in `branch`
+## Example 8: Declaring continuous variables in `branch`
 So far we have only looked at examples where we declare parameters within a branch which takes discrete values. In most cases, it makes sense to declare them separately and if the number of values for a discrete variable is not too high, sufficiently easy and concise to declare them in this manner. However, this does not apply to continuous variables as declaring all possible values would be painstakingly difficult. Hence we provide a alternate way of declaring branches where the parameter takes a continuous sequence of values.
 
 ```{r}
@@ -619,4 +619,73 @@ expand(M) %>%
 
 **Note**: in this vignette we used the script-oriented `inside()` function for implementing the multiverse. However, we can implement the exact same multiverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.
 
+
+## Example 9: Nested branch statements and asymmetric trees
+
+Consider the following hypothetical dataset where the analyst wants to predict the variable `score` based on the measures `pretest1`, `pretest2`, `reaction_time`, `HR` (heart rate) and `fatigue`.
+
+```{r}
+M = multiverse()
+
+# a random simulated dataset
+N = 100
+
+df = tibble(
+  score = round(rlnorm(N, 3)),
+  pretest1 = round(runif(N) * 100),
+  pretest2 = round(runif(N) * 100),
+  reaction_time = rnorm(N, 5, 1),
+  HR = round(rnorm(N, 90, 10)),
+  fatigue = sample(seq(1:7), size = N, replace = TRUE)
+)
+```
+
+They come up with the following regression models—normal and binomial, and in the normal model they include a decision to include or not include an interaction term for two of the variables. While one way of defining such a multiverse is through the use of the conditional operator (see `vignette("conditions")`, this can also be defined using nested branch statements:
+
+```{multiverse h-11, inside = M, echo = FALSE}
+fit = branch(model, 
+         "normal" ~ glm(log(score) ~ pretest1 + pretest2 + fatigue +
+                        branch(interaction, 
+                               "yes" ~ reaction_time*HR,
+                               "no" ~ reaction_time + HR) + 
+                        fatigue, data = df, family = "gaussian"),
+         "gamma" ~ glm(score ~ pretest1 + pretest2 + reaction_time + HR + 
+                          fatigue, data = df, family = "gamma")
+      )
+```
+
+
+````
+```{multiverse default-m-11, inside = M}`r ''`
+fit = branch(model, 
+         "normal" ~ glm(log(score) ~ pretest1 + pretest2 + 
+                        branch(interaction, 
+                               "yes" ~ reaction_time:HR,
+                               "no" ~ reaction_time:HR) + 
+                        fatigue, data = df, family = "gaussian"),
+         "binomial" ~ glm(score ~ pretest1 + pretest2 + 
+                          fatigue, data = df, family = "binomial")
+      )
+```
+````
+
+The resultant multiverse should consist of three distinct analysis paths:
+
+              root
+           /        \
+        normal   binomial
+        /   \
+      yes    no (interactions)
+
+However, because of how we currently process the multiverse code, if nested branch statements result in asymmetric trees such as the one above, we do not get the correct output. Until we fix this issue, we resort to providing the user with a warning whenever such potentially asymmetric trees are detected:
+
+```{r}
+expand(M)
+```
+The solution, which is essentially a workaround is to remove duplicates, *upon verification* at the post-processing stage (and we can then safely ignore the warning).
+
+```{r, warning = FALSE}
+expand(M) |> 
+  filter(.universe != 4)
+```
 
