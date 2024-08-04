@@ -135,7 +135,6 @@ Tangle.classes.Iterate = {
 }
 
 function setup() {
-  
   let t = new Tangle(
     document,
     {
@@ -162,7 +161,6 @@ function setup() {
           this[k] = this.choices[k][0];
         }
         choices = this.choices;
-        console.log(choices)
         combos  = this.combos;
       },
       update: function() {
@@ -177,19 +175,19 @@ function setup() {
           not) after the "pre" tag that is to be displayed. As a visual,
           
           <pre class="r multiverse ...">...</pre> <-- to be displayed
-          ...                                     <-- figs that may (not) exist
-          <pre ...>...</pre>                      <-- next "pre" tag
+          ...                                     <-- warnings / figs that may (not) exist
+          <pre class="r multiverse ..."...>...</pre>                      <-- next multiverse "pre" tag
         */
         // TODO: change to find succeeding <p> tags
         let preMV = $("pre.multiverse");
-        preMV.hide();
+        // console.log(preMV);
         preMV.each(
-          (i,e) => { $(e).nextUntil('pre').hide(); }
+          (i,e) => { $(e).nextUntil('pre.multiverse').hide(); }
         );
         let pre = $("." + Object.entries(universe).map(d => d.join('---')).join('.'));
         pre.show();
         pre.each(
-          (i,e) => { $(e).nextUntil('pre').show(); }
+          (i,e) => { $(e).nextUntil('pre.multiverse').show(); }
         );
       }
     }
