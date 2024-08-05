@@ -59,7 +59,7 @@ expand.multiverse <- function(multiverse) {
     select(names(.m_obj$parameters))
   
   if (length(.m_obj$conditions) > 0) {
-    all_conditions <- parse_expr(paste0("(", .m_obj$conditions, ")", collapse = "&"))
+    all_conditions <- parse_expr(paste0("(", unlist(.m_obj$conditions), ")", collapse = "&"))
   } else {
     all_conditions <- expr(TRUE)
   }
@@ -196,7 +196,14 @@ conditions.default <- function(multiverse) {
 #' @rdname accessors
 #' @export
 conditions.multiverse <- function(multiverse) {
-  attr(multiverse, "multiverse")[['conditions']]
+  .conditions = attr(multiverse, "multiverse")[['conditions']]
+  redundant_conditions = lapply(unlist(.conditions), function(x) { x == TRUE} ) |> unname() |>  unlist()
+  
+  if (!is.null(redundant_conditions)) {
+    unlist(.conditions, use.names = FALSE)[!redundant_conditions] 
+  } else {
+    list()
+  }
 }
 
 

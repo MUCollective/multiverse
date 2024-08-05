@@ -23,7 +23,7 @@ test_that("can extract one or more single valued variables from the multiverse",
     x = as.character(x)
   )
   
-  expect_equal(as.list(out), as.list(ref))
+  expect_equal(lapply(as.list(out), unname), as.list(ref))
 })
 
 test_that("can extract variables from the multiverse which are not at the last level of the tree", {
@@ -44,7 +44,7 @@ test_that("can extract variables from the multiverse which are not at the last l
   
   ref <- tibble(x_value = rep(c("a", "b"), each = 10))
   
-  expect_equal(as.list(out), as.list(ref))
+  expect_equal(lapply(as.list(out), unname), as.list(ref))
 })
 
 test_that("can extract vectors and lists from the multiverse as list columns", {
@@ -77,8 +77,8 @@ test_that("can extract vectors and lists from the multiverse as list columns", {
     x = as.character(x)
   )
   
-  expect_equal(as.list(out.1), as.list(ref.1))
-  expect_equal(as.list(out.2), as.list(ref.2))
+  expect_equal(lapply(as.list(out.1), unname), as.list(ref.1))
+  expect_equal(lapply(as.list(out.2), unname), as.list(ref.2))
 })
 
 test_that("can extract vectors from the multiverse as list columns", {
@@ -100,5 +100,5 @@ test_that("can extract vectors from the multiverse as list columns", {
     x = as.character(x)
   )
   
-  expect_equal(as.list(out), as.list(ref))
+  expect_equal(lapply(as.list(out), unname), as.list(ref))
 })

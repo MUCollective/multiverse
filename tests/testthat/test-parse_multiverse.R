@@ -45,17 +45,17 @@ test_that("the output of `get_branch_parameter_conditions` on a `branch` call", 
 # combine_parameter_conditions -----------------------------------------
 
 test_that("combine_parameter_conditions properly combines non-overlapping parameters and conditions", {
-   l.1 = list(parameters = list(a = 1:3, b = 3:4), conditions = letters[1:3])
-   l.2 = list(parameters = list(c = 4:6, d = 1:2), conditions = letters[4:6])
-   l = list(parameters = list(a = 1:3, b = 3:4, c = 4:6, d = 1:2), conditions = letters[1:6])
+   l.1 = list(parameters = list(a = 1:3, b = 3:4), conditions = list(a = letters[1:3]))
+   l.2 = list(parameters = list(c = 4:6, d = 1:2), conditions = list(b = letters[4:6]))
+   l = list(parameters = list(a = 1:3, b = 3:4, c = 4:6, d = 1:2), conditions = list(a = letters[1:3], b = letters[4:6]))
 
   expect_equal(combine_parameter_conditions(l.1, l.2), l)
 })
 
 test_that("combine_parameter_conditions properly combines overlapping parameters and conditions", {
-  l.1 = list(parameters = list(a = 1:3, b = 3:4), conditions = letters[1:3])
-  l.2 = list(parameters = list(a = c(2,4,6), b = 1:5), conditions = letters[4:6])
-  l = list(parameters = list(a = c(1,2,3,4,6), b = c(3,4,1,2,5)), conditions = letters[1:6])
+  l.1 = list(parameters = list(a = 1:3, b = 3:4), conditions = list(a = letters[1:3]))
+  l.2 = list(parameters = list(a = c(2,4,6), b = 1:5), conditions = list(b = letters[4:6]))
+  l = list(parameters = list(a = c(1,2,3,4,6), b = c(3,4,1,2,5)), conditions = list(a = letters[1:3], b = letters[4:6]))
 
   expect_equal(combine_parameter_conditions(l.1, l.2), l)
 })
@@ -135,7 +135,7 @@ test_that("`get_parameter_conditions` returns an empty list when input expressio
 test_that("`get_parameter_conditions` returns the correct output (list) when input expression has a single branch", {
   an_expr = expr({
     df <- test_df %>%
-      mutate(NextMenstrualOnset = branch(mentrual_calculation,
+      mutate(NextMenstrualOnset = branch(menstrual_calculation,
            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
            "mc_option3" ~ StartDateNext)
@@ -143,8 +143,8 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
   })
 
   output = list(
-    parameters = list(mentrual_calculation = list("mc_option1", "mc_option2", "mc_option3")),
-    conditions = list()
+    parameters = list(menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3")),
+    conditions = list(menstrual_calculation = list(TRUE, TRUE, TRUE))
   )
 
   expect_equal(get_parameter_conditions(an_expr), output)
@@ -177,7 +177,11 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
         relationship_status = list("rs_option1", "rs_option2", "rs_option3"),
         cycle_length = list("cl_option1", "cl_option2", "cl_option3")
     ),
-    conditions = list()
+    conditions = list(
+      mentrual_calculation = list(TRUE, TRUE, TRUE),
+      relationship_status = list(TRUE, TRUE, TRUE),
+      cycle_length = list(TRUE, TRUE, TRUE)
+    )
   )
 
   expect_equal(get_parameter_conditions(an_expr), output)
@@ -231,7 +235,7 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
  # expect_equal(pc_list.1, output)
  # expect_equal(pc_list.2, output)
   expect_true(all(map2_lgl(pc_list.1$parameters, output$parameters, identical)))
-  expect_true(all(map2_lgl(pc_list.1$conditions, output$conditions, identical)))
+  expect_true(all(map2_lgl(pc_list.1$conditions$branch_assert, output$conditions, identical)))
 })
 
 
@@ -244,7 +248,7 @@ test_that("`get_condition` is able to extract conditions in the correct format",
   ))
 
   conditions_list = map(as.list(an_expr[-1:-2]), ~ get_condition(.x, 'value_z'))
-  conditions_list.ref = list(NULL, NULL, expr(("value_z" != "sum" | (value_y == TRUE))))
+  conditions_list.ref = list(TRUE, TRUE, expr(("value_z" != "sum" | (value_y == TRUE))))
 
   expect_equal(conditions_list, conditions_list.ref)
 })
@@ -257,7 +261,7 @@ test_that("`get_condition` is able to extract conditions in the correct format",
   ))
 
   conditions_list = map(as.list(an_expr[-1:-2]), ~ get_condition(.x, 'value_z'))
-  conditions_list.ref = list(NULL, NULL, expr(("value_z" != "(x + y)" | (value_y == TRUE))))
+  conditions_list.ref = list(TRUE, TRUE, expr(("value_z" != "(x + y)" | (value_y == TRUE))))
 
   expect_equal(conditions_list, conditions_list.ref)
 })
@@ -276,7 +280,7 @@ test_that("`get_condition` ignores `%when%` if assigned to subexpression of an o
                           "sum" ~ (x + (y %when% (value_y == TRUE)))
   ))
 
-  ref = list( NULL, NULL, expr( ("value_z" != "sum" | (values_y == TRUE)) ), NULL)
+  ref = list( TRUE, TRUE, expr( ("value_z" != "sum" | (values_y == TRUE)) ), TRUE)
 
   expect_equal( map(as.list(an_expr.1[-1:-2]), ~ get_condition(.x, 'value_z')), ref )
   expect_equal( map(as.list(an_expr.2[-1:-2]), ~ get_condition(.x, 'value_z')), ref )

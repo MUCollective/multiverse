@@ -1,6 +1,6 @@
 library(distributional)
 
-test_that("export_2_json creates correct CDF for estimate + std.error and distributions", {
+test_that("export_results_json creates correct CDF for estimate + std.error and distributions", {
   N = 50
   
   dist1 = dist_normal()
@@ -28,19 +28,21 @@ test_that("export_2_json creates correct CDF for estimate + std.error and distri
   )
   
   df1 = df %>%
-    export_2_json(term, dist = distribution) %>%
-    unnest(results)
+    export_results_json(term, dist = distribution) %>%
+    unnest(results) %>%
+    select(-distribution)
   
   df2 = df %>%
     select(-distribution) %>%
-    export_2_json(term, estimate, std.error) %>%
-    unnest(results)
+    export_results_json(term, estimate, std.error) %>%
+    unnest(results) %>%
+    select(-dist)
   
   expect_equal(df.ref, df1)
   expect_equal(df.ref, df2)
 })
 
-test_that("export_dist_2_json creates correct CDF for distributions", {
+test_that("export_results_dist_json creates correct CDF for distributions", {
   N = 50
   
   dist1 = dist_normal()
@@ -67,8 +69,9 @@ test_that("export_dist_2_json creates correct CDF for distributions", {
   )
   
   df1 = df %>%
-    export_dist_2_json(term, distribution) %>%
-    unnest(results)
+    export_results_dist_json(term, distribution) %>%
+    unnest(results) %>%
+    select(-distribution)
   
   expect_equal(df.ref, df1)
 })
@@ -81,7 +84,7 @@ test_that("get_limits esimtates correct finite limits non-normal distributions",
   expect_equal(get_limits(dist_exponential(2))[[1]], 0) # lower limit of exponential dist is 0
 })
 
-test_that("export_dist_2_json creates correct CDF for non-normal distributions", {
+test_that("export_results_dist_json creates correct CDF for non-normal distributions", {
   N = 50
   
   dist1 = dist_gamma(2, 2)
@@ -106,14 +109,15 @@ test_that("export_dist_2_json creates correct CDF for non-normal distributions",
   )
   
   df1 = df %>%
-    export_dist_2_json(term, distribution) %>%
-    unnest(results)
+    export_results_dist_json(term, distribution) %>%
+    unnest(results) %>%
+    select(-distribution)
   
   expect_equal(df.ref, df1)
 })
 
 
-test_that("export_2_json creates correct CDF for estimate + std.error and distributions from output of multiverse `expand`", {
+test_that("export_results_json creates correct CDF for estimate + std.error and distributions from output of multiverse `expand`", {
   N = 50
   M = multiverse()
   
@@ -143,8 +147,9 @@ test_that("export_2_json creates correct CDF for estimate + std.error and distri
   df1 = expand(M) %>%
     extract_variables(df) %>%
     unnest(df) %>%
-    export_2_json(term, dist = distribution) %>%
-    unnest(results)
+    export_results_json(term, dist = distribution) %>%
+    unnest(results) %>%
+    select(-distribution)
   
   expect_equal(df.ref, df1)
 })
