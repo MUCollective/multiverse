@@ -110,7 +110,11 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
   ## for each node in the previous level, take the parameter assignment of the previous with the new parameter assignments
   if (is.null(.parent_block)) {
     df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE)
-    df <- filter(df, eval(all_conditions))
+    df <- try(filter(df, eval(all_conditions)), silent = TRUE)
+    
+    if(inherits(df, "try-error")) {
+      stop(attr(df, "condition")$parent, "\nHave you declared all the parameters that you are using?")
+    }
     
     n <- ifelse(nrow(df), nrow(df), 1)
     
