@@ -358,7 +358,7 @@ code block inside a RMarkdown document through the following steps:
 -   Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one
     result with “Insert multiverse code chunk” as the name.
--   Click on the Shortcut field and press Cmd+Shift+M (on Mac OS) or
+-   Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or
     Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended
     shortcuts, but you should feel free to use whatever you prefer.
 -   Click “Apply” and exit the dialog box

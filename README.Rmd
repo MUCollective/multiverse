@@ -220,7 +220,7 @@ Alternately, users can insert a multiverse code block using a keyboard shortcut.
 
 -   Tools > Addins > Browse Addins… > Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one result with "Insert multiverse code chunk" as the name.
--   Click on the Shortcut field and press Cmd+Shift+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended shortcuts, but you should feel free to use whatever you prefer.
+-   Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended shortcuts, but you should feel free to use whatever you prefer.
 -   Click "Apply" and exit the dialog box
 
 Please refer to \\link{multiverse-in-rmd} for more details on using the multiverse code blocks with RMarkdown. The vignette also contains information on steps for debugging some of the common problems in assigning keyboard shortcuts.

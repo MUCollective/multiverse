@@ -55,7 +55,8 @@
 #'   extract_variables(x.mean, y)
 #' }
 #' 
-#' @importFrom tidyr unnest_wider
+#' @importFrom tidyr unnest_longer
+#' @importFrom tidyr pivot_wider
 #' @importFrom rlang enquos
 #' @importFrom rlang as_name
 #'
