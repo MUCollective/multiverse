@@ -51,6 +51,8 @@ inside(M, {
     "trim_5pc" ~ 0.025,
     "trim_10pc" ~ 0.05
   ))
+  
+  y <- sd(data)
 })
 
 # Extracts the relevant variable from the multiverse
@@ -61,6 +63,11 @@ M \%>\%
 # you ca first create the table and manipulate it before extracting variables
 expand(M) \%>\%
   extract_variables(x.mean)
+
+# you can extract more than one variable from the multiverse simultaneously
+# these variables will be new columns in the dataset
+expand(M) \%>\%
+  extract_variables(x.mean, y)
 }
 
 }

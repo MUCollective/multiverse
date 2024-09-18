@@ -115,14 +115,14 @@ A **branch** may be defined for:
 
 In the rest of this document we describe different ways of declaring a **branch**, using different syntactical styles that are popular with R users, including base R syntax and tidyverse syntax.
 
-## Example 1: A branch within functions in a "pipe": `%>%`
+## Example 1: A branch within functions in a "pipe": `|>`
 
 Let's say that we have some data which indicates the amount of time spent by a user in four different conditions which are indexed 1, 2, 3 and 4 (the `modality` column in the following dataset). We will first load the data and convert the column into factor from integer.
 
 ```{r}
 data("userlogs")
-data.userlogs.raw = userlogs %>%
-  mutate( modality = factor(modality) ) %>%
+data.userlogs.raw = userlogs |>
+  mutate( modality = factor(modality) ) |>
   arrange( modality )
 ```
 
@@ -135,8 +135,8 @@ M = multiverse()
 The data variable `duration` is approximately normally distributed, however, as is common with such data it has a long right-tail. Before using a regression model, we can choose to either log-transform the data, or assume that it is normally distribution and analyse it. We can perform both analysis in our multiverse by declaring two branches --- one where the variable is log-transformed and the other where it is not.
 
 ```{multiverse h-1, inside = M, echo = FALSE}
-df <- data.userlogs.raw %>%
-    select(modality, duration) %>%
+df <- data.userlogs.raw |>
+    select(modality, duration) |>
     mutate( duration = branch( data_transform, 
         "none" ~ duration,
         "log" ~ log(duration)
@@ -145,8 +145,8 @@ df <- data.userlogs.raw %>%
 
 ````
 ```{multiverse default-m-1, inside = M}`r ''`
-df <- data.userlogs.raw %>%
-    select(modality, duration) %>%
+df <- data.userlogs.raw |>
+    select(modality, duration) |>
     mutate( duration = branch( data_transform, 
         "none" ~ duration,
         "log" ~ log(duration)
@@ -184,7 +184,7 @@ this decision node in a multiverse analysis can thus be declared as:
 # here we just create the variable `df` in the multiverse
 data("hurricane")
 
-hurricane_data = hurricane %>%
+hurricane_data = hurricane |>
   # rename some variables
   rename(
       year = Year,
@@ -199,7 +199,7 @@ hurricane_data = hurricane %>%
   )
 
 # here, we perform a `filter` operation in the multiverse
-df.filtered = hurricane_data %>%
+df.filtered = hurricane_data |>
   filter(branch(death_outliers,
       "no_exclusion" ~ TRUE,
       "most_extreme" ~ name != "Katrina",
@@ -212,7 +212,7 @@ df.filtered = hurricane_data %>%
 # here we just create the variable `df` in the multiverse
 df = data("hurricane")
 
-hurricane_data = hurricane %>%
+hurricane_data = hurricane |>
     # rename some variables
     rename(
         year = Year,
@@ -227,7 +227,7 @@ hurricane_data = hurricane %>%
     )
 
 # here, we perform a `filter` operation in the multiverse
-df.filtered = hurricane %>%
+df.filtered = hurricane |>
   filter(branch(death_outliers,
       "no_exclusion" ~ TRUE,
       "most_extreme" ~ name != "Katrina",
@@ -247,7 +247,7 @@ expand(M)
 
 ```{multiverse h-3, inside = M, echo = FALSE}
 # here, we perform a `filter` operation in the multiverse
-df.filtered = hurricane_data %>%
+df.filtered = hurricane_data |>
   branch(death_outliers,
       "no_exclusion" ~ filter(TRUE),
       "most_extreme" ~ filter(name != "Katrina"),
@@ -258,7 +258,7 @@ df.filtered = hurricane_data %>%
 ````
 ```{multiverse default-m-3, inside = M}`r ''`
 # here, we perform a `filter` operation in the multiverse
-df.filtered = hurricane_data %>%
+df.filtered = hurricane_data |>
   branch(death_outliers,
       "no_exclusion" ~ filter(TRUE),
       "most_extreme" ~ filter(name != "Katrina"),
@@ -273,16 +273,16 @@ However, we cannot chain additional pipes after the `filter()`, within the `bran
 ````
 ```{multiverse default-m-4, inside = M}`r ''`
 # do not do this
-df.filtered = hurricane_data %>%
+df.filtered = hurricane_data |>
   branch(death_outliers,
-      "no_exclusion" ~ filter(TRUE) %>% mutate(deaths = log(deaths + 1)),
-      "most_extreme" ~ filter(name != "Katrina") %>% mutate(deaths = log(deaths + 1)),
-      "two_most_extreme" ~ filter(!(name %in% c("Katrina", "Audrey"))) %>% mutate(deaths = log(deaths + 1))
+      "no_exclusion" ~ filter(TRUE) |> mutate(deaths = log(deaths + 1)),
+      "most_extreme" ~ filter(name != "Katrina") |> mutate(deaths = log(deaths + 1)),
+      "two_most_extreme" ~ filter(!(name %in% c("Katrina", "Audrey"))) |> mutate(deaths = log(deaths + 1))
   )
 ```
 ````
 
-This is because, due to the presence of the pipe (`%>%`) within the `branch` statement, we are not able to process the option expressions. Workarounds to this problem include declaring additional pipes outside branch (if these are invariant), or declaring it by reusing the same parameter (if they vary based on the options).
+This is because, due to the presence of the pipe (`|>`) within the `branch` statement, we are not able to process the option expressions. Workarounds to this problem include declaring additional pipes outside branch (if these are invariant), or declaring it by reusing the same parameter (if they vary based on the options).
 
 ## Example 4: Variable assignment inside a branch statement
 
@@ -357,7 +357,7 @@ Then we execute the multiverse and inspect the results:
 ```{r}
 execute_multiverse(M)
 
-expand(M) %>%
+expand(M) |>
   mutate(transformed_duration = map(.results, "duration"))
 ```
 
@@ -394,9 +394,9 @@ Next, we execute and inspect the results. Again, this alternate calculation also
 ```{r}
 execute_multiverse(M)
 
-expand(M) %>%
-  mutate( transformed_duration = map(.results, "duration" ) ) %>% 
-  unnest(c(transformed_duration)) %>%
+expand(M) |>
+  mutate( transformed_duration = map(.results, "duration" ) ) |> 
+  unnest(c(transformed_duration)) |>
   head()
 ```
 
@@ -416,8 +416,8 @@ t_test_ci <- function(x, y) {
 }
 
 bootstrapped_ci <- function(x, y) {
-    boot(data = x, statistic = samplemean, R = 5000) %>%
-        broom::tidy( conf.int = TRUE, conf.method = "bca", conf.level =  y) %>%
+    boot(data = x, statistic = samplemean, R = 5000) |>
+        broom::tidy( conf.int = TRUE, conf.method = "bca", conf.level =  y) |>
         rename(estimate = statistic)
 }
 ```
@@ -437,20 +437,21 @@ fit <- branch(bootstrap,
 
 ci <- 0.95
 
-df <- data.userlogs.raw  %>%
-    mutate( duration = data_trans(duration) ) %>% 
-    mutate( modality.f = factor(modality) ) %>%
-    group_by(subject, modality.f, modalityname) %>% 
-    summarise( duration = mean(duration), .groups = "drop" ) %>%
-    group_by(modality.f) %>%
-    rename( value = duration ) %>%
+df <- data.userlogs.raw  |>
+    mutate( duration = data_trans(duration) ) |> 
+    mutate( modality.f = factor(modality) ) |>
+    group_by(subject, modality.f, modalityname) |> 
+    summarise( duration = mean(duration), .groups = "drop" ) |>
+    group_by(modality.f) |>
+    rename( value = duration ) |>
     summarise( data = list(value), .groups = "keep" )
 
-df <- df %>%
-    mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
-    select(-data) %>%
+df <- df |>
+    mutate( fit = map(data, ~ fit(.x, ci) ) ) |>
+    select(-data) |>
     unnest( cols = c(fit) )
 ```
+
 
 ````
 ```{multiverse default-m-9, inside = M}`r ''`
@@ -466,18 +467,18 @@ fit <- branch(bootstrap,
 
 ci <- 0.95
 
-df <- data.userlogs.raw  %>%
-  mutate( duration = data_trans(duration) ) %>% 
-  mutate( modality.f = factor(modality) ) %>%
-  group_by(subject, modality.f, modalityname) %>% 
-  summarise( duration = mean(duration), .groups = "drop" ) %>%
-  group_by(modality.f) %>%
-  rename( value = duration ) %>%
+df <- data.userlogs.raw  |>
+  mutate( duration = data_trans(duration) ) |> 
+  mutate( modality.f = factor(modality) ) |>
+  group_by(subject, modality.f, modalityname) |> 
+  summarise( duration = mean(duration), .groups = "drop" ) |>
+  group_by(modality.f) |>
+  rename( value = duration ) |>
   summarise( data = list(value), .groups = "keep" )
 
-df <- df %>%
-  mutate( fit = map(data, ~ fit(.x, ci) ) ) %>%
-  select(-data) %>%
+df <- df |>
+  mutate( fit = map(data, ~ fit(.x, ci) ) ) |>
+  select(-data) |>
   unnest( cols = c(fit) )
 ```
 ````
@@ -490,28 +491,28 @@ execute_multiverse(M)
 
 To see the results of using branches, we plot a part of this multiverse. We see the different transformations (no transformations in the right column and log-transform in the left column). Each row shows the different data presentation branches by presenting different confidence levels.
 
-```{r, fig.width = 8, fig.height = 8}
-expand(M) %>%
-  mutate(df = map(.results, "df" ) ) %>%
-  unnest( cols = c(df) )  %>%
+```{r, fig.width = 8, fig.height = 4}
+expand(M) |>
+  mutate(df = map(.results, "df" ) ) |>
+  unnest( cols = c(df) )  |>
   mutate( modality.f = recode( modality.f, 
                  "1" = "physical-touch",
                  "2" = "no-touch",
                  "3" = "virtual-prop",
                  "4" = "virtual-mouse"
-  ) ) %>%
+  ) ) |>
   mutate( 
     estimate = ifelse(data_trans == "log", exp(estimate), estimate),
     conf.low = ifelse(data_trans == "log", exp(conf.low), conf.low),
     conf.high = ifelse(data_trans == "log", exp(conf.high), conf.high)
-  ) %>%
-  arrange(ci, desc(data_trans), desc(bootstrap)) %>%
-  filter( bootstrap == "bca" ) %>%
+  ) |>
+  arrange(desc(data_trans), desc(bootstrap)) |>
+  filter( bootstrap == "bca" ) |>
   ggplot() + 
-  #geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = modality.f)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = modality.f), height = 0) +
-  facet_grid(. ~ data_trans, scales = "free")
+  facet_grid(. ~ data_trans, scales = "free") +
+  theme_minimal()
 ```
 
 
@@ -606,16 +607,17 @@ execute_multiverse(M)
 
 We then plot the estimates from the multiverse to see if we obtain the correct results:
 
-```{r, fig.width = 8, fig.height = 8}
-expand(M) %>%
-  mutate(df = map(.results, "intervals" ) ) %>%
-  unnest( cols = c(df) ) %>%
-  unnest(seed) %>%  # won't be necessary once issue #34 is fixed
+```{r, fig.width = 8, fig.height = 5}
+expand(M) |>
+  mutate(df = map(.results, "intervals" ) ) |>
+  unnest( cols = c(df) ) |>
+  unnest(seed) |>  # won't be necessary once issue #34 is fixed
   ggplot(aes(x = .universe, y = estimate, ymin = conf.low, ymax = conf.high), alpha = 0.5) +
   geom_pointrange() +
   facet_grid( . ~ term )  +
   scale_x_continuous( breaks = seq(0, 25, by = 5) ) +
-  labs(x = "Universe (i.e. the seed parameter)", y = "Model Parameter Values", title = "Estimates with 95% confidence intervals")
+  labs(x = "Universe (i.e. the seed parameter)", y = "Model Parameter Values", title = "Estimates with 95% confidence intervals") +
+  theme_minimal()
 ```
 
 **Note**: in this vignette we used the script-oriented `inside()` function for implementing the multiverse. However, we can implement the exact same multiverse in RMarkdown using the `multiverse-code-block` for more interactive programming. To implement this using a `multiverse-code-block`, we can simply place the code passed into the inside function (the second argument) inside a code block of type `multiverse`, provide it with the appropriate labels and multiverse object, and execute it. See \link(multiverse-in-rmd) and \link(branch) for more details and examples.

@@ -129,12 +129,12 @@ test_that("parallel computation is supported", {
   plan(sequential)
   
   expect_equal(
-    as.list(select(extract_variables(M_cores_2.1, x, y), x, y)), 
+    lapply(as.list(select(extract_variables(M_cores_2.1, x, y), x, y)), unname), 
     as.list( ref_list.1 )
   )
   
   expect_equal(
-    as.list(select(extract_variables(M_cores_2.2, var1, var2), var1, var2)),
+    lapply(as.list(mutate(select(extract_variables(M_cores_2.2, var1, var2), var1, var2), across(var1:var2, unlist))), unname),
     as.list( ref_list.2)
   )
 })
@@ -157,7 +157,7 @@ test_that("`execute_multiverse` sends error and warning messages but does not st
     x = c(1, 0, NA, 10, 14)
   )
   
-  expect_equal(as.list(df.extracted), as.list(ref))
+  expect_equal(lapply(as.list(df.extracted), unname), as.list(ref))
 })
 
 
@@ -442,6 +442,6 @@ test_that("execute_universe outputs correct result during parallel execution of 
     ) %>%
     select(.universe, x_values, z_values, everything())
   
-  expect_equal(as.list(.res), as.list(.res_ref))
+  expect_equal(as.list(unnest(.res, c(astr, anmbr))), as.list(.res_ref))
 })
 

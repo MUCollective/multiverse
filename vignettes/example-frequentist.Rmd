@@ -45,7 +45,7 @@ knitr::opts_chunk$set(
 
 ## Multiverse case study #2
 
-In this vignette, we will recreate the multiverse analysis, [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
+In this vignette, we will recreate the multiverse analysis, [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) using the package. 
 
 ## Introduction
 
@@ -266,17 +266,18 @@ df.results$estimate[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$e
 df.results$conf.low[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$conf.low[df.mtbl$data_transform == "log-transformed"])
 df.results$conf.high[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$conf.high[df.mtbl$data_transform == "log-transformed"])
 
-df.results %>% head()
+df.results |> head()
 ```
 
 
 ```{r, fig.width = 9, fig.height = 4}
-p <- df.results %>%
+p <- df.results |>
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = modality)) +
   geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = modality), height = 0) +
-  transition_manual( .universe )
+  transition_manual( .universe ) +
+  theme_minimal()
 
 animate(p, nframes = 28,  fps = 2)
 ```
@@ -287,16 +288,15 @@ The figure above shows the (geometric) mean completion time for each condition. 
 So far we have tried to keep this analysis in base R. However, the steps involved in extracting and visualising results from the multiverse maybe more convenient for some using the tidyverse API. We can implement the steps that we have taken in the previous three code block in the following way using the tidyverse. The result of this is the same data frame that was created in the previous step, and was used as input data to ggplot, `df.results`. The `multiverse` package is flexible, and does not restrict you towards a particular style of R programming.
 
 ```{r}
-expand(M) %>%
-  mutate( index = seq(1:nrow(.)) ) %>%
-  mutate( summary = map(.results, "df") ) %>%
-  unnest_wider( c(summary)) %>%
-  unnest(cols = c(modality, estimate, conf.low, conf.high)) %>%
+expand(M) |>
+  mutate( summary = map(.results, "df") ) |>
+  unnest_wider( c(summary)) |>
+  unnest(cols = c(modality, estimate, conf.low, conf.high)) |>
   mutate(
     estimate = ifelse(data_transform == "log-transformed", exp(estimate), estimate),
     conf.low = ifelse(data_transform == "log-transformed", exp(conf.low), conf.low),
     conf.high = ifelse(data_transform == "log-transformed", exp(conf.high), conf.high)
-  ) %>%
+  ) |>
   arrange(conf_level, desc(data_transform), desc(ci_method))
 ```
 
@@ -340,6 +340,12 @@ df.diffs <- transform(df.diffs, estimate = as.numeric(estimate), conf.low = as.n
 ```
 ````
 
+We then execute all the other analysis combinations (universes) in our multiverse.
+
+```{r, warnings = FALSE}
+execute_multiverse(M)
+```
+
 We can output the data frame that we have created inside the multiverse code block, as we would for a data frame in R. This would output the result in the default universe (\code{\link{default_parameter_assignment}}) of the multiverse. We can see that this data frame, as intended, has computed the mean differences and 95% confidence intervals between the conditions we care about.
 
 
@@ -349,14 +355,8 @@ df.diffs
 ```
 ````
 
-```{r}
-df.diffs
-```
-
-We then execute all the other analysis combinations (universes) in our multiverse.
-
-```{r, warnings = FALSE}
-execute_multiverse(M)
+```{r, echo = FALSE}
+extract_variable_from_universe(M, 1, df.diffs)
 ```
 
 ### Extracting and visualizing the results from the multiverse
@@ -364,12 +364,12 @@ execute_multiverse(M)
 We then use the workflow described in the previous section to extract results for each universe in the multiverse. We then use gganimate to plot the results.
 
 ```{r}
-df.results.diff <- expand(M) %>%
-  extract_variables(df.diffs) %>%
-  unnest(c(df.diffs)) %>%
+df.results.diff <- expand(M) |>
+  extract_variables(df.diffs) |>
+  unnest(c(df.diffs)) |>
   arrange(desc(data_transform), conf_level, desc(ci_method))
 
-df.results.diff %>%
+df.results.diff |>
   head()
 ```
 
@@ -378,7 +378,7 @@ df.results.diff %>%
 A value lower than 1 (i.e., on the left side of the dark line) means the condition on the left is faster than the condition on the right. The confidence intervals are not corrected for multiplicity. The results from this study appear to be relatively robust and consistent across all the possible combinations that we have tried.
 
 ```{r}
-p <- df.results.diff %>%
+p <- df.results.diff |>
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = modality)) +
@@ -393,7 +393,7 @@ Correction for multiplicity can be another analysis option in the multiverse ana
 
 ## Conclusion
 
-This example was adapted from Dragicevic et al.'s study [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) to show how previously performed multiverse analysis can be reproduced using the package in a flexible, and easily readable manner. It also shows how a multiverse analysis can be implemented in mostly base R syntax.
+This example was adapted from Dragicevic et al.'s study [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) to show how previously performed multiverse analysis can be reproduced using the package in a flexible, and easily readable manner. It also shows how a multiverse analysis can be implemented in mostly base R syntax.
 
 
 

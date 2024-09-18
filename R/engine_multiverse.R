@@ -50,8 +50,6 @@ multiverse_engine <- function(options) {
 }
 
 multiverse_block_code <- function(.multiverse, .label, .code) {
-  # .multiverse = get(.multiverse_name, envir = knit_global())
-  
   if (strsplit(.label, "-[0-9]+") == "unnamed-chunk") {
     stop("Please provide a label to your multiverse code block")
   }
@@ -84,7 +82,6 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
   # skip all these steps while knitting.
   if (knit && options$eval) {
     .multiverse = options$inside
-    # execute_multiverse(.multiverse)
     
     # when knitting we are not performing any traditional evaluation
     # hence we can not evaluate the code chunk using default evaluation
@@ -93,7 +90,6 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # What we want is to create a `div` for each universe
     # options$eval = TRUE
     # options$class.source = "multiverse"
-    
     options$eval = FALSE
     options$engine = "R"
     options$comment = ""
@@ -125,8 +121,8 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
 
       temp_options
     })
+    
     unlist(lapply(options_list, eng_r))
-    # }
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     
