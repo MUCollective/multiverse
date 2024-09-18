@@ -49,6 +49,8 @@
 #' }
 #' 
 #' @importFrom tidyr unnest_wider
+#' @importFrom dplyr mutate
+#' @importFrom rlang enquo
 #' @importFrom rlang enquos
 #' @importFrom rlang as_name
 #'

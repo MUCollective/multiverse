@@ -1,7 +1,7 @@
 #' Survey to study the effect of fertility on religiosity and political attitudes
 #'
 #' A dataset for the study conducted by Jung et al. (2014)
-#' in their study, \doi{10.1073/pnas.1402786111}{\emph{Female hurricanes are deadlier than male hurricanes}}.
+#' in their study, \emph{Female hurricanes are deadlier than male hurricanes}.
 #' 
 #'
 #' @format A data frame with 502 rows and 26 variables:

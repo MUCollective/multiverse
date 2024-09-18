@@ -70,8 +70,8 @@ We also implement a series of end-to-end multiverse implementations using this p
 
 -   Steegen et al.'s [original multiverse analysis](https://doi.org/10.1177/1745691616658637) of the paper [The fluctuating female vote: Politics, religion, and the ovulatory cycle](https://doi.org/10.1177/0956797612466416); can also be found **below**.
 -   Simonsohn et al.'s [specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
--   Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
--   Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
+-   Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) )
+-   Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) )
 
 ## Example analysis
 
@@ -470,7 +470,7 @@ During interactive use (i.e. when running code chunks individually in RMarkdown)
 broom::tidy(fit)
 ```
 
-Note: this behavior is not permitted when a notebook is being knit—rendered to HTML (or some other format) using `knitr`. This is because we cannot control how code is executed when knitting, and we want to avoid providing the user with a surprising result. Instead, we through an error. If your code is running perfectly fine in a script file or markdown notebook, and only throwing an error when knitting with a message similar to `! object 'fit' not found`, this is likely because you are trying to access objects declared within a multiverse code block using an R code block. Please see [*debugging*](https://mucollective.github.io/multiverse/articles/debugging-multiverse.html) for more information on this.
+Note: this behavior is not permitted when a notebook is being knit—rendered to HTML (or some other format) using `knitr`. This is because we cannot control how code is executed when knitting, and we want to avoid providing the user with a surprising result. Instead, we through an error. If your code is running perfectly fine in a script file or markdown notebook, and only throwing an error when knitting with a message similar to `! object 'fit' not found`, this is likely because you are trying to access objects declared within a multiverse code block using an R code block.
 
 Instead, if we want to output the results of the default (or any particular) analysis while **knitting**, we should instead use:
 
@@ -505,5 +505,5 @@ In this document, we covered details to help you quickly get started with this p
 We also implement a series of other end-to-end multiverse implementations using this package to demonstrate how it might be used:
 
 -   Simonsohn et al.'s [specification curve analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female hurricanes are deadlier than male hurricanes](https://doi.org/10.1073/pnas.1402786111)
--   Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
--   Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) )
+-   Dragicevic et al.'s mini-paper [Adding Inferential Information to plots using Resampling and Animations](https://explorablemultiverse.github.io/examples/dance/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) )
+-   Dragicevic et al.'s mini-paper [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/) (from [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) )

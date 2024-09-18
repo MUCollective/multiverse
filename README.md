@@ -91,13 +91,13 @@ found in the package
     Animations](https://explorablemultiverse.github.io/examples/dance/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )
 -   Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
     Physical
     Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )
 
 ## Example analysis
 
@@ -276,12 +276,6 @@ data.
 ``` r
 #load the library
 library(multiverse)
-#> Loading required package: knitr
-#> 
-#> Attaching package: 'multiverse'
-#> The following object is masked from 'package:tidyr':
-#> 
-#>     expand
 
 #create multiverse object
 M = multiverse()
@@ -453,6 +447,20 @@ that particular option.
 Putting it all together, a decision point in a multiverse analysis can
 thus be declared as:
 
+``` r
+# here we just create the variable `df` in the multiverse
+df <- hurricane_data
+
+# here, we perform a `filter` operation in the multiverse
+df.filtered <- df |>
+  filter(branch(
+    death_outliers,
+    "no_exclusion" ~ TRUE,
+    "most_extreme" ~ name != "Katrina",
+    "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+  ))
+```
+
     ```{multiverse branch_definition, inside = M}
     # here we just create the variable `df` in the multiverse
     df = hurricane_data
@@ -560,7 +568,7 @@ extract_variables(M, df.filtered)
 #> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
 #> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
 #> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
-#> # ℹ 1 more variable: df.filtered <list>
+#> # ℹ 1 more variable: df.filtered <named list>
 ```
 
 ## Building up a complete analysis
@@ -578,6 +586,22 @@ researchers could have:
     value with a long right-tail
 
 This would result in 3 × 2 × 2 = 12 analysis paths.
+
+``` r
+df.filtered <- df.filtered |>
+  mutate(
+    femininity = branch(
+      femininity_calculation,
+      "masfem" ~ masfem,
+      "female" ~ female
+    ),
+    damage = branch(
+      damage_transform,
+      "no_transform" ~ identity(dam),
+      "log_transform" ~ log(dam)
+    )
+  )
+```
 
     ```{multiverse label = variable_definitions, inside = M}
         df.filtered <- df.filtered |>
@@ -721,29 +745,50 @@ immediately below it, mimicking notebook code chunks
               data = df)
     ```
 
-The following code chunk (should) illustrate this behavior. Even though
-the variable `fit` was defined in a multiverse code block, since the
-default analysis is executed in the active R environment, the version
-corresponding to the default analysis can be accessed directly in R:
+``` r
+fit <- glm(
+  branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
+    branch(
+      main_interaction,
+      "no" ~ femininity + damage,
+      "yes" ~ femininity * damage
+    ) + branch(
+      other_predictors,
+      "none" ~ NULL,
+      "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
+      "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
+      "category" %when% (main_interaction == "yes") ~ femininity * zcat,
+      "all" %when% (main_interaction == "yes") ~ femininity * z3,
+      "all_no_interaction" %when% (main_interaction == "no") ~ z3
+    ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage),
+  family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),
+  data = df.filtered
+)
+```
+
+During interactive use (i.e. when running code chunks individually in
+RMarkdown), the following code chunk illustrates this behavior. Even
+though the variable `fit` was defined in a multiverse code block, since
+the default analysis is executed in the active R environment, the
+version corresponding to the default analysis can be accessed directly
+in R:
 
 ``` r
 broom::tidy(fit)
 ```
 
-Note: *should* because this behavior is not permitted when a notebook is
-being compiled to HTML (or some other format) using `knitr`. This is
+Note: this behavior is not permitted when a notebook is being
+knit—rendered to HTML (or some other format) using `knitr`. This is
 because we cannot control how code is executed when knitting, and we
 want to avoid providing the user with a surprising result. Instead, we
 through an error. If your code is running perfectly fine in a script
 file or markdown notebook, and only throwing an error when knitting with
 a message similar to `! object 'fit' not found`, this is likely because
 you are trying to access objects declared within a multiverse code block
-using an R code block. Please see
-[*debugging*](https://mucollective.github.io/multiverse/articles/debugging-multiverse.html)
-for more information on this.
+using an R code block.
 
 Instead, if we want to output the results of the default (or any
-particular) analysis while **knitting**, we should use:
+particular) analysis while **knitting**, we should instead use:
 
 ``` r
 extract_variable_from_universe(M, 1, fit) |> 
@@ -822,10 +867,10 @@ implementations using this package to demonstrate how it might be used:
     Animations](https://explorablemultiverse.github.io/examples/dance/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )
 -   Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
     Physical
     Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )

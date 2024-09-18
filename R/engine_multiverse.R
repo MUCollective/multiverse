@@ -125,8 +125,8 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
 
       temp_options
     })
+    
     unlist(lapply(options_list, eng_r))
-    # }
   } else {
     # when in interactive mode, execute the default analysis in the knitr global environment
     

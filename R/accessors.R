@@ -11,9 +11,11 @@
 #' @param .pretty A binary argument whether `code()` should prettify the output using the tidyverse style guide. defaults to TRUE.
 #'
 #' @importFrom dplyr select
+#' @importFrom dplyr mutate
 #' @importFrom styler style_text
 #' @importFrom styler create_style_guide
 #' @importFrom rlang expr
+#' @importFrom rlang enquo
 #' @importFrom tibble as_tibble
 #' @importFrom tidyselect everything
 #' @importFrom rlang as_name
