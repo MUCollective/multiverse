@@ -1,5 +1,5 @@
 Package: multiverse
-Version: 0.6.2.1
+Version: 0.6.3
 Date: 2024-09-18
 Title: Create 'multiverse analysis' in R
 Authors@R: c(
@@ -7,6 +7,8 @@ Authors@R: c(
         person("Matthew", "Kay", role = "aut", email = "mjskay@northwestern.edu"),
         person("Michael", "Moon", role = "ctb", email = "moon@utstat.toronto.edu"),
         person("Mark", "Miller", role = "ctb", email = "725mrm@gmail.com"),
+        person("Kyle", "Hwang", role = "ctb", email = "kyle.sg.hwang@gmail.com"),
+        person("Hadley", "Wickham", role = "ctb", email = "hadley@posit.co"),
         person("Alex", "Kale", role = "ctb", email = "kalea@uw.edu"),
         person("Nathan", "Taback", role = "ctb", email = "nathan.taback@utoronto.ca"),
         person("Fanny", "Chevalier", role = "ctb", email = "fanny@dgp.toronto.edu"),

@@ -115,7 +115,7 @@ multiverse analysis. We adopt the “tree of analysis” metaphor (see
 Figure below): “an analysis proceeds from top to bottom, and each
 branching represents a choice between different analysis options”.
 
-<img src="vignettes/figures/00-reporting-strategies.png" width="60%" />
+<img src="man/figures/00-reporting-strategies.png" width="60%" />
 
 In this terminology:
 
@@ -244,7 +244,7 @@ However, the original analysis involved at least four analysis decisions
 led to a different result. These decisions are highlighted in the figure
 below:
 
-<img src="vignettes/figures/00-default-analysis.png" width="90%" />
+<img src="man/figures/00-default-analysis.png" width="90%" />
 
 Several subsequent studies, each proposing a different analysis
 strategy, found no presence of such an effect, suggesting that the
@@ -290,7 +290,7 @@ executed in a special environment. To be more precise, `multiverse`
 takes the user declared code, parses and rewrites the code into multiple
 versions of valid R code, each corresponding to an unique analysis path
 in the multiverse. For more information on this processing step, see
-vignette(branch)
+`vignette("branch")`
 
 To get around these limitations, we need to declare this (multiverse
 DSL) code “inside a multiverse object”. The `multiverse` package
@@ -349,7 +349,7 @@ RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the
 image below). This would create a multiverse code block at the location
 of the cursor in the document.
 
-<img src="vignettes/figures/01-multiverse-addins.png" width="90%" />
+<img src="man/figures/01-multiverse-addins.png" width="90%" />
 
 Alternately, users can insert a multiverse code block using a keyboard
 shortcut. Users can create a keyboard shortcut to declare a multiverse
@@ -358,8 +358,9 @@ code block inside a RMarkdown document through the following steps:
 -   Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one
     result with “Insert multiverse code chunk” as the name.
--   Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or
-    Ctrl+Shift+Alt+M (on Windows).
+-   Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or
+    Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended
+    shortcuts, but you should feel free to use whatever you prefer.
 -   Click “Apply” and exit the dialog box
 
 Please refer to \link{multiverse-in-rmd} for more details on using the
@@ -447,20 +448,6 @@ that particular option.
 Putting it all together, a decision point in a multiverse analysis can
 thus be declared as:
 
-``` r
-# here we just create the variable `df` in the multiverse
-df <- hurricane_data
-
-# here, we perform a `filter` operation in the multiverse
-df.filtered <- df |>
-  filter(branch(
-    death_outliers,
-    "no_exclusion" ~ TRUE,
-    "most_extreme" ~ name != "Katrina",
-    "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
-  ))
-```
-
     ```{multiverse branch_definition, inside = M}
     # here we just create the variable `df` in the multiverse
     df = hurricane_data
@@ -478,10 +465,10 @@ The `multiverse` library then takes this user-declared syntax in the
 multiverse DSL and and compiles it into three separate, executable R
 expressions as shown in the figure below:
 
-<img src="vignettes/figures/02-branch.png" width="90%" />
+<img src="man/figures/02-branch.png" width="90%" />
 
 More details on the `branch()` function can be found in the
-corresponding `vignette(branch)`.
+corresponding `vignette("branch")`.
 
 ## Interfacing with the multiverse
 
@@ -536,19 +523,13 @@ expand(M)
 
 ``` r
 code(M)
-#> [[1]]
-#> df <- hurricane_data
-#> 
-#> [[2]]
-#> df.filtered <- filter(
-#>   df,
-#>   branch(
-#>     death_outliers,
-#>     "no_exclusion" ~ TRUE,
-#>     "most_extreme" ~ name != "Katrina",
-#>     "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
-#>   )
-#> )
+#> $branch_definition
+#> {
+#>     df = hurricane_data
+#>     df.filtered = filter(df, branch(death_outliers, "no_exclusion" ~ 
+#>         TRUE, "most_extreme" ~ name != "Katrina", "two_most_extreme" ~ 
+#>         !(name %in% c("Katrina", "Audrey"))))
+#> }
 ```
 
 1.  `extract_variables(M, <variable names>)` extracts the supplied
@@ -568,7 +549,7 @@ extract_variables(M, df.filtered)
 #> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
 #> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
 #> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
-#> # ℹ 1 more variable: df.filtered <named list>
+#> # ℹ 1 more variable: df.filtered <list>
 ```
 
 ## Building up a complete analysis
@@ -586,22 +567,6 @@ researchers could have:
     value with a long right-tail
 
 This would result in 3 × 2 × 2 = 12 analysis paths.
-
-``` r
-df.filtered <- df.filtered |>
-  mutate(
-    femininity = branch(
-      femininity_calculation,
-      "masfem" ~ masfem,
-      "female" ~ female
-    ),
-    damage = branch(
-      damage_transform,
-      "no_transform" ~ identity(dam),
-      "log_transform" ~ log(dam)
-    )
-  )
-```
 
     ```{multiverse label = variable_definitions, inside = M}
         df.filtered <- df.filtered |>
@@ -745,27 +710,6 @@ immediately below it, mimicking notebook code chunks
               data = df)
     ```
 
-``` r
-fit <- glm(
-  branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
-    branch(
-      main_interaction,
-      "no" ~ femininity + damage,
-      "yes" ~ femininity * damage
-    ) + branch(
-      other_predictors,
-      "none" ~ NULL,
-      "pressure" %when% (main_interaction == "yes") ~ femininity * zpressure,
-      "wind" %when% (main_interaction == "yes") ~ femininity * zwind,
-      "category" %when% (main_interaction == "yes") ~ femininity * zcat,
-      "all" %when% (main_interaction == "yes") ~ femininity * z3,
-      "all_no_interaction" %when% (main_interaction == "no") ~ z3
-    ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage),
-  family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),
-  data = df.filtered
-)
-```
-
 During interactive use (i.e. when running code chunks individually in
 RMarkdown), the following code chunk illustrates this behavior. Even
 though the variable `fit` was defined in a multiverse code block, since
@@ -793,15 +737,16 @@ particular) analysis while **knitting**, we should instead use:
 ``` r
 extract_variable_from_universe(M, 1, fit) |> 
   broom::tidy()
-#> # A tibble: 6 × 5
-#>   term               estimate   std.error statistic   p.value
-#>   <chr>                 <dbl>       <dbl>     <dbl>     <dbl>
-#> 1 (Intercept)      2.09       0.0908          23.0  2.03e-117
-#> 2 masfem           0.0454     0.0123           3.70 2.18e-  4
-#> 3 dam              0.0000195  0.00000338       5.77 8.10e-  9
-#> 4 zpressure        0.137      0.101            1.35 1.76e-  1
-#> 5 masfem:dam       0.00000110 0.000000421      2.61 8.94e-  3
-#> 6 masfem:zpressure 0.0253     0.0125           2.02 4.33e-  2
+#> # A tibble: 7 × 5
+#>   term              estimate std.error statistic  p.value
+#>   <chr>                <dbl>     <dbl>     <dbl>    <dbl>
+#> 1 (Intercept)       -3.59      0.451      -7.97  1.53e-15
+#> 2 femininity        -0.146     0.504      -0.290 7.71e- 1
+#> 3 damage             0.772     0.0517     14.9   1.97e-50
+#> 4 z3                -0.481     0.0886     -5.43  5.69e- 8
+#> 5 femininity:damage  0.00719   0.0563      0.128 8.98e- 1
+#> 6 femininity:z3      0.484     0.0938      5.17  2.38e- 7
+#> 7 damage:post       -0.0386    0.00515    -7.48  7.27e-14
 ```
 
 Analysts can change which analysis path is executed by default. Inline
@@ -835,7 +780,7 @@ output by `expand()`, see below) allows analysts to execute a particular
 analysis path and reproduce errors encountered in the execution of that
 specific path.
 
-<img src="vignettes/figures/06-expand.png" width="90%" />
+<img src="man/figures/06-expand.png" width="90%" />
 
 ## Conclusion
 

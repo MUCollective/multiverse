@@ -80,7 +80,7 @@ In this document, we outline an initial approach to conducting a multiverse anal
 Before we dive into the analysis, it might be helpful to establish a terminology to help describe the steps that go into creating a multiverse analysis. We adopt the "tree of analysis" metaphor (see Figure below): "an analysis proceeds from top to bottom, and each branching represents a choice between different analysis options".
 
 ```{r echo = FALSE, out.width = '60%'}
-knitr::include_graphics("vignettes/figures/00-reporting-strategies.png")
+knitr::include_graphics("man/figures/00-reporting-strategies.png")
 ```
 
 In this terminology:
@@ -162,7 +162,7 @@ tidy(fit) |>
 However, the original analysis involved at least four analysis decisions (A-D), and at each decision point (node) alternative choices may have led to a different result. These decisions are highlighted in the figure below:
 
 ```{r echo = FALSE, out.width = '90%'}
-knitr::include_graphics("vignettes/figures/00-default-analysis.png")
+knitr::include_graphics("man/figures/00-default-analysis.png")
 ```
 
 Several subsequent studies, each proposing a different analysis strategy, found no presence of such an effect, suggesting that the original finding may have been a result of a idiosyncratic combination of analysis choices. Data analysis can often involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable option to choose from. A multiverse analysis makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). Below, we use this analysis as an example of how a single analysis can be extended to a multiverse analysis.
@@ -183,7 +183,7 @@ M = multiverse()
 
 ### Two ways to building a multiverse
 
-Through the `multiverse` DSL, users are specifying multiple analysis paths at the same time. The DSL cannot be executed directly in an R environment or R code chunk and needs to be declared, processed and executed in a special environment. To be more precise, `multiverse` takes the user declared code, parses and rewrites the code into multiple versions of valid R code, each corresponding to an unique analysis path in the multiverse. For more information on this processing step, see vignette(branch)
+Through the `multiverse` DSL, users are specifying multiple analysis paths at the same time. The DSL cannot be executed directly in an R environment or R code chunk and needs to be declared, processed and executed in a special environment. To be more precise, `multiverse` takes the user declared code, parses and rewrites the code into multiple versions of valid R code, each corresponding to an unique analysis path in the multiverse. For more information on this processing step, see `vignette("branch")`
 
 To get around these limitations, we need to declare this (multiverse DSL) code "inside a multiverse object". The `multiverse` package facilitates this through some boilerplate code:
 
@@ -214,14 +214,14 @@ The code within the `filter` function call is written in the `multiverse` DSL an
 We provide the ability to declare multiverse code block as an *AddIn* in RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
 
 ```{r echo = FALSE, out.width = '90%'}
-knitr::include_graphics("vignettes/figures/01-multiverse-addins.png")
+knitr::include_graphics("man/figures/01-multiverse-addins.png")
 ```
 
 Alternately, users can insert a multiverse code block using a keyboard shortcut. Users can create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document through the following steps:
 
 -   Tools > Addins > Browse Addins… > Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one result with "Insert multiverse code chunk" as the name.
--   Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).
+-   Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended shortcuts, but you should feel free to use whatever you prefer.
 -   Click "Apply" and exit the dialog box
 
 Please refer to \\link{multiverse-in-rmd} for more details on using the multiverse code blocks with RMarkdown. The vignette also contains information on steps for debugging some of the common problems in assigning keyboard shortcuts.
@@ -302,10 +302,10 @@ df.filtered = df |>
 The `multiverse` library then takes this user-declared syntax in the multiverse DSL and and compiles it into three separate, executable R expressions as shown in the figure below:
 
 ```{r echo = FALSE, out.width = '90%'}
-knitr::include_graphics("vignettes/figures/02-branch.png")
+knitr::include_graphics("man/figures/02-branch.png")
 ```
 
-More details on the `branch()` function can be found in the corresponding `vignette(branch)`.
+More details on the `branch()` function can be found in the corresponding `vignette("branch")`.
 
 ## Interfacing with the multiverse
 
@@ -490,7 +490,7 @@ To execute all unique analysis paths in the multiverse, an analyst can call `exe
 For the default analysis, as it executes in the R environment, users have access to the same set of debugging utilities that R provides. When the user executes the entire multiverse, the library outputs the error message, a traceback—an object containing the entire call stack that caused the error—and the index of the corresponding analysis path in which the error was encountered. The execution of the remaining analysis paths in the multiverse are not halted if any errors are encountered. The traceback is helpful to identify the location of the error, as often R expressions return unidentifiable error messages. `execute_universe(<universe ID>)` (universe ID are found in the table output by `expand()`, see below) allows analysts to execute a particular analysis path and reproduce errors encountered in the execution of that specific path.
 
 ```{r echo = FALSE, out.width = '90%'}
-knitr::include_graphics("vignettes/figures/06-expand.png")
+knitr::include_graphics("man/figures/06-expand.png")
 ```
 
 ## Conclusion

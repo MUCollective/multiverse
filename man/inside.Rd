@@ -7,7 +7,7 @@
 inside(multiverse, .expr, .label = NULL, .execute_default = TRUE)
 }
 \arguments{
-\item{multiverse}{A multive[])rse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}}
+\item{multiverse}{A multiverse object. A multiverse object is an S3 object which can be defined using \code{multiverse()}}
 
 \item{.expr}{R syntax. All the operations that the user wants to perform within the multiverse can be passed.
 Since it accepts a single argument, chunks of code can be passed using `\{\}`. See example for details.}
