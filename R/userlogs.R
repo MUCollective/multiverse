@@ -1,7 +1,7 @@
 #' Userlogs
 #'
 #' Data collected by Jansen et al. in their study,
-#' \doi{10.1145/2470654.2481359}{Evaluating the Efficiency of Physical Visualizations}
+#' \emph{Evaluating the Efficiency of Physical Visualizations}
 #' which investigated factors contributing to the efficiency of physical visualizations.
 #'
 #' @format A data frame with 512 observations and 19 variables:

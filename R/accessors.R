@@ -11,12 +11,13 @@
 #' @param .pretty A binary argument whether `code()` should prettify the output using the tidyverse style guide. defaults to TRUE.
 #'
 #' @importFrom dplyr select
-#' @importFrom styler style_text
-#' @importFrom styler create_style_guide
+#' @importFrom dplyr mutate
 #' @importFrom rlang expr
+#' @importFrom rlang enquo
+#' @importFrom rlang as_name
+#' @importFrom rlang parse_expr
 #' @importFrom tibble as_tibble
 #' @importFrom tidyselect everything
-#' @importFrom rlang as_name
 #'
 #' @export
 `$.multiverse` <- function(multiverse, name) {
@@ -57,7 +58,7 @@ expand.multiverse <- function(multiverse) {
   .m_obj = attr(multiverse, "multiverse")
   .m_list = .m_obj$multiverse_diction$as_list()
   
-  df <- data.frame( lapply(expand.grid(rev(.m_obj$parameters), KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE ) %>%
+  df <- data.frame( lapply(expand.grid(rev(.m_obj$parameters), KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE ) |>
     select(names(.m_obj$parameters))
   
   if (length(.m_obj$conditions) > 0) {

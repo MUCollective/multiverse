@@ -1,6 +1,6 @@
 #' 'Explorable Multiverse' Data Analysis and Reports in R
-#'
-#' @docType package
+"_PACKAGE"
+
 #' @name multiverse-package
 #'
 #' @description

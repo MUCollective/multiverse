@@ -1,8 +1,8 @@
 #' Survey to study the effect of fertility on religiosity and political attitudes
 #'
 #' A dataset containing the responses to the survey conducted by Durante, Rae, and Griskevicius (2013)
-#' in their study, \doi{10.1177/0956797612466416}{\emph{The
-#' fluctuating female vote: Politics, religion, and the ovulatory cycle}}.
+#' in their study, \emph{The
+#' fluctuating female vote: Politics, religion, and the ovulatory cycle}.
 #' Durante et al. study effect of fertility on religiosity and political attitudes.
 #' Steegen, Tuerlinckx, Gelman, and Vanpaemel (2016) used this dataset in their analysis to illustrate how a
 #' multiverse analysis can highlight the robustness of the conclusions reached by the original author.

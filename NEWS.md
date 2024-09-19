@@ -1,3 +1,15 @@
+# multiverse 0.6.2
+
+### Bug Fixes
+- Fix for #119. Fixes for compatibility with evaluate 1.0.0
+
+### Minor Changes
+- Added functions to allow export of the multiverse results as JSON to be compatible with [Milliways](https://abhsarma.github.io/milliways/). EMARs are not yet supported however, as that requires changes to knitr
+- Added support for naming variables when extracting multiple variables using `extract_variables`
+- Added support for extraction of objects using `extract_variables`
+- Changes to printing behavior: (1) we do not allow a user to print variables declared in a multiverse code block from an R code block (it will throw an error); (2) we do not show the output of multiverse code blocks when knitting (as it can create hundreds or thousands of outputs)
+
+
 # multiverse 0.6.1
 
 ### Bug Fixes

@@ -1,12 +1,14 @@
 Package: multiverse
-Version: 0.6.2.1
-Date: 2022-10-13
-Title: Multiverse: Create 'multiverse analysis' in R
+Version: 0.6.3
+Date: 2024-09-18
+Title: Create 'multiverse analysis' in R
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
         person("Matthew", "Kay", role = "aut", email = "mjskay@northwestern.edu"),
         person("Michael", "Moon", role = "ctb", email = "moon@utstat.toronto.edu"),
         person("Mark", "Miller", role = "ctb", email = "725mrm@gmail.com"),
+        person("Kyle", "Hwang", role = "ctb", email = "kyle.sg.hwang@gmail.com"),
+        person("Hadley", "Wickham", role = "ctb", email = "hadley@posit.co"),
         person("Alex", "Kale", role = "ctb", email = "kalea@uw.edu"),
         person("Nathan", "Taback", role = "ctb", email = "nathan.taback@utoronto.ca"),
         person("Fanny", "Chevalier", role = "ctb", email = "fanny@dgp.toronto.edu"),
@@ -29,7 +31,7 @@ Description: Implement 'multiverse' style analyses (Steegen S., Tuerlinckx F, Ge
      analysis options by interacting with the paper itself.
 License: GPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Depends:
     R (>= 3.5.0),
     knitr (>= 1.3.2)
@@ -49,7 +51,10 @@ Imports:
     rstudioapi,
     berryFunctions,
     furrr,
-    styler
+    styler,
+    distributional,
+    jsonlite,
+    readr
 Suggests:
     ggplot2 (>= 3.0.0),
     testthat (>= 3.0.0),

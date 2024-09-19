@@ -31,7 +31,7 @@ A data frame with 502 rows and 26 variables:
 }
 \description{
 A dataset for the study conducted by Jung et al. (2014)
-in their study, \doi{10.1073/pnas.1402786111}{\emph{Female hurricanes are deadlier than male hurricanes}}.
+in their study, \emph{Female hurricanes are deadlier than male hurricanes}.
 }
 \details{
 This dataset was collated by Jung et. al in their study \emph{Female hurricanes are deadlier than male hurricanes}

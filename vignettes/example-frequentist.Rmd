@@ -45,7 +45,7 @@ knitr::opts_chunk$set(
 
 ## Multiverse case study #2
 
-In this vignette, we will recreate the multiverse analysis, [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) using the package. 
+In this vignette, we will recreate the multiverse analysis, [Re-evaluating the efficiency of Physical Visualisations](https://explorablemultiverse.github.io/examples/frequentist/), performed by Dragicevic et al. in [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) using the package. 
 
 ## Introduction
 
@@ -393,7 +393,7 @@ Correction for multiplicity can be another analysis option in the multiverse ana
 
 ## Conclusion
 
-This example was adapted from Dragicevic et al.'s study [Increasing the transparency of research papers with explorable multiverse analyses](https://hal.inria.fr/hal-01976951/document) to show how previously performed multiverse analysis can be reproduced using the package in a flexible, and easily readable manner. It also shows how a multiverse analysis can be implemented in mostly base R syntax.
+This example was adapted from Dragicevic et al.'s study [Increasing the transparency of research papers with explorable multiverse analyses](https://inria.hal.science/hal-01976951/document) to show how previously performed multiverse analysis can be reproduced using the package in a flexible, and easily readable manner. It also shows how a multiverse analysis can be implemented in mostly base R syntax.
 
 
 

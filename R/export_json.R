@@ -1,11 +1,11 @@
-globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
+globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe", "values"))
 
 #' Exporting results from a multiverse analysis to JSON
 #'
 #' @description Exports the results of the multiverse analysis to JSON in a format which is compatible with the multiverse visualisation tool
 #' 
 #' 
-#' @name export_2_json
+#' @name export_json
 #' @param x a tidy tibble or data frame which contains summary statistics or distributional information 
 #' of each regression coefficient parameter 
 #' @param term column in the data frame, x, which contains the name of the coefficients
@@ -15,7 +15,38 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' `distribution` for each coefficient
 #' @param filename filename on disk (as a character string)
 #' 
-#' @return a data frame or a JSON file
+#' @return a JSON file or (if a filepath is not specified) a dataframe for the results file and a list for the code file
+#' 
+#' @details
+#' ## results JSON file schema
+#' It consists of a list of objects (where each object corresponds to one analysis in the multiverse). 
+#' Within this object, the results attribute contains a(nother) list of objects corresponding to each outcome variable. 
+#' For e.g., here we have four coefficients (see the results of the regression model), and thus the results attribute will contain four objects. 
+#' Each object has the following attributes:
+#' - `term`: name of the outcome variable
+#' - `estimate`: mean / median point estimate i.e., \eqn{\mathbb{E}(\mu)} for any parameter \eqn{\mu}.
+#' - `std.error`: standard error for the point estimate i.e., \eqn{\sqrt{\text{var}(\mu)}}
+#' - `cdf.x`: a list of quantiles
+#' - `cdf.y`: a list of cumulative probability density estimates corresponding to the quantiles
+#' 
+#' In addition, it also contains the following attributes, but these are not currently used by Milliways:
+#' - `statistic`
+#' - `p.value`
+#' - `conf.low`
+#' - `conf.high`
+#' 
+#' 
+#' ## code JSON file schema
+#' It consists of two attributes: `code` and `parameters`. 
+#' `code` is a list of strings consisting of the R and multiverse syntax used to implement the analysis. For readability, we
+#' use [styler] to break up the declared code.
+#' `parameters` is an object listing the parameter names and the corresponding options for each of the parameters declared in the analysis.
+#' 
+#' ## data JSON file schema
+#' It consists of a list of objects, each with two attributes: `field` and `values`. 
+#' `field` is the name of a column corresponding to a variable in the dataset. 
+#' `values` are a list of values for that variable in the dataset.
+#' 
 #' 
 #' @examples
 #' \donttest{
@@ -48,7 +79,7 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' multiverse::expand(M) %>%
 #'   extract_variables(res) %>%
 #'   unnest(res) %>%
-#'   export_2_json(term, estimate, std.error) 
+#'   export_results_json(term, estimate, std.error) 
 #' } 
 #' 
 #'
@@ -61,17 +92,20 @@ globalVariables(c(".max", ".min", "cdf.x", "cdf.y", "limits", "universe"))
 #' @importFrom dplyr mutate
 #' @importFrom dplyr group_by
 #' @importFrom dplyr rename
+#' @importFrom dplyr summarise_all
 #' @importFrom tidyr unnest_wider
+#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr nest
+#' @importFrom readr guess_parser
 #' @importFrom stats quantile
 #' @importFrom distributional cdf
 #' @importFrom distributional dist_normal
 #' @importFrom purrr map2
-#' @importFrom tidyr nest
 #' @importFrom tidyselect starts_with
 #'
 #' @rdname export_json
 #' @export
-export_2_json = function (x, term, mean, sd, dist, filename) {
+export_results_json = function (x, term, mean, sd, dist, filename) {
   term = enquo(term)
   
   if (missing(dist) & !missing(mean) & !missing(sd)){
@@ -82,7 +116,7 @@ export_2_json = function (x, term, mean, sd, dist, filename) {
     
     # change to distributional vectors
     .res_df = mutate(x, dist = dist_normal(!!.mu, !!.sd))
-   
+    
   } else if (!missing(dist) & missing(mean) & missing(sd)) {
     # we have a distributional object
     dist = enquo(dist)
@@ -93,12 +127,12 @@ export_2_json = function (x, term, mean, sd, dist, filename) {
     stop("No complete and/or distinct argument set provided")
   }
   
-  export_dist_2_json(.res_df, !!term, !!dist, filename)
+  export_results_dist_json(.res_df, !!term, !!dist, filename)
 }
 
 #' @rdname export_json
 #' @export
-export_dist_2_json = function(x, term, dist, filename) {
+export_results_dist_json = function(x, term, dist, filename) {
   dist = enquo(dist)
   term = enquo(term)
   
@@ -110,17 +144,17 @@ export_dist_2_json = function(x, term, dist, filename) {
   .res_df = 
     select(
       mutate(.res_df,
-        cdf.x = map2(.min, .max, ~ seq(.x, .y, length.out = 101)),
-        cdf.y = map2(!!dist, cdf.x, ~ unlist(cdf(.x, .y)))
+             cdf.x = map2(.min, .max, ~ seq(.x, .y, length.out = 101)),
+             cdf.y = map2(!!dist, cdf.x, ~ unlist(cdf(.x, .y)))
       ), 
-      - !!dist, -.min, -.max
+      -.min, -.max
     )
   
   .res_df = nest(.res_df,  results = c(term:cdf.y))
   
   if (!missing(filename)) {
     write_json(
-      .res_df, 
+      select(.res_df, -!!dist), 
       filename, 
       pretty = TRUE
     )
@@ -203,5 +237,24 @@ extract_parameters = function(.expr) {
         if (!is.null(ls)) ls
       }
     }
+  }
+}
+
+
+#' @rdname export_json
+#' @export
+export_data_json <- function(x, filename) {
+  result = summarise_all(x, ~ list(as.character(.)))  |> 
+    pivot_longer(cols = everything(), names_to = "field", values_to = "values")  |> 
+    mutate(field_type = map_chr(values, guess_parser))
+  
+  if (!missing(filename)) {
+    write_json(
+      result,
+      filename,
+      pretty = TRUE
+    )
+  } else {
+    return(result)
   }
 }

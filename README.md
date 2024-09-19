@@ -91,13 +91,13 @@ found in the package
     Animations](https://explorablemultiverse.github.io/examples/dance/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )
 -   Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
     Physical
     Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )
 
 ## Example analysis
 
@@ -115,7 +115,7 @@ multiverse analysis. We adopt the “tree of analysis” metaphor (see
 Figure below): “an analysis proceeds from top to bottom, and each
 branching represents a choice between different analysis options”.
 
-<img src="vignettes/figures/00-reporting-strategies.png" width="60%" />
+<img src="man/figures/00-reporting-strategies.png" width="60%" />
 
 In this terminology:
 
@@ -244,7 +244,7 @@ However, the original analysis involved at least four analysis decisions
 led to a different result. These decisions are highlighted in the figure
 below:
 
-<img src="vignettes/figures/00-default-analysis.png" width="90%" />
+<img src="man/figures/00-default-analysis.png" width="90%" />
 
 Several subsequent studies, each proposing a different analysis
 strategy, found no presence of such an effect, suggesting that the
@@ -276,12 +276,6 @@ data.
 ``` r
 #load the library
 library(multiverse)
-#> Loading required package: knitr
-#> 
-#> Attaching package: 'multiverse'
-#> The following object is masked from 'package:tidyr':
-#> 
-#>     expand
 
 #create multiverse object
 M = multiverse()
@@ -296,7 +290,7 @@ executed in a special environment. To be more precise, `multiverse`
 takes the user declared code, parses and rewrites the code into multiple
 versions of valid R code, each corresponding to an unique analysis path
 in the multiverse. For more information on this processing step, see
-vignette(branch)
+`vignette("branch")`
 
 To get around these limitations, we need to declare this (multiverse
 DSL) code “inside a multiverse object”. The `multiverse` package
@@ -355,7 +349,7 @@ RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the
 image below). This would create a multiverse code block at the location
 of the cursor in the document.
 
-<img src="vignettes/figures/01-multiverse-addins.png" width="90%" />
+<img src="man/figures/01-multiverse-addins.png" width="90%" />
 
 Alternately, users can insert a multiverse code block using a keyboard
 shortcut. Users can create a keyboard shortcut to declare a multiverse
@@ -364,8 +358,9 @@ code block inside a RMarkdown document through the following steps:
 -   Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
 -   Next, in the filter input field, type *multiverse*. You will see one
     result with “Insert multiverse code chunk” as the name.
--   Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or
-    Ctrl+Shift+Alt+M (on Windows).
+-   Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or
+    Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended
+    shortcuts, but you should feel free to use whatever you prefer.
 -   Click “Apply” and exit the dialog box
 
 Please refer to \link{multiverse-in-rmd} for more details on using the
@@ -470,10 +465,10 @@ The `multiverse` library then takes this user-declared syntax in the
 multiverse DSL and and compiles it into three separate, executable R
 expressions as shown in the figure below:
 
-<img src="vignettes/figures/02-branch.png" width="90%" />
+<img src="man/figures/02-branch.png" width="90%" />
 
 More details on the `branch()` function can be found in the
-corresponding `vignette(branch)`.
+corresponding `vignette("branch")`.
 
 ## Interfacing with the multiverse
 
@@ -560,7 +555,7 @@ extract_variables(M, df.filtered)
 #> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
 #> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
 #> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
-#> # ℹ 1 more variable: df.filtered <list>
+#> # ℹ 1 more variable: df.filtered <named list>
 ```
 
 ## Building up a complete analysis
@@ -721,29 +716,29 @@ immediately below it, mimicking notebook code chunks
               data = df)
     ```
 
-The following code chunk (should) illustrate this behavior. Even though
-the variable `fit` was defined in a multiverse code block, since the
-default analysis is executed in the active R environment, the version
-corresponding to the default analysis can be accessed directly in R:
+During interactive use (i.e. when running code chunks individually in
+RMarkdown), the following code chunk illustrates this behavior. Even
+though the variable `fit` was defined in a multiverse code block, since
+the default analysis is executed in the active R environment, the
+version corresponding to the default analysis can be accessed directly
+in R:
 
 ``` r
 broom::tidy(fit)
 ```
 
-Note: *should* because this behavior is not permitted when a notebook is
-being compiled to HTML (or some other format) using `knitr`. This is
+Note: this behavior is not permitted when a notebook is being
+knit—rendered to HTML (or some other format) using `knitr`. This is
 because we cannot control how code is executed when knitting, and we
 want to avoid providing the user with a surprising result. Instead, we
 through an error. If your code is running perfectly fine in a script
 file or markdown notebook, and only throwing an error when knitting with
 a message similar to `! object 'fit' not found`, this is likely because
 you are trying to access objects declared within a multiverse code block
-using an R code block. Please see
-[*debugging*](https://mucollective.github.io/multiverse/articles/debugging-multiverse.html)
-for more information on this.
+using an R code block.
 
 Instead, if we want to output the results of the default (or any
-particular) analysis while **knitting**, we should use:
+particular) analysis while **knitting**, we should instead use:
 
 ``` r
 extract_variable_from_universe(M, 1, fit) |> 
@@ -790,7 +785,7 @@ output by `expand()`, see below) allows analysts to execute a particular
 analysis path and reproduce errors encountered in the execution of that
 specific path.
 
-<img src="vignettes/figures/06-expand.png" width="90%" />
+<img src="man/figures/06-expand.png" width="90%" />
 
 ## Conclusion
 
@@ -822,10 +817,10 @@ implementations using this package to demonstrate how it might be used:
     Animations](https://explorablemultiverse.github.io/examples/dance/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )
 -   Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
     Physical
     Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
     (from [Increasing the transparency of research papers with
     explorable multiverse
-    analyses](https://hal.inria.fr/hal-01976951/document) )
+    analyses](https://inria.hal.science/hal-01976951/document) )
