@@ -5,75 +5,59 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="multiverse">
 <title>Declaring conditions in the multiverse • multiverse</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.7/font.css" rel="stylesheet">
-<link href="../deps/Georgia-0.4.7/font.css" rel="stylesheet">
-<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.9/font.css" rel="stylesheet">
+<link href="../deps/Georgia-0.4.9/font.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Declaring conditions in the multiverse">
-<meta property="og:description" content="multiverse">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">multiverse</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a>
-    <a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="../articles/dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="../articles/durante-multiverse-analysis.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="../articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
-    <a class="dropdown-item" href="../articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
-    <a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
-    <a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/branch.html">A discussion on branches in the multiverse</a></li>
+    <li><a class="dropdown-item" href="../articles/conditions.html">Declaring conditions in the multiverse</a></li>
+    <li><a class="dropdown-item" href="../articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a></li>
+    <li><a class="dropdown-item" href="../articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a></li>
+    <li><a class="dropdown-item" href="../articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a></li>
+    <li><a class="dropdown-item" href="../articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a></li>
+    <li><a class="dropdown-item" href="../articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a></li>
+    <li><a class="dropdown-item" href="../articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a></li>
+    <li><a class="dropdown-item" href="../articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/MUCollective/multiverse/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/MUCollective/multiverse/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -82,11 +66,12 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Declaring conditions in the multiverse</h1>
+
+      <h1>Declaring conditions in the multiverse</h1>
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma</h4>
             
-            <h4 data-toc-skip class="date">2023-11-25</h4>
+            <h4 data-toc-skip class="date">2024-09-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/conditions.Rmd" class="external-link"><code>vignettes/conditions.Rmd</code></a></small>
       <div class="d-none name"><code>conditions.Rmd</code></div>
@@ -98,7 +83,6 @@ Sarma</h4>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/" class="external-link">broom</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gganimate.com" class="external-link">gganimate</a></span><span class="op">)</span></span>
@@ -113,7 +97,7 @@ implementation of a multiverse analysis</em> (see
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"durante"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">df_durante</span> <span class="op">&lt;-</span> <span class="va">durante</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">df_durante</span> <span class="op">&lt;-</span> <span class="va">durante</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    Abortion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">Abortion</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,</span>
 <span>    StemCell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">-</span> <span class="va">StemCell</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,</span>
@@ -144,13 +128,17 @@ participants it is inconsistent to calculate
 <code>ComputedCycleLength</code>.</p>
 <p>We should be able to express these conditions in the multiverse. We
 can do this in two ways: 1. <code>%when%</code>: when declaring a
-branch, we can use this operator to specify the conditional <span class="math inline">\(A | B\)</span> as <code>A %when% B</code>. The
-conditional <span class="math inline">\(A | B\)</span> is also referred
-to as the connective <span class="math inline">\(A \implies B\)</span>.
+branch, we can use this operator to specify the conditional
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo stretchy="false" form="prefix">|</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A | B</annotation></semantics></math>
+as <code>A %when% B</code>. The conditional
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo stretchy="false" form="prefix">|</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A | B</annotation></semantics></math>
+is also referred to as the connective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>⟹</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A \implies B</annotation></semantics></math>.
 This has the meaning “if A is true, then B is also true” and is an
-abbreviation for <span class="math inline">\(\neg A | B\)</span> 2.
-<code>branch_assert</code>: this function allows the user to specify any
-condition in the form of a logical operation</p>
+abbreviation for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>¬</mo><mi>A</mi><mo stretchy="false" form="prefix">|</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">\neg A | B</annotation></semantics></math>
+2. <code>branch_assert</code>: this function allows the user to specify
+any condition in the form of a logical operation</p>
 <div class="section level4">
 <h4 id="the-when-operator">The <code>%when%</code> operator<a class="anchor" aria-label="anchor" href="#the-when-operator"></a>
 </h4>
@@ -158,7 +146,7 @@ condition in the form of a logical operation</p>
 operator. The first is to specify it at the end of the branch. This will
 work even if you omit the branch option name.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,</span>
 <span>        <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="op">(</span><span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span><span class="op">)</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span>,</span>
 <span>        <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="op">(</span><span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span><span class="op">)</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span>,</span>
@@ -167,7 +155,7 @@ work even if you omit the branch option name.</p>
 <p>The other is to specify it at the head of the branch, right after the
 option name:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,</span>
 <span>        <span class="st">"mc_option1"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,</span>
 <span>        <span class="st">"mc_option2"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span> <span class="op">~</span> <span class="op">(</span><span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span><span class="op">)</span>,</span>
@@ -184,13 +172,13 @@ the %when% operator as:</p>
 <code class="sourceCode R"><span><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
-<span>  <span class="va">df.1</span> <span class="op">&lt;-</span> <span class="va">df_durante</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">df.1</span> <span class="op">&lt;-</span> <span class="va">df_durante</span>  <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span>  <span class="op">|&gt;</span></span>
 <span>      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">cycle_length</span>,</span>
 <span>          <span class="st">"cl_option1"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
 <span>          <span class="st">"cl_option2"</span> <span class="op">~</span> <span class="va">ComputedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ComputedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span>,</span>
 <span>          <span class="st">"cl_option3"</span> <span class="op">~</span> <span class="va">ReportedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ReportedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span></span>
-<span>      <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>      <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,</span>
 <span>          <span class="st">"mc_option1"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,</span>
 <span>          <span class="st">"mc_option2"</span> <span class="op"><a href="../reference/conditionals.html">%when%</a></span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,</span>
@@ -199,17 +187,14 @@ the %when% operator as:</p>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>In <code>multiverse code chunks</code> conditionals can be declared
 in pretty much the same way:</p>
-<p><text>:11:0: unexpected end of input 9: “mc_option2” %when%
-(cycle_length != “cl_option2”) ~ StartDateofLastPeriod +
-ReportedCycleLength, 10: “mc_option3” ~ StartDateNext) ^</text></p>
 <pre><code>```{multiverse default-m-1, inside = M}
-df &lt;- df_durante  %&gt;%
-      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %&gt;%
+df &lt;- df_durante  |&gt;
+      mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |&gt;
       dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
           "cl_option2" ~ ComputedCycleLength &gt; 25 &amp; ComputedCycleLength &lt; 35,
           "cl_option3" ~ ReportedCycleLength &gt; 25 &amp; ReportedCycleLength &lt; 35
-      )) %&gt;%
+      )) |&gt;
       mutate(NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
           "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -235,6 +220,17 @@ the value of “mc_option2” when we filter <code>cycle_length</code> using
 parameter combinations are absent (universes indexed 3 and 5.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 7</span></span></span>
+<span><span class="co">##   .universe cycle_length menstrual_calculation .parameter_assignment</span></span>
+<span><span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>         1 cl_option1   mc_option1            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>         2 cl_option1   mc_option2            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>         3 cl_option1   mc_option3            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>         4 cl_option2   mc_option1            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>         5 cl_option2   mc_option3            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>         6 cl_option3   mc_option2            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span>         7 cl_option3   mc_option3            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: .code &lt;list&gt;, .results &lt;list&gt;, .errors &lt;list&gt;</span></span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="the-branch_assert-function">The <code>branch_assert()</code> function<a class="anchor" aria-label="anchor" href="#the-branch_assert-function"></a>
@@ -247,35 +243,50 @@ function, the user can specify any logical operation.</p>
 <p>Both these operations have the same result, but the first may not be
 as easily interpretable. We specify the conditionals using the
 <code>branch_assert()</code> function in our example as:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option1"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option1"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option2"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></span></code></pre></div>
 <p>Using the <code>branch_assert()</code>, we can perform the exact same
 analysis:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
-<span>    <span class="va">df.2</span> <span class="op">&lt;-</span> <span class="va">df_durante</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="va">df.2</span> <span class="op">&lt;-</span> <span class="va">df_durante</span>  <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> ComputedCycleLength <span class="op">=</span> <span class="va">StartDateofLastPeriod</span> <span class="op">-</span> <span class="va">StartDateofPeriodBeforeLast</span> <span class="op">)</span>  <span class="op">|&gt;</span></span>
 <span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">cycle_length</span>,</span>
 <span>            <span class="st">"cl_option1"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
 <span>            <span class="st">"cl_option2"</span> <span class="op">~</span> <span class="va">ComputedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ComputedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span>,</span>
 <span>            <span class="st">"cl_option3"</span> <span class="op">~</span> <span class="va">ReportedCycleLength</span> <span class="op">&gt;</span> <span class="fl">25</span> <span class="op">&amp;</span> <span class="va">ReportedCycleLength</span> <span class="op">&lt;</span> <span class="fl">35</span></span>
-<span>        <span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>        <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NextMenstrualOnset <span class="op">=</span> <span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">menstrual_calculation</span>,</span>
 <span>            <span class="st">"mc_option1"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ComputedCycleLength</span>,</span>
 <span>            <span class="st">"mc_option2"</span> <span class="op">~</span> <span class="va">StartDateofLastPeriod</span> <span class="op">+</span> <span class="va">ReportedCycleLength</span>,</span>
 <span>            <span class="st">"mc_option3"</span> <span class="op">~</span> <span class="va">StartDateNext</span><span class="op">)</span></span>
-<span>        <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>        <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option1"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>        <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option1"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option3"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>        <span class="fu">branch_assert</span><span class="op">(</span> <span class="op">(</span><span class="va">menstrual_calculation</span> <span class="op">!=</span> <span class="st">"mc_option2"</span> <span class="op">|</span> <span class="op">(</span><span class="va">cycle_length</span> <span class="op">!=</span> <span class="st">"cl_option2"</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in FUN(X[[i]], ...): error in universe 1</span></span></code></pre>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">##  Error in FUN(X[[i]], ...) : object 'df.2' not found</span></span>
+<span><span class="co">##  base::tryCatch -&gt; tryCatchOne -&gt; tryCatchList -&gt; base::withCallingHandlers -&gt; base::saveRDS -&gt; base::do.call -&gt;  -&gt;  -&gt; rmarkdown::render -&gt; knitr::knit -&gt; process_file -&gt; xfun:::handle_error -&gt; withCallingHandlers -&gt; process_group -&gt; call_block -&gt; block_exec -&gt; eng_r -&gt; in_input_dir -&gt; in_dir -&gt; evaluate -&gt; evaluate::evaluate -&gt; withRestarts -&gt; withRestartList -&gt; withOneRestart -&gt; withRestartList -&gt; withOneRestart -&gt; withRestartList -&gt; withOneRestart -&gt; with_handlers -&gt; eval -&gt; eval -&gt; withCallingHandlers -&gt; withVisible -&gt; eval -&gt; eval -&gt; inside -&gt; execute_universe -&gt; lapply -&gt; FUN -&gt; tryStack -&gt; lapply -&gt; FUN -&gt; FUN -&gt; FUN(X[[i]], ...)</span></span></code></pre>
 <p>As we can see, this results in the same multiverse, where universes
 indexed 3 and 5 are not compatible.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 7</span></span></span>
+<span><span class="co">##   .universe cycle_length menstrual_calculation .parameter_assignment</span></span>
+<span><span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>         1 cl_option1   mc_option1            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>         2 cl_option1   mc_option2            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>         3 cl_option1   mc_option3            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>         4 cl_option2   mc_option1            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>         5 cl_option2   mc_option3            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>         6 cl_option3   mc_option2            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span>         7 cl_option3   mc_option3            <span style="color: #949494;">&lt;named list [2]&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: .code &lt;list&gt;, .results &lt;list&gt;, .errors &lt;list&gt;</span></span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -284,75 +295,71 @@ indexed 3 and 5 are not compatible.</p>
 <p>Specifying these conditions allows us to exclude inconsistent
 combinations from our analyses. Let’s update the example from <a href="https://mucollective.github.io/multiverse/" class="external-link">home page</a> by
 including these conditions:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><text>:31:0: unexpected end of input 29: “rs_option2” ~
-factor(ifelse(Relationship==1, ‘Single’, ‘Relationship’)), 30:
-“rs_option3” ~ factor(ifelse(Relationship==1, ‘Single’,
-ifelse(Relationship==3 | Relationship==4, ‘Relationship’, NA))) ) ^</text></p>
 <pre><code>```{multiverse default-m-2, inside = M, echo = FALSE}
-df &lt;- df_durante  %&gt;%
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %&gt;%
+df &lt;- df_durante  |&gt;
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |&gt;
   dplyr::filter( branch(cycle_length,
           "cl_option1" ~ TRUE,
           "cl_option2" ~ ComputedCycleLength &gt; 25 &amp; ComputedCycleLength &lt; 35,
           "cl_option3" ~ ReportedCycleLength &gt; 25 &amp; ReportedCycleLength &lt; 35
-  )) %&gt;%
+  )) |&gt;
   dplyr::filter( branch(certainty,
           "cer_option1" ~ TRUE,
           "cer_option2" ~ Sure1 &gt; 6 | Sure2 &gt; 6
-  )) %&gt;%
+  )) |&gt;
   mutate(NextMenstrualOnset = branch(menstrual_calculation,
           "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
           "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
           "mc_option3" ~ StartDateNext)
-  )  %&gt;%
+  )  |&gt;
   mutate(
     CycleDay = 28 - (NextMenstrualOnset - DateTesting),
     CycleDay = ifelse(CycleDay &gt; 1 &amp; CycleDay &lt; 28, CycleDay, ifelse(CycleDay &lt; 1, 1, 28))
-  ) %&gt;%
+  ) |&gt;
   mutate( Fertility = branch( fertile,
           "fer_option1" ~ factor( ifelse(CycleDay &gt;= 7 &amp; CycleDay &lt;= 14, "high", ifelse(CycleDay &gt;= 17 &amp; CycleDay &lt;= 25, "low", NA)) ),
           "fer_option2" ~ factor( ifelse(CycleDay &gt;= 6 &amp; CycleDay &lt;= 14, "high", ifelse(CycleDay &gt;= 17 &amp; CycleDay &lt;= 27, "low", NA)) ),
           "fer_option3" ~ factor( ifelse(CycleDay &gt;= 9 &amp; CycleDay &lt;= 17, "high", ifelse(CycleDay &gt;= 18 &amp; CycleDay &lt;= 25, "low", NA)) ),
           "fer_option4" ~ factor( ifelse(CycleDay &gt;= 8 &amp; CycleDay &lt;= 14, "high", "low") ),
           "fer_option45" ~ factor( ifelse(CycleDay &gt;= 8 &amp; CycleDay &lt;= 17, "high", "low") )
-  )) %&gt;%
+  )) |&gt;
   mutate(RelationshipStatus = branch(relationship_status,
           "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
           "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
           "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
   )
 ```</code></pre>
-<p>After excluding the inconsistent choice combinations, <span class="math inline">\(270 − 2 \times (5 \times 1 \times 3 \times 1
-\times 2) = 210\)</span> choice combinations remain:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>After excluding the inconsistent choice combinations,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>270</mn><mo>−</mo><mn>2</mn><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>5</mn><mo>×</mo><mn>1</mn><mo>×</mo><mn>3</mn><mo>×</mo><mn>1</mn><mo>×</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>210</mn></mrow><annotation encoding="application/x-tex">270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210</annotation></semantics></math>
+choice combinations remain:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 210</span></span></code></pre>
 <p>Now, we’ve created the complete multiverse that was presented as
 example #2 from Steegen et al.’s paper.</p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by <a href="http://abhsarma.github.io" class="external-link">Abhraneel Sarma</a>, <a href="http://www.mjskay.com" class="external-link">Matthew Kay</a>.</p>
+  <p>Developed by <a href="http://abhsarma.github.io" class="external-link">Abhraneel Sarma</a>, <a href="http://www.mjskay.com" class="external-link">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

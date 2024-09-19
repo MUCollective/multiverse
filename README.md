@@ -523,13 +523,19 @@ expand(M)
 
 ``` r
 code(M)
-#> $branch_definition
-#> {
-#>     df = hurricane_data
-#>     df.filtered = filter(df, branch(death_outliers, "no_exclusion" ~ 
-#>         TRUE, "most_extreme" ~ name != "Katrina", "two_most_extreme" ~ 
-#>         !(name %in% c("Katrina", "Audrey"))))
-#> }
+#> [[1]]
+#> df <- hurricane_data
+#> 
+#> [[2]]
+#> df.filtered <- filter(
+#>   df,
+#>   branch(
+#>     death_outliers,
+#>     "no_exclusion" ~ TRUE,
+#>     "most_extreme" ~ name != "Katrina",
+#>     "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))
+#>   )
+#> )
 ```
 
 1.  `extract_variables(M, <variable names>)` extracts the supplied
@@ -549,7 +555,7 @@ extract_variables(M, df.filtered)
 #> 1         1 no_exclusion     <named list [1]>      <named list> <env>    <lgl>  
 #> 2         2 most_extreme     <named list [1]>      <named list> <env>    <lgl>  
 #> 3         3 two_most_extreme <named list [1]>      <named list> <env>    <lgl>  
-#> # ℹ 1 more variable: df.filtered <list>
+#> # ℹ 1 more variable: df.filtered <named list>
 ```
 
 ## Building up a complete analysis
@@ -737,16 +743,15 @@ particular) analysis while **knitting**, we should instead use:
 ``` r
 extract_variable_from_universe(M, 1, fit) |> 
   broom::tidy()
-#> # A tibble: 7 × 5
-#>   term              estimate std.error statistic  p.value
-#>   <chr>                <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 (Intercept)       -3.59      0.451      -7.97  1.53e-15
-#> 2 femininity        -0.146     0.504      -0.290 7.71e- 1
-#> 3 damage             0.772     0.0517     14.9   1.97e-50
-#> 4 z3                -0.481     0.0886     -5.43  5.69e- 8
-#> 5 femininity:damage  0.00719   0.0563      0.128 8.98e- 1
-#> 6 femininity:z3      0.484     0.0938      5.17  2.38e- 7
-#> 7 damage:post       -0.0386    0.00515    -7.48  7.27e-14
+#> # A tibble: 6 × 5
+#>   term               estimate   std.error statistic   p.value
+#>   <chr>                 <dbl>       <dbl>     <dbl>     <dbl>
+#> 1 (Intercept)      2.09       0.0908          23.0  2.03e-117
+#> 2 masfem           0.0454     0.0123           3.70 2.18e-  4
+#> 3 dam              0.0000195  0.00000338       5.77 8.10e-  9
+#> 4 zpressure        0.137      0.101            1.35 1.76e-  1
+#> 5 masfem:dam       0.00000110 0.000000421      2.61 8.94e-  3
+#> 6 masfem:zpressure 0.0253     0.0125           2.02 4.33e-  2
 ```
 
 Analysts can change which analysis path is executed by default. Inline
