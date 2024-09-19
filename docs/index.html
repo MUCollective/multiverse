@@ -5,97 +5,61 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016)
-    &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. 
-    Multiverse analysis is a philosophy of statistical reporting where paper authors 
-    report the outcomes of many different statistical analyses in order to show how 
-    fragile or robust their findings are. The multiverse package 
-    (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) 
-    &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style 
-    analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. 
-    Users can also create Explorable Multiverse Analysis Reports (EMARs) 
-    (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) &lt;doi:10.1145/3290605.3300295&gt;,
-     a new approach to statistical reporting where readers of research papers can explore alternative 
-     analysis options by interacting with the paper itself.">
-<title>Multiverse: Create multiverse analysis in R • multiverse</title>
+<title>Create multiverse analysis in R • multiverse</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Nunito_Sans-0.4.7/font.css" rel="stylesheet">
-<link href="deps/Georgia-0.4.7/font.css" rel="stylesheet">
-<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<meta property="og:title" content="Multiverse: Create multiverse analysis in R">
-<meta property="og:description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016)
-    &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. 
-    Multiverse analysis is a philosophy of statistical reporting where paper authors 
-    report the outcomes of many different statistical analyses in order to show how 
-    fragile or robust their findings are. The multiverse package 
-    (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) 
-    &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style 
-    analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. 
-    Users can also create Explorable Multiverse Analysis Reports (EMARs) 
-    (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) &lt;doi:10.1145/3290605.3300295&gt;,
-     a new approach to statistical reporting where readers of research papers can explore alternative 
-     analysis options by interacting with the paper itself.">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Nunito_Sans-0.4.9/font.css" rel="stylesheet">
+<link href="deps/Georgia-0.4.9/font.css" rel="stylesheet">
+<link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
+<meta property="og:title" content="Create multiverse analysis in R">
+<meta name="description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016) &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are. The multiverse package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. Users can also create Explorable Multiverse Analysis Reports (EMARs) (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) &lt;doi:10.1145/3290605.3300295&gt;, a new approach to statistical reporting where readers of research papers can explore alternative analysis options by interacting with the paper itself.">
+<meta property="og:description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016) &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are. The multiverse package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. Users can also create Explorable Multiverse Analysis Reports (EMARs) (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) &lt;doi:10.1145/3290605.3300295&gt;, a new approach to statistical reporting where readers of research papers can explore alternative analysis options by interacting with the paper itself.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="index.html">multiverse</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/branch.html">A discussion on branches in the multiverse</a>
-    <a class="dropdown-item" href="articles/conditions.html">Declaring conditions in the multiverse</a>
-    <a class="dropdown-item" href="articles/dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a>
-    <a class="dropdown-item" href="articles/durante-multiverse-analysis.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a>
-    <a class="dropdown-item" href="articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a>
-    <a class="dropdown-item" href="articles/frequentist-multiverse-analysis.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a>
-    <a class="dropdown-item" href="articles/hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a>
-    <a class="dropdown-item" href="articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a>
-    <a class="dropdown-item" href="articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/branch.html">A discussion on branches in the multiverse</a></li>
+    <li><a class="dropdown-item" href="articles/conditions.html">Declaring conditions in the multiverse</a></li>
+    <li><a class="dropdown-item" href="articles/example-dance.html">Example multiverse implementation: Recreating Adding inferential treatments to plots using Resampling and Animations using multiverse</a></li>
+    <li><a class="dropdown-item" href="articles/example-durante.html">Example multiverse implementation: Effect of fertility on religiosity and political attitudes</a></li>
+    <li><a class="dropdown-item" href="articles/example-frequentist.html">Example multiverse implementation: Re-evaluating the efficiency of physical visualizations</a></li>
+    <li><a class="dropdown-item" href="articles/example-hurricane.html">Example multiverse implementation: Female hurricanes are deadlier than male hurricanes</a></li>
+    <li><a class="dropdown-item" href="articles/execution-multiverse.html">Execution of multiverse analysis --- Sequential and Parallel</a></li>
+    <li><a class="dropdown-item" href="articles/multiverse-in-rmd.html">Using the multiverse in RMarkdown: Introduction to multiverse code chunks</a></li>
+    <li><a class="dropdown-item" href="articles/visualising-multiverse.html">Extracting and Visualising the results of a multiverse analysis</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/MUCollective/multiverse/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/MUCollective/multiverse/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-home">
 <div class="row">
@@ -134,8 +98,8 @@
 <li>Steegen et al.’s <a href="https://doi.org/10.1177/1745691616658637" class="external-link">original multiverse analysis</a> of the paper <a href="https://doi.org/10.1177/0956797612466416" class="external-link">The fluctuating female vote: Politics, religion, and the ovulatory cycle</a>; can also be found <strong>below</strong>.</li>
 <li>Simonsohn et al.’s <a href="http://dx.doi.org/10.2139/ssrn.2694998" class="external-link">specification curve analysis</a> of the paper <a href="https://doi.org/10.1073/pnas.1402786111" class="external-link">Female hurricanes are deadlier than male hurricanes</a>
 </li>
-<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/dance/" class="external-link">Adding Inferential Information to plots using Resampling and Animations</a> (from <a href="https://hal.inria.fr/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
-<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/frequentist/" class="external-link">Re-evaluating the efficiency of Physical Visualisations</a> (from <a href="https://hal.inria.fr/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/dance/" class="external-link">Adding Inferential Information to plots using Resampling and Animations</a> (from <a href="https://inria.hal.science/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/frequentist/" class="external-link">Re-evaluating the efficiency of Physical Visualisations</a> (from <a href="https://inria.hal.science/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
 </ul>
 </div>
 <div class="section level2">
@@ -143,7 +107,7 @@
 </h2>
 <p>In this document, we outline an initial approach to conducting a multiverse analysis in R. We will show how our package can be used to perform the multiverse analysis outlined by Simohnsohn et al. in <a href="http://dx.doi.org/10.2139/ssrn.2694998" class="external-link">Specification Curve: Descriptive and Inferential Statistics on All Reasonable Specifications</a> where they reanalysed the study titled <a href="https://doi.org/10.1073/pnas.1402786111" class="external-link">Female hurricanes are deadlier than male hurricanes</a>.</p>
 <p>Before we dive into the analysis, it might be helpful to establish a terminology to help describe the steps that go into creating a multiverse analysis. We adopt the “tree of analysis” metaphor (see Figure below): “an analysis proceeds from top to bottom, and each branching represents a choice between different analysis options”.</p>
-<p><img src="articles/figures/00-reporting-strategies.png" width="60%"></p>
+<p><img src="reference/figures/00-reporting-strategies.png" width="60%"></p>
 <p>In this terminology:</p>
 <ul>
 <li>a <em>parameter</em> represents a node in the tree that has more than one child—a point in the analysis where the analyst must decide between reasonable alternatives</li>
@@ -157,7 +121,7 @@
 <p>We first load the raw data and store it as a tibble. The data is provided with the package and can be loaded using the <code>data("hurricane)</code> command.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hurricane"</span><span class="op">)</span></span>
-<span><span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op">%&gt;%</span></span>
+<span><span class="va">hurricane_data</span> <span class="op">&lt;-</span> <span class="va">hurricane</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># rename some variables</span></span>
 <span>    <span class="fu">rename</span><span class="op">(</span></span>
 <span>        year <span class="op">=</span> <span class="va">Year</span>,</span>
@@ -169,7 +133,7 @@
 <span>        category <span class="op">=</span> <span class="va">Category</span>,</span>
 <span>        pressure <span class="op">=</span> <span class="va">Minpressure_Updated_2014</span>,</span>
 <span>        wind <span class="op">=</span> <span class="va">HighestWindSpeed</span></span>
-<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># create new variables</span></span>
 <span>    <span class="co"># which are relevant later on</span></span>
 <span>    <span class="fu">mutate</span><span class="op">(</span></span>
@@ -181,7 +145,7 @@
 <span>    <span class="op">)</span></span></code></pre></div>
 <p>The data look like this:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hurricane_data</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">hurricane_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   year     name  masfem MinPressure_before pressure female category death wind</span></span>
 <span><span class="co">#&gt; 1 1950     Easy 5.40625                958      960      0        3     2  125</span></span>
@@ -204,8 +168,8 @@
 <p>The original analysis removed the two hurricanes with the highest death toll as outliers. To test their hypothesis that hurricanes with more feminine names result in more deaths, the authors fit a negative binomial model using the number of deaths as the response variable (due to some issues with implementing the negative binomial model in R, we approximate it by fitting a poisson model instead). For predictors, they use <code>femininity</code>, <code>damages</code>, standardised value of pressure (<code>zpressure)</code>, interaction between <code>femininity</code> and <code>damages</code>, and the interaction between <code>femininity</code> and <code>zpressure</code>.</p>
 <p>The following code block contains the steps involved in implementing the original analysis:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df.filtered</span> <span class="op">=</span> <span class="va">hurricane_data</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span> <span class="op">&amp;</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Audrey"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">df.filtered</span> <span class="op">=</span> <span class="va">hurricane_data</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span> <span class="op">&amp;</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Audrey"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>zpressure <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">pressure</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span></span>
@@ -215,17 +179,16 @@
 <span><span class="op">)</span></span></code></pre></div>
 <p>The result below indicates that there is a small but positive effect of <code>masfem</code> (femininity of the name of a hurricane) on <code>deaths</code>, when controlled for damages. This appears to support the original hypothesis.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">term</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">term</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_pointinterval</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="va">term</span>, xmin <span class="op">=</span> <span class="va">estimate</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="fl">0.025</span><span class="op">)</span><span class="op">*</span><span class="va">std.error</span>, xmax <span class="op">=</span> <span class="va">estimate</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="fl">0.975</span><span class="op">)</span><span class="op">*</span><span class="va">std.error</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="float">
-<img src="reference/figures/universe-summary-1.png" alt="results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors"><div class="figcaption">results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors</div>
-</div>
-<p>However, the original analysis involved at least four analysis decisions (A-D), and at each decision point (node) alternative choices may have led to a different result. These decisions are highlighted in the figure below:</p>
-<p><img src="articles/figures/00-default-analysis.png" width="90%"></p>
+<figure><img src="reference/figures/universe-summary-1.png" alt="results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors"><figcaption aria-hidden="true">
+results from a single analysis: point estimates and 95% confidence intervals of all the coefficients of the predictors
+</figcaption></figure><p>However, the original analysis involved at least four analysis decisions (A-D), and at each decision point (node) alternative choices may have led to a different result. These decisions are highlighted in the figure below:</p>
+<p><img src="reference/figures/00-default-analysis.png" width="90%"></p>
 <p>Several subsequent studies, each proposing a different analysis strategy, found no presence of such an effect, suggesting that the original finding may have been a result of a idiosyncratic combination of analysis choices. Data analysis can often involve several decisions involving two or more options. In most statistical analysis, these decisions are taken by the researcher based on some reasonable justification. However, for several decisions, there can be more than one reasonable option to choose from. A multiverse analysis makes all such decisions explicit and conducts the complete analysis for all combinations of options (of each decision). Below, we use this analysis as an example of how a single analysis can be extended to a multiverse analysis.</p>
 </div>
 </div>
@@ -243,7 +206,7 @@
 <div class="section level3">
 <h3 id="two-ways-to-building-a-multiverse">Two ways to building a multiverse<a class="anchor" aria-label="anchor" href="#two-ways-to-building-a-multiverse"></a>
 </h3>
-<p>Through the <code>multiverse</code> DSL, users are specifying multiple analysis paths at the same time. The DSL cannot be executed directly in an R environment or R code chunk and needs to be declared, processed and executed in a special environment. To be more precise, <code>multiverse</code> takes the user declared code, parses and rewrites the code into multiple versions of valid R code, each corresponding to an unique analysis path in the multiverse. For more information on this processing step, see vignette(branch)</p>
+<p>Through the <code>multiverse</code> DSL, users are specifying multiple analysis paths at the same time. The DSL cannot be executed directly in an R environment or R code chunk and needs to be declared, processed and executed in a special environment. To be more precise, <code>multiverse</code> takes the user declared code, parses and rewrites the code into multiple versions of valid R code, each corresponding to an unique analysis path in the multiverse. For more information on this processing step, see <code><a href="articles/branch.html">vignette("branch")</a></code></p>
 <p>To get around these limitations, we need to declare this (multiverse DSL) code “inside a multiverse object”. The <code>multiverse</code> package facilitates this through some boilerplate code:</p>
 <ul>
 <li>
@@ -260,7 +223,7 @@
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="at">df = hurricane_data</span></span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="at"># here, we perform a </span><span class="st">`</span>filter<span class="st">`</span><span class="at"> operation in the multiverse</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="at">df.filtered = df %&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="at">df.filtered = df |&gt;</span></span>
 <span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="at">  filter(branch(death_outliers,</span></span>
 <span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="at">      "no_exclusion" ~ TRUE,</span></span>
 <span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="at">      "most_extreme" ~ name != "Katrina",</span></span>
@@ -269,12 +232,12 @@
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>The code within the <code>filter</code> function call is written in the <code>multiverse</code> DSL and cannot be executed directly in R. For now, ignore what the <code>branch</code> function does as we will discuss about this in more detail in the next section. When this code is written and executed inside a <em>multiverse code block</em>, it allows the multiverse library to process and compile it to three different analyses.</p>
 <p>We provide the ability to declare multiverse code block as an <em>AddIn</em> in RStudio. Users can click on <em>AddIns</em> toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.</p>
-<p><img src="articles/figures/01-multiverse-addins.png" width="90%"></p>
+<p><img src="reference/figures/01-multiverse-addins.png" width="90%"></p>
 <p>Alternately, users can insert a multiverse code block using a keyboard shortcut. Users can create a keyboard shortcut to declare a multiverse code block inside a RMarkdown document through the following steps:</p>
 <ul>
 <li>Tools &gt; Addins &gt; Browse Addins… &gt; Keyboard Shortcuts</li>
 <li>Next, in the filter input field, type <em>multiverse</em>. You will see one result with “Insert multiverse code chunk” as the name.</li>
-<li>Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).</li>
+<li>Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended shortcuts, but you should feel free to use whatever you prefer.</li>
 <li>Click “Apply” and exit the dialog box</li>
 </ul>
 <p>Please refer to  for more details on using the multiverse code blocks with RMarkdown. The vignette also contains information on steps for debugging some of the common problems in assigning keyboard shortcuts.</p>
@@ -291,13 +254,13 @@
 <p>Note that <code><a href="reference/inside.html">inside()</a></code> is primarily designed for script style programming. If a user is working with an RScript, the previous code can be declared “inside the multiverse object” using the <code><a href="reference/inside.html">inside()</a></code> function as follows:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># here we just create the variable `df` in the multiverse</span></span>
-<span><span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, df <span class="op">=</span> <span class="va">hurricane_data</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span> <span class="va">df</span> <span class="op">=</span> <span class="va">hurricane_data</span> <span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># here, we perform two `mutate` operations in the multiverse.</span></span>
 <span><span class="co"># although they could have been chained, this illustrates </span></span>
 <span><span class="co"># how multiple variables can be declared together using the `{}`</span></span>
 <span><span class="fu"><a href="reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
-<span>  <span class="va">df.filtered</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="va">df.filtered</span> <span class="op">=</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="reference/branch.html">branch</a></span><span class="op">(</span><span class="va">death_outliers</span>,</span>
 <span>        <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>
 <span>        <span class="st">"most_extreme"</span> <span class="op">~</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span>,</span>
@@ -312,7 +275,7 @@
 </h3>
 <p>After you’ve specified the appropriate boilerplate which is necessary to use the <code>multiverse</code> DSL, the next step is to define our possible alternate analysis paths. The multiverse package includes functions that aim to make it easy to declare multiple alternate choices at each analysis decision point. We do this by enabling analysts to declare code using syntax which is as close to that of a single universe analysis as possible. Consider these first few lines from the transformation code in the single analysis above:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df.filtered</span> <span class="op">=</span> <span class="va">hurricane_data</span> <span class="op">%&gt;%</span> </span>
+<code class="sourceCode R"><span><span class="va">df.filtered</span> <span class="op">=</span> <span class="va">hurricane_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">!=</span> <span class="st">"Katrina"</span> <span class="op">&amp;</span> <span class="va">name</span> <span class="op">!=</span> <span class="st">"Audrey"</span><span class="op">)</span></span></code></pre></div>
 <p>Here, the researchers are faced with the decision of which hurricanes to exclude as outliers. They decide to exclude the two hurricanes which have caused the most deaths. However, this decision is arbitrary. Why not include all hurricanes? Why not exclude only the one with most deaths? Thus we could have three possible ways of removing outliers based on extreme number of deaths:</p>
 <ul>
@@ -327,7 +290,7 @@
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="at">df = hurricane_data</span></span>
 <span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a></span>
 <span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="at"># here, we perform a </span><span class="st">`</span>filter<span class="st">`</span><span class="at"> operation in the multiverse</span></span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="at">df.filtered = df %&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="at">df.filtered = df |&gt;</span></span>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="at">  filter(branch(death_outliers,</span></span>
 <span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="at">      "no_exclusion" ~ TRUE,</span></span>
 <span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="at">      "most_extreme" ~ name != "Katrina",</span></span>
@@ -335,8 +298,8 @@
 <span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="at">))</span></span>
 <span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>The <code>multiverse</code> library then takes this user-declared syntax in the multiverse DSL and and compiles it into three separate, executable R expressions as shown in the figure below:</p>
-<p><img src="articles/figures/02-branch.png" width="90%"></p>
-<p>More details on the <code><a href="reference/branch.html">branch()</a></code> function can be found in the corresponding <code>vignette(branch)</code>.</p>
+<p><img src="reference/figures/02-branch.png" width="90%"></p>
+<p>More details on the <code><a href="reference/branch.html">branch()</a></code> function can be found in the corresponding <code><a href="articles/branch.html">vignette("branch")</a></code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -377,13 +340,19 @@
 </ol>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/accessors.html">code</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $branch_definition</span></span>
-<span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;     df = hurricane_data</span></span>
-<span><span class="co">#&gt;     df.filtered = df %&gt;% filter(branch(death_outliers, "no_exclusion" ~ </span></span>
-<span><span class="co">#&gt;         TRUE, "most_extreme" ~ name != "Katrina", "two_most_extreme" ~ </span></span>
-<span><span class="co">#&gt;         !(name %in% c("Katrina", "Audrey"))))</span></span>
-<span><span class="co">#&gt; }</span></span></code></pre></div>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; df &lt;- hurricane_data</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; df.filtered &lt;- filter(</span></span>
+<span><span class="co">#&gt;   df,</span></span>
+<span><span class="co">#&gt;   branch(</span></span>
+<span><span class="co">#&gt;     death_outliers,</span></span>
+<span><span class="co">#&gt;     "no_exclusion" ~ TRUE,</span></span>
+<span><span class="co">#&gt;     "most_extreme" ~ name != "Katrina",</span></span>
+<span><span class="co">#&gt;     "two_most_extreme" ~ !(name %in% c("Katrina", "Audrey"))</span></span>
+<span><span class="co">#&gt;   )</span></span>
+<span><span class="co">#&gt; )</span></span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li>
 <code>extract_variables(M, &lt;variable names&gt;)</code> extracts the supplied variable from the results of each analysis path, returning a table similar to the output of <code>expand(M)</code>, but with new columns for each variable that has been extracted. This would allow an analyst to, for example, extract summary statistics or even entire data tables from all universes simultaneously. These columns can easily be turned into long format data tables using the <code>tidyverse</code> packages and then visualized using the <code>ggplot2</code> package</li>
@@ -391,13 +360,12 @@
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/extract_variables.html">extract_variables</a></span><span class="op">(</span><span class="va">M</span>, <span class="va">df.filtered</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 7</span></span>
-<span><span class="co">#&gt;   .universe death_outliers   .parameter_a…¹ .code        .resu…² .errors df.fi…³</span></span>
-<span><span class="co">#&gt;       &lt;int&gt; &lt;chr&gt;            &lt;list&gt;         &lt;list&gt;       &lt;list&gt;  &lt;list&gt;  &lt;list&gt; </span></span>
-<span><span class="co">#&gt; 1         1 no_exclusion     &lt;named list&gt;   &lt;named list&gt; &lt;env&gt;   &lt;lgl&gt;   &lt;df&gt;   </span></span>
-<span><span class="co">#&gt; 2         2 most_extreme     &lt;named list&gt;   &lt;named list&gt; &lt;env&gt;   &lt;lgl&gt;   &lt;df&gt;   </span></span>
-<span><span class="co">#&gt; 3         3 two_most_extreme &lt;named list&gt;   &lt;named list&gt; &lt;env&gt;   &lt;lgl&gt;   &lt;df&gt;   </span></span>
-<span><span class="co">#&gt; # … with abbreviated variable names ¹​.parameter_assignment, ²​.results,</span></span>
-<span><span class="co">#&gt; #   ³​df.filtered</span></span></code></pre></div>
+<span><span class="co">#&gt;   .universe death_outliers   .parameter_assignment .code        .results .errors</span></span>
+<span><span class="co">#&gt;       &lt;int&gt; &lt;chr&gt;            &lt;list&gt;                &lt;list&gt;       &lt;list&gt;   &lt;list&gt; </span></span>
+<span><span class="co">#&gt; 1         1 no_exclusion     &lt;named list [1]&gt;      &lt;named list&gt; &lt;env&gt;    &lt;lgl&gt;  </span></span>
+<span><span class="co">#&gt; 2         2 most_extreme     &lt;named list [1]&gt;      &lt;named list&gt; &lt;env&gt;    &lt;lgl&gt;  </span></span>
+<span><span class="co">#&gt; 3         3 two_most_extreme &lt;named list [1]&gt;      &lt;named list&gt; &lt;env&gt;    &lt;lgl&gt;  </span></span>
+<span><span class="co">#&gt; # ℹ 1 more variable: df.filtered &lt;named list&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="building-up-a-complete-analysis">Building up a complete analysis<a class="anchor" aria-label="anchor" href="#building-up-a-complete-analysis"></a>
@@ -409,7 +377,7 @@
 </ol>
 <p>This would result in 3 × 2 × 2 = 12 analysis paths.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="st">```</span><span class="at">{multiverse label = variable_definitions, inside = M}</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="at">    df.filtered &lt;- df.filtered %&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="at">    df.filtered &lt;- df.filtered |&gt;</span></span>
 <span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="at">        mutate(</span></span>
 <span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="at">            femininity = branch(femininity_calculation,</span></span>
 <span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="at">              "masfem" ~ masfem,</span></span>
@@ -485,18 +453,23 @@
 <span id="cb20-14"><a href="#cb20-14" tabindex="-1"></a><span class="at">          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  </span></span>
 <span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a><span class="at">          data = df)</span></span>
 <span id="cb20-16"><a href="#cb20-16" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
-<p>The following code chunk illustrates this behavior. Even though the variable <code>fit</code> was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:</p>
+<p>During interactive use (i.e. when running code chunks individually in RMarkdown), the following code chunk illustrates this behavior. Even though the variable <code>fit</code> was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<p>Note: this behavior is not permitted when a notebook is being knit—rendered to HTML (or some other format) using <code>knitr</code>. This is because we cannot control how code is executed when knitting, and we want to avoid providing the user with a surprising result. Instead, we through an error. If your code is running perfectly fine in a script file or markdown notebook, and only throwing an error when knitting with a message similar to <code>! object 'fit' not found</code>, this is likely because you are trying to access objects declared within a multiverse code block using an R code block.</p>
+<p>Instead, if we want to output the results of the default (or any particular) analysis while <strong>knitting</strong>, we should instead use:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/accessors.html">extract_variable_from_universe</a></span><span class="op">(</span><span class="va">M</span>, <span class="fl">1</span>, <span class="va">fit</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 6 × 5</span></span>
 <span><span class="co">#&gt;   term               estimate   std.error statistic   p.value</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;                 &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 (Intercept)      2.10       0.0918          22.9  1.12e-115</span></span>
-<span><span class="co">#&gt; 2 masfem           0.0465     0.0123           3.77 1.63e-  4</span></span>
+<span><span class="co">#&gt; 1 (Intercept)      2.09       0.0908          23.0  2.03e-117</span></span>
+<span><span class="co">#&gt; 2 masfem           0.0454     0.0123           3.70 2.18e-  4</span></span>
 <span><span class="co">#&gt; 3 dam              0.0000195  0.00000338       5.77 8.10e-  9</span></span>
-<span><span class="co">#&gt; 4 zpressure        0.144      0.106            1.35 1.76e-  1</span></span>
+<span><span class="co">#&gt; 4 zpressure        0.137      0.101            1.35 1.76e-  1</span></span>
 <span><span class="co">#&gt; 5 masfem:dam       0.00000110 0.000000421      2.61 8.94e-  3</span></span>
-<span><span class="co">#&gt; 6 masfem:zpressure 0.0266     0.0132           2.02 4.33e-  2</span></span></code></pre></div>
+<span><span class="co">#&gt; 6 masfem:zpressure 0.0253     0.0125           2.02 4.33e-  2</span></span></code></pre></div>
 <p>Analysts can change which analysis path is executed by default. Inline code output of a single analysis path (and the ability to select that path) is meant to support the familiar trial and error workflow of data analysts and to aid debugging.</p>
 </div>
 <div class="section level2">
@@ -508,7 +481,7 @@
 <h2 id="debugging-and-diagnosing-errors">Debugging and Diagnosing Errors<a class="anchor" aria-label="anchor" href="#debugging-and-diagnosing-errors"></a>
 </h2>
 <p>For the default analysis, as it executes in the R environment, users have access to the same set of debugging utilities that R provides. When the user executes the entire multiverse, the library outputs the error message, a traceback—an object containing the entire call stack that caused the error—and the index of the corresponding analysis path in which the error was encountered. The execution of the remaining analysis paths in the multiverse are not halted if any errors are encountered. The traceback is helpful to identify the location of the error, as often R expressions return unidentifiable error messages. <code>execute_universe(&lt;universe ID&gt;)</code> (universe ID are found in the table output by <code><a href="reference/accessors.html">expand()</a></code>, see below) allows analysts to execute a particular analysis path and reproduce errors encountered in the execution of that specific path.</p>
-<p><img src="articles/figures/06-expand.png" width="90%"></p>
+<p><img src="reference/figures/06-expand.png" width="90%"></p>
 </div>
 <div class="section level2">
 <h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
@@ -524,8 +497,8 @@
 <ul>
 <li>Simonsohn et al.’s <a href="http://dx.doi.org/10.2139/ssrn.2694998" class="external-link">specification curve analysis</a> of the paper <a href="https://doi.org/10.1073/pnas.1402786111" class="external-link">Female hurricanes are deadlier than male hurricanes</a>
 </li>
-<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/dance/" class="external-link">Adding Inferential Information to plots using Resampling and Animations</a> (from <a href="https://hal.inria.fr/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
-<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/frequentist/" class="external-link">Re-evaluating the efficiency of Physical Visualisations</a> (from <a href="https://hal.inria.fr/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/dance/" class="external-link">Adding Inferential Information to plots using Resampling and Animations</a> (from <a href="https://inria.hal.science/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
+<li>Dragicevic et al.’s mini-paper <a href="https://explorablemultiverse.github.io/examples/frequentist/" class="external-link">Re-evaluating the efficiency of Physical Visualisations</a> (from <a href="https://inria.hal.science/hal-01976951/document" class="external-link">Increasing the transparency of research papers with explorable multiverse analyses</a> )</li>
 </ul>
 </div>
 </div>
@@ -579,21 +552,19 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by <a href="http://abhsarma.github.io" class="external-link">Abhraneel Sarma</a>, <a href="http://www.mjskay.com" class="external-link">Matthew Kay</a>.</p>
+  <p>Developed by <a href="http://abhsarma.github.io" class="external-link">Abhraneel Sarma</a>, <a href="http://www.mjskay.com" class="external-link">Matthew Kay</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

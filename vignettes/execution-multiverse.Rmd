@@ -30,7 +30,7 @@ In this document, we show how you can execute each of the distinct analyses in y
 
 ## Data and analysis
 
-We will use the hurricane dataset that has been discussed in greater detail in the [README](https://mucollective.github.io/multiverse/) as well as in the vignette [hurricane](hurricane.html). If you are already familiar with this dataset and analysis, please feel free to skip this section, and continue from the next section
+We will use the hurricane dataset that has been discussed in greater detail in the [README](https://mucollective.github.io/multiverse/) as well as in the vignette [hurricane](example-hurricane.html). If you are already familiar with this dataset and analysis, please feel free to skip this section, and continue from the next section
 
 ```{r}
 data(hurricane)
