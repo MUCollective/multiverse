@@ -1,6 +1,6 @@
 Package: multiverse
 Version: 0.6.2
-Date: 2024-10-06
+Date: 2024-10-07
 Title: Create 'multiverse analysis' in R
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
@@ -72,6 +72,6 @@ Suggests:
 VignetteBuilder: 
     knitr
 Language: en-US
-BugReports: https://github.com/MUCollective/multiverse/issues/new
+BugReports: https://github.com/MUCollective/multiverse/issues/
 URL: https://mucollective.github.io/multiverse/, https://github.com/mucollective/multiverse/
 Config/testthat/edition: 3
