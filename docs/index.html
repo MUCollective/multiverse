@@ -14,8 +14,8 @@
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Create multiverse analysis in R">
-<meta name="description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016) &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are. The multiverse package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. Users can also create Explorable Multiverse Analysis Reports (EMARs) (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) &lt;doi:10.1145/3290605.3300295&gt;, a new approach to statistical reporting where readers of research papers can explore alternative analysis options by interacting with the paper itself.">
-<meta property="og:description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016) &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are. The multiverse package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. Users can also create Explorable Multiverse Analysis Reports (EMARs) (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) &lt;doi:10.1145/3290605.3300295&gt;, a new approach to statistical reporting where readers of research papers can explore alternative analysis options by interacting with the paper itself.">
+<meta name="description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016) &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are. The multiverse package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks.">
+<meta property="og:description" content="Implement multiverse style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016) &lt;doi:10.1177/1745691616658637&gt; to show the robustness of statistical inference. Multiverse analysis is a philosophy of statistical reporting where paper authors report the outcomes of many different statistical analyses in order to show how fragile or robust their findings are. The multiverse package (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) &lt;doi:10.31219/osf.io/yfbwm&gt; allows users to concisely and flexibly implement multiverse-style analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">multiverse</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -199,7 +199,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <p>The first step is to load the library and define a <em>new multiverse</em>, which is the variable <code>M</code>. We will use this multiverse object to create a set of universes, each representing a different way of analysing our data.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#load the library</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mucollective.github.io/multiverse/" class="external-link">multiverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://mucollective.github.io/multiverse/">multiverse</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#create multiverse object</span></span>
 <span><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -556,7 +556,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

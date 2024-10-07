@@ -1,6 +1,6 @@
 Package: multiverse
-Version: 0.6.3
-Date: 2024-09-18
+Version: 0.6.2
+Date: 2024-10-06
 Title: Create 'multiverse analysis' in R
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
@@ -24,11 +24,7 @@ Description: Implement 'multiverse' style analyses (Steegen S., Tuerlinckx F, Ge
     fragile or robust their findings are. The 'multiverse' package 
     (Sarma A., Kale A., Moon M., Taback N., Chevalier F., Hullman J., Kay M., 2021) 
     <doi:10.31219/osf.io/yfbwm> allows users to concisely and flexibly implement 'multiverse-style' 
-    analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks. 
-    Users can also create 'Explorable Multiverse Analysis Reports' (EMARs) 
-    (Dragicevic P., Jansen Y., Sarma A., Kay M., Chevalier F., 2019) <doi:10.1145/3290605.3300295>,
-     a new approach to statistical reporting where readers of research papers can explore alternative 
-     analysis options by interacting with the paper itself.
+    analysis, which involve declaring alternate ways of performing an analysis step, in R and R Notebooks.
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.3.2
