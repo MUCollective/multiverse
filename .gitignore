@@ -17,3 +17,7 @@ data/*.csv
 data/vis_correlation_all_judgements.rda$
 /doc/
 /Meta/
+
+# ignores all non-standard files in docs/deps
+!docs/deps/Georgia-0.4.9/*.css
+!docs/deps/Nunito_Sans-0.4.9/*.css

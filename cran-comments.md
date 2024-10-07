@@ -1,11 +1,11 @@
 ## Submission comments
-This is a re-submission of v0.6.0 which was rejected due to failing R CMD check with _R_CHECK_DEPENDS_ONLY_=true.
-This submission contains minor bug fixes, and improves support for the use of {future} for parallel computation
+This release addresses some minor issues introduced by the recent evaluate 1.0.0 release. 
+It also has some other unrelated (mostly minor) changes and bugfixes, see NEWS.md.
 
 ## Test environments
-* Windows (winbuilder), R-devel (unstable) (2022-06-30 r82540)
-* Windows (winbuilder), R-release 4.2.1 (2022-06-23)
-* Windows (winbuilder), R-oldrelease 4.1.3 (2022-03-10)
+* Windows (winbuilder), R-release 4.4.1 (2024-06-14)
+* Windows (winbuilder), R-devel (unstable) (2024-10-04 r87208)
+* Windows (winbuilder), R-oldrelease 4.3.3 (2024-02-29)
 * MacOs (github), R-release 4.2.1 (2022-06-23)
 * Ubuntu 16.04 (github), R-release 4.2.1 (2022-06-23)
 
