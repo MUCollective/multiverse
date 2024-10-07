@@ -25,6 +25,6 @@ We checked 1 reverse dependencies, comparing R CMD check results across CRAN and
  * We failed to check 0 packages
  
 ### New problems
-  * mverse currently fails due to changes, but this change was made in order to make it compatible with the recent evaluate 1.0.0 release.
+  * mverse currently fails due to changes, but this change was made in order to make multiverse compatible with the recent evaluate 1.0.0 release.
   An issue has been submitted to mverse which notifies the package maintainers of this change: https://github.com/mverseanalysis/mverse/issues/54
 
