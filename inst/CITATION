@@ -1,21 +1,19 @@
 title <- sprintf("multiverse: Multiplexing Alternative Data Analyses in R Notebooks (Version %s)", meta$Version)
 
 bibentry(
-    bibtype  = "article",
-    title    = title,
-    author   = c(person("Abhraneel", "Sarma"), 
-                 person("Alex", "Kale"), 
-                 person("Michael", "Moon"), 
-                 person("Nathan", "Taback"), 
-                 person("Fanny", "Chevalier"), 
-                 person("Jessica", "Hullman"), 
-                 person("Matthew", "Kay")),
-    year     = "2021",
-    url      = "https://github.com/MUCollective/multiverse",
-    journal  = {"OSF Preprints"},
-    textVersion =
-  	paste("Sarma, A., Kale, A., Moon, M., Taback, N., Chevalier, F., Hullman, J., & Kay, M. (2021, April 11). multiverse: Multiplexing Alternative Data Analyses in R Notebooks. https://doi.org/10.31219/osf.io/yfbwm",
-		"Available from https://github.com/MUCollective/multiverse."
-		),
-	mheader = "To cite 'multiverse' in publications use:"
+  bibtype  = "inproceedings",
+  author = "Sarma, Abhraneel and Kale, Alex and Moon, Michael Jongho and Taback, Nathan and Chevalier, Fanny and Hullman, Jessica and Kay, Matthew",
+  title = "multiverse: Multiplexing Alternative Data Analyses in R Notebooks",
+  year = "2023",
+  isbn = "9781450394215",
+  publisher = "Association for Computing Machinery",
+  address = "New York, NY, USA",
+  url = "https://doi.org/10.1145/3544548.3580726",
+  doi = "10.1145/3544548.3580726",
+  booktitle = "Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems",
+  articleno = "148",
+  numpages = "15",
+  keywords = "Multiverse Analysis, cognitive dimensions of notations, robust statistical analysis",
+  location = "Hamburg, Germany",
+  series = "CHI '23"
 )
