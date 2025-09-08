@@ -74,7 +74,7 @@ hurricane_data <- hurricane |>
 ```
 
 ## Original analysis
-We then illustrate an implementation of the original analysis by Jung et al. [https://doi.org/10.1073/pnas.1402786111]. The original analysis used a negative binomial model, which is suitable for overdispersed count data. Due to some issues with model fit with the `MASS::glm.nb` function (see Note 3: https://github.com/uwdata/boba/tree/master/example/hurricane), we instead use the simpler poisson regression model which will ensure that none of the models fail while fitting.
+We then illustrate a slightly modified analysis based on the original analysis by Jung et al. [https://doi.org/10.1073/pnas.1402786111]. The original analysis used a negative binomial model, which is suitable for overdispersed count data. Due to some issues with model fit with the `MASS::glm.nb` function (see Note 3: https://github.com/uwdata/boba/tree/master/example/hurricane), we instead use the simpler poisson regression model which will ensure that none of the models fail while fitting, but may produce slightly different results.
 
 In the original analysis, Jung et al. exclude two hurricanes which caused the highest number of deaths (Katrina and Audrey) as outliers. They transform the variable used the interactions between the 11-point femininity rating and both damages and zpressure respectively, as seen below:
 
