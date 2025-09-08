@@ -242,7 +242,7 @@ inside(M, {
   pred <- predict(fit, se.fit = TRUE, type = "response")
 
   pred2expectation <- function(mu, sigma) {
-      branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
+      branch(model, "linear" ~ exp(mu) - 1, "poisson" ~ mu)
   }
   
   disagg_fit <- df  %>%
