@@ -3,6 +3,7 @@ title: "Example multiverse implementation: Female hurricanes are deadlier than m
 author: 
   - Abhraneel Sarma, Northwestern University
   - Alex Kale, University of Washington
+  - Michael Shiuming Truong, York University
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -31,7 +32,7 @@ library(dplyr)
 library(modelr)
 library(tidyr)
 library(ggplot2)
-library(tidybayes)
+library(marginaleffects)
 library(multiverse)
 ```
 
@@ -141,12 +142,12 @@ df <- df |>
 ````
 
 ### Declaring alternative specifications of regression model
-The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
+The next step is to fit the model. We can use either a Gaussian or Poisson model for the step. (The Gaussian model uses a natural-log transformation of the sum of the response variable `death` and $1$. The Gaussian model is the maximum-likelihood equivalent of running an ordinary least squares regression, except for estimates like the standard deviation of the residuals.) Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
 
 
 ````
 ```{multiverse label = default-m-3, inside = M}`r ''`
-fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+fit <- glm(branch(model, "gaussian" ~ log(death + 1), "poisson" ~ death) ~ 
           branch(main_interaction,
               "no" ~ femininity + damage,
               "yes" ~ femininity * damage
@@ -158,7 +159,7 @@ fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~
               "all" %when% (main_interaction == "yes") ~ femininity * z3,
               "all_no_interaction" %when% (main_interaction == "no") ~ z3
           ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
-          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+          family = branch(model, "gaussian" ~ "gaussian", "poisson" ~ "poisson"),  
           data = df)
 ```
 ````
@@ -167,27 +168,17 @@ Once we have implemented the analysis model in our multiverse, the corresponding
 
 ````
 ```{multiverse label = default-m-4, inside = M}`r ''`
-pred <- predict(fit, se.fit = TRUE, type = "response")
-
-pred2expectation <- function(mu, sigma) {
-    branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
-}
-
-disagg_fit <- df  |>
-    mutate(
-        fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
-        se.fit = pred$se.fit,
-        deg_f = df.residual(fit),                         # get degrees of freedom
-        sigma = sigma(fit),                               # get residual standard deviation
-        se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
+expectation <- marginaleffects::avg_predictions(
+    model = fit,
+    by = "female",
+    type = "response",
+    transform = branch(
+      model,
+      "gaussian" ~ function(x) exp(x) - 1,
+      "poisson" ~ NULL
     )
-
-# aggregate fitted effect of female storm name
-expectation <- disagg_fit |>
-    mutate(expected_deaths = pred2expectation(fitted, sigma)) |> 
-    group_by(female) |>
-    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") |> 
-    compare_levels(mean_deaths, by = female)
+  )$estimate |>
+    diff()
 ```
 ````
 
@@ -223,7 +214,7 @@ inside(M, {
         )
     )
   
-  fit <- glm(branch(model, "linear" ~ log(death + 1), "poisson" ~ death) ~ 
+  fit <- glm(branch(model, "gaussian" ~ log(death + 1), "poisson" ~ death) ~ 
           branch(main_interaction,
               "no" ~ femininity + damage,
               "yes" ~ femininity * damage
@@ -235,30 +226,20 @@ inside(M, {
               "all" %when% (main_interaction == "yes") ~ femininity * z3,
               "all_no_interaction" %when% (main_interaction == "no") ~ z3
           ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
-          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
+          family = branch(model, "gaussian" ~ "gaussian", "poisson" ~ "poisson"),  
           data = df)
   
-  pred <- predict(fit, se.fit = TRUE, type = "response")
-
-  pred2expectation <- function(mu, sigma) {
-      branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
-  }
-  
-  disagg_fit <- df  |>
-      mutate(
-          fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
-          se.fit = pred$se.fit,
-          deg_f = df.residual(fit),                         # get degrees of freedom
-          sigma = sigma(fit),                               # get residual standard deviation
-          se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
-      )
-  
-  # aggregate fitted effect of female storm name
-  expectation <- disagg_fit |>
-      mutate(expected_deaths = pred2expectation(fitted, sigma)) |> 
-      group_by(female) |>
-      summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") |> 
-      compare_levels(mean_deaths, by = female)
+  expectation <- marginaleffects::avg_predictions(
+    model = fit,
+    by = "female",
+    type = "response",
+    transform = branch(
+      model,
+      "gaussian" ~ function(x) exp(x) - 1,
+      "poisson" ~ NULL
+    )
+  )$estimate |>
+    diff()
 })
 ```
 

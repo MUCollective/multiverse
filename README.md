@@ -606,8 +606,7 @@ fit = glm(death ~ masfem * dam + masfem * zpressure, data = df.filtered, family 
 ```
 
 Although this is a reasonable choice for count data, one can also argue
-for a log-linear regression model instead, as count data such as deaths
-tend to be approximately log-normally distributed.
+for a Gaussian regression model instead, which is sometimes done after log-transforming the sum of the count data (deaths) and $1$.
 
 Specifying this in a multiverse analysis may require changes in two
 different locations in the code: the specification of the `deaths`
