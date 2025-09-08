@@ -142,7 +142,7 @@ df <- df |>
 ````
 
 ### Declaring alternative specifications of regression model
-The next step is to fit the model. We can use either a Gaussian or Poisson model for the step. (The Gaussian model uses a natural-log transformation of the sum of the response variable `death` and $1$. The Gaussian model is the maximum-likelihood equivalent of running an ordinary least squares regression, except for estimates like the standard deviation of the residuals.) Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
+The next step is to fit the model. We can use either a Gaussian or Poisson model for the step. (Here, the Gaussian model uses a natural-log transformation of the sum of the response variable `death` and $1$. Generally, the Gaussian model is the maximum-likelihood equivalent of running an ordinary least squares regression, except for estimates like the standard deviation of the residuals.) Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
 
 
 ````
