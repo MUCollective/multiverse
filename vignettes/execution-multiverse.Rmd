@@ -102,7 +102,7 @@ inside(M, {
 ```
 
 
-Alternative specifications of regression model: The next step is to fit the model. We can use either a log-linear model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
+Alternative specifications of regression model: The next step is to fit the model. We can use either a gaussian model or a poisson model for the step. Both are reasonable alternatives for this dataset. We also have to make a choice on whether we want to include an interaction between `femininity` and `damage`. This results in the following specification:
 
 
 ```{r}
