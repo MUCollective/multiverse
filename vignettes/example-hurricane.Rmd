@@ -263,12 +263,3 @@ mean_deaths |>
   labs(x = "universe", y = "Mean difference in expected deaths")
 ```
 
-```{r}
-mean_deaths |> 
-  select(-.results) |> 
-  arrange(mean_deaths) |> 
-  ggplot() +
-  geom_histogram(aes(mean_deaths), binwidth = 0.2) +
-  coord_cartesian(xlim = c(0, 12))
-```
-
