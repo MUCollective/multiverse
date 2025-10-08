@@ -268,28 +268,32 @@ get_branch_assert_condition <- function(.x) {
 }
 
 get_condition <- function(.x, name) {
-  .antecedent = get_option_name(.x)
+  .consequent = get_option_name(.x)
   if (is_call(.x, "~")) {
-    .consequent = c(
-      get_implies_consequent(f_lhs(.x)),
-      get_implies_consequent(f_rhs(.x))
+    .antecedent = c(
+      get_antecedent(f_lhs(.x)),
+      get_antecedent(f_rhs(.x))
     )[[1]]
   } else {
-    .consequent = get_implies_consequent(.x)
+    .antecedent = get_antecedent(.x)
   }
-  
-  if ( !is.null(.consequent)) {
-    expr(( !!name != !!.antecedent | !!.consequent ))
+
+  if ( !is.null(.antecedent)) {
+    expr(( !!name != !!.consequent | !!.antecedent ))
   } else {
     return(expr(TRUE))
   }
 }
 
-get_implies_consequent <- function(.x) {
+# recursive function to get the consequent of a conditional declaration
+# in logical statements, If P, then Q
+# P is the antecedent and Q is the consequent
+get_antecedent <- function(.x) {
+  # if the rhs is a %when% statement, then we get the antecedent
   if( is_call(.x, "%when%") ) {
     f_rhs(.x)
-  } else if (is_call(.x, "(") | is_call(.x, "{")) {
-    get_implies_consequent(f_rhs(.x))
+  } else if (is_call(.x, "(")) {
+    get_antecedent(f_rhs(.x))
   }
 }
 
