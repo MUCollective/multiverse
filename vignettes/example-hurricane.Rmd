@@ -255,9 +255,9 @@ mean_deaths <- multiverse::expand(M) |>
   unnest(expectation)
 
 mean_deaths |>
-  arrange(mean_deaths) |>
+  arrange(expectation) |>
   mutate(.id = row_number()) |>
-  ggplot(aes(y = mean_deaths, x = .id)) +
+  ggplot(aes(y = expectation, x = .id)) +
   geom_point() +
   theme_minimal() +
   labs(x = "universe", y = "Mean difference in expected deaths")
