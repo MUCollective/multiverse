@@ -1,6 +1,6 @@
 Package: multiverse
-Version: 0.6.2
-Date: 2024-10-07
+Version: 0.6.3
+Date: 2025-10-08
 Title: Create 'multiverse analysis' in R
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),
@@ -8,13 +8,7 @@ Authors@R: c(
         person("Michael", "Moon", role = "ctb", email = "moon@utstat.toronto.edu"),
         person("Mark", "Miller", role = "ctb", email = "725mrm@gmail.com"),
         person("Kyle", "Hwang", role = "ctb", email = "kyle.sg.hwang@gmail.com"),
-        person("Hadley", "Wickham", role = "ctb", email = "hadley@posit.co"),
-        person("Alex", "Kale", role = "ctb", email = "kalea@uw.edu"),
-        person("Nathan", "Taback", role = "ctb", email = "nathan.taback@utoronto.ca"),
-        person("Fanny", "Chevalier", role = "ctb", email = "fanny@dgp.toronto.edu"),
-        person("Jessica", "Hullman", role = "ctb", email = "jessica.hullman@gmail.com"),
-        person("Pierre", "Dragicevic", role = "ctb", email = "pierre.dragicevic@inria.fr"),
-        person("Yvonne", "Jansen", role = "ctb", email = "yvonne.jansen@sorbonne-universite.fr")
+        person("Hadley", "Wickham", role = "ctb", email = "hadley@posit.co")
     )
 Maintainer: Abhraneel Sarma <abhraneel@u.northwestern.edu>
 Description: Implement 'multiverse' style analyses (Steegen S., Tuerlinckx F, Gelman A., Vanpaemal, W., 2016)
@@ -29,7 +23,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Depends:
-    R (>= 3.5.0),
+    R (>= 4.1.0),
     knitr (>= 1.3.2)
 Imports:
     dplyr (>= 0.8.1),
@@ -68,7 +62,8 @@ Suggests:
     png,
     stringi,
     modelr,
-    future
+    future,
+    marginaleffects
 VignetteBuilder: 
     knitr
 Language: en-US
