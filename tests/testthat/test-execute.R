@@ -130,12 +130,12 @@ test_that("parallel computation is supported", {
   
   expect_equal(
     lapply(as.list(select(extract_variables(M_cores_2.1, x, y), x, y)), unname), 
-    as.list( ref_list.1 )
+    as.list(ref_list.1)
   )
   
   expect_equal(
     lapply(as.list(mutate(select(extract_variables(M_cores_2.2, var1, var2), var1, var2), across(var1:var2, unlist))), unname),
-    as.list( ref_list.2)
+    as.list(ref_list.2)
   )
 })
 

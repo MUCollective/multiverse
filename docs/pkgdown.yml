@@ -1,5 +1,5 @@
-pandoc: '3.2'
-pkgdown: 2.1.1
+pandoc: 3.6.3
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   branch: branch.html
@@ -9,9 +9,10 @@ articles:
   example-frequentist: example-frequentist.html
   example-hurricane: example-hurricane.html
   execution-multiverse: execution-multiverse.html
+  export-milliways: export-milliways.html
   multiverse-in-rmd: multiverse-in-rmd.html
   visualising-multiverse: visualising-multiverse.html
-last_built: 2024-10-06T20:23Z
+last_built: 2025-10-12T19:27Z
 urls:
   reference: http://mucollective.github.io/multiverse/reference
   article: http://mucollective.github.io/multiverse/articles

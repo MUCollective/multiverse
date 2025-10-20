@@ -1,0 +1,57 @@
+---
+title: "Integrating tangle.js with the output on multiverse notebook analysis"
+output:
+  html_document:
+    css: ../inst/css/styles.css
+---
+
+
+```{r}
+devtools::load_all(".")
+```
+
+<script src="./Tangle.js"></script>
+<link rel="stylesheet" href="TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="TangleKit/mootools.js"></script>
+<script type="text/javascript" src="TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="TangleKit/TangleKit.js"></script>
+<script type="text/javascript" src="./custom.js"></script>
+
+
+```{r}
+M = multiverse()
+```
+
+
+```{multiverse default-m-1, inside = M}
+a = branch(a, 
+           "1" ~ 1, 
+           "2" ~ 2, 
+           "3" ~ 3
+          )
+b = branch(b, 
+           "x" %when% (a != 1) ~ "x", 
+           "y" ~ "y", 
+           "z" ~ "z"
+          )
+c = branch(c, 
+           "4" ~ 4, 
+           "5"%when% (b != "z") ~ 5
+          )
+```
+
+<!-- 
+∄(a==2 <=> b==y), ((c==4 && a==1) <=> b==x), (b==z <=> c==5)
+<pre class='multiverse a---2 b---x c---4'>2x4</pre>
+<pre class='multiverse a---3 b---x c---4'>3x4</pre>
+<pre class='multiverse a---1 b---y c---4'>1y4</pre>
+<pre class='multiverse a---3 b---y c---4'>3y4</pre>
+<pre class='multiverse a---1 b---z c---4'>1z4</pre>
+<pre class='multiverse a---2 b---z c---4'>2z4</pre>
+<pre class='multiverse a---3 b---z c---4'>3z4</pre>
+<pre class='multiverse a---1 b---x c---5'>1x5</pre>
+<pre class='multiverse a---2 b---x c---5'>2x5</pre>
+<pre class='multiverse a---3 b---x c---5'>3x5</pre>
+<pre class='multiverse a---1 b---y c---5'>1y5</pre>
+<pre class='multiverse a---3 b---y c---5'>3y5</pre>  -->

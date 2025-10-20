@@ -5,6 +5,7 @@
 #' @importFrom formatR tidy_source
 #' @importFrom purrr map_chr
 #' @importFrom rlang is_condition
+#' @importFrom rlang is_true
 #' 
 multiverse_engine <- function(options) {
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 
@@ -100,7 +101,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     if (getOption("multiverse_code_blocks", 1) == "asis") {
       return(eng_r(options))
     }
-
+    
     # if (options$eval != FALSE) {
     options_list <- lapply(1:size(.multiverse), function(x) {
       temp_options <- options
@@ -108,17 +109,17 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
         tail(head(deparse(expand(.multiverse)[[".code"]][[x]][[options$label]]), -1), -1),
         ~ gsub(pattern = " ", replacement = "", x = .)
       ))$text.tidy
-
+      
       # assuming default is the first universe,
       # conditional should be change to use the default universe argument
       if (x == 1) {
-          temp_options$class.source = paste0("multiverse universe-", x, " default")
-          temp_options$class.output = paste0("multiverse universe-", x, " default")
+        temp_options$class.source = paste0("multiverse universe-", x, " default")
+        temp_options$class.output = paste0("multiverse universe-", x, " default")
       } else {
-          temp_options$class.source = paste0("multiverse universe-", x, "")
-          temp_options$class.output = paste0("multiverse universe-", x, "")
+        temp_options$class.source = paste0("multiverse universe-", x, "")
+        temp_options$class.output = paste0("multiverse universe-", x, "")
       }
-
+      
       temp_options
     })
     
@@ -130,7 +131,7 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # to evaluate the various pieces of code in the code chunk and return
     # the output strings from each line of code.
     code = .code[-c(1, length(.code))]
-      
+    
     outputs = evaluate::evaluate(
       code, 
       # must have new_device = FALSE otherwise plots don't seem to be written to
@@ -147,3 +148,5 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
 }
 
 knitr::knit_engines$set(multiverse = multiverse_engine)
+
+

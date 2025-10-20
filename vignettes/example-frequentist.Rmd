@@ -1,9 +1,9 @@
 ---
 title: "Example multiverse implementation: Re-evaluating the efficiency of physical visualizations"
 author: 
-  - Pierre Dragicevic, Inria
-  - Yvonne Jansen, CNRS & Sorbonne Universite
-  - Abhraneel Sarma, Northwestern University
+  - Pierre Dragicevic
+  - Yvonne Jansen
+  - Abhraneel Sarma
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -28,11 +28,6 @@ library(multiverse)
 ```
 
 
-```{r, include=FALSE}
-M = multiverse()
-```
-
-
 ```{r, chunk-setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -40,6 +35,7 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 
@@ -111,7 +107,7 @@ tCI <- function(observations, conf.level) {
 
 Next we initialise the multiverse object within which this analysis will take place.
 
-```{r, eval = FALSE}
+```{r}
 M = multiverse()
 ```
 
@@ -119,7 +115,7 @@ M = multiverse()
 Now we define the parameters we want to consider in the multiverse: confidence interval method (`ci_method`) and data transformation method (`data_transform`). We also define a parameter for confidence level, as the choice of a 95% confidence level is arbitrary and we can choose to instead present our results with alternate confidence levels. Here we vary between: 50%, 89%, 95%, and 99.9%. Thus our multiverse consists of: 2 $\times$ 2 $\times$ 7 different analysis combinations.
 
 #### Note 
-In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("complete-multiverse-analysis")` and `vignette("basic-multiverse")`) for more details.
+In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("example-durante")`) for more details.
 
 ```{multiverse default-m-1, inside = M, echo = FALSE}
 ci_method <- branch(ci_method,
@@ -266,12 +262,12 @@ df.results$estimate[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$e
 df.results$conf.low[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$conf.low[df.mtbl$data_transform == "log-transformed"])
 df.results$conf.high[df.mtbl$data_transform == "log-transformed"] = exp(df.mtbl$conf.high[df.mtbl$data_transform == "log-transformed"])
 
-df.results |> head()
+df.results %>% head()
 ```
 
 
 ```{r, fig.width = 9, fig.height = 4}
-p <- df.results |>
+p <- df.results %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = modality)) +
@@ -288,15 +284,15 @@ The figure above shows the (geometric) mean completion time for each condition. 
 So far we have tried to keep this analysis in base R. However, the steps involved in extracting and visualising results from the multiverse maybe more convenient for some using the tidyverse API. We can implement the steps that we have taken in the previous three code block in the following way using the tidyverse. The result of this is the same data frame that was created in the previous step, and was used as input data to ggplot, `df.results`. The `multiverse` package is flexible, and does not restrict you towards a particular style of R programming.
 
 ```{r}
-expand(M) |>
-  mutate( summary = map(.results, "df") ) |>
-  unnest_wider( c(summary)) |>
-  unnest(cols = c(modality, estimate, conf.low, conf.high)) |>
+expand(M) %>%
+  mutate( summary = map(.results, "df") ) %>%
+  unnest_wider( c(summary)) %>%
+  unnest(cols = c(modality, estimate, conf.low, conf.high)) %>%
   mutate(
     estimate = ifelse(data_transform == "log-transformed", exp(estimate), estimate),
     conf.low = ifelse(data_transform == "log-transformed", exp(conf.low), conf.low),
     conf.high = ifelse(data_transform == "log-transformed", exp(conf.high), conf.high)
-  ) |>
+  ) %>%
   arrange(conf_level, desc(data_transform), desc(ci_method))
 ```
 
@@ -364,12 +360,12 @@ extract_variable_from_universe(M, 1, df.diffs)
 We then use the workflow described in the previous section to extract results for each universe in the multiverse. We then use gganimate to plot the results.
 
 ```{r}
-df.results.diff <- expand(M) |>
-  extract_variables(df.diffs) |>
-  unnest(c(df.diffs)) |>
+df.results.diff <- expand(M) %>%
+  extract_variables(df.diffs) %>%
+  unnest(c(df.diffs)) %>%
   arrange(desc(data_transform), conf_level, desc(ci_method))
 
-df.results.diff |>
+df.results.diff %>%
   head()
 ```
 
@@ -378,7 +374,7 @@ df.results.diff |>
 A value lower than 1 (i.e., on the left side of the dark line) means the condition on the left is faster than the condition on the right. The confidence intervals are not corrected for multiplicity. The results from this study appear to be relatively robust and consistent across all the possible combinations that we have tried.
 
 ```{r}
-p <- df.results.diff |>
+p <- df.results.diff %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = modality)) +

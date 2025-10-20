@@ -153,3 +153,73 @@ test_that("export_results_json creates correct CDF for estimate + std.error and 
   
   expect_equal(df.ref, df1)
 })
+
+test_that("export_results_dist_json creates correct CDF for non-normal distributions", {
+  N = 50
+  
+  dist1 = dist_gamma(2, 2)
+  dist2 = dist_beta(2, 2)
+  dist3 = dist_exponential(4)
+  
+  df = tibble(
+    .universe = as.integer(1),
+    term = c('x', 'y', 'z'),
+    distribution = c(dist1, dist2, dist3)
+  )
+  
+  seq1 = seq(0, quantile(dist1, 0.999), length.out = 101)
+  seq2 = seq(0, 1, length.out = 101)
+  seq3 = seq(0, quantile(dist3, 0.999), length.out = 101)
+  
+  df.ref = tibble(
+    .universe = as.integer(1),
+    term = c("x", "y", "z"),
+    cdf.x = list(seq1, seq2, seq3),
+    cdf.y = c( cdf(dist1, seq1), cdf(dist2, seq2), cdf(dist3, seq3))
+  )
+  
+  df1 = df %>%
+    export_results_dist_json(term, distribution) %>%
+    unnest(results) %>%
+    select(-distribution)
+  
+  expect_equal(df.ref, df1)
+})
+
+
+test_that("export_results_json creates correct CDF for estimate + std.error and distributions from output of multiverse `expand`", {
+  N = 50
+  M = multiverse()
+  
+  dist1 = dist_normal()
+  dist2 = dist_normal(2, 5)
+  
+  inside(M, {
+    df = tibble(
+      term = 'x',
+      distribution = branch(distributions, dist1, dist2)
+    )
+  })
+  
+  execute_multiverse(M)
+  
+  seq1 = seq(quantile(dist1, 0.001), quantile(dist1, 0.999), length.out = 101)
+  seq2 = seq(quantile(dist2, 0.001), quantile(dist2, 0.999), length.out = 101)
+  
+  df.ref = tibble(
+    .universe = as.integer(c(1, 2)),
+    distributions = c("dist1", "dist2"),
+    term = "x",
+    cdf.x = list(seq1, seq2),
+    cdf.y = c( cdf(dist1, seq1), cdf(dist2, seq2))
+  )
+  
+  df1 = expand(M) %>%
+    extract_variables(df) %>%
+    unnest(df) %>%
+    export_results_json(term, dist = distribution) %>%
+    unnest(results) %>%
+    select(-distribution)
+  
+  expect_equal(df.ref, df1)
+})

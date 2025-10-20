@@ -24,6 +24,7 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 
@@ -50,7 +51,7 @@ The specification curve analysis is in principle similar to a multiverse analysi
 data("hurricane")
 
 # read and process data
-hurricane_data <- hurricane |>
+hurricane_data <- hurricane %>%
     # rename some variables
     rename(
         year = Year,
@@ -62,7 +63,7 @@ hurricane_data <- hurricane |>
         category = Category,
         pressure = Minpressure_Updated_2014,
         wind = HighestWindSpeed
-    ) |>
+    ) %>%
     # create new variables
     mutate(
         post = ifelse(year>1979, 1, 0),
@@ -79,7 +80,7 @@ We then illustrate a slightly modified analysis based on the original analysis b
 In the original analysis, Jung et al. exclude two hurricanes which caused the highest number of deaths (Katrina and Audrey) as outliers. They transform the variable used the interactions between the 11-point femininity rating and both damages and zpressure respectively, as seen below:
 
 ```{r}
-df <- hurricane_data |>
+df <- hurricane_data %>%
     filter( name != "Katrina" & name != "Audrey" )
 
 fit <- glm(death ~ masfem * dam + masfem * zpressure, data = df, family = "poisson")
@@ -102,12 +103,12 @@ In this vignette, we make use of [*multiverse code chunks*](https://mucollective
 
 ````
 ```{multiverse default-m-1, inside = M}`r ''`
-df <- hurricane_data |>
+df <- hurricane_data %>%
     filter(branch(death_outliers, 
         "no_exclusion" ~ TRUE,
         "most_extreme_deaths" ~ name != "Katrina",
         "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
-    )) |>
+    )) %>%
     filter(branch(damage_outliers,
         "no_exclusion" ~ TRUE,
         "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
@@ -127,7 +128,7 @@ We implement these two decisions in our multiverse as follows:
 
 ````
 ```{multiverse label = default-m-2, inside = M}`r ''`
-df <- df |>
+df <- df %>%
     mutate(
         femininity = branch(femininity_calculation,
           "masfem" ~ masfem,
@@ -168,6 +169,7 @@ Once we have implemented the analysis model in our multiverse, the corresponding
 
 ````
 ```{multiverse label = default-m-4, inside = M}`r ''`
+<<<<<<< HEAD
 expectation <- marginaleffects::avg_predictions(
     model = fit,
     by = "female",
@@ -179,6 +181,29 @@ expectation <- marginaleffects::avg_predictions(
     )
   )$estimate |>
     diff()
+=======
+pred <- predict(fit, se.fit = TRUE, type = "response")
+
+pred2expectation <- function(mu, sigma) {
+    branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
+}
+
+disagg_fit <- df  %>%
+    mutate(
+        fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
+        se.fit = pred$se.fit,
+        deg_f = df.residual(fit),                         # get degrees of freedom
+        sigma = sigma(fit),                               # get residual standard deviation
+        se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
+    )
+
+# aggregate fitted effect of female storm name
+expectation <- disagg_fit %>%
+    mutate(expected_deaths = pred2expectation(fitted, sigma)) %>% 
+    group_by(female) %>%
+    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") %>% 
+    compare_levels(mean_deaths, by = female)
+>>>>>>> dev
 ```
 ````
 
@@ -189,12 +214,12 @@ expectation <- marginaleffects::avg_predictions(
 # otherwise we may get a NOTE saying installed package 
 # size is greater than 5Mb
 inside(M, {
-  df <- hurricane_data |>
+  df <- hurricane_data %>%
     filter(branch(death_outliers, 
         "no_exclusion" ~ TRUE,
         "most_extreme_deaths" ~ name != "Katrina",
         "most_extreme_two_deaths" ~ ! (name %in% c("Katrina", "Audrey"))
-    )) |>
+    )) %>%
     filter(branch(damage_outliers,
         "no_exclusion" ~ TRUE,
         "most_extreme_one_damage" ~ ! (name %in% c("Sandy")),
@@ -202,7 +227,7 @@ inside(M, {
         "most_extreme_three_damage" ~ ! (name %in% c("Sandy", "Andrew", "Donna"))
     ))
   
-  df <- df |>
+  df <- df %>%
     mutate(
         femininity = branch(femininity_calculation,
           "masfem" ~ masfem,
@@ -250,8 +275,8 @@ After we've specified our multiverse analysis, we would like to execute the enti
 ```{r, fig.height=3, fig.width = 8}
 execute_multiverse(M)
 
-mean_deaths <- multiverse::expand(M) |>
-  extract_variables(expectation) |>
+mean_deaths <- multiverse::expand(M) %>%
+  extract_variables(expectation) %>%
   unnest(expectation)
 
 mean_deaths |>

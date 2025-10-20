@@ -40,7 +40,7 @@ Useful links:
 \itemize{
   \item \url{https://mucollective.github.io/multiverse/}
   \item \url{https://github.com/mucollective/multiverse/}
-  \item Report bugs at \url{https://github.com/MUCollective/multiverse/issues/new}
+  \item Report bugs at \url{https://github.com/MUCollective/multiverse/issues/}
 }
 
 }
@@ -58,12 +58,6 @@ Other contributors:
   \item Mark Miller \email{725mrm@gmail.com} [contributor]
   \item Kyle Hwang \email{kyle.sg.hwang@gmail.com} [contributor]
   \item Hadley Wickham \email{hadley@posit.co} [contributor]
-  \item Alex Kale \email{kalea@uw.edu} [contributor]
-  \item Nathan Taback \email{nathan.taback@utoronto.ca} [contributor]
-  \item Fanny Chevalier \email{fanny@dgp.toronto.edu} [contributor]
-  \item Jessica Hullman \email{jessica.hullman@gmail.com} [contributor]
-  \item Pierre Dragicevic \email{pierre.dragicevic@inria.fr} [contributor]
-  \item Yvonne Jansen \email{yvonne.jansen@sorbonne-universite.fr} [contributor]
 }
 
 }

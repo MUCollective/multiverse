@@ -21,11 +21,6 @@ library(purrr)
 library(multiverse)
 ```
 
-```{r, include=FALSE}
-M_inside = multiverse()
-M_block = multiverse()
-```
-
 
 ```{r, chunk-setup, include=FALSE}
 opts_chunk$set(
@@ -34,6 +29,7 @@ opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 
@@ -98,7 +94,7 @@ Alternately, users can insert a multiverse We also allow users to create a keybo
 
 - Tools > AddIns > Browse AddIns… > Keyboard Shortcuts
 - Next, in the filter input field, type *multiverse*. You will see one result with "Insert multiverse code chunk" as the name. 
-- Click on the Shortcut field and press Cmd+Option+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows).
+- Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended shortcuts, but you should feel free to use whatever you prefer.
 - Click "Apply" and exit the dialog box
 
 If you are experiencing issues creating a keyboard shortcut for code blocks, or if you are experiencing a situation where the shortcut needs to be re-created everytime you open a new RStudio session, please refer to the `Debugging Keyboard Shortcuts` section at the end of this document.

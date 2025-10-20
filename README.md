@@ -60,44 +60,44 @@ In this document, we will provide you with details on how to quickly get
 started with this package. Please refer to the following vignettes for
 further information on:
 
--   How `multiverse` can be used in different environments such as in
-    RMarkdown and RScripts. See `vignette("multiverse-in-rmd")`.
--   How alternate analysis paths are declared in `multiverse` using
-    branch, and how `multiverse` processes the user-declared
-    (`multiverse` DSL) code to create multiple end-to-end executable R
-    analysis code. See `vignette("branch")`.
--   How conditions and dependencies can be declared in `multiverse`;
-    conditions can be used to state when two steps in a multiverse are
-    incompatible with one another. See `vignette("conditions")`.
--   How multiverse results can be extracted and visualised. . See
-    `vignette("visualising-multiverse")`.
+- How `multiverse` can be used in different environments such as in
+  RMarkdown and RScripts. See `vignette("multiverse-in-rmd")`.
+- How alternate analysis paths are declared in `multiverse` using
+  branch, and how `multiverse` processes the user-declared (`multiverse`
+  DSL) code to create multiple end-to-end executable R analysis code.
+  See `vignette("branch")`.
+- How conditions and dependencies can be declared in `multiverse`;
+  conditions can be used to state when two steps in a multiverse are
+  incompatible with one another. See `vignette("conditions")`.
+- How multiverse results can be extracted and visualised. . See
+  `vignette("visualising-multiverse")`.
 
 We also implement a series of end-to-end multiverse implementations
 using this package to demonstrate how it might be used (which can be
 found in the package
 [vignettes](https://mucollective.github.io/multiverse/)):
 
--   Steegen et al.’s [original multiverse
-    analysis](https://doi.org/10.1177/1745691616658637) of the paper
-    [The fluctuating female vote: Politics, religion, and the ovulatory
-    cycle](https://doi.org/10.1177/0956797612466416); can also be found
-    **below**.
--   Simonsohn et al.’s [specification curve
-    analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper
-    [Female hurricanes are deadlier than male
-    hurricanes](https://doi.org/10.1073/pnas.1402786111)
--   Dragicevic et al.’s mini-paper [Adding Inferential Information to
-    plots using Resampling and
-    Animations](https://explorablemultiverse.github.io/examples/dance/)
-    (from [Increasing the transparency of research papers with
-    explorable multiverse
-    analyses](https://inria.hal.science/hal-01976951/document) )
--   Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
-    Physical
-    Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
-    (from [Increasing the transparency of research papers with
-    explorable multiverse
-    analyses](https://inria.hal.science/hal-01976951/document) )
+- Steegen et al.’s [original multiverse
+  analysis](https://doi.org/10.1177/1745691616658637) of the paper [The
+  fluctuating female vote: Politics, religion, and the ovulatory
+  cycle](https://doi.org/10.1177/0956797612466416); can also be found
+  **below**.
+- Simonsohn et al.’s [specification curve
+  analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female
+  hurricanes are deadlier than male
+  hurricanes](https://doi.org/10.1073/pnas.1402786111)
+- Dragicevic et al.’s mini-paper [Adding Inferential Information to
+  plots using Resampling and
+  Animations](https://explorablemultiverse.github.io/examples/dance/)
+  (from [Increasing the transparency of research papers with explorable
+  multiverse analyses](https://inria.hal.science/hal-01976951/document)
+  )
+- Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
+  Physical
+  Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
+  (from [Increasing the transparency of research papers with explorable
+  multiverse analyses](https://inria.hal.science/hal-01976951/document)
+  )
 
 ## Example analysis
 
@@ -119,12 +119,12 @@ branching represents a choice between different analysis options”.
 
 In this terminology:
 
--   a *parameter* represents a node in the tree that has more than one
-    child—a point in the analysis where the analyst must decide between
-    reasonable alternatives
--   an *option* is one of those children.
--   A singular analysis (i.e. universe) is a complete path from the root
-    to a leaf.
+- a *parameter* represents a node in the tree that has more than one
+  child—a point in the analysis where the analyst must decide between
+  reasonable alternatives
+- an *option* is one of those children.
+- A singular analysis (i.e. universe) is a complete path from the root
+  to a leaf.
 
 ### Background: The Data
 
@@ -296,11 +296,11 @@ To get around these limitations, we need to declare this (multiverse
 DSL) code “inside a multiverse object”. The `multiverse` package
 facilitates this through some boilerplate code:
 
--   *multiverse code chunks*: allows users to declare multiverse code in
-    a dedicated code chunk, and is more consistent with the interactive
-    programming interface of RStudio.
--   the `inside()` function: allows users to declare multiverse code in
-    RScripts (or within regular R code blocks).
+- *multiverse code chunks*: allows users to declare multiverse code in a
+  dedicated code chunk, and is more consistent with the interactive
+  programming interface of RStudio.
+- the `inside()` function: allows users to declare multiverse code in
+  RScripts (or within regular R code blocks).
 
 **Note** that the `inside` function is more suited for a script-style
 implementation. When using the interactive programming interface of
@@ -355,13 +355,13 @@ Alternately, users can insert a multiverse code block using a keyboard
 shortcut. Users can create a keyboard shortcut to declare a multiverse
 code block inside a RMarkdown document through the following steps:
 
--   Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
--   Next, in the filter input field, type *multiverse*. You will see one
-    result with “Insert multiverse code chunk” as the name.
--   Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or
-    Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended
-    shortcuts, but you should feel free to use whatever you prefer.
--   Click “Apply” and exit the dialog box
+- Tools \> Addins \> Browse Addins… \> Keyboard Shortcuts
+- Next, in the filter input field, type *multiverse*. You will see one
+  result with “Insert multiverse code chunk” as the name.
+- Click on the Shortcut field and press Cmd+Ctrl+M (on Mac OS) or
+  Ctrl+Shift+Alt+M (on Windows). Note that these are the recommended
+  shortcuts, but you should feel free to use whatever you prefer.
+- Click “Apply” and exit the dialog box
 
 Please refer to \link{multiverse-in-rmd} for more details on using the
 multiverse code blocks with RMarkdown. The vignette also contains
@@ -427,9 +427,9 @@ not include all hurricanes? Why not exclude only the one with most
 deaths? Thus we could have three possible ways of removing outliers
 based on extreme number of deaths:
 
--   No exclusion
--   Remove one most extreme hurricane
--   Remove two most extreme hurricanes
+- No exclusion
+- Remove one most extreme hurricane
+- Remove two most extreme hurricanes
 
 To create a multiverse that includes these three possible analysis
 options, we use the `branch()` function. The `branch()` function accepts
@@ -524,9 +524,15 @@ expand(M)
 ``` r
 code(M)
 #> [[1]]
+#> Warning: Could not use `colored = TRUE`, as the package prettycode is not installed.
+#> Please install it if you want to see colored output or see
+#> `?styler::print.vertical()` for more information.
 #> df <- hurricane_data
 #> 
 #> [[2]]
+#> Warning: Could not use `colored = TRUE`, as the package prettycode is not installed.
+#> Please install it if you want to see colored output or see
+#> `?styler::print.vertical()` for more information.
 #> df.filtered <- filter(
 #>   df,
 #>   branch(
@@ -606,7 +612,8 @@ fit = glm(death ~ masfem * dam + masfem * zpressure, data = df.filtered, family 
 ```
 
 Although this is a reasonable choice for count data, one can also argue
-for a Gaussian regression model instead, which is sometimes done after log-transforming the sum of the count data (deaths) and $1$.
+for a log-linear regression model instead, as count data such as deaths
+tend to be approximately log-normally distributed.
 
 Specifying this in a multiverse analysis may require changes in two
 different locations in the code: the specification of the `deaths`
@@ -680,7 +687,7 @@ ignore the previous decision on choice of models):
     ```
 
 For more details on how this can be done, as well as other details on
-conditions, please refer to vignette(conditions).
+conditions, please refer to `vignette("conditions")`.
 
 ## Executing multiverse code
 
@@ -792,34 +799,34 @@ In this document, we covered details to help you quickly get started
 with this package. Please refer to the following vignettes for further
 information on:
 
--   How `multiverse` can be used in different environments such as in
-    RMarkdown and RScripts. See `vignette("multiverse-in-rmd")`.
--   How alternate analysis paths are declared in `multiverse` using
-    branch, and how `multiverse` processes the user-declared
-    (`multiverse` DSL) code to create multiple end-to-end executable R
-    analysis code. See `vignette("branch")`.
--   How conditions and dependencies can be declared in `multiverse`;
-    conditions can be used to state when two steps in a multiverse are
-    incompatible with one another. See `vignette("conditions")`.
--   How multiverse results can be extracted and visualised. . See
-    `vignette("visualising-multiverse")`.
+- How `multiverse` can be used in different environments such as in
+  RMarkdown and RScripts. See `vignette("multiverse-in-rmd")`.
+- How alternate analysis paths are declared in `multiverse` using
+  branch, and how `multiverse` processes the user-declared (`multiverse`
+  DSL) code to create multiple end-to-end executable R analysis code.
+  See `vignette("branch")`.
+- How conditions and dependencies can be declared in `multiverse`;
+  conditions can be used to state when two steps in a multiverse are
+  incompatible with one another. See `vignette("conditions")`.
+- How multiverse results can be extracted and visualised. . See
+  `vignette("visualising-multiverse")`.
 
 We also implement a series of other end-to-end multiverse
 implementations using this package to demonstrate how it might be used:
 
--   Simonsohn et al.’s [specification curve
-    analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper
-    [Female hurricanes are deadlier than male
-    hurricanes](https://doi.org/10.1073/pnas.1402786111)
--   Dragicevic et al.’s mini-paper [Adding Inferential Information to
-    plots using Resampling and
-    Animations](https://explorablemultiverse.github.io/examples/dance/)
-    (from [Increasing the transparency of research papers with
-    explorable multiverse
-    analyses](https://inria.hal.science/hal-01976951/document) )
--   Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
-    Physical
-    Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
-    (from [Increasing the transparency of research papers with
-    explorable multiverse
-    analyses](https://inria.hal.science/hal-01976951/document) )
+- Simonsohn et al.’s [specification curve
+  analysis](http://dx.doi.org/10.2139/ssrn.2694998) of the paper [Female
+  hurricanes are deadlier than male
+  hurricanes](https://doi.org/10.1073/pnas.1402786111)
+- Dragicevic et al.’s mini-paper [Adding Inferential Information to
+  plots using Resampling and
+  Animations](https://explorablemultiverse.github.io/examples/dance/)
+  (from [Increasing the transparency of research papers with explorable
+  multiverse analyses](https://inria.hal.science/hal-01976951/document)
+  )
+- Dragicevic et al.’s mini-paper [Re-evaluating the efficiency of
+  Physical
+  Visualisations](https://explorablemultiverse.github.io/examples/frequentist/)
+  (from [Increasing the transparency of research papers with explorable
+  multiverse analyses](https://inria.hal.science/hal-01976951/document)
+  )

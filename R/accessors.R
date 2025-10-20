@@ -62,7 +62,7 @@ expand.multiverse <- function(multiverse) {
     select(names(.m_obj$parameters))
   
   if (length(.m_obj$conditions) > 0) {
-    all_conditions <- parse_expr(paste0("(", .m_obj$conditions, ")", collapse = "&"))
+    all_conditions <- parse_expr(paste0("(", unlist(.m_obj$conditions), ")", collapse = "&"))
   } else {
     all_conditions <- expr(TRUE)
   }
@@ -87,10 +87,24 @@ expand.multiverse <- function(multiverse) {
     .res = lapply( unlist(unname(tail(.m_list, n = 1)), recursive = FALSE), `[[`, "env" )
   }
   
-  select(mutate(as_tibble(df), 
-                      .universe = 1:nrow(df), 
-                      .parameter_assignment = param.assgn, 
-                      .code = .code, 
+  # check if the tree is assymmetric based on duplicated code expressions (re: #100)
+  .duplicates = duplicated(.code)
+  
+  if (any(.duplicates)) {
+    .names = lapply(.code[.duplicates], function(x) which(unlist(.code) %in% x))
+    
+    .warn_message = lapply(.names, function(x) paste0(x, sep = "", collapse = " and ")) |> 
+      unlist() |> 
+      (\(x) {paste0("{", x, "}", collapse = ", ")})() |> 
+      (\(x) {paste0("Universes ", x, " appear to be duplicates. This may be because the tree you created is asymmetric (did you use nested branch calls?). Please verify and prune universes before proceeding with your analysis. See vignette('branch') for more details.")})()
+    
+    warning(.warn_message, call. = FALSE)
+  }
+
+  select(mutate(as_tibble(df),
+                      .universe = 1:nrow(df),
+                      .parameter_assignment = param.assgn,
+                      .code = .code,
                       .results = .res,
                       .errors = .error
                     ), .universe, everything())
@@ -185,7 +199,14 @@ conditions.default <- function(multiverse) {
 #' @rdname accessors
 #' @export
 conditions.multiverse <- function(multiverse) {
-  attr(multiverse, "multiverse")[['conditions']]
+  .conditions = attr(multiverse, "multiverse")[['conditions']]
+  redundant_conditions = lapply(unlist(.conditions), function(x) { x == TRUE} ) |> unname() |>  unlist()
+  
+  if (!is.null(redundant_conditions)) {
+    unlist(.conditions, use.names = FALSE)[!redundant_conditions] 
+  } else {
+    list()
+  }
 }
 
 

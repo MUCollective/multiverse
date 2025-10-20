@@ -81,14 +81,14 @@ parse_multiverse <- function(.multiverse, .expr, .code, .label) {
   
   .expr <- list(.expr)
   names(.expr) <- .label
-  
+
   q <- parse_multiverse_expr(.multiverse, .expr, rev(parameters), conditions, .parent_key)
-  
+
   # stores parameters and conditions in the multiverse object
   m_obj$parameters <- parameters
   m_obj$conditions <- conditions
   m_obj$parameter_set <- names(parameters)
-  
+
   invisible( m_obj$multiverse_diction$set(.label, q) )
 }
 
@@ -100,7 +100,7 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
     all_conditions <- expr(TRUE) 
   } else { 
     # creates a chained expression with all the conditions 
-    all_conditions <- parse_expr(paste0("(", all_conditions, ")", collapse = "&"))
+    all_conditions <- parse_expr(paste0("(", unlist(all_conditions), ")", collapse = "&"))
   }
   
   new_params <- setdiff(names(.param_options), .m_obj$parameter_set)
@@ -110,7 +110,12 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
   ## for each node in the previous level, take the parameter assignment of the previous with the new parameter assignments
   if (is.null(.parent_block)) {
     df <- data.frame( lapply(expand.grid(.param_options, KEEP.OUT.ATTRS = FALSE), unlist), stringsAsFactors = FALSE)
-    df <- filter(df, eval(all_conditions))
+    df <- try(filter(df, eval(all_conditions)), silent = TRUE)
+    
+    if(inherits(df, "try-error")) {
+      stop(attr(df, "condition")$parent, "\nHave you declared all the parameters that you are using?")
+    }
+    
     n <- ifelse(nrow(df), nrow(df), 1)
     
     lapply(seq_len(n), function(i) {
@@ -135,8 +140,6 @@ parse_multiverse_expr <- function(multiverse, .expr, .param_options, all_conditi
     q <- lapply(seq_along(parents), function(i, dat) {
       if (length(new_params) == 0) {
         
-        # print(parents)
-        # print(class( parents[[i]]) )
         # implies no new parameters have been declared.
         # so number of child environments should be the same as the number of parent environments
         df <- data.frame(parents[[i]]$parameter_assignment)
@@ -180,7 +183,9 @@ get_parameter_conditions_list <- function(.c) {
   
   .p = unlist(lapply(l, function(x) x$parameters), recursive = FALSE)
   
-  # check if names are duplicated
+  .c = unlist(lapply(l, function(x) x$conditions), recursive = FALSE)
+  
+  # check if parameter names in `.p` are duplicated
   # if yes, then make sure all the option names of the parameter
   # are used. If no, throw an error that it should cover all the
   # options for a parameter.
@@ -191,7 +196,18 @@ get_parameter_conditions_list <- function(.c) {
     }
     .p <- .p[!duplicated(names(.p))]
   }
-  .c = unlist(lapply(l, function(x) x$conditions), recursive = FALSE)
+  
+  # check if parameter names in `.c` are duplicated
+  # if yes, then make sure all the conditions of the parameter
+  # are the same. If no, throw an error that it should have the 
+  # same set of conditions for every option of a parameter.
+  if (isTRUE(any(duplicated(names(.c))))) {
+    duplicate_names <- duplicated(names(.c), fromLast = TRUE) | duplicated(names(.c))
+    if(isFALSE( all(duplicated(.c[duplicate_names], fromLast = TRUE) | duplicated(.c[duplicate_names])) )) {
+      stop("reused parameters should have the same conditions as the original declaration")
+    }
+    .c <- .c[!duplicated(names(.c))]
+  }
   
   list(
     parameters = .p,
@@ -240,35 +256,44 @@ get_branch_parameter_conditions <- function(.branch_call) {
   parameter_options_list <- list(parameter_options)
   names(parameter_options_list) <- as.character(parameter_name)
   
-  list( parameters = parameter_options_list, conditions = parameter_conditions )
-}
-
-get_branch_assert_condition <- function(.x) {
-  list(parameters = list(), conditions = list( expr((!!f_rhs(.x))) ))
+  parameter_conditions_list <- list(parameter_conditions)
+  names(parameter_conditions_list) <- as.character(parameter_name)
+  
+  list( parameters = parameter_options_list, conditions = parameter_conditions_list )
 }
 
 get_condition <- function(.x, name) {
-  .antecedent = get_option_name(.x)
+  .consequent = get_option_name(.x)
   if (is_call(.x, "~")) {
-    .consequent = c(
-      get_implies_consequent(f_lhs(.x)),
-      get_implies_consequent(f_rhs(.x))
+    .antecedent = c(
+      get_antecedent(f_lhs(.x)),
+      get_antecedent(f_rhs(.x))
     )[[1]]
   } else {
-    .consequent = get_implies_consequent(.x)
+    .antecedent = get_antecedent(.x)
   }
-  
-  if ( !is.null(.consequent)) {
-    expr(( !!name != !!.antecedent | !!.consequent ))
+
+  if ( !is.null(.antecedent)) {
+    expr(( !!name != !!.consequent | !!.antecedent ))
+  } else {
+    return(expr(TRUE))
   }
 }
 
-get_implies_consequent <- function(.x) {
+# recursive function to get the consequent of a conditional declaration
+# in logical statements, If P, then Q
+# P is the antecedent and Q is the consequent
+get_antecedent <- function(.x) {
+  # if the rhs is a %when% statement, then we get the antecedent
   if( is_call(.x, "%when%") ) {
     f_rhs(.x)
-  } else if (is_call(.x, "(") | is_call(.x, "{")) {
-    get_implies_consequent(f_rhs(.x))
+  } else if (is_call(.x, "(")) {
+    get_antecedent(f_rhs(.x))
   }
+}
+
+get_branch_assert_condition <- function(.x) {
+  list(parameters = list(), conditions = list(branch_assert = expr((!!f_rhs(.x))) ))
 }
 
 # takes as input two lists list(parameter = list(), condition = list())
@@ -285,6 +310,7 @@ combine_parameter_conditions <- function(l1, l2) {
   # up front is to prevent a potentially more expensive linear search inside the loop
   parameters = l1$parameters
   shared_parameters = intersect(names(l1$parameters), names(l2$parameters))
+  
   for (n in shared_parameters) {
     parameters[[n]] = union(l1$parameters[[n]], l2$parameters[[n]])
   }
@@ -293,9 +319,23 @@ combine_parameter_conditions <- function(l1, l2) {
     parameters[[n]] = l2$parameters[[n]]
   }
   
+  # merge the condition lists
+  conditions = l1$conditions
+  shared_conditions = intersect(names(l1$conditions), names(l2$conditions))
+  
+  for (n in shared_conditions) {
+    # union requires the inputs to be lists
+    conditions[[n]] = union(list(l1$conditions[[n]]), list(l2$conditions[[n]]))
+  }
+  l2_only_conditions = setdiff(names(l2$conditions), shared_conditions)
+  for (n in l2_only_conditions) {
+    conditions[[n]] = l2$conditions[[n]]
+  }
+  
   list(
     parameters = parameters,
-    conditions = compact(union(l1$conditions, l2$conditions))
+    # conditions = compact(union(l1$conditions, l2$conditions))
+    conditions = conditions
   )
 }
 

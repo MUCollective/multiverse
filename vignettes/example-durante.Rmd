@@ -1,6 +1,6 @@
 ---
 title: "Example multiverse implementation: Effect of fertility on religiosity and political attitudes"
-author: "Abhraneel Sarma, Northwestern University"
+author: "Abhraneel Sarma"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
@@ -42,6 +42,7 @@ knitr::opts_chunk$set(
   fig.width = 6, 
   fig.height = 4
 )
+options(knitr.graphics.rel_path = FALSE)
 ```
 
 ## The data
@@ -51,7 +52,7 @@ The first step is to read the raw data from the file and store it as a tibble. W
 ```{r data}
 data("durante")
 
-data.raw.study2 <- durante |>
+data.raw.study2 <- durante %>%
   mutate(
     Abortion = abs(7 - Abortion) + 1,
     StemCell = abs(7 - StemCell) + 1,
@@ -67,7 +68,7 @@ data.raw.study2 <- durante |>
 The data look like this:
 
 ```{r}
-data.raw.study2 |>
+data.raw.study2 %>%
   head(10)
 ```
 
@@ -79,32 +80,32 @@ The data collected needs to be processed before it can be modeled. Preparing the
 
 
 ```{r single_analysis}
-one_universe = data.raw.study2 |>
-  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) |>
-  mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) |>
+one_universe = data.raw.study2 %>%
+  mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
+  mutate( NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength ) %>%
   mutate(
     CycleDay = 28 - (NextMenstrualOnset - DateTesting),
     CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
     CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-  ) |>
+  ) %>%
   mutate(
     Relationship = factor(ifelse(Relationship==1 | Relationship==2, "Single", "Relationship"))
-  ) |>
-  filter( ComputedCycleLength > 25 & ComputedCycleLength < 35) |>
-  filter( Sure1 > 6 | Sure2 > 6 ) |>
+  ) %>%
+  filter( ComputedCycleLength > 25 & ComputedCycleLength < 35) %>%
+  filter( Sure1 > 6 | Sure2 > 6 ) %>%
   mutate( Fertility = factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ) )
 ```
 
 The transformed data for this one universe looks like this:
 
 ```{r}
-one_universe |>
-  select( NextMenstrualOnset, Relationship, Sure1, Sure2, Fertility, everything() ) |>
+one_universe %>%
+  select( NextMenstrualOnset, Relationship, Sure1, Sure2, Fertility, everything() ) %>%
   head(10)
 ```
 
 ```{r, fig.align = 'center'}
-one_universe |>
+one_universe %>%
   ggplot(aes(x = Relationship, y = Rel1 + Rel2 + Rel3, color = Fertility)) +
   stat_summary(position = position_dodge(width = .1), fun.data = "mean_se") +
   theme_minimal()
@@ -129,8 +130,8 @@ The next step is to define our possible analyses inside the multiverse. The `mul
 Consider these first few lines from the transformation code in the single analysis above:
 
 ```{r eval = FALSE}
-df <- data.raw.study2 |>
-  mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) |>
+df <- data.raw.study2 %>%
+  mutate(ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast) %>%
   mutate(NextMenstrualOnset = StartDateofLastPeriod + ComputedCycleLength)
 ```
 
@@ -161,10 +162,10 @@ inside(M, df <- data.raw.study2)
 # although they could have been chained, this illustrates 
 # how multiple variables can be declared together using the `{}`
 inside(M, {
-  df <- df |>
+  df <- df %>%
     mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )
   
-  df <- df |>
+  df <- df %>%
     mutate( NextMenstrualOnset = branch(menstrual_calculation, 
       "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
       "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
@@ -214,26 +215,26 @@ Besides calculating the onset of the next menstruation cycle, there are other va
 
 ```{r}
 inside(M, {
-  df <- df |>
+  df <- df %>%
       mutate(RelationshipStatus = branch( relationship_status, 
         "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
         "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
         "rs_option3" ~ factor(ifelse(Relationship==1, 'Single', ifelse(Relationship==3 | Relationship==4, 'Relationship', NA))) )
-      ) |>
+      ) %>%
       mutate(
         CycleDay = 28 - (NextMenstrualOnset - DateTesting),
         CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
         CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-      ) |>
+      ) %>%
       filter( branch(cycle_length, 
         "cl_option1" ~ TRUE,
         "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
         "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-      )) |>
+      )) %>%
       filter( branch(certainty,
         "cer_option1" ~ TRUE,
         "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-      )) |>
+      )) %>%
       mutate( Fertility = branch( fertile,
         "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", "medium")) ),
         "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", "medium")) ),
@@ -253,7 +254,7 @@ code(M)
 The `expand` will contain all the possible combinations of the parameter options that have been identified.
 
 ```{r}
-expand(M) |>
+expand(M) %>%
   head()
 ```
 
@@ -263,13 +264,13 @@ In our multiverse we have identified 5 options for calculating `fertility`, 3 op
 This results in $ 5 \times 3 \times 3 \times 3 \times 2 = 270$ possible combinations.
 
 ```{r}
-expand(M) |> nrow()
+expand(M) %>% nrow()
 ```
 
 We can then inspect the default analysis the default single universe analysis from this multiverse:
 
 ```{r}
-M$df |>
+M$df %>%
   head()
 ```
 
@@ -281,8 +282,8 @@ For example, in our example, depending on how we filter participants based on *c
 We can express these conditionals in the multiverse (See vignette("Conditions") for more details). Below, we use the %when% operator:
 
 ```{r eval = FALSE}
-df <- data.raw.study2  |>
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) |>
+df <- data.raw.study2  %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast ) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
             "mc_option1" ~ (StartDateofLastPeriod + ComputedCycleLength) %when% (cycle_length != "cl_option3"),
             "mc_option2" ~ (StartDateofLastPeriod + ReportedCycleLength) %when% (cycle_length != "cl_option2"),
@@ -298,34 +299,34 @@ Specifying these conditions allows us to exclude inconsistent combinations from 
 M = multiverse()
 
 inside(M, {
-  df <- data.raw.study2 |>
-    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  |>
-    dplyr::filter( branch(cycle_length,
+  df <- data.raw.study2 %>%
+    mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+    filter( branch(cycle_length,
         "cl_option1" ~ TRUE,
         "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
         "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
-    )) |>
-    dplyr::filter( branch(certainty,
+    )) %>%
+    filter( branch(certainty,
         "cer_option1" ~ TRUE,
         "cer_option2" ~ Sure1 > 6 | Sure2 > 6
-    )) |>
+    )) %>%
     mutate(NextMenstrualOnset = branch(menstrual_calculation,
         "mc_option1" %when% (cycle_length != "cl_option3") ~ StartDateofLastPeriod + ComputedCycleLength,
         "mc_option2" %when% (cycle_length != "cl_option2") ~ StartDateofLastPeriod + ReportedCycleLength,
         "mc_option3" ~ StartDateNext)
-    )  |>
+    )  %>%
     mutate(
       CycleDay = 28 - (NextMenstrualOnset - DateTesting),
       CycleDay = ifelse(WorkerID == 15, 11, ifelse(WorkerID == 16, 18, CycleDay)),
       CycleDay = ifelse(CycleDay > 1 & CycleDay < 28, CycleDay, ifelse(CycleDay < 1, 1, 28))
-    ) |>
+    ) %>%
     mutate( Fertility = branch( fertile,
         "fer_option1" ~ factor( ifelse(CycleDay >= 7 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 25, "low", NA)) ),
         "fer_option2" ~ factor( ifelse(CycleDay >= 6 & CycleDay <= 14, "high", ifelse(CycleDay >= 17 & CycleDay <= 27, "low", NA)) ),
         "fer_option3" ~ factor( ifelse(CycleDay >= 9 & CycleDay <= 17, "high", ifelse(CycleDay >= 18 & CycleDay <= 25, "low", NA)) ),
         "fer_option4" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 14, "high", "low") ),
         "fer_option5" ~ factor( ifelse(CycleDay >= 8 & CycleDay <= 17, "high", "low") )
-    )) |>
+    )) %>%
     mutate(RelationshipStatus = branch(relationship_status,
         "rs_option1" ~ factor(ifelse(Relationship==1 | Relationship==2, 'Single', 'Relationship')),
         "rs_option2" ~ factor(ifelse(Relationship==1, 'Single', 'Relationship')),
@@ -337,7 +338,7 @@ inside(M, {
 After excluding the inconsistent choice combinations, $270 − 2 \times (5 \times 1 \times 3 \times 1 \times 2) = 210$ choice combinations remain:
 
 ```{r}
-expand(M) |> nrow()
+expand(M) %>% nrow()
 ```
 
 Now, we've created the complete multiverse that was presented as example #2 from Steegen et al.'s paper.
@@ -350,7 +351,7 @@ The authors compute a composite score of Religiosity by calculating the average 
 
 ```{r}
 inside(M, {
-  df <- df |>
+  df <- df %>%
   mutate( RelComp = round((Rel1 + Rel2 + Rel3)/3, 2))
 })
 ```
@@ -368,7 +369,7 @@ To extract the results from the analysis, we first create a tidy data-frame of t
 
 ```{r}
 inside(M, {
-  summary_RelComp <- fit_RelComp |> 
+  summary_RelComp <- fit_RelComp %>% 
     broom::tidy( conf.int = TRUE )
 })
 
@@ -379,9 +380,9 @@ execute_multiverse(M)
 Now that we have performed the analysis in each universe of the multiverse, we need to plot the data. To plot the data, we need to extract the relevant result data-frame from each universe into a single data-frame. The following code does this, by extracting the variable where the estimates of the model are stored, `summary_RelComp` and creating a single tidy data-frame that can be accessed easily.
 
 ```{r}
-expand(M) |>
-  extract_variables(summary_RelComp) |>
-  unnest( cols = c(summary_RelComp) ) |>
+expand(M) %>%
+  extract_variables(summary_RelComp) %>%
+  unnest( cols = c(summary_RelComp) ) %>%
   head( 10 )
 ```
 
@@ -391,14 +392,14 @@ We then take this data frame and plot the results as a confidence interval and p
 Note: we discuss extracting results from the multiverse and visualising them in more detail in `vignette(visualising-multiverse)`
 
 ```{r, message = FALSE, eval = FALSE}
-p <- expand(M) |>
-  extract_variables(summary_RelComp) |>
-  unnest( cols = c(summary_RelComp) ) |>
+p <- expand(M) %>%
+  extract_variables(summary_RelComp) %>%
+  unnest( cols = c(summary_RelComp) ) %>%
   mutate( term = recode( term, 
                  "RelationshipStatusSingle" = "Single",
                  "Fertilitylow:RelationshipStatusSingle" = "Single:Fertility_low"
-  ) ) |>
-  filter( term != "(Intercept)" ) |>
+  ) ) %>%
+  filter( term != "(Intercept)" ) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
@@ -406,8 +407,7 @@ p <- expand(M) |>
   theme_minimal() +
   transition_manual( .universe )
 
-animate(p, nframes = 210, fps = 4, res = 72)
+animate(p, nframes = 210, fps = 4, res = 150)
 ```
 
-![Animation of linear regression coefficients](../man/figures/durante-regression.gif)
 
