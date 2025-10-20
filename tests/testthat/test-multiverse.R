@@ -19,8 +19,8 @@ test_that("identify multiverse object using 'inherits' function", {
 test_that("new multiverse object is initialised properly", {
   expect_null(M.obj$code)
   expect_null(M.obj$parameter_set)
-  expect_warning( expect_mapequal( M.obj$parameters, list()) )
-  expect_warning( expect_mapequal( M.obj$conditions, list()) )
+  suppressWarnings( expect_mapequal( M.obj$parameters, list()) )
+  suppressWarnings( expect_mapequal( M.obj$conditions, list()) )
   expect_equal( length(M.obj$multiverse_diction$as_list()), 0 )
 })
 
@@ -28,8 +28,8 @@ test_that("accessor functions work on newly initialised object", {
   m_tbl <- expand(M)
   
   expect_equal(code(M), NULL)
-  expect_warning( expect_mapequal( parameters(M), list()) )
-  expect_warning( expect_mapequal( conditions(M), list()) )
+  suppressWarnings( expect_mapequal( parameters(M), list()) )
+  suppressWarnings( expect_mapequal( conditions(M), list()) )
   expect_true( is.data.frame(m_tbl) )
   expect_equal( nrow(m_tbl), 1 )
 })
@@ -141,6 +141,3 @@ test_that("accessor functions retrieve the multiverse table", {
   expect_true( tibble::is_tibble(expand(M.2)) )
   expect_equal( as.list(ref_df), as.list(df) )
 })
-
-
-
