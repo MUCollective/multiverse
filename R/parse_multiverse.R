@@ -190,10 +190,14 @@ get_parameter_conditions_list <- function(.c) {
   # are used. If no, throw an error that it should cover all the
   # options for a parameter.
   if (isTRUE(any(duplicated(names(.p))))) {
-    duplicate_names <- duplicated(names(.p), fromLast = TRUE) | duplicated(names(.p))
-    if(isFALSE( all(duplicated(.p[duplicate_names], fromLast = TRUE) | duplicated(.p[duplicate_names])) )) {
+    # duplicate_names <- duplicated(names(.p), fromLast = TRUE) | duplicated(names(.p))
+    # if(isFALSE( all(duplicated(.p[duplicate_names], fromLast = TRUE) | duplicated(.p[duplicate_names])) )) {
+    #   stop("reused parameters should have the same number of options and the same names for each option as the original declaration")
+    # }
+    if(isFALSE( setequal(unlist(.p[duplicated(names(.p), fromLast = TRUE)]), unlist(.p[duplicated(names(.p))])) )) {
       stop("reused parameters should have the same number of options and the same names for each option as the original declaration")
     }
+    
     .p <- .p[!duplicated(names(.p))]
   }
   
@@ -202,9 +206,13 @@ get_parameter_conditions_list <- function(.c) {
   # are the same. If no, throw an error that it should have the 
   # same set of conditions for every option of a parameter.
   if (isTRUE(any(duplicated(names(.c))))) {
-    duplicate_names <- duplicated(names(.c), fromLast = TRUE) | duplicated(names(.c))
-    if(isFALSE( all(duplicated(.c[duplicate_names], fromLast = TRUE) | duplicated(.c[duplicate_names])) )) {
-      stop("reused parameters should have the same conditions as the original declaration")
+    # duplicate_names <- duplicated(names(.c), fromLast = TRUE) | duplicated(names(.c))
+    # if(isFALSE( all(duplicated(.c[duplicate_names], fromLast = TRUE) | duplicated(.c[duplicate_names])) )) {
+    #   stop("reused parameters should have the same conditions as the original declaration")
+    # }
+    
+    if(isFALSE( setequal(unlist(.c[duplicated(names(.c), fromLast = TRUE)]), unlist(.c[duplicated(names(.c))])) )) {
+      stop("reused parameters should have the same number of options and the same names for each option as the original declaration")
     }
     .c <- .c[!duplicated(names(.c))]
   }
