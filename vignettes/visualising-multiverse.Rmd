@@ -178,7 +178,6 @@ One way to visualise over the multiverse is to animate over the results from eac
 
 
 ```{r, message = FALSE, fig.width = 6, fig.height = 4}
-
 p <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
@@ -190,11 +189,11 @@ p <- expand(M) %>%
   ggplot() + 
   geom_vline( xintercept = 0,  colour = '#979797' ) +
   geom_point( aes(x = estimate, y = term)) +
-  geom_errorbarh( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
+  geom_errorbar( aes(xmin = conf.low, xmax = conf.high, y = term), height = 0) +
   theme_minimal() +
   transition_manual( .universe )
 
-animate(p, nframes = 210, fps = 2)
+animate(p, nframes = 210, fps = 4)
 ```
 
 
@@ -231,24 +230,24 @@ data.spec_curve <- expand(M) %>%
   mutate( summary_RelComp = map(.results, "summary_RelComp") ) %>%
   unnest( cols = c(summary_RelComp) ) %>%
   filter( term == "Fertilitylow:RelationshipStatusSingle" ) %>%
-  select( .universe, !! names(parameters(M)), estimate, p.value ) %>%
-  arrange( estimate ) %>% 
+  select( .universe, !! names(multiverse::parameters(M)), estimate, p.value ) %>%
+  arrange( estimate ) %>%
   mutate( .universe = row_number())
-
+ 
 p1 <- data.spec_curve %>%
-  gather( "parameter_name", "parameter_option", !! names(parameters(M)) ) %>%
+  gather( "parameter_name", "parameter_option", !! names(multiverse::parameters(M)) ) %>%
   select( .universe, parameter_name, parameter_option) %>%
   mutate(
     parameter_name = factor(str_replace(parameter_name, "_", "\n"))
   ) %>%
   ggplot() +
   geom_point( aes(x = .universe, y = parameter_option, color = parameter_name), size = 0.5 ) +
-  labs( x = "universe #", y = "option included in the analysis specification") + 
+  labs( x = "universe #", y = "option included in the analysis specification") +
   facet_grid(parameter_name ~ ., space="free_y", scales="free_y", switch="y") +
   theme(strip.placement = "outside",
         strip.background = element_rect(fill=NA,colour=NA),
-        panel.spacing.x=unit(0.15,"cm"), 
-        strip.text.y = element_text(angle = 180, face="bold", size=10), 
+        panel.spacing.x=unit(0.15,"cm"),
+        strip.text.y = element_text(angle = 180, face="bold", size=10),
         panel.spacing = unit(0.25, "lines")
       ) +
   theme_minimal()
@@ -258,7 +257,7 @@ p2 <- data.spec_curve %>%
   geom_point( aes(.universe, estimate, color = (p.value < 0.05)), size = 0.25) +
   labs(x = "", y = "coefficient of\ninteraction term:\nfertility x relationship") +
   theme_minimal()
-  
+
 cowplot::plot_grid(p2, p1, axis = "bltr",  align = "v", ncol = 1, rel_heights = c(1, 3))
 ```
 

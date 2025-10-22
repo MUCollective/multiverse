@@ -130,9 +130,6 @@ execute_linear_universe <- function(i, code, env_list) {
   .c = code[[i]]
   .e = env_list[[i]]
   
-  .seed = expr(set.seed(12345))
-  tryStack( invisible(lapply(.seed, eval, envir = .e)), silent = TRUE)
-  
   .error_stack = tryStack( invisible(lapply(.c, eval, envir = .e)), silent = TRUE)
   list(env = .e, ts = .error_stack)
 }

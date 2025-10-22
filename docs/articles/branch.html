@@ -72,7 +72,7 @@
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma</h4>
             
-            <h4 data-toc-skip class="date">2025-10-12</h4>
+            <h4 data-toc-skip class="date">2025-10-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/branch.Rmd" class="external-link"><code>vignettes/branch.Rmd</code></a></small>
       <div class="d-none name"><code>branch.Rmd</code></div>
@@ -86,7 +86,7 @@ Sarma</h4>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mucollective.github.io/multiverse/" class="external-link">multiverse</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mucollective.github.io/multiverse/">multiverse</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="branches-in-a-multiverse-analysis">Branches in a multiverse analysis<a class="anchor" aria-label="anchor" href="#branches-in-a-multiverse-analysis"></a>
 </h2>
@@ -154,12 +154,12 @@ multiverse specification below, “two_levels”, and “three_levels” are
 used as option names). However, names can be omitted; if omitted, the
 entire syntax for performing that operation will be treated as the name
 for that particular option.</p>
-<p><strong>Note</strong> In this vignette, we make use of <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html" class="external-link"><em>multiverse
+<p><strong>Note</strong> In this vignette, we make use of <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse
 code chunks</em></a>, a custom engine designed to work with the
 multiverse package, to implement the multiverse analyses. Please refer
 to the vignette (<code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more
 details. Users could instead make use of the function which is more
-suited for a script-style implementation. Please refer to the <a href="https://mucollective.github.io/multiverse/index.html" class="external-link">README</a>
+suited for a script-style implementation. Please refer to the <a href="https://mucollective.github.io/multiverse/index.html">README</a>
 or refer to <code><a href="../articles/example-durante.html">vignette("example-durante")</a></code> for more
 details.</p>
 </div>
@@ -330,7 +330,7 @@ analysis path.</p>
 </h2>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Recall the hurricane example from the <a href="https://mucollective.github.io/multiverse/" class="external-link">README</a>. In that
+<p>Recall the hurricane example from the <a href="https://mucollective.github.io/multiverse/">README</a>. In that
 example, the researchers are faced with the decision of which hurricanes
 to exclude as outliers. They decide to exclude the two hurricanes which
 have caused the most deaths. However, there may be other possible ways
@@ -770,10 +770,6 @@ resort to providing the user with a warning whenever such potentially
 asymmetric trees are detected:</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: Universes {3 and 4} appear to be duplicates. This may be because the</span></span>
-<span><span class="co">## tree you created is asymmetric (did you use nested branch calls?). Please</span></span>
-<span><span class="co">## verify and prune universes before proceeding with your analysis. See</span></span>
-<span><span class="co">## vignette('branch') for more details.</span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 7</span></span></span>
 <span><span class="co">##   .universe model  interaction .parameter_assignment .code            .results</span></span>
 <span><span class="co">##       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  </span></span>
@@ -785,7 +781,7 @@ asymmetric trees are detected:</p>
 <p>The solution, which is essentially a workaround is to remove
 duplicates, <em>upon verification</em> at the post-processing stage (and
 we can then safely ignore the warning).</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/accessors.html">expand</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.universe</span> <span class="op">!=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 7</span></span></span>

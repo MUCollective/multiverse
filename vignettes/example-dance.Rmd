@@ -27,6 +27,8 @@ library(multiverse)
 ```
 
 ```{r, chunk-setup, include=FALSE}
+M = multiverse()
+
 opts_chunk$set(
   echo = TRUE,
   eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
@@ -284,7 +286,7 @@ Once we have the results stored from each unique analysis from our defined multi
 >
 > The following plots shows the mean JND for each of the 216 conditions as a point estimate with the corresponding error bars communicating inferential uncertainty. As inferential information is already conveyed by the way of error bars, the dance is somewhat redundant. However, showing the dance still has educational value, as researchers tend to grossly overestimate the reliability and the replicability of inferential statistics such as p-values [5] and confidence intervals [4]. One might notice that the error bars are jumping more wildly than in a regular dance of 95% confidence intervals [5, 4]. This is because the error bars are standard errors, which are approximately twice as short as 95% CIs. Although in the original article this was clearly stated in the Figure caption, the dance might make it less likely for the reader to miss this important information.
 
-```{r, vis-errorbars-above, fig.width = 8, fig.height = 5}
+```{r, vis-errorbars-above}
 p.above <- expand(M) %>%
   mutate(data = map(.results, "df.error_bar.i")) %>%
   unnest( cols = c(data) ) %>%
@@ -298,7 +300,7 @@ p.above <- expand(M) %>%
   theme_minimal() +
   transition_manual(.universe)
 
-animate(p.above, nframes = n, fps = 3, width = 9, height = 4, res = 300, units = "in")
+animate(p.above, nframes = n, fps = 4, width = 1600, height = 640, units = "px")
 ```
 
 
@@ -316,7 +318,7 @@ p.below <- expand(M) %>%
   theme_minimal() +
   transition_manual(.universe)
 
-animate(p.below, nframes = n, fps = 3, width = 9, height = 4, res = 300, units = "in")
+animate(p.below, nframes = n, fps = 4, width = 1600, height = 640, units = "px")
 ```
 
 The following figure shows the regression lines for all conditions.
@@ -337,7 +339,7 @@ p.fitted_lines <- expand(M) %>%
   theme_minimal() +
   transition_manual(.universe)
 
-animate(p.fitted_lines, nframes = n, fps = 3, width = 9, height = 6, res = 300, units = "in")
+animate(p.fitted_lines, nframes = n, fps = 3, width = 840, height = 480, units = "px")
 ```
 
 > The figure is consistent with Harrison et al.’s main findings: ”using scatterplots to depict correlation results in better performance overall. However, this performance difference only occurs when depicting positively correlated data. In fact, parallel coordinates depicting negatively correlated data appear to perform as well as scatterplots”. The statistical dance gives credence to these conclusions, while at the same time providing a faithful illustration of the uncertainty behind the estimates. The reader is free to linger on the figure and go beyond the authors’ own summary of findings by examining other comparisons and drawing their own conclusions. All necessary information on effect sizes and inferential statistics is seamlessly combined into this single animated figure, and it would take pages and pages of text to fully describe it.

@@ -65,6 +65,8 @@ We implement the same analysis as in the `vignette("example-hurricane")`. Below 
 Outlier exclusion: We implement different alternative choices on how to exclude outliers based on extreme observations of death and damages.
 
 ```{r}
+M = multiverse()
+
 inside(M, {
   df <- hurricane_data %>%
     filter(branch(death_outliers, 
@@ -80,6 +82,7 @@ inside(M, {
     ))
 })
 ```
+
 
 Identifying independent variables: How is femininity of the name of a hurricane operationalised? Simonsohn et al. identify two distinct ways. First, using the 11 point scale that was used in the original analysis; or second using a binary scale.
 

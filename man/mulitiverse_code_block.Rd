@@ -12,9 +12,9 @@ This allows users to implement analysis in RMarkdown without using auxiliary fun
 \code{inside()} is still required to define and execute multiverse analyses in a RScript using this package. 
 See \code{vignette("multiverse-in-rmd")} for more details.
 
-In RStudio, you can create a shortcut for this using RStudio AddIns
+In RStudio, you can create a shortcut for this using RStudio Addin
 (we recommend \code{Cmd + Opt + M} in Mac and \code{Ctrl + Alt + M} in Windows).
-To add a shortcut, go to Tools > AddIns > Browse AddIns... > Keyboard shortcuts. 
+To add a shortcut, go to Tools > Addins > Browse Addins... > Keyboard shortcuts. 
 Search for \emph{insert multiverse code chunk} and add a keyboard shortcut to this function. 
 Once you have set this up, the keyboard shortcut will create a code block in 
 any RMarkdown document.

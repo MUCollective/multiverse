@@ -1,6 +1,6 @@
 Package: multiverse
 Version: 0.6.3
-Date: 2025-10-08
+Date: 2025-10-22
 Title: Create 'multiverse analysis' in R
 Authors@R: c(
         person("Abhraneel", "Sarma", role = c("aut", "cre"), email = "abhraneel@u.northwestern.edu"),

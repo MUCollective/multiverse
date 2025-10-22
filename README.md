@@ -344,8 +344,8 @@ detail in the next section. When this code is written and executed
 inside a *multiverse code block*, it allows the multiverse library to
 process and compile it to three different analyses.
 
-We provide the ability to declare multiverse code block as an *AddIn* in
-RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the
+We provide the ability to declare multiverse code block as an *Addin* in
+RStudio. Users can click on *Addins* toolbar menu in RStudio (see the
 image below). This would create a multiverse code block at the location
 of the cursor in the document.
 

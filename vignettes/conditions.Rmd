@@ -25,6 +25,8 @@ library(multiverse)
 ```
 
 ```{r, chunk-setup, include=FALSE}
+M = multiverse()
+
 opts_chunk$set(
   echo = TRUE,
   eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,

@@ -47,7 +47,8 @@ test_that("the output of `get_branch_parameter_conditions` on a `branch` call", 
 test_that("combine_parameter_conditions properly combines non-overlapping parameters and conditions", {
    l.1 = list(parameters = list(a = 1:3, b = 3:4), conditions = list(a = letters[1:3]))
    l.2 = list(parameters = list(c = 4:6, d = 1:2), conditions = list(b = letters[4:6]))
-   l = list(parameters = list(a = 1:3, b = 3:4, c = 4:6, d = 1:2), conditions = list(a = letters[1:3], b = letters[4:6]))
+   # l = list(parameters = list(a = c(1,2,3,4,6), b = c(3,4,1,2,5)), conditions = list(a = letters[1:3], b = letters[4:6]))
+   l = list(parameters = list(a = 1:3, b = 3:4, c = 4:6, d = 1:2), conditions = list(letters[1:3], letters[4:6]))
 
   expect_equal(combine_parameter_conditions(l.1, l.2), l)
 })
@@ -55,7 +56,8 @@ test_that("combine_parameter_conditions properly combines non-overlapping parame
 test_that("combine_parameter_conditions properly combines overlapping parameters and conditions", {
   l.1 = list(parameters = list(a = 1:3, b = 3:4), conditions = list(a = letters[1:3]))
   l.2 = list(parameters = list(a = c(2,4,6), b = 1:5), conditions = list(b = letters[4:6]))
-  l = list(parameters = list(a = c(1,2,3,4,6), b = c(3,4,1,2,5)), conditions = list(a = letters[1:3], b = letters[4:6]))
+  # l = list(parameters = list(a = c(1,2,3,4,6), b = c(3,4,1,2,5)), conditions = list(a = letters[1:3], b = letters[4:6]))
+  l = list(parameters = list(a = c(1,2,3,4,6), b = c(3,4,1,2,5)), conditions = list(letters[1:3], letters[4:6]))
 
   expect_equal(combine_parameter_conditions(l.1, l.2), l)
 })
@@ -144,7 +146,8 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
 
   output = list(
     parameters = list(menstrual_calculation = list("mc_option1", "mc_option2", "mc_option3")),
-    conditions = list(menstrual_calculation = list(TRUE, TRUE, TRUE))
+    # conditions = list(menstrual_calculation = list(TRUE, TRUE, TRUE))
+    conditions = list()
   )
 
   expect_equal(get_parameter_conditions(an_expr), output)
@@ -177,11 +180,12 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
         relationship_status = list("rs_option1", "rs_option2", "rs_option3"),
         cycle_length = list("cl_option1", "cl_option2", "cl_option3")
     ),
-    conditions = list(
-      mentrual_calculation = list(TRUE, TRUE, TRUE),
-      relationship_status = list(TRUE, TRUE, TRUE),
-      cycle_length = list(TRUE, TRUE, TRUE)
-    )
+    # conditions = list(
+    #   mentrual_calculation = list(TRUE, TRUE, TRUE),
+    #   relationship_status = list(TRUE, TRUE, TRUE),
+    #   cycle_length = list(TRUE, TRUE, TRUE)
+    # )
+    conditions = list()
   )
 
   expect_equal(get_parameter_conditions(an_expr), output)
@@ -232,10 +236,8 @@ test_that("`get_parameter_conditions` returns the correct output (list) when inp
     conditions = list(quote((menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3"))), quote((menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2"))))
   )
   
- # expect_equal(pc_list.1, output)
- # expect_equal(pc_list.2, output)
   expect_true(all(map2_lgl(pc_list.1$parameters, output$parameters, identical)))
-  expect_true(all(map2_lgl(pc_list.1$conditions$branch_assert, output$conditions, identical)))
+  expect_true(all(map2_lgl(pc_list.1$conditions, output$conditions, identical)))
 })
 
 

@@ -169,7 +169,6 @@ Once we have implemented the analysis model in our multiverse, the corresponding
 
 ````
 ```{multiverse label = default-m-4, inside = M}`r ''`
-<<<<<<< HEAD
 expectation <- marginaleffects::avg_predictions(
     model = fit,
     by = "female",
@@ -181,29 +180,6 @@ expectation <- marginaleffects::avg_predictions(
     )
   )$estimate |>
     diff()
-=======
-pred <- predict(fit, se.fit = TRUE, type = "response")
-
-pred2expectation <- function(mu, sigma) {
-    branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
-}
-
-disagg_fit <- df  %>%
-    mutate(
-        fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
-        se.fit = pred$se.fit,
-        deg_f = df.residual(fit),                         # get degrees of freedom
-        sigma = sigma(fit),                               # get residual standard deviation
-        se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
-    )
-
-# aggregate fitted effect of female storm name
-expectation <- disagg_fit %>%
-    mutate(expected_deaths = pred2expectation(fitted, sigma)) %>% 
-    group_by(female) %>%
-    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") %>% 
-    compare_levels(mean_deaths, by = female)
->>>>>>> dev
 ```
 ````
 

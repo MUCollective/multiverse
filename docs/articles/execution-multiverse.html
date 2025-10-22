@@ -72,7 +72,7 @@
                         <h4 data-toc-skip class="author">Abhraneel
 Sarma</h4>
             
-            <h4 data-toc-skip class="date">2025-10-12</h4>
+            <h4 data-toc-skip class="date">2025-10-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/execution-multiverse.Rmd" class="external-link"><code>vignettes/execution-multiverse.Rmd</code></a></small>
       <div class="d-none name"><code>execution-multiverse.Rmd</code></div>
@@ -102,7 +102,7 @@ analyses in your specified multiverse.</p>
 <h2 id="data-and-analysis">Data and analysis<a class="anchor" aria-label="anchor" href="#data-and-analysis"></a>
 </h2>
 <p>We will use the hurricane dataset that has been discussed in greater
-detail in the <a href="https://mucollective.github.io/multiverse/" class="external-link">README</a> as well as
+detail in the <a href="https://mucollective.github.io/multiverse/">README</a> as well as
 in the vignette <a href="example-hurricane.html">hurricane</a>. If you
 are already familiar with this dataset and analysis, please feel free to
 skip this section, and continue from the next section</p>
@@ -139,7 +139,9 @@ steps involved.</p>
 to exclude outliers based on extreme observations of death and
 damages.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="../reference/multiverse.html">multiverse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/inside.html">inside</a></span><span class="op">(</span><span class="va">M</span>, <span class="op">{</span></span>
 <span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">hurricane_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/branch.html">branch</a></span><span class="op">(</span><span class="va">death_outliers</span>, </span>
 <span>        <span class="st">"no_exclusion"</span> <span class="op">~</span> <span class="cn">TRUE</span>,</span>

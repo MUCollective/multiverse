@@ -76,7 +76,7 @@ University of Washington</h4>
                         <h4 data-toc-skip class="author">Michael
 Shiuming Truong, York University</h4>
             
-            <h4 data-toc-skip class="date">2025-10-12</h4>
+            <h4 data-toc-skip class="date">2025-10-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MUCollective/multiverse/blob/HEAD/vignettes/example-hurricane.Rmd" class="external-link"><code>vignettes/example-hurricane.Rmd</code></a></small>
       <div class="d-none name"><code>example-hurricane.Rmd</code></div>
@@ -172,7 +172,7 @@ terms of damages. This space of decisions is implemented using
 <div class="section level4">
 <h4 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a>
 </h4>
-<p>In this vignette, we make use of <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html" class="external-link"><em>multiverse
+<p>In this vignette, we make use of <a href="https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html"><em>multiverse
 code chunks</em></a>, a custom engine designed to work with the
 multiverse package, to implement the multiverse analyses. Please refer
 to the vignette (<code><a href="../articles/multiverse-in-rmd.html">vignette("multiverse-in-rmd")</a></code>) for more
@@ -257,7 +257,6 @@ corresponding step will be applied to each analysis path. To interpret
 the results, we first estimate a prediction interval corresponding to
 each analysis path.</p>
 <pre><code>```{multiverse label = default-m-4, inside = M}
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 expectation &lt;- marginaleffects::avg_predictions(
     model = fit,
     by = "female",
@@ -269,29 +268,6 @@ expectation &lt;- marginaleffects::avg_predictions(
     )
   )$estimate |&gt;
     diff()
-=======
-pred &lt;- predict(fit, se.fit = TRUE, type = "response")
-
-pred2expectation &lt;- function(mu, sigma) {
-    branch(model, "linear" ~ exp(mu + sigma^2/2) - 1, "poisson" ~ mu)
-}
-
-disagg_fit &lt;- df  %&gt;%
-    mutate(
-        fitted = pred$fit,                                # add fitted predictions and standard errors to dataframe
-        se.fit = pred$se.fit,
-        deg_f = df.residual(fit),                         # get degrees of freedom
-        sigma = sigma(fit),                               # get residual standard deviation
-        se.residual = sqrt(sum(residuals(fit)^2) / deg_f) # get residual standard errors
-    )
-
-# aggregate fitted effect of female storm name
-expectation &lt;- disagg_fit %&gt;%
-    mutate(expected_deaths = pred2expectation(fitted, sigma)) %&gt;% 
-    group_by(female) %&gt;%
-    summarise(mean_deaths = mean(expected_deaths), .groups = "drop_last") %&gt;% 
-    compare_levels(mean_deaths, by = female)
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; dev
 ```</code></pre>
 </div>
 <div class="section level3">

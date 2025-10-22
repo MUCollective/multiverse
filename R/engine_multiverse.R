@@ -5,7 +5,6 @@
 #' @importFrom formatR tidy_source
 #' @importFrom purrr map_chr
 #' @importFrom rlang is_condition
-#' @importFrom rlang is_true
 #' 
 multiverse_engine <- function(options) {
   if(is.null(options$inside)) stop("A multiverse object should be specified with", 
@@ -30,7 +29,7 @@ multiverse_engine <- function(options) {
     .multiverse = get(.multiverse_name, envir = knit_global())
   } else if (is.multiverse(.multiverse_name)) {
     .multiverse = .multiverse_name
-  } # maybe an error?
+  }
   
   .c = multiverse_block_code(.multiverse, options$label, options$code)
   
@@ -89,8 +88,6 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
     # changing this to TRUE would execute the default universe and show 
     # the relevant output
     # What we want is to create a `div` for each universe
-    # options$eval = TRUE
-    # options$class.source = "multiverse"
     options$eval = FALSE
     options$engine = "R"
     options$comment = ""
@@ -148,5 +145,3 @@ multiverse_default_block_exec <- function(.code, options, knit = FALSE) {
 }
 
 knitr::knit_engines$set(multiverse = multiverse_engine)
-
-

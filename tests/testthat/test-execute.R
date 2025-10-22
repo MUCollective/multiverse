@@ -148,7 +148,7 @@ test_that("`execute_multiverse` sends error and warning messages but does not st
   
   expect_warning(execute_multiverse(M))
   
-  df.extracted <- extract_variables(M, x) %>%
+  df.extracted <- extract_variables(M, x) |>
     select(-.parameter_assignment, -.code, -.results, -.errors)
   
   ref <- tibble(

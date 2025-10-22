@@ -83,9 +83,9 @@ inside <- function(multiverse, .expr, .label = NULL, .execute_default = TRUE) {
   .code = enexpr(.expr)
   
   add_and_parse_code(multiverse, .code, .label)
-  
+
   ## execute everything from where things have changed
-  
+
   # direct calls to inside() by the user result in execution of the
   # default universe in the global environment.
   if (.execute_default) {
@@ -102,7 +102,7 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   if (is.null(.name)) {
     .name = as.character(length(m_obj$code) + 1)
   }
-  
+
   # ensure that .expr is a single self-contained { ... } block
   if(!is_call(.expr, "{")) {
     .expr = as.call(list(quote(`{`), .expr))
@@ -111,10 +111,10 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
   # expand .options arguments in branch calls
   .expr = expand_branch_options(.expr)
   .loc = length(m_obj$code)
-  
+
   # what has been unchanged so far in the tree
   # everything post will be edited in the subsequent steps
-  
+
   # there is no code declared in the multiverse
   if (is_null(m_obj$code)) {
     # code block is not named, it is just appended to a unnamed list -> inside() declaration
@@ -133,23 +133,23 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
       # replaces existing code
       .c = m_obj$code
       .c[[.name]] = .expr
-      
+
       #.expr needs to be changed so that we recompute everything that occurs subsequently
       .expr = .c[which(names(.c) == .name):length(.c)]
       .name = names(.c)[which(names(.c) == .name)]
     }
   }
-  
+
   mapply(parse_multiverse, .expr, names(.expr), MoreArgs = list(.multiverse = multiverse, .code = .c))
-  
+
   m_obj$code <- .c
-  
-  # case 1: if code is being added to the end, 
+
+  # case 1: if code is being added to the end,
   # unchanged_until should be the length of the list
   #
   # case 2: if a previous element, n, in the code list
   #  is being edited, unchanged until should be n - 1
-  
+
   if (tail(names(.c), n = 1) == .name) {
     # case 1
     m_obj$unchanged_until = length(.c) - 1
@@ -158,6 +158,7 @@ add_and_parse_code <- function(multiverse, .expr, .name = NULL) {
     # `which` returns the index of the code block which has changed
     # we substract one to indicate what has been unchanged
     .p_idx = which( names(.c) == .name ) - 1
+  
     if (.p_idx == 0) m_obj$unchanged_until = NA
     else m_obj$unchanged_until = .p_idx
   }

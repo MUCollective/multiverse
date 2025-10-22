@@ -18,7 +18,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-# running Windows and Mac with --no-examples to avoid spurious Stan crashes in examples
           - {os: windows-latest, r: 'release', suffix: 'quick', not_cran: 'false', check_options: '"--as-cran", "--no-build-vignettes", "--ignore-vignettes", "--no-examples"'}
           - {os: macOS-latest, r: 'release', suffix: 'quick', not_cran: 'false', check_options: '"--as-cran", "--no-build-vignettes", "--ignore-vignettes", "--no-examples"'}
 # full checks on linux

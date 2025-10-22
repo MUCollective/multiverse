@@ -210,7 +210,7 @@ RMarkdown [supports languages other than R](https://bookdown.org/yihui/rmarkdown
 
 The code within the `filter` function call is written in the `multiverse` DSL and cannot be executed directly in R. For now, ignore what the `branch` function does as we will discuss about this in more detail in the next section. When this code is written and executed inside a *multiverse code block*, it allows the multiverse library to process and compile it to three different analyses.
 
-We provide the ability to declare multiverse code block as an *AddIn* in RStudio. Users can click on *AddIns* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
+We provide the ability to declare multiverse code block as an *Addin* in RStudio. Users can click on *Addins* toolbar menu in RStudio (see the image below). This would create a multiverse code block at the location of the cursor in the document.
 
 ```{r echo = FALSE, out.width = '90%'}
 knitr::include_graphics("man/figures/01-multiverse-addins.png")

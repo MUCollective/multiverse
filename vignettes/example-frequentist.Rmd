@@ -29,6 +29,8 @@ library(multiverse)
 
 
 ```{r, chunk-setup, include=FALSE}
+M = multiverse()
+
 knitr::opts_chunk$set(
   echo = TRUE,
   eval = if (isTRUE(exists("params"))) params$EVAL else FALSE,
@@ -117,7 +119,7 @@ Now we define the parameters we want to consider in the multiverse: confidence i
 #### Note 
 In this vignette, we make use of [*multiverse code chunks*](https://mucollective.github.io/multiverse/articles/multiverse-in-rmd.html), a custom engine designed to work with the multiverse package, to implement the multiverse analyses. Please refer to the vignette (`vignette("multiverse-in-rmd")`) for more details. Users could instead make use of the  \code{inside} function which is more suited for a script-style implementation. Please refer to the vignettes (`vignette("example-durante")`) for more details.
 
-```{multiverse default-m-1, inside = M, echo = FALSE}
+```{multiverse default-m-1, inside = M, echo = FALSE, eval = params$EVAL}
 ci_method <- branch(ci_method,
     "t based"   ~ "tCI",
     "bootstrap" ~ "bootstrappedCI"
@@ -168,7 +170,7 @@ We then actually perform the steps within the multiverse to get results from the
 First, we perform the data transformation operation within the multiverse. This will result in the data being appropriately transformed (log or identity) in the corresponding multiverse.
 
 
-```{multiverse default-m-2, inside = M, echo = FALSE}
+```{multiverse default-m-2, inside = M, echo = FALSE, eval = params$EVAL}
 duration <- do.call(data_transform, list(data.userlogs.raw$duration))
 ```
 
@@ -180,7 +182,7 @@ duration <- do.call(data_transform, list(data.userlogs.raw$duration))
 
 Next, we calculate the mean point estimates and 95% confidence intervals for each condition in the experiment. We also need to format the data so that the results could be neatly stored in a `data.frame`. We strongly recommend sorting the results that you would wish to extract from the multiverse in a `data.frame` as that would make it much easier for analysing and visualising the results.
 
-```{multiverse default-m-3, inside = M, echo = FALSE, message = FALSE, warning = FALSE}
+```{multiverse default-m-3, inside = M, echo = FALSE, eval = params$EVAL, message = FALSE, warning = FALSE}
 modality <- data.userlogs.raw$modalityname
 
 ci.physical_notouch <- do.call(ci_method, list(duration[modality == 'physical-notouch'], conf_level))
@@ -275,7 +277,7 @@ p <- df.results %>%
   transition_manual( .universe ) +
   theme_minimal()
 
-animate(p, nframes = 28,  fps = 2)
+animate(p, nframes = 28,  fps = 4)
 ```
 
 The figure above shows the (geometric) mean completion time for each condition. At first sight, physical touch appears to be consistently faster than the other conditions, across all possible analysis combinations specified in the multiverse. However, since condition is a within-subject factor, it is preferable to examine within-subject differences, which we show in the next section.
@@ -300,7 +302,7 @@ expand(M) %>%
 
 Next, we compute the pairwise ratios between mean completion times to examine the within-subject differences.
 
-```{multiverse default-m-4, inside = M, echo = FALSE}
+```{multiverse default-m-4, inside = M, echo = FALSE, eval = params$EVAL}
 diff.touch_notouch <- duration[modality == 'physical-notouch'] - duration[modality == 'physical-touch']
 `physical_touch - physical_notouch` <- do.call(ci_method, list(diff.touch_notouch, conf_level))
 `physical_touch - physical_notouch` <- setNames(as.list(c("physical_touch - physical_notouch", `physical_touch - physical_notouch`)), c("modality", "estimate", "conf.low", "conf.high"))

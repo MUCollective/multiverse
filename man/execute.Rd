@@ -46,7 +46,7 @@ inside(M, {
     "trim_none" ~ 0,
     "trim_1pc" ~ 0.05,
     "trim_5pc" ~ 0.025,
-    "trim_10pc" ~ 0.05
+    "trim_10pc" ~ 0.005
   ))
 })
 

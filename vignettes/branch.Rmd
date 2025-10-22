@@ -24,6 +24,8 @@ library(multiverse)
 
 
 ```{r, chunk-setup, include=FALSE}
+M = multiverse()
+
 opts_chunk$set(
   echo = TRUE,
   fig.width = 6, 
@@ -60,6 +62,7 @@ y = branch(discretisation,
       "three_levels" ~ ifelse(x < 20, "low", ifelse(x > 40, "high", "medium"))
     )
 ```
+
 
 ````
 ```{multiverse default-m-0, inside = M}`r ''`
@@ -688,4 +691,5 @@ The solution, which is essentially a workaround is to remove duplicates, *upon v
 expand(M) |> 
   filter(.universe != 4)
 ```
+
 
