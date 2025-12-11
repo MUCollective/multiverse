@@ -435,7 +435,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="at">              "category" %when% (main_interaction == "yes") ~ femininity * zcat,</span></span>
 <span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="at">              "all" %when% (main_interaction == "yes") ~ femininity * z3,</span></span>
 <span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="at">              "all_no_interaction" %when% (main_interaction == "no") ~ z3</span></span>
-<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="at">          ), family = "poisson", data = df)</span></span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="at">          ), family = "poisson", data = df.filtered)</span></span>
 <span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>For more details on how this can be done, as well as other details on conditions, please refer to <code><a href="articles/conditions.html">vignette("conditions")</a></code>.</p>
 </div>
@@ -458,7 +458,7 @@ results from a single analysis: point estimates and 95% confidence intervals of 
 <span id="cb20-12"><a href="#cb20-12" tabindex="-1"></a><span class="at">              "all_no_interaction" %when% (main_interaction == "no") ~ z3</span></span>
 <span id="cb20-13"><a href="#cb20-13" tabindex="-1"></a><span class="at">          ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), </span></span>
 <span id="cb20-14"><a href="#cb20-14" tabindex="-1"></a><span class="at">          family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  </span></span>
-<span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a><span class="at">          data = df)</span></span>
+<span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a><span class="at">          data = df.filtered)</span></span>
 <span id="cb20-16"><a href="#cb20-16" tabindex="-1"></a><span class="st">```</span></span></code></pre></div>
 <p>During interactive use (i.e. when running code chunks individually in RMarkdown), the following code chunk illustrates this behavior. Even though the variable <code>fit</code> was defined in a multiverse code block, since the default analysis is executed in the active R environment, the version corresponding to the default analysis can be accessed directly in R:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">

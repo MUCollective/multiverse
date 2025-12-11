@@ -420,7 +420,7 @@ This results in the following multiverse specification (for now, let's ignore th
                   "category" %when% (main_interaction == "yes") ~ femininity * zcat,
                   "all" %when% (main_interaction == "yes") ~ femininity * z3,
                   "all_no_interaction" %when% (main_interaction == "no") ~ z3
-              ), family = "poisson", data = df)
+              ), family = "poisson", data = df.filtered)
     ```
 
 For more details on how this can be done, as well as other details on conditions, please refer to `vignette("conditions")`.
@@ -443,7 +443,7 @@ As with code chunks in a typical computational notebook, users can execute a mul
                   "all_no_interaction" %when% (main_interaction == "no") ~ z3
               ) + branch(covariates, "1" ~ NULL, "2" ~ year:damage, "3" ~ post:damage), 
               family = branch(model, "linear" ~ "gaussian", "poisson" ~ "poisson"),  
-              data = df)
+              data = df.filtered)
     ```
 
 ```{multiverse label = default-m-3, inside = M, echo = FALSE}
