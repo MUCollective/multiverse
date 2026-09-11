@@ -153,6 +153,49 @@ expand(M)
 ```
 
 
+#### The `branch_assert()` function
+The same can be performed with the `branch_assert()` function. The benefit of using this is that within the branch assert function, the user can specify any logical operation. 
+
+For eg: the above logical operations can be specified as: `branch_assert((menstrual_calculation != "mc_option1" | cycle_length != "cl_option3"))`
+
+Both these operations have the same result, but the first may not be as easily interpretable. We specify the conditionals using the `branch_assert()` function in our example as:
+
+```{r, eval = FALSE}
+df %>%
+    branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+    branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
+```
+
+Using the `branch_assert()`, we can perform the exact same analysis:
+
+```{r}
+M = multiverse()
+
+inside(M, {
+    df.2 <- df_durante  %>%
+        mutate( ComputedCycleLength = StartDateofLastPeriod - StartDateofPeriodBeforeLast )  %>%
+        filter( branch(cycle_length,
+            "cl_option1" ~ TRUE,
+            "cl_option2" ~ ComputedCycleLength > 25 & ComputedCycleLength < 35,
+            "cl_option3" ~ ReportedCycleLength > 25 & ReportedCycleLength < 35
+        )) %>%
+        mutate(NextMenstrualOnset = branch(menstrual_calculation,
+            "mc_option1" ~ StartDateofLastPeriod + ComputedCycleLength,
+            "mc_option2" ~ StartDateofLastPeriod + ReportedCycleLength,
+            "mc_option3" ~ StartDateNext)
+        ) %>%
+        branch_assert( (menstrual_calculation != "mc_option1" | (cycle_length != "cl_option3")) ) %>%
+        branch_assert( (menstrual_calculation != "mc_option2" | (cycle_length != "cl_option2")) )
+})
+```
+
+As we can see, this results in the same multiverse, where universes indexed 3 and 5 are not compatible.
+
+```{r}
+expand(M)
+```
+
+
 ## Implementing conditions in a complete analysis
 
 Specifying these conditions allows us to exclude inconsistent combinations from our analyses. Let's update the example from [home page](https://mucollective.github.io/multiverse/) by including these conditions:

@@ -589,6 +589,30 @@ test_that("multiverse with same parameter and option do not throw error with dif
 })
 
 
+
+# flexible ordering of branch options --------------------------------------------
+test_that("branch should support multiple assignments within a code block", {
+  M <- multiverse()
+  
+  # Ordering of branches
+  inside(M, {
+    x<-branch(options,
+              "a" ~ 1,
+              "b" ~ 2,
+              "c" ~ 3)
+  })
+  
+  inside(M, {
+    y <-branch(options,
+               "b" ~ 2,
+               "a" ~ 1,
+               "c" ~ 3)
+  })
+  
+  expect_equal(parameters(M), list(options = list("a", "b", "c")))
+})
+
+
 # parsing branches with multiple assignments --------------------------------------------
 test_that("branch should support multiple assignments within a code block", {
   M <- multiverse()
